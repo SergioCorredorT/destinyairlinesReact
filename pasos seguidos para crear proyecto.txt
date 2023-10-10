@@ -1,0 +1,8 @@
+0 esquema de pantallas web
+1 Crear bbdd
+	diagrama de flujo
+	modelo entidad relación
+	SQL exportado
+2 backend
+	estructura de carpetas + conexión a bbdd
+	

@@ -1,0 +1,143 @@
+//// Docs: https://dbml.dbdiagram.io/docs
+Table AIRPORTS {
+  id_AIRPORTS int [pk, increment]
+  id_CURRENCIES int [ref: > CURRENCIES.id_CURRENCIES]
+  IATA varchar(3) [unique, not null]
+  name varchar(50) [unique]
+}
+
+Table CURRENCIES {
+  id_CURRENCIES int [pk, increment]
+  name varchar(20) [unique, not null]
+  idToEuro double(10,3)
+  euroToId double(10,3)
+}
+
+Table FLIGHTS_ITINERARIES {
+  id_ITINERARIES_FLIGHTS int [pk, increment]
+  id_FLIGHTS int [not null, ref: > FLIGHTS.id_FLIGHTS]
+  id_ITINERARIES int [not null, ref: > ITINERARIES.id_ITINERARIES]
+}
+
+Table ITINERARIES {
+  id_ITINERARIES int [pk, increment]
+  origin int [not null, ref: > AIRPORTS.id_AIRPORTS]
+  destiny int [not null, ref: > AIRPORTS.id_AIRPORTS]
+  routeCode varchar(20) [not null, unique]
+}
+
+Table FLIGHTS {
+  id_FLIGHTS int [pk, increment]
+  id_AIRPLANES int [ref: > AIRPLANES.id_AIRPLANES]
+  date date
+  hour time
+  price double
+  freeSeats int
+  arrivalHour time
+}
+
+Table AIRPLANES {
+  id_AIRPLANES int [pk, increment]
+  airplaneCode varchar(10) [not null, unique]
+  model varchar(50)
+  seats int(4) [not null]
+}
+
+Table USERS {
+  id_USERS int [pk, increment]
+  title varchar(3)
+  firstName varchar(50)
+  lastName varchar(50)
+  townCity varchar(50)
+  streetAddress varchar(50)
+  zipCode varchar(5)
+  country varchar(25)
+  emailAddress varchar(50) [not null]
+  password varchar(50) [not null]
+  phoneNumber1 varchar(20)
+  phoneNumber2 varchar(20)
+  phoneNumber3 varchar(20)
+  companyName varchar(50)
+  companyTaxNumber varchar(50)
+  companyPhoneNumber varchar(20)
+}
+
+Table BOOKS {
+  id_BOOKS int [pk, increment]
+  id_FLIGHTS int [not null, ref: > FLIGHTS.id_FLIGHTS]
+  id_USERS int [not null, ref: > USERS.id_USERS]
+  bookCode varchar(10) [not null, unique]
+  bookDate date
+  price double
+  direction direction [not null, default: "departure"]
+  invoiced date
+  deadLine date
+}
+
+enum direction {
+  departure
+  return
+}
+
+Table SERVICES {
+  id_SERVICES int [pk, increment]
+  serviceCode varchar(10) [not null, unique]
+  serviceGroupingType serviceGroupingType [not null]
+  type varchar(30) [not null]
+  subtype varchar(30) [not null]
+  description varchar(600)
+  price double
+}
+
+enum serviceGroupingType {
+  individual
+  colective
+  both
+}
+
+Table BOOKS_SERVICES {
+  id_BOOKS_SERVICES int [pk, increment]
+  id_BOOKS int [not null, ref: > BOOKS.id_BOOKS]
+  id_SERVICES int [not null, ref: > SERVICES.id_SERVICES]
+}
+
+Table PASSENGERS_SERVICES {
+  id_PASSENGERS_SERVICES int [pk, increment]
+  id_PASSENGERS int [not null, ref: > PASSENGERS.id_PASSENGERS]
+  id_BOOKS int [not null, ref: > BOOKS.id_BOOKS]
+  id_SERVICES int [not null, ref: > SERVICES.id_SERVICES]
+}
+
+Table PASSENGERS {
+  id_PASSENGERS int [pk, increment]
+  passengerCode varchar(50) [not null, unique]
+  documentationType documentationType [not null]
+  documentCode varchar(30) [not null]
+  firstName varchar(50)
+  lastName varchar(50)
+  title varchar(50)
+  ageCategory ageCategory [not null, default: "adult"]
+  billed date
+}
+
+enum documentationType {
+  DNI
+  Passport
+  Drivers_license
+  Residence_card_or_work_permit
+}
+
+enum ageCategory {
+  infant
+  child
+  adult
+}
+
+Table ADDITIONAL_INFORMATIONS {
+  id_ADDITIONAL_INFORMATIONS int [pk, increment]
+  id_PASSENGERS int [not null, ref: > PASSENGERS.id_PASSENGERS]
+  nationality varchar(50)
+  dateBirth date
+  country varchar(50)
+  expirationDate date
+}

@@ -1,0 +1,1 @@
+usar axios en front para peticiones al back
