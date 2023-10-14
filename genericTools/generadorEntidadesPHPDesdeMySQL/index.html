@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL to PHP Entity Generator</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="container">
+        <textarea id="sqlCode" onfocus="this.select()" placeholder="Pega aquí tu código SQL"></textarea>
+        <button onclick="generateEntity()">Generar entidad</button>
+        <textarea id="generatedEntity" onfocus="this.select()" placeholder="Aquí se mostrará el entidad PHP generado"></textarea>
+        <button onclick="copiarAlPortapapeles()">Copiar al Portapapeles</button>
+        <div>
+            <label>Ejemplo:</label>
+            <textarea>
+                CREATE TABLE `USERS` (
+                    `id_USERS` int PRIMARY KEY AUTO_INCREMENT,
+                    `title` varchar(3),
+                    `firstName` varchar(50),
+                    `lastName` varchar(50),
+                    `emailAddress` varchar(50) NOT NULL,
+                    `password` varchar(50) NOT NULL,
+                );
+            </textarea>
+        </div>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>
