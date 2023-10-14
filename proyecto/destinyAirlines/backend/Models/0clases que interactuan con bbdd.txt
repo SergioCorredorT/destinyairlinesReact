@@ -1,0 +1,1 @@
+baseModel interactúa con bbdd, los modelos lo heredan, los modelos solo pueden interactuar con bbdd a través del baseModel

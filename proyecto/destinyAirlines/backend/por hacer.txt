@@ -1,0 +1,6 @@
+generar en server al empezar navegación, un token o código aleatorio contra CSRF que el usuario reciba y lo vaya enviando a server tras cada acción para saber que es el mismo usuario.
+    convenientemente usar https al menos con ese token
+
+conforme el usuario avance en las pantallas de nuevo viaje se irán validando y metiendo los datos en las entidades,
+    tras pagar, los objetos se enviarán a los controller y estos a los modelos para insertar datos en bbdd
+        en la introducción de datos en bbdd usar transacciones para poder revertir cambios con rollback en caso de error

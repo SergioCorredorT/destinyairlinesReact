@@ -1,0 +1,2 @@
+Los controllers son los que manipulan las entidades y los más cercanos a la acción del usuario respecto a los modelos
+validan datos antes de meterlos en las entidades
