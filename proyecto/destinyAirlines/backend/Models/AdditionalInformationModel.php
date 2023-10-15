@@ -1,5 +1,5 @@
 <?php
-
+require_once "./Models/BaseModel.php";
 class AdditionalInformationModel extends BaseModel
 {
     private const table = "ADDITIONAL_INFORMATIONS";
@@ -8,7 +8,7 @@ class AdditionalInformationModel extends BaseModel
     {
         parent::__construct(self::table);
     }
-    //estos métodos se modificarán para que hagan únicamente lo necesario
+
     public function createAdditionalInformations($data)
     {
         return parent::insert($data);

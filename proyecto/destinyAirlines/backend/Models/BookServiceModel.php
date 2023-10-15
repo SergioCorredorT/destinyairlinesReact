@@ -1,5 +1,5 @@
 <?php
-
+require_once "./Models/BaseModel.php";
 class BookServiceModel extends BaseModel
 {
     private const table = "BOOKS_SERVICES";
@@ -8,7 +8,7 @@ class BookServiceModel extends BaseModel
     {
         parent::__construct(self::table);
     }
-    //estos métodos se modificarán para que hagan únicamente lo necesario
+
     public function createBookServices($data)
     {
         return parent::insert($data);

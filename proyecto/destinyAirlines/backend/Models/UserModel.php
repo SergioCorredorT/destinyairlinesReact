@@ -1,5 +1,5 @@
 <?php
-
+require_once "./Models/BaseModel.php";
 class UserModel extends BaseModel
 {
     private const table = "USERS";
@@ -8,7 +8,7 @@ class UserModel extends BaseModel
     {
         parent::__construct(self::table);
     }
-    //estos métodos se modificarán para que hagan únicamente lo necesario
+
     public function createUsers($data)
     {
         return parent::insert($data);
