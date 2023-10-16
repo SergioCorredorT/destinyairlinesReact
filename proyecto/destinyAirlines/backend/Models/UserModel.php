@@ -9,9 +9,14 @@ class UserModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function createUsers($data)
+    public function createUser($data)
     {
         return parent::insert($data);
+    }
+
+    public function createUsers($data)
+    {
+        return parent::inserts($data);
     }
 
     public function readUsers()
@@ -24,7 +29,7 @@ class UserModel extends BaseModel
         return parent::update($data, $where);
     }
 
-    public function deleteUsers($where = "")
+    public function deleteUsers($where)
     {
         return parent::delete($where);
     }
