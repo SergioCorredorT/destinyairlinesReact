@@ -10,9 +10,10 @@ final class Database
       $this->conn = new PDO("mysql:host=" . $config['host'] . ";dbname=" . $config['dbname'] . ";port=" . $config['port'], $config['username'], $config['password']);
       // set the PDO error mode to exception
       $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-      echo "Conexión exitosa";
+      $this->conn->exec("SET CHARACTER SET utf8");
+      echo "Succesfull database connection";
     } catch (PDOException $e) {
-      echo "Conexión fallida: " . $e->getMessage();
+      echo "Fail database connection: " . $e->getMessage();
     }
   }
 

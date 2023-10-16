@@ -2,3 +2,4 @@ Bebés no ocupan un asiento aparte (van en el regazo de cuidador/a)
 Bebés, precio de 20%
 Se hacen las cuentas sobre un precio base del vuelo
 el botón continuar de la pestaña vuelo tendra position absolute abajo a la derecha
+Cada pasajero puede estar en 1 o 2 books, cada book minimo un pasajero, esto en PASSENGER_SERVICES

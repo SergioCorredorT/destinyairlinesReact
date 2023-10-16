@@ -75,4 +75,21 @@ abstract class BaseModel
     {
         return $this->con->rollBack();
     }
+
+    protected function cleanData($myString){
+
+        $restrictedWords=["<script>","</script>","<script src","<script type=","SELECT * FROM","SELECT "," SELECT ","DELETE FROM","INSERT INTO","DROP TABLE","DROP DATABASE","TRUNCATE TABLE","SHOW TABLES","SHOW DATABASES","<?php","?>","--","^","<",">","==","=",";","::"];
+
+        $myString=trim($myString);
+        $myString=stripslashes($myString);
+
+        foreach($restrictedWords as $restrictedWord){
+            $myString=str_ireplace($restrictedWord, "", $myString);
+        }
+
+        $myString=trim($myString);
+        $myString=stripslashes($myString);
+
+        return $myString;
+    }
 }

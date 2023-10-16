@@ -101,11 +101,11 @@ Table BOOKS_SERVICES {
   id_SERVICES int [not null, ref: > SERVICES.id_SERVICES]
 }
 
-Table PASSENGERS_SERVICES {
-  id_PASSENGERS_SERVICES int [pk, increment]
+Table PASSENGERS_BOOKS_SERVICES {
+  id_PASSENGERS_BOOKS_SERVICES int [pk, increment]
   id_PASSENGERS int [not null, ref: > PASSENGERS.id_PASSENGERS]
   id_BOOKS int [not null, ref: > BOOKS.id_BOOKS]
-  id_SERVICES int [not null, ref: > SERVICES.id_SERVICES]
+  id_SERVICES int [ref: > SERVICES.id_SERVICES]
 }
 
 Table PASSENGERS {

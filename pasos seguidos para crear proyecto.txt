@@ -5,4 +5,5 @@
 	SQL exportado
 2 backend
 	estructura de carpetas + conexión a bbdd
+	modelos
 	
