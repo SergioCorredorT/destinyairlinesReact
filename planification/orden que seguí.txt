@@ -1,0 +1,5 @@
+1 Pantallas
+2 Diagrama de flujo
+3 Modelo entidad relación
+4 SQL exportado
+5 DF_servidor

@@ -1,7 +1,7 @@
 <?php
-
-    include 'Models/UserModel.php';
-    $usuario = new UserModel();
+//-----------------------------------------------------------------------------------------------------------------------
+//    include 'Models/UserModel.php';
+//    $usuario = new UserModel();
 /*
         $datas = [
             ['firstName' => 'AAAA', 'zipCode' => 25, 'emailAddress' => 'aaaa@example.com', 'password' => 'contraseña1'],
@@ -18,8 +18,10 @@
 
     //if($usuario->deleteUsers("firstName LIKE AAAA")){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
 
-
+/*
     $data = [
         'firstName' => 'A555', 'zipCode' => 25, 'emailAddress' => 'aaaa5@example.com', 'password' => 'contraseña5'
     ];
     if($usuario->createUsers($data)){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
+*/
+//-----------------------------------------------------------------------------------------------------------------------
