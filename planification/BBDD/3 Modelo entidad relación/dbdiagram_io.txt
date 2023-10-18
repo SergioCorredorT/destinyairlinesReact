@@ -67,11 +67,10 @@ Table BOOKS {
   id_FLIGHTS int [not null, ref: > FLIGHTS.id_FLIGHTS]
   id_USERS int [not null, ref: > USERS.id_USERS]
   bookCode varchar(10) [not null, unique]
-  bookDate date
   price double
   direction direction [not null, default: "departure"]
   invoiced date
-  deadLine date
+  checkinDate date
 }
 
 enum direction {

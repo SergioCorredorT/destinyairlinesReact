@@ -1,2 +1,1 @@
-Los controllers son los que manipulan las entidades y los más cercanos a la acción del usuario respecto a los modelos
-validan datos antes de meterlos en las entidades
+Los controllers se clasifican por acciones, y cada acción puede hacer uso de varios modelos a través del autoload del BaseController

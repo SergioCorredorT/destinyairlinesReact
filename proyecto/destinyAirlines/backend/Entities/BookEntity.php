@@ -5,22 +5,20 @@ class BooksEntity {
     private $id_FLIGHTS;
     private $id_USERS;
     private $bookCode;
-    private $bookDate;
     private $price;
     private $direction;
     private $invoiced;
-    private $deadLine;
+    private $checkinDate;
 
     public function __construct($params = []) {
         $this->id_BOOKS = $params['id_BOOKS'] ?? null;
         $this->id_FLIGHTS = $params['id_FLIGHTS'] ?? null;
         $this->id_USERS = $params['id_USERS'] ?? null;
         $this->bookCode = $params['bookCode'] ?? null;
-        $this->bookDate = $params['bookDate'] ?? null;
+        $this->checkinDate = $params['checkinDate'] ?? null;
         $this->price = $params['price'] ?? null;
         $this->direction = $params['direction'] ?? null;
         $this->invoiced = $params['invoiced'] ?? null;
-        $this->deadLine = $params['deadLine'] ?? null;
     }
 
     public function getId_BOOKS() {
@@ -39,10 +37,6 @@ class BooksEntity {
         return $this->bookCode;
     }
 
-    public function getBookDate() {
-        return $this->bookDate;
-    }
-
     public function getPrice() {
         return $this->price;
     }
@@ -55,8 +49,8 @@ class BooksEntity {
         return $this->invoiced;
     }
 
-    public function getDeadLine() {
-        return $this->deadLine;
+    public function getCheckinDate() {
+        return $this->checkinDate;
     }
 
     public function setId_BOOKS($value) {
@@ -75,10 +69,6 @@ class BooksEntity {
         $this->bookCode = $value;
     }
 
-    public function setBookDate($value) {
-        $this->bookDate = $value;
-    }
-
     public function setPrice($value) {
         $this->price = $value;
     }
@@ -91,7 +81,7 @@ class BooksEntity {
         $this->invoiced = $value;
     }
 
-    public function setDeadLine($value) {
-        $this->deadLine = $value;
+    public function setCheckinDate($value) {
+        $this->checkinDate = $value;
     }
 }

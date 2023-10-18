@@ -69,11 +69,10 @@ CREATE TABLE `BOOKS` (
   `id_FLIGHTS` int NOT NULL,
   `id_USERS` int NOT NULL,
   `bookCode` varchar(10) UNIQUE NOT NULL,
-  `bookDate` date,
   `price` double,
   `direction` ENUM ('departure', 'return') NOT NULL DEFAULT "departure",
   `invoiced` date,
-  `deadLine` date
+  `checkinDate` date
 );
 
 CREATE TABLE `SERVICES` (
