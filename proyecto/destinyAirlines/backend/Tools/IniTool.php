@@ -1,10 +1,10 @@
 <?php
-    class IniController
+    class IniTool
     {
 //Ruta al archivo .ini
         private $rutaIni=null;
 //Valor obtenido del archivo .ini
-        private $valorIni=null;
+        private $iniContain=null;
 //Indicador de si hay error
         private $ifError=false;
 
@@ -16,9 +16,9 @@
                 {
                     $this->rutaIni=$rutaIni;
 //Obtengo valores del archivo .ini
-                    $this->valorIni=parse_ini_file($rutaIni,true);
+                    $this->iniContain=parse_ini_file($rutaIni,true);
 //Compruebo si tengo valores del archivo .ini
-                    if(!(is_array($this->valorIni)))
+                    if(!(is_array($this->iniContain)))
                     {
                         $this->ifError=true;
                     }
@@ -33,7 +33,7 @@
         public function __destruct()
         {
             $this->rutaIni=null;
-            $this->valorIni=null;
+            $this->iniContain=null;
             $this->ifError=null;
         }
 
@@ -44,9 +44,9 @@
 
         function getKey($section,$key)
         {
-            if(isset($this->valorIni[$section][$key]))
+            if(isset($this->iniContain[$section][$key]))
             {
-                return $this->valorIni[$section][$key];
+                return $this->iniContain[$section][$key];
             }
             else
             {
@@ -56,9 +56,9 @@
 
         function getKeysAndValues($section)
         {
-            if(isset($this->valorIni[$section]))
+            if(isset($this->iniContain[$section]))
             {
-                return $this->valorIni[$section];
+                return $this->iniContain[$section];
             }
             else
             {
@@ -68,9 +68,9 @@
 
         public function getSection($section)
         {
-            if(isset($this->valorIni[$section]))
+            if(isset($this->iniContain[$section]))
             {
-                return $this->valorIni[$section];
+                return $this->iniContain[$section];
             }
             else
             {

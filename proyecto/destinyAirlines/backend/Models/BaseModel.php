@@ -1,17 +1,17 @@
 <?php
 require_once './Database/Database.php';
-require_once './Config/IniController.php';
+require_once './Tools/IniTool.php';
 
 abstract class BaseModel
 {
     private $con;
     private $tableName;
-    private $iniController;
+    private $iniTool;
 
     protected function __construct($tableName)
     {
-        $this->iniController = new IniController('./Config/cfg.ini');
-        $config = $this->iniController->getKeysAndValues("database");
+        $this->iniTool = new IniTool('./Config/cfg.ini');
+        $config = $this->iniTool->getKeysAndValues("database");
 
         $this->con = Database::getInstance($config)->getConnection();
         $this->tableName = $tableName;

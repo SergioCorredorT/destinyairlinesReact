@@ -6,4 +6,6 @@
 2 backend
 	estructura de carpetas + conexión a bbdd
 	modelos
-	
+	entidades
+	controladores
+	validadores
