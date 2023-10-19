@@ -23,22 +23,26 @@ class ContactController extends BaseController
             'message'   => isset($_POST['message'])         ? ContactSanitizer::sanitizeMessage($_POST['message'])          : null,
             'dateTime'  => date('Y-m-d H:i:s')
         ];
-
 /*
 //PARA PRUEBAS
-        $contactData = [
+      $contactData = [
             'name'      => ContactSanitizer::sanitizeName("Sergio"),
-            'email'     => ContactSanitizer::sanitizeName("sergiocorredort@gmail.com"),
+            'email'     => ContactSanitizer::sanitizeName("waa@gmail.com"),
             'phone'     => ContactSanitizer::sanitizeName("111223344"),
             'subject'   => ContactSanitizer::sanitizeName("motivazo bueno"),
             'message'   => ContactSanitizer::sanitizeName("Mensaje guauuuuuuuuuuuuuuu"),
             'dateTime'  => date('Y-m-d H:i:s')
         ];
 */
-
         $errors = ContactValidator::validate($contactData);
         if (empty($errors)) {
             $contactData['to'] = $this->chooseToFromSubject($contactData['subject']);
+            
+            $iniTool = new IniTool('./Config/cfg.ini');
+            $originEmailIni = $iniTool->getKeysAndValues("originEmail");
+            $contactData['fromEmail'] = $originEmailIni['email'];
+            $contactData['fromPassword'] = $originEmailIni['password'];
+
             if (!EmailTool::sendEmail($contactData)) {
                 $errors['sendEmail'] = 1;
             }
@@ -52,7 +56,7 @@ class ContactController extends BaseController
     {
         //devolver el "to" (correo destino) según el subject según el cfg.ini
         $iniTool = new IniTool('./Config/cfg.ini');
-        $subjectWithItsEmails = $iniTool->getKeysAndValues("contactEmails");
+        $subjectWithItsEmails = $iniTool->getKeysAndValues("destinyContactEmails");
         if (isset($subjectWithItsEmails[$subject])) {
             return $subjectWithItsEmails[$subject];
         }
@@ -60,3 +64,5 @@ class ContactController extends BaseController
         return $subjectWithItsEmails["default"];
     }
 }
+$a=new ContactController();
+$a->sendContact();
