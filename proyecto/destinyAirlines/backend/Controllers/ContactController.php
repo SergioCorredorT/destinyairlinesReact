@@ -64,5 +64,3 @@ class ContactController extends BaseController
         return $subjectWithItsEmails["default"];
     }
 }
-$a=new ContactController();
-$a->sendContact();
