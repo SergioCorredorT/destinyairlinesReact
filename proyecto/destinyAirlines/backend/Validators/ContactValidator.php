@@ -29,6 +29,11 @@ class ContactValidator
         return strlen($message) > 3 ? 0 : 1;
     }
 
+    public static function validatePhoneNumber($phoneNumber)
+    {
+        return strlen($phoneNumber) >= 9 ? 0 : 1;
+    }
+
     public static function validate($data)
     {
         $errors = [];
@@ -51,6 +56,11 @@ class ContactValidator
         $messageError = self::validateMessage($data['message']);
         $messageError != 0 ?
             $errors['message'] = $messageError : 
+            null;
+
+        $phoneNumberError = self::validatePhoneNumber($data['phoneNumber']);
+        $phoneNumberError != 0 ?
+            $errors['phoneNumber'] = $phoneNumberError :
             null;
 
         return $errors;

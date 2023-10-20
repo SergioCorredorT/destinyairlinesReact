@@ -15,18 +15,20 @@ class ContactController extends BaseController
 
     public function sendContact($data)
     {
-        $contactData=ContactSanitizer::sanitize($data);
+        $contactData = ContactSanitizer::sanitize($data);
         $errors = ContactValidator::validate($contactData);
 
         if (empty($errors)) {
-            $contactData['to'] = $this->chooseToFromSubject($contactData['subject']);
-            
+            //Seleccionamos correo destino en función del asunto recibido, que debería estar en cfg.ini, si no, se activa el valor default
+            $contactData['toEmail'] = $this->chooseToFromSubject($contactData['subject']);
+
+            //Recogemos del cfg.ini la cuenta remitente de correo
             $iniTool = new IniTool('./Config/cfg.ini');
             $originEmailIni = $iniTool->getKeysAndValues("originEmail");
             $contactData['fromEmail'] = $originEmailIni['email'];
             $contactData['fromPassword'] = $originEmailIni['password'];
 
-            if (!EmailTool::sendEmail($contactData)) {
+            if (!EmailTool::sendEmail($contactData, "contactTemplate")) {
                 $errors['sendEmail'] = 1;
             }
         }

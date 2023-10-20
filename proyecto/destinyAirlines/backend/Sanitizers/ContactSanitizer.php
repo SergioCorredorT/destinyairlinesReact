@@ -29,6 +29,7 @@
             $arraySanitized["email"] = self::sanitizeEmail($arrayData['email']);
             $arraySanitized["subject"] = self::sanitizeSubject($arrayData['subject']);
             $arraySanitized["message"] = self::sanitizeMessage($arrayData['message']);
+            $arraySanitized["phoneNumber"] = self::sanitizePhoneNumber($arrayData['phoneNumber']);
 
             return $arraySanitized;
         }

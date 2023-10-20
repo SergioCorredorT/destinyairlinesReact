@@ -1,15 +1,16 @@
 <?php
-    require_once './vendor/autoload.php';
-    require_once './Tools/IniTool.php';
+require_once './vendor/autoload.php';
+require_once './Tools/IniTool.php';
+include_once './Tools/TemplateTool.php';
 class EmailTool
 {
-    public static function sendEmail($Data)
+    public static function sendEmail($data, $template = "")
     {
-        $to = $Data["to"];
-        $subject = $Data["subject"];
-        $message = $Data["message"];
-        $fromEmail =$Data["fromEmail"];
-        $fromPassword =$Data["fromPassword"];
+        $toEmail = $data["toEmail"];
+        $subject = $data["subject"];
+        $fromEmail = $data["fromEmail"];
+        $fromPassword = $data["fromPassword"];
+        $message = TemplateTool::ApplyTemplate($data, $template);
 
         $phpmailer = new PHPMailer\PHPMailer\PHPMailer();
         $phpmailer->isSMTP();
@@ -21,9 +22,10 @@ class EmailTool
         $phpmailer->Password = $fromPassword;
 
         $phpmailer->setFrom($fromEmail, 'Destiny Airlines');
-        $phpmailer->addAddress($to);
+        $phpmailer->addAddress($toEmail);
         $phpmailer->Subject = $subject;
         $phpmailer->isHTML(true);
+        $phpmailer->CharSet = 'UTF-8';
         $phpmailer->Body = $message;
 
         if (!$phpmailer->send()) {
