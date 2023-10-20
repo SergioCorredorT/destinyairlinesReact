@@ -1,5 +1,4 @@
 <?php
-    use PHPMailer\PHPMailer\PHPMailer;
     require_once './vendor/autoload.php';
     require_once './Tools/IniTool.php';
 class EmailTool
@@ -12,7 +11,7 @@ class EmailTool
         $fromEmail =$Data["fromEmail"];
         $fromPassword =$Data["fromPassword"];
 
-        $phpmailer = new PHPMailer();
+        $phpmailer = new PHPMailer\PHPMailer\PHPMailer();
         $phpmailer->isSMTP();
         $phpmailer->SMTPSecure = 'ssl';
         $phpmailer->Host = 'smtp.gmail.com'; // Servidor SMTP de Gmail

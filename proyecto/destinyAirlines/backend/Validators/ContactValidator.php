@@ -29,26 +29,26 @@ class ContactValidator
         return strlen($message) > 3 ? 0 : 1;
     }
 
-    public static function validate($arrayData)
+    public static function validate($data)
     {
         $errors = [];
 
-        $nameError = self::validateName($arrayData['name']);
+        $nameError = self::validateName($data['name']);
         $nameError != 0 ?
             $errors['name'] = $nameError :
             null;
 
-        $emailError = self::validateEmail($arrayData['email']);
+        $emailError = self::validateEmail($data['email']);
         $emailError != 0 ?
             $errors['email'] = $emailError : 
             null;
 
-        $subjectError = self::validateSubject($arrayData['subject']);
+        $subjectError = self::validateSubject($data['subject']);
         $subjectError != 0 ?
             $errors['subject'] = $subjectError : 
             null;
 
-        $messageError = self::validateMessage($arrayData['message']);
+        $messageError = self::validateMessage($data['message']);
         $messageError != 0 ?
             $errors['message'] = $messageError : 
             null;

@@ -4,3 +4,5 @@ generar en server al empezar navegación, un token o código aleatorio contra CS
 conforme el usuario avance en las pantallas de nuevo viaje se irán validando y metiendo los datos en las entidades,
     tras pagar, los objetos se enviarán a los controller y estos a los modelos para insertar datos en bbdd
         en la introducción de datos en bbdd usar transacciones para poder revertir cambios con rollback en caso de error
+
+Cuando entienda como el frontend manejaría la respuesta de php frente a exceptions, quizás añadir más throw y try catch

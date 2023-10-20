@@ -13,28 +13,11 @@ class ContactController extends BaseController
         parent::__construct();
     }
 
-    public function sendContact()
+    public function sendContact($data)
     {
-        $contactData = [
-            'name'      => isset($_POST['name'])            ? ContactSanitizer::sanitizeName($_POST['name'])                : null,
-            'email'     => isset($_POST['email'])           ? ContactSanitizer::sanitizeEmail($_POST['email'])              : null,
-            'phone'     => isset($_POST['phoneNumber'])     ? ContactSanitizer::sanitizePhoneNumber($_POST['phoneNumber'])  : null,
-            'subject'   => isset($_POST['subject'])         ? ContactSanitizer::sanitizeSubject($_POST['subject'])          : null,
-            'message'   => isset($_POST['message'])         ? ContactSanitizer::sanitizeMessage($_POST['message'])          : null,
-            'dateTime'  => date('Y-m-d H:i:s')
-        ];
-/*
-//PARA PRUEBAS
-      $contactData = [
-            'name'      => ContactSanitizer::sanitizeName("Sergio"),
-            'email'     => ContactSanitizer::sanitizeName("waa@gmail.com"),
-            'phone'     => ContactSanitizer::sanitizeName("111223344"),
-            'subject'   => ContactSanitizer::sanitizeName("motivazo bueno"),
-            'message'   => ContactSanitizer::sanitizeName("Mensaje guauuuuuuuuuuuuuuu"),
-            'dateTime'  => date('Y-m-d H:i:s')
-        ];
-*/
+        $contactData=ContactSanitizer::sanitize($data);
         $errors = ContactValidator::validate($contactData);
+
         if (empty($errors)) {
             $contactData['to'] = $this->chooseToFromSubject($contactData['subject']);
             
