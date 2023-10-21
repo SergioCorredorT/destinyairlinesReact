@@ -67,7 +67,7 @@ abstract class BaseModel
 
     private function insertOne($data)
     {
-        $data = $this->cleanAll($data);
+        $data = $this->sanitizeAll($data);
         $columns = implode(', ', array_keys($data));
         $placeholders = ':' . implode(', :', array_keys($data));
         $query = "INSERT INTO $this->tableName ($columns) VALUES ($placeholders)";
@@ -177,7 +177,6 @@ abstract class BaseModel
         }
     }
 
-
     protected function beginTransaction()
     {
         return $this->con->beginTransaction();
@@ -193,21 +192,21 @@ abstract class BaseModel
         return $this->con->rollBack();
     }
 
-    protected function cleanAll($data)
+    protected function sanitizeAll($data)
     {
         if (is_array($data)) {
             $cleanedData = [];
             foreach ($data as $key => $value) {
-                $cleanKey = $this->cleanString((string)$key);
-                $cleanedData[$cleanKey] = $this->cleanString($value);
+                $cleanKey = $this->sanitizeString((string)$key);
+                $cleanedData[$cleanKey] = $this->sanitizeString($value);
             }
             return $cleanedData;
         } else {
-            return $this->cleanString($data);
+            return $this->sanitizeString($data);
         }
     }
 
-    protected function cleanString($myString)
+    protected function sanitizeString($myString)
     {
         $restrictedWords = ["<script>", "</script>", "<script src", "<script type=", "SELECT * FROM", "SELECT ", " SELECT ", "DELETE FROM", "INSERT INTO", "DROP TABLE", "DROP DATABASE", "TRUNCATE TABLE", "SHOW TABLES", "SHOW DATABASES", "<?php", "?>", "--", "^", "<", ">", "==", "=", ";", "::"];
 

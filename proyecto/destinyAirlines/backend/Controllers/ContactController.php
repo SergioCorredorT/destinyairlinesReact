@@ -1,8 +1,6 @@
 <?php
 //enviar correo o whatsapp al correo de empresa
 require_once './Controllers/BaseController.php';
-require_once './Sanitizers/ContactSanitizer.php';
-require_once './Validators/ContactValidator.php';
 require_once './Tools/IniTool.php';
 require_once './Tools/EmailTool.php';
 
@@ -13,28 +11,20 @@ class ContactController extends BaseController
         parent::__construct();
     }
 
-    public function sendContact($data)
+    public function sendContact($contactData)
     {
-        $contactData = ContactSanitizer::sanitize($data);
-        $errors = ContactValidator::validate($contactData);
+        //Seleccionamos correo destino en función del asunto recibido, que debería estar en cfg.ini, si no, se activa el valor default
+        $contactData['toEmail'] = $this->chooseToFromSubject($contactData['subject']);
 
-        if (empty($errors)) {
-            //Seleccionamos correo destino en función del asunto recibido, que debería estar en cfg.ini, si no, se activa el valor default
-            $contactData['toEmail'] = $this->chooseToFromSubject($contactData['subject']);
+        //Recogemos del cfg.ini la cuenta remitente de correo
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $originEmailIni = $iniTool->getKeysAndValues("originEmail");
+        $contactData['fromEmail'] = $originEmailIni['email'];
+        $contactData['fromPassword'] = $originEmailIni['password'];
 
-            //Recogemos del cfg.ini la cuenta remitente de correo
-            $iniTool = new IniTool('./Config/cfg.ini');
-            $originEmailIni = $iniTool->getKeysAndValues("originEmail");
-            $contactData['fromEmail'] = $originEmailIni['email'];
-            $contactData['fromPassword'] = $originEmailIni['password'];
-
-            if (!EmailTool::sendEmail($contactData, "contactTemplate")) {
-                $errors['sendEmail'] = 1;
-            }
+        if (!EmailTool::sendEmail($contactData, "contactTemplate")) {
+            throw new Exception("Failed to send email");
         }
-        header('Content-Type: application/json');
-        echo json_encode(['error' => $errors]);
-        exit();
     }
 
     private function chooseToFromSubject($subject)

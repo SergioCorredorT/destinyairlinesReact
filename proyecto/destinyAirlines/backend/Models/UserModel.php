@@ -14,9 +14,19 @@ class UserModel extends BaseModel
         return parent::insert($data);
     }
 
+    public function createUser($data)
+    {
+        return $this->createUsers($data);
+    }
+
     public function readUsers()
     {
         return parent::select("*");
+    }
+
+    public function readUserByEmail($email, $password)
+    {
+        return parent::select("*", "emailAddress = '$email' AND password = '$password'");
     }
 
     public function updateUsers($data, $where)
@@ -27,5 +37,10 @@ class UserModel extends BaseModel
     public function deleteUsers($where)
     {
         return parent::delete($where);
+    }
+
+    public function deleteUserByEmailAndPassword($email, $password)
+    {
+        return parent::delete("emailAddress = '$email' AND password = '$password'");
     }
 }
