@@ -3,7 +3,8 @@
 require_once './Controllers/BaseController.php';
 require_once './Tools/IniTool.php';
 require_once './Tools/EmailTool.php';
-
+require_once './Sanitizers/ContactSanitizer.php';
+require_once './Validators/ContactValidator.php';
 class ContactController extends BaseController
 {
     public function __construct()
@@ -11,19 +12,34 @@ class ContactController extends BaseController
         parent::__construct();
     }
 
-    public function sendContact($contactData)
+    public function sendContact($POST)
     {
-        //Seleccionamos correo destino en función del asunto recibido, que debería estar en cfg.ini, si no, se activa el valor default
-        $contactData['toEmail'] = $this->chooseToFromSubject($contactData['subject']);
+        $contactData = [
+            'name'          => $POST['name'] ?? "",
+            'email'         => $POST['email'] ?? "",
+            'phoneNumber'   => $POST['phoneNumber'] ?? "",
+            'subject'       => $POST['subject'] ?? "",
+            'message'       => $POST['message'] ?? "",
+            'dateTime'      => date('Y-m-d H:i:s')
+        ];
 
-        //Recogemos del cfg.ini la cuenta remitente de correo
-        $iniTool = new IniTool('./Config/cfg.ini');
-        $originEmailIni = $iniTool->getKeysAndValues("originEmail");
-        $contactData['fromEmail'] = $originEmailIni['email'];
-        $contactData['fromPassword'] = $originEmailIni['password'];
+        $contactData = ContactSanitizer::sanitize($contactData);
+        $isValidate = ContactValidator::validate($contactData);
+        if ($isValidate) {
+            //Seleccionamos correo destino en función del asunto recibido, que debería estar en cfg.ini, si no, se activa el valor default
+            $contactData['toEmail'] = $this->chooseToFromSubject($contactData['subject']);
 
-        if (!EmailTool::sendEmail($contactData, "contactTemplate")) {
-            throw new Exception("Failed to send email");
+            //Recogemos del cfg.ini la cuenta remitente de correo
+            $iniTool = new IniTool('./Config/cfg.ini');
+            $originEmailIni = $iniTool->getKeysAndValues("originEmail");
+            $contactData['fromEmail'] = $originEmailIni['email'];
+            $contactData['fromPassword'] = $originEmailIni['password'];
+
+            if (!EmailTool::sendEmail($contactData, "contactTemplate")) {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 

@@ -58,11 +58,11 @@ abstract class BaseModel
             return true;
         } catch (PDOException $e) {
             $this->con->rollBack();
-            echo 'Se ha capturado una excepción: ' . $e->getMessage() . "\n";
+            //echo 'Se ha capturado una excepción: ' . $e->getMessage() . "\n";
             return false;
-        } finally {
+        }/* finally {
             $this->con = null;  // Cerrar la conexión
-        }
+        }*/
     }
 
     private function insertOne($data)
@@ -74,7 +74,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
+            //echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
             return false;
         }
         // Bind parameters
@@ -103,7 +103,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
+            //echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
             return false;
         }
         $stmt->execute();
@@ -133,7 +133,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
+            //echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
             return false;
         }
         // Bind parameters and execute the query
@@ -165,7 +165,7 @@ abstract class BaseModel
             }
             $stmt->bindValue(':value', trim($value));
         } catch (Exception $er) {
-            echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
+            //echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
             return false;
         }
 
@@ -192,7 +192,7 @@ abstract class BaseModel
         return $this->con->rollBack();
     }
 
-    protected function sanitizeAll($data)
+    private function sanitizeAll($data)
     {
         if (is_array($data)) {
             $cleanedData = [];
@@ -206,7 +206,7 @@ abstract class BaseModel
         }
     }
 
-    protected function sanitizeString($myString)
+    private function sanitizeString($myString)
     {
         $restrictedWords = ["<script>", "</script>", "<script src", "<script type=", "SELECT * FROM", "SELECT ", " SELECT ", "DELETE FROM", "INSERT INTO", "DROP TABLE", "DROP DATABASE", "TRUNCATE TABLE", "SHOW TABLES", "SHOW DATABASES", "<?php", "?>", "--", "^", "<", ">", "==", "=", ";", "::"];
 

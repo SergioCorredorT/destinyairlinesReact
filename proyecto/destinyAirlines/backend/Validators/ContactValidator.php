@@ -4,43 +4,63 @@ class ContactValidator
     public static function validateName($name)
     {
         if (strlen($name) < 2) {
-            throw new Exception("Invalid name");
+            return false;
         }
+        return true;
     }
 
     public static function validateEmail($email)
     {
         if (strlen($email) < 7 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("Invalid email");
+            return false;
         }
+        return true;
     }
 
     public static function validateSubject($subject)
     {
         if (empty($subject)) {
-            throw new Exception("Invalid subject");
+            return false;
         }
+        return true;
     }
 
-    public static function validatePhone($phoneNumber) {
+    public static function validatePhone($phoneNumber)
+    {
         if (strlen($phoneNumber) < 9) {
-            throw new Exception("Invalid phone number");
+            return false;
         }
+        return true;
     }
 
     public static function validateMessage($message)
     {
         if (strlen($message) < 3) {
-            throw new Exception("Invalid message");
+            return false;
         }
+        return true;
     }
 
     public static function validate($data)
     {
-        self::validateName($data['name']);
-        self::validateEmail($data['email']);
-        self::validateSubject($data['subject']);
-        self::validateMessage($data['message']);
-        self::validatePhone($data['phoneNumber']);
+        $isValid = true;
+
+        if (isset($data['name']) && !self::validateName($data['name'])) {
+            $isValid = false;
+        }
+        if (isset($data['email']) && !self::validateEmail($data['email'])) {
+            $isValid = false;
+        }
+        if (isset($data['subject']) && !self::validateSubject($data['subject'])) {
+            $isValid = false;
+        }
+        if (isset($data['message']) && !self::validateMessage($data['message'])) {
+            $isValid = false;
+        }
+        if (isset($data['phoneNumber']) && !self::validatePhone($data['phoneNumber'])) {
+            $isValid = false;
+        }
+
+        return $isValid;
     }
 }

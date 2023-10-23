@@ -18,18 +18,18 @@
         }
 
         public static function sanitizeMessage($message) {
-            return htmlspecialchars(trim($message));
+            return trim($message);
         }
 
         public static function sanitize($arrayData)
         {
             $arraySanitized = [];
-
-            $arraySanitized["name"] = self::sanitizeName($arrayData['name']);
-            $arraySanitized["email"] = self::sanitizeEmail($arrayData['email']);
-            $arraySanitized["subject"] = self::sanitizeSubject($arrayData['subject']);
-            $arraySanitized["message"] = self::sanitizeMessage($arrayData['message']);
-            $arraySanitized["phoneNumber"] = self::sanitizePhoneNumber($arrayData['phoneNumber']);
+//Si es "", o null, o no está definida no se ejecutará el saneamiento
+            if (!empty($arrayData['name'])) $arraySanitized["name"] = self::sanitizeName($arrayData['name']);
+            if (!empty($arrayData['email'])) $arraySanitized["email"] = self::sanitizeEmail($arrayData['email']);
+            if (!empty($arrayData['subject'])) $arraySanitized["subject"] = self::sanitizeSubject($arrayData['subject']);
+            if (!empty($arrayData['message'])) $arraySanitized["message"] = self::sanitizeMessage($arrayData['message']);
+            if (!empty($arrayData['phoneNumber'])) $arraySanitized["phoneNumber"] = self::sanitizePhoneNumber($arrayData['phoneNumber']);
 
             return $arraySanitized;
         }

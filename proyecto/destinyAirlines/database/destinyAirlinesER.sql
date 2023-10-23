@@ -54,7 +54,7 @@ CREATE TABLE `USERS` (
   `streetAddress` varchar(50),
   `zipCode` varchar(5),
   `country` varchar(25),
-  `emailAddress` varchar(50) NOT NULL,
+  `emailAddress` varchar(50) UNIQUE NOT NULL,
   `password` varchar(50) NOT NULL,
   `phoneNumber1` varchar(20),
   `phoneNumber2` varchar(20),

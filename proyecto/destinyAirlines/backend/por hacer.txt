@@ -1,8 +1,11 @@
+simplificar
+si está duplicado el usuario al intentar crearlo, controlar quizas mejor las excepciones desde el BaseModel
+al crear un usuario devolver respuesta al frontend si fue exitoso o no
+
+
 generar en server al empezar navegación, un token o código aleatorio contra CSRF que el usuario reciba y lo vaya enviando a server tras cada acción para saber que es el mismo usuario.
     convenientemente usar https al menos con ese token
 
 conforme el usuario avance en las pantallas de nuevo viaje se irán validando y metiendo los datos en las entidades,
     tras pagar, los objetos se enviarán a los controller y estos a los modelos para insertar datos en bbdd
         en la introducción de datos en bbdd usar transacciones para poder revertir cambios con rollback en caso de error
-
-Cuando entienda como el frontend manejaría la respuesta de php frente a exceptions, quizás añadir más throw y try catch

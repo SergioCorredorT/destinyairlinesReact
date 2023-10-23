@@ -24,7 +24,7 @@ class UserModel extends BaseModel
         return parent::select("*");
     }
 
-    public function readUserByEmail($email, $password)
+    public function readUserByEmailPassword($email, $password)
     {
         return parent::select("*", "emailAddress = '$email' AND password = '$password'");
     }
