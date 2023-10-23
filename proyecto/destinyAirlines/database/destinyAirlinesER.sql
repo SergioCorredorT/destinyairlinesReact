@@ -55,7 +55,7 @@ CREATE TABLE `USERS` (
   `zipCode` varchar(5),
   `country` varchar(25),
   `emailAddress` varchar(50) UNIQUE NOT NULL,
-  `password` varchar(50) NOT NULL,
+  `passwordHash` varchar(100) NOT NULL,
   `phoneNumber1` varchar(20),
   `phoneNumber2` varchar(20),
   `phoneNumber3` varchar(20),

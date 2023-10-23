@@ -28,12 +28,10 @@ class EmailTool
         $phpmailer->CharSet = 'UTF-8';
         $phpmailer->Body = $message;
 
-        if (!$phpmailer->send()) {
-            // No se ha enviado
-            return false;
-        } else {
-            // Se ha enviado
+        if ($phpmailer->send()) {
             return true;
+        } else {
+            return false;
         }
     }
 }

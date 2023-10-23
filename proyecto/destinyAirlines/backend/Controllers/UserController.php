@@ -25,35 +25,6 @@ class UserController extends BaseController
         parent::__construct();
     }
 
-    public function getUserByEmailPassword($POST)
-    {
-        $userData = [
-            'emailAddress'          => $POST['emailAddress'] ?? "",
-            'password'              => $POST['password'] ?? "",
-            'dateTime'  => date('Y-m-d H:i:s')
-        ];
-        $userData = UserSanitizer::sanitize($userData);
-        $isValidate = UserValidator::validate($userData);
-        if ($isValidate) {
-            $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
-
-            $UserModel = new UserModel();
-            $results = $UserModel->readUserByEmailPassword($userData["email"], $userData["password"]);
-
-            //SI DEVUELVE EL REGISTRO ES QUE ESTÁ REGISTRADO
-            /* if ($results.length > 1){
-                
-            }
-            else
-            {
-
-            }*/
-        } else {
-        }
-
-        return $results;
-    }
-
     public function createUser($POST)
     {
         require_once './Sanitizers/UserSanitizer.php';
@@ -81,13 +52,39 @@ class UserController extends BaseController
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
         if ($isValidate) {
-            $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
+            $userData["passwordHash"] = password_hash($userData["password"], PASSWORD_BCRYPT);
+            unset($userData["password"]);
 
             $UserModel = new UserModel();
             if ($UserModel->createUser($userData)) {
                 return true;
             }
         }
+        return false;
+    }
+
+    public function loginUser($POST)
+    {
+        $userData = [
+            'emailAddress'          => $POST['emailAddress'] ?? "",
+            'password'              => $POST['password'] ?? "",
+            'dateTime'  => date('Y-m-d H:i:s')
+        ];
+        $userData = UserSanitizer::sanitize($userData);
+        $isValidate = UserValidator::validate($userData);
+        if ($isValidate) {
+            $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
+
+            $UserModel = new UserModel();
+            $results = $UserModel->readUserByEmailPassword($userData["email"], $userData["password"]);
+
+            if (!$results){
+//SEGUIMOS PARA LOGUEO
+
+                return true;
+            }
+        }
+
         return false;
     }
 

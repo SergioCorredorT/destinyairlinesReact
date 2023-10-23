@@ -1,6 +1,6 @@
 <?php
 require_once "./Models/BaseModel.php";
-class PassengerModel extends BaseModel
+final class PassengerModel extends BaseModel
 {
     private const table = "PASSENGERS";
 

@@ -1,6 +1,6 @@
 <?php
 require_once "./Models/BaseModel.php";
-class UserModel extends BaseModel
+final class UserModel extends BaseModel
 {
     private const table = "USERS";
 
@@ -9,14 +9,9 @@ class UserModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function createUsers($data)
-    {
-        return parent::insert($data);
-    }
-
     public function createUser($data)
     {
-        return $this->createUsers($data);
+        return parent::insert($data);
     }
 
     public function readUsers()
@@ -41,6 +36,11 @@ class UserModel extends BaseModel
 
     public function deleteUserByEmailAndPassword($email, $password)
     {
-        return parent::delete("emailAddress = '$email' AND password = '$password'");
+        [$passwordHash] = parent::select("passwordHash", "emailAddress = '$email'");
+
+        if (password_verify($password, $passwordHash["passwordHash"])) {
+            return parent::delete("emailAddress = '$email'");
+        }
+        return false;
     }
 }

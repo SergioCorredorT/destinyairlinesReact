@@ -60,9 +60,7 @@ abstract class BaseModel
             $this->con->rollBack();
             //echo 'Se ha capturado una excepción: ' . $e->getMessage() . "\n";
             return false;
-        }/* finally {
-            $this->con = null;  // Cerrar la conexión
-        }*/
+        }
     }
 
     private function insertOne($data)
@@ -154,7 +152,6 @@ abstract class BaseModel
         //Ejemplo:
         //if($usuario->delete("firstName LIKE Emily")){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
         [$column, $operator, $value] = explode(" ", $where);
-
         $query = "DELETE FROM $this->tableName WHERE $column $operator :value";
 
         try {

@@ -11,12 +11,12 @@
         if($usuario->createUsers($datas)){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
 */
 
-    //print_r($usuario->readUsers());
+//print_r($usuario->readUsers());
 
-        //$datas = ["zipCode"=>"11113", "phoneNumber3"=>"123456"];
-        //if($usuario->updateUsers($datas, "country LIKE 'USA'")){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
+//$datas = ["zipCode"=>"11113", "phoneNumber3"=>"123456"];
+//if($usuario->updateUsers($datas, "country LIKE 'USA'")){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
 
-    //if($usuario->deleteUsers("firstName LIKE AAAA")){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
+//if($usuario->deleteUsers("firstName LIKE AAAA")){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
 
 /*
     $data = [
@@ -25,3 +25,54 @@
     if($usuario->createUsers($data)){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
 */
 //-----------------------------------------------------------------------------------------------------------------------
+/*
+$data = [
+    'action'    => 'contact',
+    'name'      => "Sergio",
+    'email'     => "waa@gmail.com",
+    'phoneNumber' => "111223344",
+    'subject'   => "motivazo bueno",
+    'message'   => "Mensaje guauuuuuuuuuuuuuuu",
+    'dateTime'  => date('Y-m-d H:i:s')
+];
+*/
+/*
+$data = [
+    'action'    => 'createuser',
+    'firstName' => 'A555', 
+    'zipCode' => 25, 
+    'emailAddress' => 'aaaa5@example.com', 
+    'password' => 'contraseña5',
+    'dateTime'  => date('Y-m-d H:i:s')
+];
+*/
+
+$data = [
+    'action'    => 'removeuser',
+    'emailAddress' => 'aaaa5@example.com', 
+    'password' => 'contraseña5',
+    'dateTime'  => date('Y-m-d H:i:s')
+];
+
+$url = 'http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php'; // Cambia esto a la URL de tu MainController
+// Inicializar cURL
+$ch = curl_init($url);
+
+// Configurar las opciones de cURL
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+// Ejecutar la solicitud POST
+$response = curl_exec($ch);
+
+// Cerrar la sesión cURL
+curl_close($ch);
+
+// Imprimir la respuesta
+if ($response) {
+    echo "bieeeeeeeen";
+} else {
+    echo "maaaaaaaaaaaaal";
+}
+echo $response;

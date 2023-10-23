@@ -35,8 +35,8 @@ class ContactController extends BaseController
             $contactData['fromEmail'] = $originEmailIni['email'];
             $contactData['fromPassword'] = $originEmailIni['password'];
 
-            if (!EmailTool::sendEmail($contactData, "contactTemplate")) {
-                return false;
+            if (EmailTool::sendEmail($contactData, "contactTemplate")) {
+                return true;
             }
         } else {
             return false;

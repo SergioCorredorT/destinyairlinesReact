@@ -52,8 +52,8 @@ Table USERS {
   streetAddress varchar(50)
   zipCode varchar(5)
   country varchar(25)
-  emailAddress varchar(50) [not null]
-  password varchar(50) [not null]
+  emailAddress varchar(50) [not null, unique]
+  passwordHash varchar(100) [not null]
   phoneNumber1 varchar(20)
   phoneNumber2 varchar(20)
   phoneNumber3 varchar(20)
