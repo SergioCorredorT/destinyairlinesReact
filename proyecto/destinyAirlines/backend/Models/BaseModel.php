@@ -149,27 +149,21 @@ abstract class BaseModel
 
     protected function delete($where)
     {
-        //Ejemplo:
-        //if($usuario->delete("firstName LIKE Emily")){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
-        [$column, $operator, $value] = explode(" ", $where);
-        $query = "DELETE FROM $this->tableName WHERE $column $operator :value";
-
+        // Ejecuta DELETE sin filtro WHERE
+        $query = "DELETE FROM $this->tableName WHERE $where";
+    
         try {
             $stmt = $this->con->prepare($query);
-
-            if ($operator == 'LIKE') {
-                $value = "%$value%";
+            $stmt->execute();
+    
+            if (intval($stmt->errorCode()) === 0) {
+                return true; // La eliminación fue exitosa
+            } else {
+                return false; // Error al ejecutar la consulta
             }
-            $stmt->bindValue(':value', trim($value));
         } catch (Exception $er) {
-            //echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
-            return false;
-        }
-
-        $stmt->execute();
-        if (intval($stmt->errorCode()) === 0) {
-            return true;
-        } else {
+            // Manejo de excepciones en caso de error
+            // echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
             return false;
         }
     }

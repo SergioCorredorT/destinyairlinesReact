@@ -5,7 +5,7 @@ require_once './Tools/IniTool.php';
 require_once './Tools/EmailTool.php';
 require_once './Sanitizers/ContactSanitizer.php';
 require_once './Validators/ContactValidator.php';
-class ContactController extends BaseController
+final class ContactController extends BaseController
 {
     public function __construct()
     {

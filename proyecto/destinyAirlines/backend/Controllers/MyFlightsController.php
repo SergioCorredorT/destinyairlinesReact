@@ -18,7 +18,7 @@
 //si el cliente tiene una reserva, se le notifica por mail y sms (sms se considera servicio con precio)
 //se podrá seleccionar asiento si se pagó ese servicio
 require_once './Controllers/BaseController.php';
-class MyFlightsController extends BaseController
+final class MyFlightsController extends BaseController
 {
     public function __construct()
     {

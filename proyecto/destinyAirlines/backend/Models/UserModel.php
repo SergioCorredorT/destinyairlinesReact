@@ -21,7 +21,14 @@ final class UserModel extends BaseModel
 
     public function readUserByEmailPassword($email, $password)
     {
-        return parent::select("*", "emailAddress = '$email' AND password = '$password'");
+        $passwordHash = parent::select("passwordHash", "emailAddress = '$email'");
+
+        if (!empty($passwordHash) && password_verify($password, $passwordHash[0]["passwordHash"])) {
+            
+            return parent::select("id_USERS", "emailAddress = '$email' AND passwordHash = '".$passwordHash[0]["passwordHash"]."'");
+        }
+
+        return false;
     }
 
     public function updateUsers($data, $where)
@@ -38,7 +45,7 @@ final class UserModel extends BaseModel
     {
         [$passwordHash] = parent::select("passwordHash", "emailAddress = '$email'");
 
-        if (password_verify($password, $passwordHash["passwordHash"])) {
+        if (!empty($passwordHash) && password_verify($password, $passwordHash["passwordHash"])) {
             return parent::delete("emailAddress = '$email'");
         }
         return false;

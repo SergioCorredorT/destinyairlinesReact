@@ -1,7 +1,5 @@
 hacer que las exceptions ocurridas lleguen al mainController, y ahí decidir qué hacer con ellas.
 si está duplicado el usuario al intentar crearlo, controlar quizas mejor las excepciones desde el BaseModel
-al crear un usuario devolver respuesta al frontend si fue exitoso o no
-
 
 generar en server al empezar navegación, un token o código aleatorio contra CSRF que el usuario reciba y lo vaya enviando a server tras cada acción para saber que es el mismo usuario.
     convenientemente usar https al menos con ese token

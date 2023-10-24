@@ -45,10 +45,17 @@ $data = [
     'password' => 'contraseña5',
     'dateTime'  => date('Y-m-d H:i:s')
 ];
-*/
 
+/*
 $data = [
     'action'    => 'removeuser',
+    'emailAddress' => 'aaaa5@example.com', 
+    'password' => 'contraseña5',
+    'dateTime'  => date('Y-m-d H:i:s')
+];
+*/
+$data = [
+    'action'    => 'loginUser',
     'emailAddress' => 'aaaa5@example.com', 
     'password' => 'contraseña5',
     'dateTime'  => date('Y-m-d H:i:s')
@@ -71,8 +78,8 @@ curl_close($ch);
 
 // Imprimir la respuesta
 if ($response) {
-    echo "bieeeeeeeen";
+    echo "bieeeeeeeen\n";
 } else {
-    echo "maaaaaaaaaaaaal";
+    echo "maaaaaaaaaaaaal\n";
 }
-echo $response;
+echo $response."\n";

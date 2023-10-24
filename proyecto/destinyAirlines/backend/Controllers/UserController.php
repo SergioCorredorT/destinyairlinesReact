@@ -5,7 +5,7 @@ pass encriptadas con hash
 
 para hacer un login en php,
 los campos email y password que rellenó el usuario en un form se envían por POST a un archivo php mediante axios (desde react js),
-entonces en el php saneo y valido los datos, aplico un hash al password para posteriormente comprobar si en la bbdd de mysql tengo en la tabla users un registro con ese email y password,
+entonces en el php saneo y valido los datos, compruebo password con hash bbdd, para seleccionar si en bbdd tengo ese email+hasPassword,
 	si no lo tengo lanzo exception
 	si lo tengo entonces debo crear un $_SESSION con el id del usuario y un token
 		el token se crea mediante jsonwebtoken con jwt.sign(idUsuario, claveServerGuardadaEnElIni)
@@ -18,7 +18,7 @@ limitar intentos fallidos de sesión
 require_once './Controllers/BaseController.php';
 require_once './Sanitizers/UserSanitizer.php';
 require_once './Validators/UserValidator.php';
-class UserController extends BaseController
+final class UserController extends BaseController
 {
     public function __construct()
     {
@@ -27,9 +27,6 @@ class UserController extends BaseController
 
     public function createUser($POST)
     {
-        require_once './Sanitizers/UserSanitizer.php';
-        require_once './Validators/UserValidator.php';
-
         $userData = [
             'title'                 => $POST['title'] ?? "",
             'firstName'             => $POST['firstName'] ?? "",
@@ -63,8 +60,27 @@ class UserController extends BaseController
         return false;
     }
 
+    public function deleteUser($POST)
+    {
+        //if($_SESSION["userEmail"]=== $POST['emailAddress'])
+        $userData = [
+            'emailAddress'          => $POST['emailAddress'] ?? "",
+            'password'              => $POST['password'] ?? "",
+            'dateTime'  => date('Y-m-d H:i:s')
+        ];
+        $userData = UserSanitizer::sanitize($userData);
+        if (UserValidator::validate($userData)) {
+            $UserModel = new UserModel();
+            if ($UserModel->deleteUserByEmailAndPassword($userData["emailAddress"], $userData["password"])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function loginUser($POST)
     {
+        require_once './Tools/SessionTool.php';
         $userData = [
             'emailAddress'          => $POST['emailAddress'] ?? "",
             'password'              => $POST['password'] ?? "",
@@ -73,35 +89,31 @@ class UserController extends BaseController
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
         if ($isValidate) {
-            $userData["password"] = password_hash($userData["password"], PASSWORD_BCRYPT);
-
+            //Comprobar password
             $UserModel = new UserModel();
-            $results = $UserModel->readUserByEmailPassword($userData["email"], $userData["password"]);
+            $results = $UserModel->readUserByEmailPassword($userData["emailAddress"], $userData["password"]);
 
-            if (!$results){
-//SEGUIMOS PARA LOGUEO
+            if ($results) {
+                $token = $this->generateToken();
 
-                return true;
+                SessionTool::startSession("destinyAirlines_session",60*60*10);
+                $_SESSION['login'] = ['token' => $token, 'id' => $results[0]["id_USERS"]];
+                return $token;
             }
         }
 
         return false;
     }
 
-    public function deleteUser($POST)
+    public function logoutUser()
     {
-        $userData = [
-            'emailAddress'          => $POST['emailAddress'] ?? "",
-            'password'              => $POST['password'] ?? "",
-            'dateTime'  => date('Y-m-d H:i:s')
-        ];
-        $userData = UserSanitizer::sanitize($userData);
-        if(UserValidator::validate($userData)) {
-            $UserModel = new UserModel();
-            if ($UserModel->deleteUserByEmailAndPassword($userData["emailAddress"],$userData["password"])) {
-                return true;
-            }
-        }
-        return false;
+        $_SESSION = array();
+        return SessionTool::destroy();
+    }
+
+    private function generateToken() {
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $secretTokenPassword = $iniTool->getKeysAndValues("secretTokenPassword");//Normalmente se recogería de una variable de entorno desde $_ENV
+        return hash('sha256', $secretTokenPassword["password"] . uniqid(mt_rand(), true));
     }
 }
