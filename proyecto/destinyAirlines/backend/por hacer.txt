@@ -1,3 +1,5 @@
+cambiar el sistema de autenticación basada en sesiones a basada en tokens (el server codifica con jwt y la pass secreta (lo que codifica es el id del user), la envía al front para que este la reenvíe al server, en el server será descodificada con la pass maestra y así se comprueba el usuario que hace la petición)
+
 hacer que las exceptions ocurridas lleguen al mainController, y ahí decidir qué hacer con ellas.
 si está duplicado el usuario al intentar crearlo, controlar quizas mejor las excepciones desde el BaseModel
 
