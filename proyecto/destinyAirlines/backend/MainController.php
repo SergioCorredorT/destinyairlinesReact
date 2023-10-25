@@ -11,7 +11,7 @@ switch (strtolower($command)) {
                 //status indica si hubo exception, response indica el resultado de la operación
                 echo json_encode(['status' => true, 'response' => $rsp]);
             } catch (Exception $e) {
-                echo json_encode(['status' => false, 'response' => $rsp]);
+                echo json_encode(['status' => false, 'response' => false]);
                 //echo json_encode(['Catched error: ' . $e]);
                 exit();
             }
@@ -25,7 +25,7 @@ switch (strtolower($command)) {
                 $rsp = $userController->createUser($_POST);
                 echo json_encode(['status' => true, 'response' => $rsp]);
             } catch (Exception $e) {
-                echo json_encode(['status' => false, 'response' => $rsp]);
+                echo json_encode(['status' => false, 'response' => false]);
                 //echo json_encode(['Catched error: ' . $e]);
                 exit();
             }
@@ -40,7 +40,7 @@ switch (strtolower($command)) {
                 $rsp = $userController->deleteUser($_POST);
                 echo json_encode(['status' => true, 'response' => $rsp]);
             } catch (Exception $e) {
-                echo json_encode(['status' => false, 'response' => $rsp]);
+                echo json_encode(['status' => false, 'response' => false]);
                 //echo json_encode(['Catched error: ' . $e]);
                 exit();
             }
@@ -54,7 +54,7 @@ switch (strtolower($command)) {
                 $rsp = $UserController->loginUser($_POST);
                 echo json_encode(['status' => true, 'response' => $rsp]);
             } catch (Exception $e) {
-                echo json_encode(['status' => false, 'response' => $rsp]);
+                echo json_encode(['status' => false, 'response' => false]);
                 //echo json_encode(['Catched error: ' . $e]);
                 exit();
             }
@@ -68,7 +68,7 @@ switch (strtolower($command)) {
                 $rsp = $UserController->logoutUser($_POST["token"]);
                 echo json_encode(['status' => true, 'response' => $rsp]);
             } catch (Exception $e) {
-                echo json_encode(['status' => false, 'response' => $rsp]);
+                echo json_encode(['status' => false, 'response' => false]);
                 //error_log(json_encode(['Catched error: ' . $e]),0);
                 exit();
             }

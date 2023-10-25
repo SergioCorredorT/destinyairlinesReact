@@ -31,15 +31,10 @@ class TokenTool
         $secretTokenPassword = $iniTool->getKeysAndValues("secretTokenPassword");
         $secret = $secretTokenPassword["secret"];
     
-        $header = [
-            "alg" => "HS256",
-            "typ" => "JWT",
-            "kid" => "miKid"
-        ];
-    
         $payload = array(
             "iss" => "destinyAirlines",
             "aud" => "destinyAirlines",
+            "sub" => $user["id_USERS"],
             "iat" => time(),
             "exp" => time() + (60 * 60),
             "data" => [
@@ -49,7 +44,7 @@ class TokenTool
             "role" => "user"
         );
     
-        $jwt = \Firebase\JWT\JWT::encode($payload, $secret, 'HS256', null, $header);
+        $jwt = \Firebase\JWT\JWT::encode($payload, $secret, 'HS256');
         return $jwt;
     }
 
@@ -63,10 +58,9 @@ class TokenTool
             $headers = new stdClass();
             $headers->alg = 'HS256';
             $headers->typ = "JWT";
-            $headers->kid = "miKid";
-
-            $decoded = \Firebase\JWT\JWT::decode($jwtToken, $secret, $headers);
-
+  
+            $decoded = \Firebase\JWT\JWT::decode($jwtToken, new \Firebase\JWT\Key($secret, "HS256"), $headers);
+  
             return $decoded;
         } catch (\Firebase\JWT\ExpiredException $e) {
             // El token ha expirado
@@ -79,7 +73,6 @@ class TokenTool
         } catch (Exception $e) {
             // Otro error
             error_log($e->getMessage());
-            print($e->getMessage());
             return false;
         }
     }

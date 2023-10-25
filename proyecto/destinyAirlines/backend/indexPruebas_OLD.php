@@ -87,15 +87,16 @@ $data = [
     'emailAddress' => 'aaaa5@example.com', 
     'password' => 'contraseña5'
 ];
-*/
-/*
+
+
 $response=prueba($data);
 print_r("Prueba1:".$response);
 */
 //$response=json_decode($response);
 
+
 $data2 = [
     'command'    => 'logoutUser',
-    'token'     => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjU5NzhiNWUwLWZlYmQtNGFhZC1iZmM5LWY3NDYwOSJ9.eyJpc3MiOiJkZXN0aW55QWlybGluZXMiLCJhdWQiOiJkZXN0aW55QWlybGluZXMiLCJpYXQiOjE2OTgyNTE3NDUsImV4cCI6MTY5ODI1NTM0NSwiZGF0YSI6eyJpZCI6MTEzLCJlbWFpbCI6ImFhYWE1QGV4YW1wbGUuY29tIn0sInJvbGUiOiJ1c2VyIn0.4jSqcOwA0JWDsk_TqCGQOH0IK6BdlHHzE42hrBMLboA'
+    'token'     => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkZXN0aW55QWlybGluZXMiLCJhdWQiOiJkZXN0aW55QWlybGluZXMiLCJzdWIiOjExNSwiaWF0IjoxNjk4MjY1MjUzLCJleHAiOjE2OTgyNjg4NTMsImRhdGEiOnsiaWQiOjExNSwiZW1haWwiOiJhYWFhNUBleGFtcGxlLmNvbSJ9LCJyb2xlIjoidXNlciJ9.UsFCX342zxOIwdrWA5kqhS45dfTTaIX_Hlh7jV-4plY'
 ];
 print_r("Prueba2:".prueba($data2));
