@@ -25,42 +25,10 @@
     if($usuario->createUsers($data)){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
 */
 //-----------------------------------------------------------------------------------------------------------------------
-/*
-$data = [
-    'action'    => 'contact',
-    'name'      => "Sergio",
-    'email'     => "waa@gmail.com",
-    'phoneNumber' => "111223344",
-    'subject'   => "motivazo bueno",
-    'message'   => "Mensaje guauuuuuuuuuuuuuuu",
-    'dateTime'  => date('Y-m-d H:i:s')
-];
-*/
-/*
-$data = [
-    'action'    => 'createuser',
-    'firstName' => 'A555', 
-    'zipCode' => 25, 
-    'emailAddress' => 'aaaa5@example.com', 
-    'password' => 'contraseña5',
-    'dateTime'  => date('Y-m-d H:i:s')
-];
 
-/*
-$data = [
-    'action'    => 'removeuser',
-    'emailAddress' => 'aaaa5@example.com', 
-    'password' => 'contraseña5',
-    'dateTime'  => date('Y-m-d H:i:s')
-];
-*/
-$data = [
-    'action'    => 'loginUser',
-    'emailAddress' => 'aaaa5@example.com', 
-    'password' => 'contraseña5',
-    'dateTime'  => date('Y-m-d H:i:s')
-];
 
+function prueba($data)
+{
 $url = 'http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php'; // Cambia esto a la URL de tu MainController
 // Inicializar cURL
 $ch = curl_init($url);
@@ -82,4 +50,52 @@ if ($response) {
 } else {
     echo "maaaaaaaaaaaaal\n";
 }
-echo $response."\n";
+
+return $response;
+}
+
+/*
+$data = [
+    'command'    => 'contact',
+    'name'      => "Sergio",
+    'email'     => "waa@gmail.com",
+    'phoneNumber' => "111223344",
+    'subject'   => "motivazo bueno",
+    'message'   => "Mensaje guauuuuuuuuuuuuuuu"
+];
+*/
+/*
+$data = [
+    'command'    => 'createuser',
+    'firstName' => 'A555', 
+    'zipCode' => 25, 
+    'emailAddress' => 'aaaa5@example.com', 
+    'password' => 'contraseña5'
+];
+
+/*
+$data = [
+    'command'    => 'removeuser',
+    'emailAddress' => 'aaaa5@example.com', 
+    'password' => 'contraseña5'
+];
+*/
+
+/*
+$data = [
+    'command'    => 'loginUser',
+    'emailAddress' => 'aaaa5@example.com', 
+    'password' => 'contraseña5'
+];
+*/
+/*
+$response=prueba($data);
+print_r("Prueba1:".$response);
+*/
+//$response=json_decode($response);
+
+$data2 = [
+    'command'    => 'logoutUser',
+    'token'     => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjU5NzhiNWUwLWZlYmQtNGFhZC1iZmM5LWY3NDYwOSJ9.eyJpc3MiOiJkZXN0aW55QWlybGluZXMiLCJhdWQiOiJkZXN0aW55QWlybGluZXMiLCJpYXQiOjE2OTgyNTE3NDUsImV4cCI6MTY5ODI1NTM0NSwiZGF0YSI6eyJpZCI6MTEzLCJlbWFpbCI6ImFhYWE1QGV4YW1wbGUuY29tIn0sInJvbGUiOiJ1c2VyIn0.4jSqcOwA0JWDsk_TqCGQOH0IK6BdlHHzE42hrBMLboA'
+];
+print_r("Prueba2:".prueba($data2));

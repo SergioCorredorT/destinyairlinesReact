@@ -1,8 +1,7 @@
 <?php
+$command = $_POST['command'] ?? "";
 
-$action = $_POST['action'] ?? "";
-
-switch (strtolower($action)) {
+switch (strtolower($command)) {
     case 'contact': {
             require_once './Controllers/ContactController.php';
 
@@ -21,7 +20,7 @@ switch (strtolower($action)) {
     case 'createuser': {
             require_once './Controllers/UserController.php';
             try {
-                //Comprobar si no hay sesión
+                //Comprobar token
                 $userController = new UserController();
                 $rsp = $userController->createUser($_POST);
                 echo json_encode(['status' => true, 'response' => $rsp]);
@@ -64,13 +63,13 @@ switch (strtolower($action)) {
     case 'logoutuser': {
             require_once './Controllers/UserController.php';
             try {
-                //Comprobar token
+                //no funca
                 $UserController = new UserController();
-                $rsp = $UserController->logoutUser();
+                $rsp = $UserController->logoutUser($_POST["token"]);
                 echo json_encode(['status' => true, 'response' => $rsp]);
             } catch (Exception $e) {
                 echo json_encode(['status' => false, 'response' => $rsp]);
-                //echo json_encode(['Catched error: ' . $e]);
+                //error_log(json_encode(['Catched error: ' . $e]),0);
                 exit();
             }
             break;

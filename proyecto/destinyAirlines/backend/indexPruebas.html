@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulario POST</title>
+    <style>
+      body {
+        background-color: black;
+      }
+
+      span {
+        color: red;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      #formularios {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-auto-flow: dense;
+        gap: 10px;
+        box-sizing: border-box;
+        padding: 10px;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: 1;
+        width: fit-content;
+      }
+
+      textarea {
+        box-sizing: border-box;
+        padding: 10px;
+        resize: vertical;
+        width: 90%;
+        margin: 0 5%;
+      }
+    </style>
+  </head>
+  <body>
+    <a
+      href="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/indexPruebas.html"
+      >Index en server</a
+    >
+    <div id="formularios">
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <!-- Datos para enviar en la solicitud POST -->
+        <span>Contact</span>
+        <input type="text" name="command" value="contact" />
+        <input type="text" name="name" value="Sergio" />
+        <input type="text" name="email" value="waa@gmail.com" />
+        <input type="text" name="phoneNumber" value="111223344" />
+        <input type="text" name="subject" value="motivazo bueno" />
+        <input type="text" name="message" value="Mensaje guauuuuuuuuuuuuuuu" />
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <span>CreateUser</span>
+        <input type="text" name="command" value="createuser" />
+        <input type="text" name="firstName" value="A555" />
+        <input type="text" name="zipCode" value="25" />
+        <input type="text" name="emailAddress" value="aaaa5@example.com" />
+        <input type="text" name="password" value="contraseña5" />
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <span>RemoveUser</span>
+        <input type="text" name="command" value="removeuser" />
+        <input type="text" name="emailAddress" value="aaaa5@example.com" />
+        <input type="text" name="password" value="contraseña5" />
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <span>LoginUser</span>
+        <input type="text" name="command" value="loginUser" />
+        <input type="text" name="emailAddress" value="aaaa5@example.com" />
+        <input type="text" name="password" value="contraseña5" />
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <span>LogoutUser</span>
+        <input type="text" name="command" value="logoutUser" />
+        <input
+          type="text"
+          name="token"
+          id="token"
+          value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im1pS2lkIn0.eyJpc3MiOiJkZXN0aW55QWlybGluZXMiLCJhdWQiOiJkZXN0aW55QWlybGluZXMiLCJpYXQiOjE2OTgyNTMyNjAsImV4cCI6MTY5ODI1Njg2MCwiZGF0YSI6eyJpZCI6MTEzLCJlbWFpbCI6ImFhYWE1QGV4YW1wbGUuY29tIn0sInJvbGUiOiJ1c2VyIn0.fzzKqr8FkwQyHvRyYobCiWEIrNJKH-hwKOIrOxsqQ_w"
+          placeholder="token"
+        />
+        <button type="submit">Enviar POST</button>
+      </form>
+    </div>
+    <!-- Puedes agregar más formularios aquí -->
+    <textarea
+      id="responseTextArea"
+      oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+      onchange="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+    ></textarea>
+    <script>
+      function handleFormSubmit(event) {
+
+        event.preventDefault(); // Evita que se envíe el formulario directamente
+
+        var formData = new FormData(event.target);
+        var responseTextArea = document.getElementById("responseTextArea");
+
+        fetch(event.target.action, {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.text())
+          .then((responseText) => {
+            var response = JSON.parse(responseText);
+            var responseTextValue = "Prueba: " + response.response;
+            responseTextArea.value = responseTextValue;
+          })
+          .catch((error) => console.error(error));
+
+        return false; // Evita que se envíe el formulario
+      }
+    </script>
+  </body>
+</html>

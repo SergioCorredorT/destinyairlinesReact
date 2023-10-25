@@ -63,7 +63,6 @@ final class UserController extends BaseController
     public function deleteUser($POST)
     {
         //Comprobar decodificación del token recibido
-        //if($_SESSION["userEmail"]=== $POST['emailAddress'])
         $userData = [
             'emailAddress'          => $POST['emailAddress'] ?? "",
             'password'              => $POST['password'] ?? "",
@@ -81,7 +80,7 @@ final class UserController extends BaseController
 
     public function loginUser($POST)
     {
-        require_once './Tools/SessionTool.php';
+        require_once './Tools/TokenTool.php';
         $userData = [
             'emailAddress'          => $POST['emailAddress'] ?? "",
             'password'              => $POST['password'] ?? "",
@@ -95,7 +94,7 @@ final class UserController extends BaseController
             $results = $UserModel->readUserByEmailPassword($userData["emailAddress"], $userData["password"]);
 
             if ($results) {
-                $token = $this->generateToken($results[0]);
+                $token = TokenTool::generateToken($results[0]);
                 return $token;
             }
         }
@@ -103,14 +102,17 @@ final class UserController extends BaseController
         return false;
     }
 
-    public function logoutUser()
+    public function logoutUser($jwtToken)
     {
-        //Comprobar token recibido
-        $_SESSION = array();
-        SessionTool::destroy();
-        return true;
+        require_once './Tools/TokenTool.php';
+        if (TokenTool::decodeToken($jwtToken)) {
+            //$_SESSION = array();
+            //SessionTool::destroy();
+            return true;
+        }
+        return false;
     }
-
+/*
     private function generateTokenSession($user)
     {//OLD, la autenticación basada en sesiones es otro modo (sobrecarga el server y no sirve para varias API a la vez porque es necesaria session en cada una, aunque tiene otros modos seguros),
         // para este proyecto prefiero la autenticación basada en tokens
@@ -119,50 +121,5 @@ final class UserController extends BaseController
         $_SESSION['login'] = ['token' => $token, 'id' => $user["id_USERS"]];
         return $token;
     }
-
-    private function generateToken($user)
-    {
-        //Sería buena idea cortar el generar token y decodificarlo en otra api, estando el secret en una variable de entorno donde estén ambas funciones
-        require_once "./vendor/autoload.php";
-
-        $iniTool = new IniTool('./Config/cfg.ini');
-        [$secret] = $iniTool->getKeysAndValues("secretTokenPassword"); //Normalmente se recogería de una variable de entorno desde $_ENV
-
-        $payload = array(
-            "iss" => "destinyAirlines", // Emisor del token
-            "aud" => "destinyAirlines", // Destinatario del token
-            "iat" => time(), // Tiempo que inició el token
-            "exp" => time() + (60 * 60), // Tiempo que expirará el token (+1 hora)
-            "data" => [ // información adicional que se quiera añadir
-                "id" => $user["id_USERS"],
-                "email" => $user["emailAddres"]
-            ],
-            "role" => "user"
-        );
-
-        $jwt = \Firebase\JWT\JWT::encode($payload, $secret, 'HS256');
-        return $jwt;
-    }
-
-    private function decodificarToken($jwt)
-    {
-        $iniTool = new IniTool('./Config/cfg.ini');
-        [$secret] = $iniTool->getKeysAndValues("secretTokenPassword"); // Normalmente se recogería de una variable de entorno desde $_ENV
-
-        try {
-            $headers = new stdClass();
-            $headers->alg = 'HS256';
-            $decoded = \Firebase\JWT\JWT::decode($jwt, $secret, $headers);
-            return $decoded;
-        } catch (\Firebase\JWT\ExpiredException $e) {
-            // El token ha expirado
-            echo 'El token ha expirado';
-        } catch (\Firebase\JWT\SignatureInvalidException $e) {
-            // La firma del token no coincide con la clave proporcionada
-            echo 'La firma del token no coincide con la clave proporcionada';
-        } catch (\Exception $e) {
-            // Otro error
-            echo 'Ha ocurrido un error al decodificar el token: ' . $e->getMessage();
-        }
-    }
+*/
 }

@@ -25,7 +25,7 @@ final class UserModel extends BaseModel
 
         if (!empty($passwordHash) && password_verify($password, $passwordHash[0]["passwordHash"])) {
             
-            return parent::select("id_USERS", "emailAddress = '$email' AND passwordHash = '".$passwordHash[0]["passwordHash"]."'");
+            return parent::select("*", "emailAddress = '$email' AND passwordHash = '".$passwordHash[0]["passwordHash"]."'");
         }
 
         return false;
