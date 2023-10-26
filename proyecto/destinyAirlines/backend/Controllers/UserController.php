@@ -1,17 +1,10 @@
 <?php
 /*
 Login, editar usuario, eliminar cuenta
-pass encriptadas con hash
 
-para hacer un login en php,
-los campos email y password que rellenó el usuario en un form se envían por POST a un archivo php mediante axios (desde react js),
-entonces en el php saneo y valido los datos, compruebo password con hash bbdd, para seleccionar si en bbdd tengo ese email+hasPassword,
-	si no lo tengo lanzo exception
-	si lo tengo entonces debo crear un $_SESSION con el id del usuario y un token
-		el token se crea mediante jsonwebtoken con jwt.sign(idUsuario, claveServerGuardadaEnElIni)
-, entonces el token se le envía al usuario con echo,
+tras logueo y envío de token al frontend
  en el frontend entonces se creará un localstorage con ese token para enviarlo al server cuando sea necesario.
-	Entonces cuando el usuario haga una acción en la que sea necesaria una comprobación de servidor, el frontend enviará al php el token, el cual debo compararlo con el token guardado en $_SESSION para saber si es el mismo usuario. 
+	Entonces cuando el usuario haga una acción en la que sea necesaria una comprobación de servidor, el frontend enviará al php el token, el cual comprobará con secretPass
 
 limitar intentos fallidos de sesión
 */
@@ -60,19 +53,33 @@ final class UserController extends BaseController
         return false;
     }
 
+    public function updateUser($POST)
+    {
+        require_once './Tools/TokenTool.php';
+
+        return true;
+    }
+
     public function deleteUser($POST)
     {
-        //Comprobar decodificación del token recibido
+        require_once './Tools/TokenTool.php';
         $userData = [
             'emailAddress'          => $POST['emailAddress'] ?? "",
             'password'              => $POST['password'] ?? "",
+            'token'                 => $POST['token'] ?? "",
             'dateTime'  => date('Y-m-d H:i:s')
         ];
-        $userData = UserSanitizer::sanitize($userData);
-        if (UserValidator::validate($userData)) {
-            $UserModel = new UserModel();
-            if ($UserModel->deleteUserByEmailAndPassword($userData["emailAddress"], $userData["password"])) {
-                return true;
+        $decodedToken = TokenTool::decodeAndCheckToken($userData["token"]);
+        if ($decodedToken && $decodedToken->data->email === $POST['emailAddress']) {
+            require_once './Tools/SessionTool.php';
+            SessionTool::destroy();
+
+            $userData = UserSanitizer::sanitize($userData);
+            if (UserValidator::validate($userData)) {
+                $UserModel = new UserModel();
+                if ($UserModel->deleteUserByEmailAndPassword($userData["emailAddress"], $userData["password"])) {
+                    return true;
+                }
             }
         }
         return false;
@@ -92,9 +99,12 @@ final class UserController extends BaseController
             //Comprobar password
             $UserModel = new UserModel();
             $results = $UserModel->readUserByEmailPassword($userData["emailAddress"], $userData["password"]);
-
+            $data=[
+                "id" => $results[0]["id_USERS"],
+                "email" => $results[0]["emailAddress"]
+            ];
             if ($results) {
-                $token = TokenTool::generateToken($results[0]);
+                $token = TokenTool::generateToken($data);
                 return $token;
             }
         }
@@ -102,19 +112,24 @@ final class UserController extends BaseController
         return false;
     }
 
-    public function logoutUser($jwtToken)
+    public function logoutUser($POST)
     {
         require_once './Tools/TokenTool.php';
-        if (TokenTool::decodeToken($jwtToken)) {
-            //$_SESSION = array();
-            //SessionTool::destroy();
+
+        $userData = [
+            'token'          => $POST['token'] ?? "",
+            'dateTime'       => date('Y-m-d H:i:s')
+        ];
+        if (TokenTool::decodeAndCheckToken($userData["token"])) {
+            require_once './Tools/SessionTool.php';
+            SessionTool::destroy();
             return true;
         }
         return false;
     }
-/*
+    /*
     private function generateTokenSession($user)
-    {//OLD, la autenticación basada en sesiones es otro modo (sobrecarga el server y no sirve para varias API a la vez porque es necesaria session en cada una, aunque tiene otros modos seguros),
+    {//OLD, la autenticación basada en sesiones es otro modo (sobrecarga el server y no sirve para varias API a la vez porque es necesaria una session en cada una, aunque tiene otros modos seguros),
         // para este proyecto prefiero la autenticación basada en tokens
         $token = hash('sha256', uniqid(mt_rand(), true));
         SessionTool::startSession("destinyAirlines_session", 60 * 60 * 10);

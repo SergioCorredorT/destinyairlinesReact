@@ -84,6 +84,13 @@
         <input type="text" name="command" value="removeuser" />
         <input type="text" name="emailAddress" value="aaaa5@example.com" />
         <input type="text" name="password" value="contraseña5" />
+        <input
+          type="text"
+          name="token"
+          id="token"
+          value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkZXN0aW55QWlybGluZXMiLCJhdWQiOiJkZXN0aW55QWlybGluZXMiLCJzdWIiOjExNSwiaWF0IjoxNjk4MjcyODkyLCJleHAiOjE2OTgyNzY0OTIsImRhdGEiOnsiaWQiOjExNSwiZW1haWwiOiJhYWFhNUBleGFtcGxlLmNvbSJ9LCJyb2xlIjoidXNlciJ9._7f80uAZjKmxBmmv07jDs3hFYMcSEVQ9QaLvv5CwisY"
+          placeholder="token"
+        />
         <button type="submit">Enviar POST</button>
       </form>
 
@@ -110,7 +117,7 @@
           type="text"
           name="token"
           id="token"
-          value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkZXN0aW55QWlybGluZXMiLCJhdWQiOiJkZXN0aW55QWlybGluZXMiLCJzdWIiOjExNSwiaWF0IjoxNjk4MjY1MjUzLCJleHAiOjE2OTgyNjg4NTMsImRhdGEiOnsiaWQiOjExNSwiZW1haWwiOiJhYWFhNUBleGFtcGxlLmNvbSJ9LCJyb2xlIjoidXNlciJ9.UsFCX342zxOIwdrWA5kqhS45dfTTaIX_Hlh7jV-4plY"
+          value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkZXN0aW55QWlybGluZXMiLCJhdWQiOiJkZXN0aW55QWlybGluZXMiLCJzdWIiOjExNSwiaWF0IjoxNjk4MjcyODkyLCJleHAiOjE2OTgyNzY0OTIsImRhdGEiOnsiaWQiOjExNSwiZW1haWwiOiJhYWFhNUBleGFtcGxlLmNvbSJ9LCJyb2xlIjoidXNlciJ9._7f80uAZjKmxBmmv07jDs3hFYMcSEVQ9QaLvv5CwisY"
           placeholder="token"
         />
         <button type="submit">Enviar POST</button>
@@ -124,7 +131,6 @@
     ></textarea>
     <script>
       function handleFormSubmit(event) {
-
         event.preventDefault(); // Evita que se envíe el formulario directamente
 
         var formData = new FormData(event.target);

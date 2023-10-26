@@ -1,5 +1,6 @@
 <?php
 //-----------------------------------------------------------------------------------------------------------------------
+//PROBANDO MODELOS
 //    include 'Models/UserModel.php';
 //    $usuario = new UserModel();
 /*
@@ -29,29 +30,29 @@
 
 function prueba($data)
 {
-$url = 'http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php'; // Cambia esto a la URL de tu MainController
-// Inicializar cURL
-$ch = curl_init($url);
+    $url = 'http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php'; // Cambia esto a la URL de tu MainController
+    // Inicializar cURL
+    $ch = curl_init($url);
 
-// Configurar las opciones de cURL
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // Configurar las opciones de cURL
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-// Ejecutar la solicitud POST
-$response = curl_exec($ch);
+    // Ejecutar la solicitud POST
+    $response = curl_exec($ch);
 
-// Cerrar la sesión cURL
-curl_close($ch);
+    // Cerrar la sesión cURL
+    curl_close($ch);
 
-// Imprimir la respuesta
-if ($response) {
-    echo "bieeeeeeeen\n";
-} else {
-    echo "maaaaaaaaaaaaal\n";
-}
+    // Imprimir la respuesta
+    if ($response) {
+        echo "bieeeeeeeen\n";
+    } else {
+        echo "maaaaaaaaaaaaal\n";
+    }
 
-return $response;
+    return $response;
 }
 
 /*
@@ -99,4 +100,4 @@ $data2 = [
     'command'    => 'logoutUser',
     'token'     => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkZXN0aW55QWlybGluZXMiLCJhdWQiOiJkZXN0aW55QWlybGluZXMiLCJzdWIiOjExNSwiaWF0IjoxNjk4MjY1MjUzLCJleHAiOjE2OTgyNjg4NTMsImRhdGEiOnsiaWQiOjExNSwiZW1haWwiOiJhYWFhNUBleGFtcGxlLmNvbSJ9LCJyb2xlIjoidXNlciJ9.UsFCX342zxOIwdrWA5kqhS45dfTTaIX_Hlh7jV-4plY'
 ];
-print_r("Prueba2:".prueba($data2));
+print_r("Prueba2:" . prueba($data2));
