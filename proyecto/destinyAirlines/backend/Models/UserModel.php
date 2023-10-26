@@ -19,6 +19,11 @@ final class UserModel extends BaseModel
         return parent::select("*");
     }
 
+    public function getEmailById($id)
+    {
+        return parent::select("emailAddress", "id_USERS = '$id'")[0]["emailAddress"];
+    }
+
     public function readUserByEmailPassword($email, $password)
     {
         $passwordHash = parent::select("passwordHash", "emailAddress = '$email'");
@@ -34,6 +39,11 @@ final class UserModel extends BaseModel
     public function updateUsers($data, $where)
     {
         return parent::update($data, $where);
+    }
+
+    public function updateUsersByEmail($data, $email)
+    {
+        return parent::update($data, " WHERE emailAddress = '$email'");
     }
 
     public function deleteUsers($where)

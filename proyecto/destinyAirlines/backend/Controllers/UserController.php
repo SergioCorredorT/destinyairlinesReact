@@ -11,6 +11,7 @@ limitar intentos fallidos de sesión
 require_once './Controllers/BaseController.php';
 require_once './Sanitizers/UserSanitizer.php';
 require_once './Validators/UserValidator.php';
+require_once "./Tools/IniTool.php";
 final class UserController extends BaseController
 {
     public function __construct()
@@ -30,7 +31,7 @@ final class UserController extends BaseController
             'country'               => $POST['country'] ?? "",
             'emailAddress'          => $POST['emailAddress'] ?? "",
             'password'              => $POST['password'] ?? "",
-            'phoneNumber1'          => $POST['phoneNumber1	'] ?? "",
+            'phoneNumber1'          => $POST['phoneNumber1'] ?? "",
             'phoneNumber2'          => $POST['phoneNumber2'] ?? "",
             'phoneNumber3'          => $POST['phoneNumber3'] ?? "",
             'companyName'           => $POST['companyName'] ?? "",
@@ -55,22 +56,67 @@ final class UserController extends BaseController
 
     public function updateUser($POST)
     {
-        require_once './Tools/TokenTool.php';
+//POR AHORA SE MODIFICAN TODOS ya que recibo "" del form y estos se envían al update, averiguar como discriminar óptimamente.
+        $userData = [
+            'title'                 => $POST['title'] ?? null,
+            'firstName'             => $POST['firstName'] ?? null,
+            'lastName'              => $POST['lastName'] ?? null,
+            'townCity'              => $POST['townCity'] ?? null,
+            'streetAddress'         => $POST['streetAddress'] ?? null,
+            'zipCode'               => $POST['zipCode'] ?? null,
+            'country'               => $POST['country'] ?? null,
+            'emailAddress'          => $POST['emailAddress'] ?? null,
+            'password'              => $POST['password'] ?? null,
+            'phoneNumber1'          => $POST['phoneNumber1'] ?? null,
+            'phoneNumber2'          => $POST['phoneNumber2'] ?? null,
+            'phoneNumber3'          => $POST['phoneNumber3'] ?? null,
+            'companyName'           => $POST['companyName'] ?? null,
+            'companyTaxNumber'      => $POST['companyTaxNumber'] ?? null,
+            'companyPhoneNumber'    => $POST['companyPhoneNumber'] ?? null,
+            'refreshToken'          => $POST['refreshToken'] ?? null,
+            'accessToken'           => $POST['accessToken'] ?? null,
+            'dateTime'  => date('Y-m-d H:i:s')
+        ];
 
-        return true;
+        require_once './Tools/TokenTool.php';
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $tokenSettings = $iniTool->getKeysAndValues("tokenSettings");
+        $secondsMinTimeLifeAccessToken=intval($tokenSettings["secondsMinTimeLifeAccessToken"]);
+        $secondsMinTimeLifeRefreshToken=intval($tokenSettings["secondsMinTimeLifeRefreshToken"]);
+        $secondsMaxTimeLifeAccessToken=intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
+        $secondsMaxTimeLifeRefreshToken=intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
+//DEVOLVER TOKENS AL FRONT DESDE EL RETURN
+        TokenTool::checkUpdateByRemainingTokenTimes($userData["accessToken"], $userData["refreshToken"],$secondsMinTimeLifeAccessToken,$secondsMinTimeLifeRefreshToken,$secondsMaxTimeLifeAccessToken,$secondsMaxTimeLifeRefreshToken);
+        $decodedToken = TokenTool::decodeAndCheckToken($userData["accessToken"]);
+        $email = $UserModel->getEmailById($decodedToken->data->id);
+
+        if ($decodedToken && $email === $POST['emailAddress']) {
+            $userData = UserSanitizer::sanitize($userData);
+            if (UserValidator::validate($userData)) {
+                $UserModel = new UserModel();
+                if ($UserModel->updateUsersByEmail(array_filter($userData), $email)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public function deleteUser($POST)
     {
+        //eliminar tokens en el frontend
         require_once './Tools/TokenTool.php';
         $userData = [
             'emailAddress'          => $POST['emailAddress'] ?? "",
             'password'              => $POST['password'] ?? "",
-            'token'                 => $POST['token'] ?? "",
+            'refreshToken'          => $POST['refreshToken'] ?? "",
             'dateTime'  => date('Y-m-d H:i:s')
         ];
-        $decodedToken = TokenTool::decodeAndCheckToken($userData["token"]);
-        if ($decodedToken && $decodedToken->data->email === $POST['emailAddress']) {
+        $decodedToken = TokenTool::decodeAndCheckToken($userData["refreshToken"]);
+        $UserModel = new UserModel();
+        $email = $UserModel->getEmailById($decodedToken->data->id);
+
+        if ($decodedToken && $email === $POST['emailAddress']) {
             require_once './Tools/SessionTool.php';
             SessionTool::destroy();
 
@@ -96,16 +142,26 @@ final class UserController extends BaseController
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
         if ($isValidate) {
-            //Comprobar password
             $UserModel = new UserModel();
             $results = $UserModel->readUserByEmailPassword($userData["emailAddress"], $userData["password"]);
-            $data=[
-                "id" => $results[0]["id_USERS"],
-                "email" => $results[0]["emailAddress"]
+            $data = [
+                "id" => $results[0]["id_USERS"]
             ];
             if ($results) {
-                $token = TokenTool::generateToken($data);
-                return $token;
+                /*
+                    Destiny Airlines
+                                LifeTime    minTime
+                    Refresh     3 días ,    1 día
+                    Access      1 hora,     30 min
+                */
+                $iniTool = new IniTool('./Config/cfg.ini');
+                $tokenSettings = $iniTool->getKeysAndValues("tokenSettings");
+                $secondsMaxTimeLifeAccessToken=intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
+                $secondsMaxTimeLifeRefreshToken=intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
+
+                $accessToken = TokenTool::generateToken($data, $secondsMaxTimeLifeAccessToken);
+                $refreshToken = TokenTool::generateToken($data, $secondsMaxTimeLifeRefreshToken);
+                return ["accessToken" => $accessToken, "refreshToken" => $refreshToken];
             }
         }
 
@@ -117,10 +173,12 @@ final class UserController extends BaseController
         require_once './Tools/TokenTool.php';
 
         $userData = [
-            'token'          => $POST['token'] ?? "",
-            'dateTime'       => date('Y-m-d H:i:s')
+            'refreshToken'           => $POST['refreshToken'] ?? "",
+            'dateTime'              => date('Y-m-d H:i:s')
         ];
-        if (TokenTool::decodeAndCheckToken($userData["token"])) {
+        if (TokenTool::decodeAndCheckToken($userData["refreshToken"])) {
+            //eliminar tokens en el frontend
+            //Un método más seguro es hacer en server una lista blanca o negra para dejar pasar solo a los refresh tokens adecuados, pero requeriría carga en el server, y se desaprovecha la ventaja de no hacer un logueo basado en session
             require_once './Tools/SessionTool.php';
             SessionTool::destroy();
             return true;

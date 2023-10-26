@@ -86,10 +86,9 @@
         <input type="text" name="password" value="contraseña5" />
         <input
           type="text"
-          name="token"
-          id="token"
-          value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkZXN0aW55QWlybGluZXMiLCJhdWQiOiJkZXN0aW55QWlybGluZXMiLCJzdWIiOjExNSwiaWF0IjoxNjk4MjcyODkyLCJleHAiOjE2OTgyNzY0OTIsImRhdGEiOnsiaWQiOjExNSwiZW1haWwiOiJhYWFhNUBleGFtcGxlLmNvbSJ9LCJyb2xlIjoidXNlciJ9._7f80uAZjKmxBmmv07jDs3hFYMcSEVQ9QaLvv5CwisY"
-          placeholder="token"
+          name="refreshToken"
+          value=""
+          placeholder="refreshToken"
         />
         <button type="submit">Enviar POST</button>
       </form>
@@ -115,10 +114,54 @@
         <input type="text" name="command" value="logoutUser" />
         <input
           type="text"
-          name="token"
-          id="token"
-          value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkZXN0aW55QWlybGluZXMiLCJhdWQiOiJkZXN0aW55QWlybGluZXMiLCJzdWIiOjExNSwiaWF0IjoxNjk4MjcyODkyLCJleHAiOjE2OTgyNzY0OTIsImRhdGEiOnsiaWQiOjExNSwiZW1haWwiOiJhYWFhNUBleGFtcGxlLmNvbSJ9LCJyb2xlIjoidXNlciJ9._7f80uAZjKmxBmmv07jDs3hFYMcSEVQ9QaLvv5CwisY"
-          placeholder="token"
+          name="refreshToken"
+          value=""
+          placeholder="refreshToken"
+        />
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <span>UpdateUser</span>
+        <input type="text" name="command" value="updateUser" />
+        <input type="text" name="title" placeholder="Title" />
+        <input type="text" name="firstName" placeholder="First Name" />
+        <input type="text" name="lastName" placeholder="Last Name" />
+        <input type="text" name="townCity" placeholder="Town/City" />
+        <input type="text" name="streetAddress" placeholder="Street Address" />
+        <input type="text" name="zipCode" placeholder="Zip Code" />
+        <input type="text" name="country" placeholder="Country" />
+        <input type="text" name="emailAddress" placeholder="Email Address" />
+        <input type="text" name="password" placeholder="Password" />
+        <input type="text" name="phoneNumber1" placeholder="Phone Number 1" />
+        <input type="text" name="phoneNumber2" placeholder="Phone Number 2" />
+        <input type="text" name="phoneNumber3" placeholder="Phone Number 3" />
+        <input type="text" name="companyName" placeholder="Company Name" />
+        <input
+          type="text"
+          name="companyTaxNumber"
+          placeholder="Company Tax Number"
+        />
+        <input
+          type="text"
+          name="companyPhoneNumber"
+          placeholder="Company Phone Number"
+        />
+        <input
+          type="text"
+          name="accessToken"
+          value=""
+          placeholder="accessToken"
+        />
+        <input
+          type="text"
+          name="refreshToken"
+          value=""
+          placeholder="refreshToken"
         />
         <button type="submit">Enviar POST</button>
       </form>

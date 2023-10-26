@@ -25,7 +25,7 @@ class TokenTool
         return $jwt;
     }
 */
-    static function generateToken($data, $timeLife = 60 * 60, $role = "user")
+    public static function generateToken($data, $timeLife = 60 * 60, $role = "user")
     {
         $iniTool = new IniTool('./Config/cfg.ini');
         $secretTokenPassword = $iniTool->getKeysAndValues("secretTokenPassword");
@@ -44,30 +44,47 @@ class TokenTool
         $jwt = \Firebase\JWT\JWT::encode($payload, $secret, 'HS256');
         return $jwt;
     }
+/*
+    public static function checkUpdateByRemainingAccessTokenTime($accessToken, $refreshToken, $lifeTimeAccessToken=60*5)
+    {
+        $payloadRefreshToken = TokenTool::decodeAndCheckToken($refreshToken);
+        $rsp = [];
+
+        if ($payloadRefreshToken) {
+            $dataRefreshToken = $payloadRefreshToken->data;
+
+            $timeRemainingAccessTokenTime = TokenTool::getRemainingTokenTime($accessToken);
+            if ($timeRemainingAccessTokenTime < $lifeTimeAccessToken) {
+                $rsp["accessToken"] = TokenTool::generateToken($dataRefreshToken, $lifeTimeAccessToken);
+            }
+        }
+        return $rsp;
+    }
+*/
 
     public static function checkUpdateByRemainingTokenTimes($accessToken, $refreshToken, $minLifeTimeAccessToken, $minLifeTimeRefreshToken, $initialLifeTimeAccessToken, $initialLifeTimeRefreshToken)
     {
         /*
+            Destiny Airlines
                         LifeTime    minTime
             Refresh     7 días ,    1 día
             Access      1 hora,     30 min
         */
 
-        $payloadRefreshToken=TokenTool::decodeAndCheckToken($refreshToken);
+        $payloadRefreshToken = TokenTool::decodeAndCheckToken($refreshToken);
         $rsp = [];
 
-        if($payloadRefreshToken)
-        {
-            $dataRefreshToken=$payloadRefreshToken->data;
+        if ($payloadRefreshToken) {
+            $dataRefreshToken = $payloadRefreshToken->data;
 
-            $timeRemainingAccessTokenTime= TokenTool::getRemainingTokenTime($accessToken);
-            if($timeRemainingAccessTokenTime<$minLifeTimeAccessToken) {
-                $rsp["accessToken"]=TokenTool::generateToken($dataRefreshToken,$initialLifeTimeAccessToken);
+            $timeRemainingAccessTokenTime = TokenTool::getRemainingTokenTime($accessToken);
+            if ($timeRemainingAccessTokenTime < $minLifeTimeAccessToken) {
+                $rsp["accessToken"] = TokenTool::generateToken($dataRefreshToken, $initialLifeTimeAccessToken);
             }
 
-            $timeRemainingRefreshTokenTime= TokenTool::getRemainingTokenTime($refreshToken);
-            if($timeRemainingRefreshTokenTime<$minLifeTimeRefreshToken) {
-                $rsp["refreshToken"]=TokenTool::generateToken($dataRefreshToken,$initialLifeTimeRefreshToken);
+            $timeRemainingRefreshTokenTime = TokenTool::getRemainingTokenTime($refreshToken);
+            if ($timeRemainingRefreshTokenTime < $minLifeTimeRefreshToken) {
+                $rsp["refreshToken"] = TokenTool::generateToken($dataRefreshToken, $initialLifeTimeRefreshToken);
             }
         }
         return $rsp;
