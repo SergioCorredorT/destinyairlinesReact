@@ -56,7 +56,7 @@ final class UserController extends BaseController
 
     public function updateUser($POST)
     {
-        //los que vengan con null no se modifican
+        //el form del front debe tener todos los campos rellenos con el valor actual y recibir todos los valores para updatear todos
         $userData = [
             'title'                 => $POST['title'] ?? null,
             'firstName'             => $POST['firstName'] ?? null,
@@ -81,30 +81,25 @@ final class UserController extends BaseController
         require_once './Tools/TokenTool.php';
         $iniTool = new IniTool('./Config/cfg.ini');
         $tokenSettings = $iniTool->getKeysAndValues("tokenSettings");
-        $secondsMinTimeLifeAccessToken = intval($tokenSettings["secondsMinTimeLifeAccessToken"]);
-        $secondsMinTimeLifeRefreshToken = intval($tokenSettings["secondsMinTimeLifeRefreshToken"]);
-        $secondsMaxTimeLifeAccessToken = intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
-        $secondsMaxTimeLifeRefreshToken = intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
-
-        $newTokens = TokenTool::checkUpdateByRemainingTokenTimes($userData["accessToken"], $userData["refreshToken"], $secondsMinTimeLifeAccessToken, $secondsMinTimeLifeRefreshToken, $secondsMaxTimeLifeAccessToken, $secondsMaxTimeLifeRefreshToken);
+        $secondsMinTimeLifeAccessToken=intval($tokenSettings["secondsMinTimeLifeAccessToken"]);
+        $secondsMinTimeLifeRefreshToken=intval($tokenSettings["secondsMinTimeLifeRefreshToken"]);
+        $secondsMaxTimeLifeAccessToken=intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
+        $secondsMaxTimeLifeRefreshToken=intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
+//DEVOLVER TOKENS AL FRONT DESDE EL RETURN sabiendo que quizás no se hayan actualizado los datos del user
+        $newTokens=TokenTool::checkUpdateByRemainingTokenTimes($userData["accessToken"], $userData["refreshToken"],$secondsMinTimeLifeAccessToken,$secondsMinTimeLifeRefreshToken,$secondsMaxTimeLifeAccessToken,$secondsMaxTimeLifeRefreshToken);
         $decodedToken = TokenTool::decodeAndCheckToken($userData["accessToken"]);
-        $UserModel = new UserModel();
         $email = $UserModel->getEmailById($decodedToken->data->id);
 
         if ($decodedToken && $email === $POST['emailAddress']) {
             $userData = UserSanitizer::sanitize($userData);
             if (UserValidator::validate($userData)) {
-                if(isset($userData["password"])) {
-                    $userData["passwordHash"] = password_hash($userData["password"], PASSWORD_BCRYPT);
-                    unset($userData["password"]);
-                }
-
+                $UserModel = new UserModel();
                 if ($UserModel->updateUsersByEmail(array_filter($userData), $email)) {
-                    return ["response" => true, "tokens" => $newTokens];
+                    return true;
                 }
             }
         }
-        return ["response" => false, "tokens" => $newTokens];
+        return false;
     }
 
     public function deleteUser($POST)
@@ -119,20 +114,17 @@ final class UserController extends BaseController
         ];
         $decodedToken = TokenTool::decodeAndCheckToken($userData["refreshToken"]);
         $UserModel = new UserModel();
+        $email = $UserModel->getEmailById($decodedToken->data->id);
 
-        if ($decodedToken) {
-            $email = $UserModel->getEmailById($decodedToken->data->id);
+        if ($decodedToken && $email === $POST['emailAddress']) {
+            require_once './Tools/SessionTool.php';
+            SessionTool::destroy();
 
-            if ($email === $POST['emailAddress']) {
-                require_once './Tools/SessionTool.php';
-                SessionTool::destroy();
-
-                $userData = UserSanitizer::sanitize($userData);
-                if (UserValidator::validate($userData)) {
-                    $UserModel = new UserModel();
-                    if ($UserModel->deleteUserByEmailAndPassword($userData["emailAddress"], $userData["password"])) {
-                        return true;
-                    }
+            $userData = UserSanitizer::sanitize($userData);
+            if (UserValidator::validate($userData)) {
+                $UserModel = new UserModel();
+                if ($UserModel->deleteUserByEmailAndPassword($userData["emailAddress"], $userData["password"])) {
+                    return true;
                 }
             }
         }
@@ -164,8 +156,8 @@ final class UserController extends BaseController
                 */
                 $iniTool = new IniTool('./Config/cfg.ini');
                 $tokenSettings = $iniTool->getKeysAndValues("tokenSettings");
-                $secondsMaxTimeLifeAccessToken = intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
-                $secondsMaxTimeLifeRefreshToken = intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
+                $secondsMaxTimeLifeAccessToken=intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
+                $secondsMaxTimeLifeRefreshToken=intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
 
                 $accessToken = TokenTool::generateToken($data, $secondsMaxTimeLifeAccessToken);
                 $refreshToken = TokenTool::generateToken($data, $secondsMaxTimeLifeRefreshToken);

@@ -58,7 +58,7 @@ abstract class BaseModel
             return true;
         } catch (PDOException $e) {
             $this->con->rollBack();
-            //echo 'Se ha capturado una excepción: ' . $e->getMessage() . "\n";
+            error_log('Catched exception: ' . $e->getMessage() . "\n");
             return false;
         }
     }

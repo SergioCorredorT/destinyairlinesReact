@@ -26,7 +26,6 @@
 
       form {
         display: grid;
-        grid-template-columns: 1;
         width: fit-content;
       }
 
@@ -36,6 +35,15 @@
         resize: vertical;
         width: 90%;
         margin: 0 5%;
+      }
+
+      .filaForm {
+        display: flex;
+        flex-direction: row;
+      }
+
+      input[type="text"], form{
+        height: fit-content;
       }
     </style>
   </head>
@@ -50,7 +58,6 @@
         action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
         method="post"
       >
-        <!-- Datos para enviar en la solicitud POST -->
         <span>Contact</span>
         <input type="text" name="command" value="contact" />
         <input type="text" name="name" value="Sergio" />
@@ -127,54 +134,239 @@
         method="post"
       >
         <span>UpdateUser</span>
-        <input type="text" name="command" value="updateUser" />
-        <input type="text" name="title" placeholder="Title" />
-        <input type="text" name="firstName" placeholder="First Name" />
-        <input type="text" name="lastName" placeholder="Last Name" />
-        <input type="text" name="townCity" placeholder="Town/City" />
-        <input type="text" name="streetAddress" placeholder="Street Address" />
-        <input type="text" name="zipCode" placeholder="Zip Code" />
-        <input type="text" name="country" placeholder="Country" />
-        <input type="text" name="emailAddress" placeholder="Email Address" />
-        <input type="text" name="password" placeholder="Password" />
-        <input type="text" name="phoneNumber1" placeholder="Phone Number 1" />
-        <input type="text" name="phoneNumber2" placeholder="Phone Number 2" />
-        <input type="text" name="phoneNumber3" placeholder="Phone Number 3" />
-        <input type="text" name="companyName" placeholder="Company Name" />
-        <input
-          type="text"
-          name="companyTaxNumber"
-          placeholder="Company Tax Number"
-        />
-        <input
-          type="text"
-          name="companyPhoneNumber"
-          placeholder="Company Phone Number"
-        />
-        <input
-          type="text"
-          name="accessToken"
-          value=""
-          placeholder="accessToken"
-        />
-        <input
-          type="text"
-          name="refreshToken"
-          value=""
-          placeholder="refreshToken"
-        />
+        <div class="filaForm">
+          <input type="text" name="command" value="updateUser" /><span
+            >Null?</span
+          >
+        </div>
+        <div class="filaForm">
+          <input type="text" name="title" placeholder="title" value="" />
+          <input
+            type="checkbox"
+            name="nullify_title"
+            onchange="nullifyInput(this, 'title')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value="A555"
+          />
+          <input
+            type="checkbox"
+            name="nullify_firstName"
+            onchange="nullifyInput(this, 'firstName')"
+          />
+        </div>
+
+        <div class="filaForm">
+          <input type="text" name="lastName" placeholder="lastName" value="" />
+          <input
+            type="checkbox"
+            name="nullify_lastName"
+            onchange="nullifyInput(this, 'lastName')"
+          />
+        </div>
+        <div class="filaForm">
+          <input type="text" name="townCity" placeholder="townCity" value="" />
+          <input
+            type="checkbox"
+            name="nullify_townCity"
+            onchange="nullifyInput(this, 'townCity')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="streetAddress"
+            placeholder="streetAddress"
+            value=""
+          />
+          <input
+            type="checkbox"
+            name="nullify_streetAddress"
+            onchange="nullifyInput(this, 'streetAddress')"
+          />
+        </div>
+        <div class="filaForm">
+          <input type="text" name="zipCode" placeholder="zipCode" value="25" />
+          <input
+            type="checkbox"
+            name="nullify_zipCode"
+            onchange="nullifyInput(this, 'zipCode')"
+          />
+        </div>
+        <div class="filaForm">
+          <input type="text" name="country" placeholder="country" value="" />
+          <input
+            type="checkbox"
+            name="nullify_country"
+            onchange="nullifyInput(this, 'country')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="emailAddress"
+            placeholder="Email Address"
+            value="aaaa5@example.com"
+          />
+          <input
+            type="checkbox"
+            name="nullify_emailAddress"
+            onchange="nullifyInput(this, 'emailAddress')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="password"
+            placeholder="Password"
+            value="contraseña5"
+          />
+          <input
+            type="checkbox"
+            name="nullify_password"
+            onchange="nullifyInput(this, 'password')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="phoneNumber1"
+            placeholder="Phone Number 1"
+            value=""
+          />
+          <input
+            type="checkbox"
+            name="nullify_phoneNumber1"
+            onchange="nullifyInput(this, 'phoneNumber1')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="phoneNumber2"
+            placeholder="Phone Number 2"
+            value=""
+          />
+          <input
+            type="checkbox"
+            name="nullify_phoneNumber2"
+            onchange="nullifyInput(this, 'phoneNumber2')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="phoneNumber3"
+            placeholder="Phone Number 3"
+            value=""
+          />
+          <input
+            type="checkbox"
+            name="nullify_phoneNumber3"
+            onchange="nullifyInput(this, 'phoneNumber3')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="companyName"
+            placeholder="Company Name"
+            value=""
+          />
+          <input
+            type="checkbox"
+            name="nullify_companyName"
+            onchange="nullifyInput(this, 'companyName')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="companyTaxNumber"
+            placeholder="Company Tax Number"
+          />
+          <input
+            type="checkbox"
+            name="nullify_companyTaxNumber"
+            onchange="nullifyInput(this, 'companyTaxNumber')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="companyPhoneNumber"
+            placeholder="Company Phone Number"
+          />
+          <input
+            type="checkbox"
+            name="nullify_companyPhoneNumber"
+            onchange="nullifyInput(this, 'companyPhoneNumber')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="accessToken"
+            value=""
+            placeholder="accessToken"
+          />
+          <input
+            type="checkbox"
+            name="nullify_accessToken "
+            onchange="nullifyInput (this,'accessToken')"
+          />
+        </div>
+        <div class="filaForm">
+          <input
+            type="text"
+            name="refreshToken"
+            value=""
+            placeholder="refreshToken"
+          />
+          <input
+            type="checkbox"
+            name="nullify_refreshToken "
+            onchange="nullifyInput (this,'refreshToken')"
+          />
+        </div>
         <button type="submit">Enviar POST</button>
       </form>
     </div>
     <!-- Puedes agregar más formularios aquí -->
     <textarea
+      placeholder="results"
       id="responseTextArea"
       oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
-      onchange="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+      onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
     ></textarea>
+    <textarea placeholder="accessToken"
+      id="extraTextArea1"
+      oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+      onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+    ></textarea>
+    <textarea placeholder="refreshToken"
+      id="extraTextArea2"
+      oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+      onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+    ></textarea>
+
     <script>
+      function nullifyInput(checkbox, inputName) {
+        var input = document.getElementsByName(inputName)[0];
+        if (checkbox.checked) {
+          input.value = null;
+        }
+      }
+
       function handleFormSubmit(event) {
-        event.preventDefault(); // Evita que se envíe el formulario directamente
+        event.preventDefault();
+
+        // Aquí puedes agregar código para verificar los checkboxes y establecer los valores correspondientes en null
 
         var formData = new FormData(event.target);
         var responseTextArea = document.getElementById("responseTextArea");
@@ -186,12 +378,12 @@
           .then((response) => response.text())
           .then((responseText) => {
             var response = JSON.parse(responseText);
-            var responseTextValue = "Prueba: " + response.response;
+            var responseTextValue = "Prueba: " + JSON.stringify(response);
             responseTextArea.value = responseTextValue;
           })
           .catch((error) => console.error(error));
 
-        return false; // Evita que se envíe el formulario
+        return false;
       }
     </script>
   </body>
