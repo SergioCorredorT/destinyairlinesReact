@@ -56,7 +56,7 @@ final class UserController extends BaseController
 
     public function updateUser($POST)
     {
-        //los que vengan con null no se modifican
+        //En $POST solo se deben recibir los campos que se desean editar dentro de los posibles definidos en $userData
         $userData = [
             'title'                 => $POST['title'] ?? null,
             'firstName'             => $POST['firstName'] ?? null,
@@ -75,6 +75,7 @@ final class UserController extends BaseController
             'companyPhoneNumber'    => $POST['companyPhoneNumber'] ?? null,
             'refreshToken'          => $POST['refreshToken'] ?? null,
             'accessToken'           => $POST['accessToken'] ?? null,
+            'emailAddressAuth'      => $POST['emailAddressAuth'] ?? null,
             'dateTime'  => date('Y-m-d H:i:s')
         ];
 
@@ -86,21 +87,30 @@ final class UserController extends BaseController
         $secondsMaxTimeLifeAccessToken = intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
         $secondsMaxTimeLifeRefreshToken = intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
 
+        $decodedToken = null;
+
         $newTokens = TokenTool::checkUpdateByRemainingTokenTimes($userData["accessToken"], $userData["refreshToken"], $secondsMinTimeLifeAccessToken, $secondsMinTimeLifeRefreshToken, $secondsMaxTimeLifeAccessToken, $secondsMaxTimeLifeRefreshToken);
-        $decodedToken = TokenTool::decodeAndCheckToken($userData["accessToken"]);
-        $UserModel = new UserModel();
-        $email = $UserModel->getEmailById($decodedToken->data->id);
+        if (isset($newTokens["accessToken"])) {
+            $decodedToken = TokenTool::decodeAndCheckToken($newTokens["accessToken"]);
+        } else {
+            $decodedToken = TokenTool::decodeAndCheckToken($userData["accessToken"]);
+        }
 
-        if ($decodedToken && $email === $POST['emailAddress']) {
-            $userData = UserSanitizer::sanitize($userData);
-            if (UserValidator::validate($userData)) {
-                if(isset($userData["password"])) {
-                    $userData["passwordHash"] = password_hash($userData["password"], PASSWORD_BCRYPT);
-                    unset($userData["password"]);
-                }
+        if ($decodedToken) {
+            $UserModel = new UserModel();
+            $email = $UserModel->getEmailById($decodedToken->data->id);
 
-                if ($UserModel->updateUsersByEmail(array_filter($userData), $email)) {
-                    return ["response" => true, "tokens" => $newTokens];
+            if ($email === $POST['emailAddressAuth']) {
+                $userData = UserSanitizer::sanitize($userData);
+                if (UserValidator::validate($userData)) {
+                    if (isset($userData["password"])) {
+                        $userData["passwordHash"] = password_hash($userData["password"], PASSWORD_BCRYPT);
+                        unset($userData["password"]);
+                    }
+
+                    if ($UserModel->updateUsersByEmail(array_filter($userData), $email)) {
+                        return ["response" => true, "tokens" => $newTokens];
+                    }
                 }
             }
         }
@@ -169,7 +179,7 @@ final class UserController extends BaseController
 
                 $accessToken = TokenTool::generateToken($data, $secondsMaxTimeLifeAccessToken);
                 $refreshToken = TokenTool::generateToken($data, $secondsMaxTimeLifeRefreshToken);
-                return ["accessToken" => $accessToken, "refreshToken" => $refreshToken];
+                return ["tokens"=>["accessToken" => $accessToken, "refreshToken" => $refreshToken]];
             }
         }
 

@@ -43,7 +43,7 @@ final class UserModel extends BaseModel
 
     public function updateUsersByEmail($data, $email)
     {
-        return parent::update($data, " WHERE emailAddress = '$email'");
+        return parent::update($data, " emailAddress = '$email'");
     }
 
     public function deleteUsers($where)
@@ -53,7 +53,7 @@ final class UserModel extends BaseModel
 
     public function deleteUserByEmailAndPassword($email, $password)
     {
-        [$passwordHash] = parent::select("passwordHash", "emailAddress = '$email'");
+        [$passwordHash] = parent::select("passwordHash", " emailAddress = '$email'");
 
         if (!empty($passwordHash) && password_verify($password, $passwordHash["passwordHash"])) {
             return parent::delete("emailAddress = '$email'");
