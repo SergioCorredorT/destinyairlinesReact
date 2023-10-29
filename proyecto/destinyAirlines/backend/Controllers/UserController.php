@@ -151,6 +151,7 @@ final class UserController extends BaseController
 
     public function loginUser($POST)
     {
+//IMPLEMENTAR LÍMITE DE INTENTOS
         require_once './Tools/TokenTool.php';
         $userData = [
             'emailAddress'          => $POST['emailAddress'] ?? "",

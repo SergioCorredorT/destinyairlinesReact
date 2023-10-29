@@ -60,6 +60,8 @@ Table USERS {
   companyName varchar(50)
   companyTaxNumber varchar(50)
   companyPhoneNumber varchar(20)
+  failed_attempts tinyint [default: 0, not null]
+  lastFailedAttempt date
 }
 
 Table BOOKS {
@@ -69,7 +71,7 @@ Table BOOKS {
   bookCode varchar(10) [not null, unique]
   price double
   direction direction [not null, default: "departure"]
-  invoiced date
+  invoiced date [default: `now()`]
   checkinDate date
 }
 

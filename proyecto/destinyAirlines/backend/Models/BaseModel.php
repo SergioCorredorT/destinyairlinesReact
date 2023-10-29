@@ -72,7 +72,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            //echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
+            error_log('Se ha capturado una excepción: ',  $er->getMessage(), "\n");
             return false;
         }
         // Bind parameters
@@ -101,7 +101,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            //echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
+            error_log('Se ha capturado una excepción: ',  $er->getMessage(), "\n");
             return false;
         }
         $stmt->execute();
@@ -131,7 +131,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            //echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
+            error_log('Se ha capturado una excepción: ',  $er->getMessage(), "\n");
             return false;
         }
         // Bind parameters and execute the query

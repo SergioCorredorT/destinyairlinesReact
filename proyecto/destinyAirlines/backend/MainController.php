@@ -34,22 +34,3 @@ if (array_key_exists(strtolower($command), $controllers)) {
 } else {
     echo json_encode(['status' => true, 'response' => false]);
 }
-
-/*
-$controllers = [
-    'contact'       => ['ContactController', 'sendContact'],
-    'createuser'    => ['UserController', 'createUser'],
-    'updateuser'    => ['UserController', 'updateUser'],
-    'removeuser'    => ['UserController', 'deleteUser'],
-    'loginuser'     => ['UserController', 'loginUser'],
-    'logoutuser'    => ['UserController', 'logoutUser']
-];
-
-if (array_key_exists(strtolower($command), $controllers)) {
-    [$controllerName, $methodName] = $controllers[strtolower($command)];
-    require_once "./Controllers/$controllerName.php";
-    executeCommand($controllerName, $methodName, $_POST);
-} else {
-    echo json_encode(['status' => true, 'response' => false]);
-}
-*/

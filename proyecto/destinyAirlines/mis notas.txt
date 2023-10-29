@@ -1,6 +1,7 @@
 usar axios en front para peticiones al back
 
-contraseñas en bbdd con md5 o cifrado actual
+modificar title en front al perder foco el window
+
 qr
 whatsapp
-user de la bbdd usado
+mostrar datos del propio user logueado
