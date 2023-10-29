@@ -59,8 +59,8 @@ CREATE TABLE `USERS` (
   `companyName` varchar(50),
   `companyTaxNumber` varchar(50),
   `companyPhoneNumber` varchar(20),
-  `failed_attempts` tinyint NOT NULL DEFAULT 0,
-  `lastFailedAttempt` date
+  `failedAttempts` tinyint NOT NULL DEFAULT 0,
+  `lastFailedAttempt` datetime
 );
 
 CREATE TABLE `BOOKS` (

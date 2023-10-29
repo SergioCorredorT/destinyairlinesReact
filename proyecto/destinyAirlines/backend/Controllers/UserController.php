@@ -151,6 +151,50 @@ final class UserController extends BaseController
 
     public function loginUser($POST)
     {
+        require_once './Tools/TokenTool.php';
+        $userData = [
+            'emailAddress'          => $POST['emailAddress'] ?? "",
+            'password'              => $POST['password'] ?? "",
+            'dateTime'  => date('Y-m-d H:i:s')
+        ];
+        $userData = UserSanitizer::sanitize($userData);
+        $isValidate = UserValidator::validate($userData);
+        if ($isValidate) {
+            $UserModel = new UserModel();
+            $results = $UserModel->readUserByEmail($userData["emailAddress"]);
+            if ($results) {
+                $iniTool = new IniTool('./Config/cfg.ini');
+                $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
+                $maxFailedLoginAttemps=intval($aboutLogin["maxFailedLoginAttemps"]);
+
+                if (intval($results[0]["failedAttempts"]) < $maxFailedLoginAttemps) {
+                    if (password_verify($userData["password"], $results[0]["passwordHash"])) {
+                        $UserModel->updateResetFailedAttempts($results[0]["id_USERS"]);
+                        $tokenSettings = $iniTool->getKeysAndValues("tokenSettings");
+                        $secondsMaxTimeLifeAccessToken = intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
+                        $secondsMaxTimeLifeRefreshToken = intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
+
+                        $data = [
+                            "id" => $results[0]["id_USERS"]
+                        ];
+
+                        $accessToken = TokenTool::generateToken($data, $secondsMaxTimeLifeAccessToken);
+                        $refreshToken = TokenTool::generateToken($data, $secondsMaxTimeLifeRefreshToken);
+                        return ["tokens" => ["accessToken" => $accessToken, "refreshToken" => $refreshToken]];
+                    } else {
+                        $UserModel->updateAddFailedAttempts($results[0]["id_USERS"]);
+                        [$user]=$UserModel->readFailedAttemptsById($results[0]["id_USERS"]);
+                        return ["response"=>false, "failedAttempts"=>$user["failedAttempts"], "lastFailedAttempt"=>$user["lastFailedAttempt"]];
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+    /*
+    public function loginUser($POST)
+    {
 //IMPLEMENTAR LÍMITE DE INTENTOS
         require_once './Tools/TokenTool.php';
         $userData = [
@@ -162,17 +206,14 @@ final class UserController extends BaseController
         $isValidate = UserValidator::validate($userData);
         if ($isValidate) {
             $UserModel = new UserModel();
+//recoger usuario solo por email, y después comprobar password(si no coincide password es un intento fallido)
             $results = $UserModel->readUserByEmailPassword($userData["emailAddress"], $userData["password"]);
             $data = [
                 "id" => $results[0]["id_USERS"]
             ];
+//en este if quizás añadir que el número de intentos deba ser menor que 3
             if ($results) {
-                /*
-                    Destiny Airlines
-                                LifeTime    minTime
-                    Refresh     3 días ,    1 día
-                    Access      1 hora,     30 min
-                */
+//Ahora poner el número de intentos a 0
                 $iniTool = new IniTool('./Config/cfg.ini');
                 $tokenSettings = $iniTool->getKeysAndValues("tokenSettings");
                 $secondsMaxTimeLifeAccessToken = intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
@@ -186,6 +227,7 @@ final class UserController extends BaseController
 
         return false;
     }
+*/
 
     public function logoutUser($POST)
     {

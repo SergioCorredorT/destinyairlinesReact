@@ -72,7 +72,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            error_log('Se ha capturado una excepción: ',  $er->getMessage(), "\n");
+            error_log('Se ha capturado una excepción: '.  $er->getMessage(). "\n");
             return false;
         }
         // Bind parameters
@@ -101,7 +101,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            error_log('Se ha capturado una excepción: ',  $er->getMessage(), "\n");
+            error_log('Se ha capturado una excepción: '.  $er->getMessage(). "\n");
             return false;
         }
         $stmt->execute();
@@ -111,34 +111,23 @@ abstract class BaseModel
             return false;
         }
     }
-
     protected function update($data, $where)
     {
-        //Ejemplo:
-        /*
-            $datas = ["zipCode"=>"11112", "phoneNumber3"=>"123456"];
-            if($usuario->update($datas, "country LIKE 'USA'")){echo "bieeeeeeeeeeen";}else{echo "maaaaaaaaaaaal";};
-        */
         $updateData = '';
         foreach ($data as $key => $value) {
-            $updateData .= "$key = :$key, ";
+                $updateData .= "$key = $value, ";
         }
         $updateData = rtrim($updateData, ', ');
-
         $query = "UPDATE $this->tableName SET $updateData WHERE $where";
-
+    
         // Prepare the query
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            error_log('Se ha capturado una excepción: ',  $er->getMessage(), "\n");
+            error_log('Se ha capturado una excepción: ' . $er->getMessage() . "\n");
             return false;
         }
-        // Bind parameters and execute the query
-        foreach ($data as $key => &$value) {
-            $stmt->bindParam(':' . $key, $value);
-        }
-
+        
         $stmt->execute();
         if (intval($stmt->errorCode()) === 0) {
             return true;

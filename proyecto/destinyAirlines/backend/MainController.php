@@ -6,6 +6,7 @@ function executeCommand($controllerName, $methodName, $params)
     try {
         $controller = new $controllerName();
         $response = $controller->$methodName($params);
+
         if (is_array($response) && array_keys($response) !== range(0, count($response) - 1)) {
             // Si $response es un array o array asociativo, fusionamos $response con el array que se pasa a json_encode
             echo json_encode(array_merge(['status' => true], $response));

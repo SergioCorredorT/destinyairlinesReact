@@ -29,11 +29,21 @@ final class UserModel extends BaseModel
         $passwordHash = parent::select("passwordHash", "emailAddress = '$email'");
 
         if (!empty($passwordHash) && password_verify($password, $passwordHash[0]["passwordHash"])) {
-            
-            return parent::select("*", "emailAddress = '$email' AND passwordHash = '".$passwordHash[0]["passwordHash"]."'");
+
+            return parent::select("*", "emailAddress = '$email' AND passwordHash = '" . $passwordHash[0]["passwordHash"] . "'");
         }
 
         return false;
+    }
+
+    public function readUserByEmail($email)
+    {
+        return parent::select("*", "emailAddress = '$email' ");
+    }
+
+    public function readFailedAttemptsById($id_USERS)
+    {
+        return parent::select("*", "id_USERS = '$id_USERS' ");
     }
 
     public function updateUsers($data, $where)
@@ -44,6 +54,16 @@ final class UserModel extends BaseModel
     public function updateUsersByEmail($data, $email)
     {
         return parent::update($data, " emailAddress = '$email'");
+    }
+
+    public function updateAddFailedAttempts($id_USERS)
+    {
+        return parent::update(["failedAttempts" => "failedAttempts + 1", "lastFailedAttempt" => "'" .date('Y-m-d H:i:s')."'"], "id_USERS = '$id_USERS'");
+    }
+
+    public function updateResetFailedAttempts($id_USERS)
+    {
+        return parent::update(["failedAttempts" => 0], " id_USERS = '$id_USERS'");
     }
 
     public function deleteUsers($where)

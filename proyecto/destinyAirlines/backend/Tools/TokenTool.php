@@ -9,6 +9,11 @@ class TokenTool
         $secretTokenPassword = $iniTool->getKeysAndValues("secretTokenPassword");
         $secret = $secretTokenPassword["secret"];
 
+        if(is_string($data))
+        {
+            $data = ["id"=>$data];
+        }
+
         $payload = array(
             "iss" => "destinyAirlines",
             "aud" => "destinyAirlines",

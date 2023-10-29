@@ -60,8 +60,8 @@ Table USERS {
   companyName varchar(50)
   companyTaxNumber varchar(50)
   companyPhoneNumber varchar(20)
-  failed_attempts tinyint [default: 0, not null]
-  lastFailedAttempt date
+  failedAttempts tinyint [default: 0, not null]
+  lastFailedAttempt datetime
 }
 
 Table BOOKS {
