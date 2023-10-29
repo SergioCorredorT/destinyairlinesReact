@@ -165,7 +165,7 @@ final class UserController extends BaseController
             if ($results) {
                 $iniTool = new IniTool('./Config/cfg.ini');
                 $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
-                $maxFailedLoginAttemps=intval($aboutLogin["maxFailedLoginAttemps"]);
+                $maxFailedLoginAttemps = intval($aboutLogin["maxFailedLoginAttemps"]);
 
                 if (intval($results[0]["failedAttempts"]) < $maxFailedLoginAttemps) {
                     if (password_verify($userData["password"], $results[0]["passwordHash"])) {
@@ -183,51 +183,30 @@ final class UserController extends BaseController
                         return ["tokens" => ["accessToken" => $accessToken, "refreshToken" => $refreshToken]];
                     } else {
                         $UserModel->updateAddFailedAttempts($results[0]["id_USERS"]);
-                        [$user]=$UserModel->readFailedAttemptsById($results[0]["id_USERS"]);
-                        return ["response"=>false, "failedAttempts"=>$user["failedAttempts"], "lastFailedAttempt"=>$user["lastFailedAttempt"]];
+                        [$user] = $UserModel->readFailedAttemptsById($results[0]["id_USERS"]);
+                        return ["response" => false, "failedAttempts" => $user["failedAttempts"], "lastFailedAttempt" => $user["lastFailedAttempt"]];
                     }
+                } else {
+                    $userData['toEmail'] = $results['emailAddress'];
+
+                    $originEmailIni = $iniTool->getKeysAndValues("originEmail");
+                    $userData['fromEmail'] = $originEmailIni['email'];
+                    $userData['fromPassword'] = $originEmailIni['password'];
+                    $userData['lastFailedAttempt']=$results[0]["lastFailedAttempt"];
+                    require_once './Tools/PasswordTool.php';
+                    $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
+                    $userData['newUserPassword'] = PasswordTool::generateRandomPassword(intval($aboutLogin["generatedPasswordCharacters"]));
+                    $userData["newPasswordHash"] = password_hash($userData["newUserPassword"], PASSWORD_BCRYPT);
+                    $UserModel->updatePasswordHashById($userData["newPasswordHash"], $results[0]["id_USERS"]);
+
+                    require_once './Tools/EmailTool.php';
+                    return ["response" => false, "emailSent" => EmailTool::sendEmail($userData, "failedAttemptsTemplate")];
                 }
             }
         }
 
         return false;
     }
-    /*
-    public function loginUser($POST)
-    {
-//IMPLEMENTAR LÍMITE DE INTENTOS
-        require_once './Tools/TokenTool.php';
-        $userData = [
-            'emailAddress'          => $POST['emailAddress'] ?? "",
-            'password'              => $POST['password'] ?? "",
-            'dateTime'  => date('Y-m-d H:i:s')
-        ];
-        $userData = UserSanitizer::sanitize($userData);
-        $isValidate = UserValidator::validate($userData);
-        if ($isValidate) {
-            $UserModel = new UserModel();
-//recoger usuario solo por email, y después comprobar password(si no coincide password es un intento fallido)
-            $results = $UserModel->readUserByEmailPassword($userData["emailAddress"], $userData["password"]);
-            $data = [
-                "id" => $results[0]["id_USERS"]
-            ];
-//en este if quizás añadir que el número de intentos deba ser menor que 3
-            if ($results) {
-//Ahora poner el número de intentos a 0
-                $iniTool = new IniTool('./Config/cfg.ini');
-                $tokenSettings = $iniTool->getKeysAndValues("tokenSettings");
-                $secondsMaxTimeLifeAccessToken = intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
-                $secondsMaxTimeLifeRefreshToken = intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
-
-                $accessToken = TokenTool::generateToken($data, $secondsMaxTimeLifeAccessToken);
-                $refreshToken = TokenTool::generateToken($data, $secondsMaxTimeLifeRefreshToken);
-                return ["tokens"=>["accessToken" => $accessToken, "refreshToken" => $refreshToken]];
-            }
-        }
-
-        return false;
-    }
-*/
 
     public function logoutUser($POST)
     {
