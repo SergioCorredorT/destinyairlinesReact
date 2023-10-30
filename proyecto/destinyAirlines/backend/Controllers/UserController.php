@@ -104,7 +104,9 @@ final class UserController extends BaseController
                 $userData = UserSanitizer::sanitize($userData);
                 if (UserValidator::validate($userData)) {
                     if (isset($userData["password"])) {
-                        $userData["passwordHash"] = password_hash($userData["password"], PASSWORD_BCRYPT);
+                        $userData["passwordHash"] = "'".password_hash($userData["password"], PASSWORD_BCRYPT)."'";
+                        $dataString = print_r($userData, true);
+                        error_log($dataString);
                         unset($userData["password"]);
                     }
 
@@ -187,17 +189,20 @@ final class UserController extends BaseController
                         return ["response" => false, "failedAttempts" => $user["failedAttempts"], "lastFailedAttempt" => $user["lastFailedAttempt"]];
                     }
                 } else {
-                    $userData['toEmail'] = $results['emailAddress'];
+                    $userData['toEmail'] = $results[0]['emailAddress'];
 
                     $originEmailIni = $iniTool->getKeysAndValues("originEmail");
                     $userData['fromEmail'] = $originEmailIni['email'];
                     $userData['fromPassword'] = $originEmailIni['password'];
                     $userData['lastFailedAttempt']=$results[0]["lastFailedAttempt"];
+                    $userData['subject']="Cambio de contraseña";
+
                     require_once './Tools/PasswordTool.php';
                     $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
                     $userData['newUserPassword'] = PasswordTool::generateRandomPassword(intval($aboutLogin["generatedPasswordCharacters"]));
                     $userData["newPasswordHash"] = password_hash($userData["newUserPassword"], PASSWORD_BCRYPT);
                     $UserModel->updatePasswordHashById($userData["newPasswordHash"], $results[0]["id_USERS"]);
+                    $UserModel->updateResetFailedAttempts($results[0]["id_USERS"]);//Desbloqueamos cuenta. Temporal debido a la amenaza de múltiples intentos de login falso ajeno
 
                     require_once './Tools/EmailTool.php';
                     return ["response" => false, "emailSent" => EmailTool::sendEmail($userData, "failedAttemptsTemplate")];

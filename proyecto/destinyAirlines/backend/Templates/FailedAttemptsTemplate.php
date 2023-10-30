@@ -7,15 +7,34 @@ class FailedAttemptsTemplate
   {
     $iniTool = new IniTool('./Config/cfg.ini');
     $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
+
+    $companyInfo = $iniTool->getKeysAndValues("companyInfo");
+    $companyPhoneNumber = $companyInfo['phoneNumber'];
+    $companyLegalInfo = $companyInfo['legalInfo'];
+
     $maxFailedLoginAttemps = $aboutLogin['maxFailedLoginAttemps'];
     $generatedPasswordCharacters = $aboutLogin['generatedPasswordCharacters'];
 
     $newUserPassword = $data["newUserPassword"];
     $lastFailedAttempt = $data['lastFailedAttempt'];
 
-    $subject = "subject";
-    $userMessage = "";
+    $subject = $data["subject"];
+    $message = "Estimado usuario,
 
+    <p>Hemos detectado $maxFailedLoginAttemps intentos fallidos de inicio de sesión en su cuenta siendo el última con fecha $lastFailedAttempt. Por razones de seguridad, hemos restablecido su contraseña.</p>
+    
+    <p>Su nueva contraseña es: '$newUserPassword'</p>
+    
+    <p>Le recomendamos que inicie sesión con esta nueva contraseña lo antes posible y que la cambie por una que sea fácil de recordar para usted.</p>
+    
+    <p>Si no ha intentado iniciar sesión recientemente y cree que alguien más podría estar intentando acceder a su cuenta, por favor, póngase en contacto con nuestro servicio de atención al cliente.</p>
+    
+    <p>Gracias por su comprensión.</p>
+    
+    <p>Atentamente,</p>
+    <p>Sergio Corredor</p>
+    <p>Director Ejecutivo de Destiny Airlines</p>
+    ";
 
     $isotipo_URL = "https://lh3.googleusercontent.com/pw/ADCreHcBgNwlq4KG-PxMPtJXEOCJZ7BD6pgXMgBvLWmA8qY0R1SkzjPMcASMurvjyp7pAcA4rngXW6yn0umyPjL72b9eO9RwavbVMHIArvmvutsjOodl8wnH4RH0XfOqY1COQAVV6qMyQOy1VqJ3Ur77PA=w200-h190-s-no?authuser=0";
 
@@ -86,44 +105,19 @@ class FailedAttemptsTemplate
               <img class="logo" src="' . $isotipo_URL . '" alt="Logotipo" />
             </div>
             <div class="header-contain">
-                <table>
-                <tr>
-                  <td>
-                    Nombre:
-                  </td>
-                  <td>
-                  ' . $userName . '
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Email:
-                  </td>
-                  <td>
-                  ' . $userEmail . '
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Número de teléfono:
-                  </td>
-                  <td>
-                  ' . $userPhoneNumber . '
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Asunto:
-                  </td>
-                  <td>
-                  ' . $subject . '
-                  </td>
-                </tr>
-              </table>
-            </div>
+            <table>
+            <tr>
+              <td>
+                Asunto:
+              </td>
+              <td>
+              ' . $subject . '
+              </td>
+            </tr>
+            </table>
           </header>
           <main>
-            <p class="mainText">' . $userMessage . '</p>
+            <p class="mainText">' . $message . '</p>
           </main>
           <footer>
               <p>' . $companyPhoneNumber . '</p>

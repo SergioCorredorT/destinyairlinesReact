@@ -113,9 +113,12 @@ abstract class BaseModel
     }
     protected function update($data, $where)
     {
+        $dataString = ":::".print_r($data, true);
+        error_log($dataString);
+
         $updateData = '';
         foreach ($data as $key => $value) {
-                $updateData .= "$key = $value, ";
+            $updateData .= "$key = $value, ";
         }
         $updateData = rtrim($updateData, ', ');
         $query = "UPDATE $this->tableName SET $updateData WHERE $where";
@@ -124,7 +127,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            error_log('Se ha capturado una excepción: ' . $er->getMessage() . "\n");
+            error_log('Catched exception: ' . $er->getMessage() . "\n");
             return false;
         }
         

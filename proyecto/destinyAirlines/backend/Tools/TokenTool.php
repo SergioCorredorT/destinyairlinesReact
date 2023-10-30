@@ -13,6 +13,10 @@ class TokenTool
         {
             $data = ["id"=>$data];
         }
+        elseif(!is_array($data))
+        {
+            $data = json_decode(json_encode($data), true);
+        }
 
         $payload = array(
             "iss" => "destinyAirlines",
@@ -82,6 +86,7 @@ class TokenTool
             $headers->alg = 'HS256';
             $headers->typ = "JWT";
 
+            //Retorna un objeto std
             $decoded = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($secret, "HS256"), $headers);
 
             return $decoded;

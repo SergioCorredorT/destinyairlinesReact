@@ -53,7 +53,7 @@ final class UserModel extends BaseModel
 
     public function updatePasswordHashById($passwordHash, $id_USERS)
     {
-        return parent::update(" passwordHash = '$passwordHash'", " id_USERS = '$id_USERS'");
+        return parent::update(["passwordHash" => "'".$passwordHash."'"], " id_USERS = $id_USERS");
     }
 
     public function updateUsersByEmail($data, $email)
