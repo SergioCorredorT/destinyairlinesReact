@@ -7,30 +7,27 @@ class FailedAttemptsTemplate
   {
     $iniTool = new IniTool('./Config/cfg.ini');
     $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
-
     $companyInfo = $iniTool->getKeysAndValues("companyInfo");
+
     $companyPhoneNumber = $companyInfo['phoneNumber'];
     $companyLegalInfo = $companyInfo['legalInfo'];
 
     $maxFailedLoginAttemps = $aboutLogin['maxFailedLoginAttemps'];
-    $generatedPasswordCharacters = $aboutLogin['generatedPasswordCharacters'];
 
-    $newUserPassword = $data["newUserPassword"];
     $lastFailedAttempt = $data['lastFailedAttempt'];
-
+    $unblockLink = $data['unblockLink'];
     $subject = $data["subject"];
+  
     $message = "Estimado usuario,
 
-    <p>Hemos detectado $maxFailedLoginAttemps intentos fallidos de inicio de sesión en su cuenta siendo el última con fecha $lastFailedAttempt. Por razones de seguridad, hemos restablecido su contraseña.</p>
+    <p>Hemos detectado $maxFailedLoginAttemps intentos fallidos de inicio de sesión en su cuenta siendo el última con fecha $lastFailedAttempt. Por razones de seguridad, hemos bloqueado su cuenta y restablecido su contraseña.</p>
     
-    <p>Su nueva contraseña es: '$newUserPassword'</p>
-    
-    <p>Le recomendamos que inicie sesión con esta nueva contraseña lo antes posible y que la cambie por una que sea fácil de recordar para usted.</p>
-    
+    <p>Puede desbloquear su cuenta accediendo al siguiente enlace: '$unblockLink'</p>
+
     <p>Si no ha intentado iniciar sesión recientemente y cree que alguien más podría estar intentando acceder a su cuenta, por favor, póngase en contacto con nuestro servicio de atención al cliente.</p>
-    
+
     <p>Gracias por su comprensión.</p>
-    
+
     <p>Atentamente,</p>
     <p>Sergio Corredor</p>
     <p>Director Ejecutivo de Destiny Airlines</p>

@@ -60,7 +60,8 @@ CREATE TABLE `USERS` (
   `companyTaxNumber` varchar(50),
   `companyPhoneNumber` varchar(20),
   `failedAttempts` tinyint NOT NULL DEFAULT 0,
-  `lastFailedAttempt` datetime
+  `lastFailedAttempt` datetime,
+  `lastPasswordResetEmailSentAt` datetime
 );
 
 CREATE TABLE `BOOKS` (

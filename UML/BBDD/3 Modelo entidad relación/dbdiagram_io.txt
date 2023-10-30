@@ -62,6 +62,7 @@ Table USERS {
   companyPhoneNumber varchar(20)
   failedAttempts tinyint [default: 0, not null]
   lastFailedAttempt datetime
+  lastPasswordResetEmailSentAt datetime
 }
 
 Table BOOKS {

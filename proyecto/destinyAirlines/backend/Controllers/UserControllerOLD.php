@@ -104,9 +104,7 @@ final class UserController extends BaseController
                 $userData = UserSanitizer::sanitize($userData);
                 if (UserValidator::validate($userData)) {
                     if (isset($userData["password"])) {
-                        $userData["passwordHash"] = "'" . password_hash($userData["password"], PASSWORD_BCRYPT) . "'";
-                        $dataString = print_r($userData, true);
-                        error_log($dataString);
+                        $userData["passwordHash"] = "'".password_hash($userData["password"], PASSWORD_BCRYPT)."'";
                         unset($userData["password"]);
                     }
 
@@ -168,16 +166,17 @@ final class UserController extends BaseController
                 $iniTool = new IniTool('./Config/cfg.ini');
                 $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
                 $maxFailedLoginAttemps = intval($aboutLogin["maxFailedLoginAttemps"]);
-                $data = [
-                    "id" => $results[0]["id_USERS"]
-                ];
 
-                if (intval($results[0]["failedAttempts"]) < $maxFailedLoginAttemps - 1) {
+                if (intval($results[0]["failedAttempts"]) < $maxFailedLoginAttemps) {
                     if (password_verify($userData["password"], $results[0]["passwordHash"])) {
                         $UserModel->updateResetFailedAttempts($results[0]["id_USERS"]);
                         $tokenSettings = $iniTool->getKeysAndValues("tokenSettings");
                         $secondsMaxTimeLifeAccessToken = intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
                         $secondsMaxTimeLifeRefreshToken = intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
+
+                        $data = [
+                            "id" => $results[0]["id_USERS"]
+                        ];
 
                         $accessToken = TokenTool::generateToken($data, $secondsMaxTimeLifeAccessToken);
                         $refreshToken = TokenTool::generateToken($data, $secondsMaxTimeLifeRefreshToken);
@@ -188,30 +187,24 @@ final class UserController extends BaseController
                         return ["response" => false, "failedAttempts" => $user["failedAttempts"], "lastFailedAttempt" => $user["lastFailedAttempt"]];
                     }
                 } else {
-//aquí comprobar si se envió el correo
-                    $userRestartData['toEmail'] = $results[0]['emailAddress'];
+                    $userData['toEmail'] = $results[0]['emailAddress'];
 
                     $originEmailIni = $iniTool->getKeysAndValues("originEmail");
-                    $userRestartData['fromEmail'] = $originEmailIni['email'];
-                    $userRestartData['fromPassword'] = $originEmailIni['password'];
-                    $userRestartData['lastFailedAttempt'] = $results[0]["lastFailedAttempt"];
-                    $userRestartData['subject'] = "Cambio de contraseña";
+                    $userData['fromEmail'] = $originEmailIni['email'];
+                    $userData['fromPassword'] = $originEmailIni['password'];
+                    $userData['lastFailedAttempt']=$results[0]["lastFailedAttempt"];
+                    $userData['subject']="Cambio de contraseña";
 
                     require_once './Tools/PasswordTool.php';
-                    //Crear token
-                    $unblockToken = TokenTool::generateToken($data, $secondsMaxTimeLifeAccessToken);
-
-                    //Crear link
-                    $userRestartData["unblockLink"] = $aboutLogin["endpointResetPasswordLink"] . "?unblockToken=" . urlencode($unblockToken);
-                    //$UserModel->updateResetFailedAttempts($results[0]["id_USERS"]); //Desbloqueamos cuenta. Temporal debido a la amenaza de múltiples intentos de login falso ajeno
+                    $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
+                    $userData['newUserPassword'] = PasswordTool::generateRandomPassword(intval($aboutLogin["generatedPasswordCharacters"]));
+                    $userData["newPasswordHash"] = password_hash($userData["newUserPassword"], PASSWORD_BCRYPT);
+                    $UserModel->updatePasswordHashById($userData["newPasswordHash"], $results[0]["id_USERS"]);
+                    //Mejor crear una password de desbloqueo, enviar link de GET al email, que conduzca a la api y desbloquee la cuenta
+                    $UserModel->updateResetFailedAttempts($results[0]["id_USERS"]);//Desbloqueamos cuenta. Temporal debido a la amenaza de múltiples intentos de login falso ajeno
 
                     require_once './Tools/EmailTool.php';
-                    $isEmailSent = EmailTool::sendEmail($userRestartData, "failedAttemptsTemplate");
-                    if($isEmailSent) {
-//Guardar en bbdd la fecha en que se envió
-                    }
-
-                    return ["response" => false, "emailSent" => $isEmailSent];
+                    return ["response" => false, "emailSent" => EmailTool::sendEmail($userData, "failedAttemptsTemplate")];
                 }
             }
         }
