@@ -194,6 +194,7 @@ final class UserController extends BaseController
                     //Comprobamos si se envió el correo
                     $isEmailSent = false;
                     if (!$results[0]['lastPasswordResetEmailSentAt']) {
+                        $UserModel->updateAddFailedAttempts($results[0]["id_USERS"]);
                         $userRestartData['toEmail'] = $results[0]['emailAddress'];
 
                         $originEmailIni = $iniTool->getKeysAndValues("originEmail");
@@ -218,7 +219,8 @@ final class UserController extends BaseController
                             $UserModel->updateLastPasswordResetEmailSentAt(date('Y-m-d H:i:s'), $results[0]["id_USERS"]);
                         }
                     }
-                    return ["response" => false, "emailSent" => $isEmailSent];
+                    [$user] = $UserModel->readFailedAttemptsById($results[0]["id_USERS"]);
+                    return ["response" => false, "failedAttempts" => $user["failedAttempts"], "emailSent" => $isEmailSent];
                 }
             }
         }

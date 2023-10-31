@@ -1,98 +1,35 @@
 <?php
-require_once "./images/isotipo_small_CSS.php";
 require_once "./Tools/IniTool.php";
-class ContactTemplate
+require_once "./Templates/BaseTemplate.php";
+class ContactTemplate extends BaseTemplate
 {
   static function applyContactTemplate($data)
   {
-    //Recogemos del cfg.ini lo del footer
-    $iniTool = new IniTool('./Config/cfg.ini');
-    $companyInfo = $iniTool->getKeysAndValues("companyInfo");
-    $companyPhoneNumber = $companyInfo['phoneNumber'];
-    $companyLegalInfo = $companyInfo['legalInfo'];
-
+    $title = "Contact";
     $userName = $data["name"];
     $userEmail = $data["email"];
     $userPhoneNumber = $data["phoneNumber"];
     $subject = $data["subject"];
-    $userMessage = $data["message"];
+    $message = $data["message"];
 
-    $isotipo_URL = "https://lh3.googleusercontent.com/pw/ADCreHcBgNwlq4KG-PxMPtJXEOCJZ7BD6pgXMgBvLWmA8qY0R1SkzjPMcASMurvjyp7pAcA4rngXW6yn0umyPjL72b9eO9RwavbVMHIArvmvutsjOodl8wnH4RH0XfOqY1COQAVV6qMyQOy1VqJ3Ur77PA=w200-h190-s-no?authuser=0";
-
-    return '
+    return "
     <!DOCTYPE html>
-    <html lang="es">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Contact</title>
-        <style>
-        body * {
-          box-sizing: border-box;
-        }
-
-        body {
-          font-family: Arial, sans-serif;
-          padding: 20px;
-        }
-
-        header {
-          text-align: center;
-        }
-
-        .logo {
-          width: 200px;
-          margin: auto;
-        }
-
-        .header-contain {
-          background-color: #f8f9fa;
-          padding: 20px;
-        }
-
-        .header-contain td{
-          text-align:left;
-          padding: 5px 20px;
-        }
-
-        main {
-          padding: 20px;
-          text-align: center;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .mainText
-        {
-          padding:20px;
-        }
-        footer {
-          text-align: center;
-          background-color: #f8f9fa;
-          padding: 20px;
-        }
-
-        footer > div {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 5px;
-        }
-        </style>
+    <html lang='es'>
+        <head>
+          " . parent::getHeadContent($title) . "
         </head>
         <body>
           <header>
-            <div class="header-logo">
-              <img class="logo" src="' . $isotipo_URL . '" alt="Logotipo" />
-            </div>
-            <div class="header-contain">
+            " . parent::getHeaderContent($subject) . "
+          </header>
+          <main>
                 <table>
                 <tr>
                   <td>
                     Nombre:
                   </td>
                   <td>
-                  ' . $userName . '
+                    $userName
                   </td>
                 </tr>
                 <tr>
@@ -100,7 +37,7 @@ class ContactTemplate
                     Email:
                   </td>
                   <td>
-                  ' . $userEmail . '
+                    $userEmail
                   </td>
                 </tr>
                 <tr>
@@ -108,28 +45,16 @@ class ContactTemplate
                     Número de teléfono:
                   </td>
                   <td>
-                  ' . $userPhoneNumber . '
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Asunto:
-                  </td>
-                  <td>
-                  ' . $subject . '
+                    $userPhoneNumber
                   </td>
                 </tr>
               </table>
-            </div>
-          </header>
-          <main>
-            <p class="mainText">' . $userMessage . '</p>
+              ". parent::getPMainText($message) ."
           </main>
-          <footer>
-              <p>' . $companyPhoneNumber . '</p>
-              <p>' . $companyLegalInfo . '</p>
-          </footer>
+          <footer>"
+            . parent::getFooterContent() .
+          "</footer>
         </body>
-      </html>';
+      </html>";
   }
 }

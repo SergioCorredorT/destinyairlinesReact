@@ -24,13 +24,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     //modificar a null el campo del email enviado de la tabla users
                     $UserModel->updateLastPasswordResetEmailSentAt("NULL", $userId);
 
-                    echo 'Contraseña cambiada con éxito.';
+                    echo '<span class="success">Contraseña cambiada con éxito, puede cerrar esta página.</span>';
                 } else {
-                    echo 'Contraseña ya fue cambiada en una anterior ocasión.';
+                    echo '<span class="warning">Contraseña ya fue cambiada en una anterior ocasión.</span>';
                 }
             }
         } catch (Exception $er) {
-            echo 'Hubo un error en el cambio de contraseña.';
+            echo '<span class="error">Hubo un error en el cambio de contraseña.</span>';
             error_log('Catched exception: ' .  $er->getMessage() . "\n");
         }
     }
@@ -50,15 +50,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 display: grid;
                 place-content: center;
                 height: 100vh;
-                background-color: #f0f0f0;
+                background-color: rgb(32, 35, 37);
             }
 
             form {
-                background-color: #fff;
+                background-color: rgb(24, 26, 27);
                 padding: 20px;
                 border-radius: 15px;
                 box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.2);
                 width: 250px;
+                color: #fff;
             }
 
             input[type="password"] {
@@ -66,8 +67,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 padding: 10px;
                 margin-bottom: 10px;
                 border-radius: 10px;
-                border: 1px solid rgba(204, 204, 204);
+                border: 1px solid rgb(118, 110, 97);
                 box-sizing: border-box;
+                background-color: rgba(255, 255, 255, 0.01);
+                color: #fff;
+            }
+
+            .warning {
+                color: rgb(240, 173, 78);
+            }
+
+            .error {
+                color: rgb(204, 2, 2);
+            }
+
+            .success {
+                color: rgb(40, 167, 69);
+            }
+
+            .warning,
+            .error,
+            .success {
+                font-weight: 600;
             }
 
             input[type="submit"] {
@@ -104,18 +125,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             function validarFormulario(event) {
                 event.preventDefault();
 
-                var newPassword = document.getElementById('new_password').value;
-                var confirmPassword = document.getElementById('confirm_password').value;
+                let newPassword = document.getElementById('new_password').value;
+                let confirmPassword = document.getElementById('confirm_password').value;
+                let mensaje = document.getElementById("mensaje");
 
                 // Validar que las contraseñas coinciden
                 if (newPassword !== confirmPassword) {
-                    alert('Las contraseñas no coinciden.');
+                    mensaje.innerHTML = "<span class='error'>Las contraseñas no coinciden.</span>";
                     return;
                 }
 
                 // Longitud mínima y máxima
                 if (newPassword.length < 9 || newPassword.length > 100) {
-                    alert("La contraseña debe tener entre 9 y 100 caracteres.");
+                    mensaje.innerHTML = "<span class='error'>La contraseña debe tener entre 9 y 100 caracteres.</span>";
                     return;
                 }
 
@@ -124,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     !/[A-Z]/.test(newPassword) || // Debe contener al menos una letra mayúscula
                     !/[0-9]/.test(newPassword) || // Debe contener al menos un dígito
                     !/[\W_]/.test(newPassword)) { // Debe contener al menos un carácter especial
-                    alert("La contraseña debe contener al menos una letra minúscula, una letra mayúscula, un dígito y un carácter especial.");
+                    mensaje.innerHTML = "<span class='error'>La contraseña debe contener al menos una letra minúscula, una letra mayúscula, un dígito y un carácter especial.</span>";
 
                     return;
                 }
@@ -143,9 +165,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         throw new Error('Error: ' + response.statusText);
                     }
                 }).then(text => {
-                    document.getElementById("mensaje").innerHTML = text;
+                    mensaje.innerHTML = text;
                 }).catch(error => {
-                    document.getElementById("mensaje").innerHTML = "Hubo un error en el cambio de contraseña.";
+                    mensaje.innerHTML = '<span class="error">Hubo un error en el cambio de contraseña.</span>';
                     console.error('Error:', error);
                 });
             }
