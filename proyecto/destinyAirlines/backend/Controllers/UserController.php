@@ -105,8 +105,6 @@ final class UserController extends BaseController
                 if (UserValidator::validate($userData)) {
                     if (isset($userData["password"])) {
                         $userData["passwordHash"] = "'" . password_hash($userData["password"], PASSWORD_BCRYPT) . "'";
-                        $dataString = print_r($userData, true);
-                        error_log($dataString);
                         unset($userData["password"]);
                     }
 
@@ -179,6 +177,11 @@ final class UserController extends BaseController
                         $secondsMaxTimeLifeAccessToken = intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
                         $secondsMaxTimeLifeRefreshToken = intval($tokenSettings["secondsMaxTimeLifeRefreshToken"]);
 
+                        //Poner a null el lastPasswordResetEmailSentAt si es que tenía algo
+                        if ($results[0]['lastPasswordResetEmailSentAt']) {
+                            $UserModel->updateLastPasswordResetEmailSentAt(null, $results[0]["id_USERS"]);
+                        }
+
                         $accessToken = TokenTool::generateToken($data, $secondsMaxTimeLifeAccessToken);
                         $refreshToken = TokenTool::generateToken($data, $secondsMaxTimeLifeRefreshToken);
                         return ["tokens" => ["accessToken" => $accessToken, "refreshToken" => $refreshToken]];
@@ -188,29 +191,33 @@ final class UserController extends BaseController
                         return ["response" => false, "failedAttempts" => $user["failedAttempts"], "lastFailedAttempt" => $user["lastFailedAttempt"]];
                     }
                 } else {
-//aquí comprobar si se envió el correo
-                    $userRestartData['toEmail'] = $results[0]['emailAddress'];
+                    //Comprobamos si se envió el correo
+                    $isEmailSent = false;
+                    if (!$results[0]['lastPasswordResetEmailSentAt']) {
+                        $userRestartData['toEmail'] = $results[0]['emailAddress'];
 
-                    $originEmailIni = $iniTool->getKeysAndValues("originEmail");
-                    $userRestartData['fromEmail'] = $originEmailIni['email'];
-                    $userRestartData['fromPassword'] = $originEmailIni['password'];
-                    $userRestartData['lastFailedAttempt'] = $results[0]["lastFailedAttempt"];
-                    $userRestartData['subject'] = "Cambio de contraseña";
+                        $originEmailIni = $iniTool->getKeysAndValues("originEmail");
+                        $userRestartData['fromEmail'] = $originEmailIni['email'];
+                        $userRestartData['fromPassword'] = $originEmailIni['password'];
+                        $userRestartData['lastFailedAttempt'] = $results[0]["lastFailedAttempt"];
+                        $userRestartData['subject'] = "Cambio de contraseña";
 
-                    require_once './Tools/PasswordTool.php';
-                    //Crear token
-                    $unblockToken = TokenTool::generateToken($data, $secondsMaxTimeLifeAccessToken);
+                        require_once './Tools/PasswordTool.php';
+                        //Crear token
+                        $tokenSettings = $iniTool->getKeysAndValues("tokenSettings");
+                        $secondsMaxTimeLifeAccessToken = intval($tokenSettings["secondsMaxTimeLifeAccessToken"]);
+                        $unblockToken = TokenTool::generateToken($data, $secondsMaxTimeLifeAccessToken);
 
-                    //Crear link
-                    $userRestartData["unblockLink"] = $aboutLogin["endpointResetPasswordLink"] . "?unblockToken=" . urlencode($unblockToken);
-                    //$UserModel->updateResetFailedAttempts($results[0]["id_USERS"]); //Desbloqueamos cuenta. Temporal debido a la amenaza de múltiples intentos de login falso ajeno
+                        //Crear link
+                        $userRestartData["unblockLink"] = $aboutLogin["endpointResetPasswordLink"] . "?unblockToken=" . urlencode($unblockToken);
 
-                    require_once './Tools/EmailTool.php';
-                    $isEmailSent = EmailTool::sendEmail($userRestartData, "failedAttemptsTemplate");
-                    if($isEmailSent) {
-//Guardar en bbdd la fecha en que se envió
+                        require_once './Tools/EmailTool.php';
+                        $isEmailSent = EmailTool::sendEmail($userRestartData, "failedAttemptsTemplate");
+                        if ($isEmailSent) {
+                            //Si el email se ha enviado guardamos la fecha de envío
+                            $UserModel->updateLastPasswordResetEmailSentAt(date('Y-m-d H:i:s'), $results[0]["id_USERS"]);
+                        }
                     }
-
                     return ["response" => false, "emailSent" => $isEmailSent];
                 }
             }
@@ -224,8 +231,8 @@ final class UserController extends BaseController
         require_once './Tools/TokenTool.php';
 
         $userData = [
-            'refreshToken'           => $POST['refreshToken'] ?? "",
-            'dateTime'              => date('Y-m-d H:i:s')
+            'refreshToken'  => $POST['refreshToken'] ?? "",
+            'dateTime'      => date('Y-m-d H:i:s')
         ];
         if (TokenTool::decodeAndCheckToken($userData["refreshToken"])) {
             //eliminar tokens en el frontend

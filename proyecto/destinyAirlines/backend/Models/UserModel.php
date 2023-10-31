@@ -43,7 +43,12 @@ final class UserModel extends BaseModel
 
     public function readFailedAttemptsById($id_USERS)
     {
-        return parent::select("*", "id_USERS = '$id_USERS' ");
+        return parent::select("*", "id_USERS = $id_USERS ");
+    }
+
+    public function readLastPasswordResetEmailSentAt($id_USERS)
+    {
+        return parent::select("lastPasswordResetEmailSentAt", "id_USERS = $id_USERS ");
     }
 
     public function updateUsers($data, $where)
@@ -53,7 +58,7 @@ final class UserModel extends BaseModel
 
     public function updatePasswordHashById($passwordHash, $id_USERS)
     {
-        return parent::update(["passwordHash" => "'".$passwordHash."'"], " id_USERS = $id_USERS");
+        return parent::update(["passwordHash" => "'" . $passwordHash . "'"], " id_USERS = $id_USERS");
     }
 
     public function updateUsersByEmail($data, $email)
@@ -63,12 +68,20 @@ final class UserModel extends BaseModel
 
     public function updateAddFailedAttempts($id_USERS)
     {
-        return parent::update(["failedAttempts" => "failedAttempts + 1", "lastFailedAttempt" => "'" .date('Y-m-d H:i:s')."'"], "id_USERS = '$id_USERS'");
+        return parent::update(["failedAttempts" => "failedAttempts + 1", "lastFailedAttempt" => "'" . date('Y-m-d H:i:s') . "'"], "id_USERS = $id_USERS");
     }
 
     public function updateResetFailedAttempts($id_USERS)
     {
-        return parent::update(["failedAttempts" => 0], " id_USERS = '$id_USERS'");
+        return parent::update(["failedAttempts" => 0], " id_USERS = $id_USERS");
+    }
+
+    public function updateLastPasswordResetEmailSentAt($lastPasswordResetEmailSentAt, $id_USERS)
+    {
+        if (strtolower($lastPasswordResetEmailSentAt) != "null") {
+            $lastPasswordResetEmailSentAt = "'" . $lastPasswordResetEmailSentAt . "'";
+        }
+        return parent::update(["lastPasswordResetEmailSentAt" => $lastPasswordResetEmailSentAt], " id_USERS = $id_USERS");
     }
 
     public function deleteUsers($where)

@@ -113,9 +113,6 @@ abstract class BaseModel
     }
     protected function update($data, $where)
     {
-        $dataString = ":::".print_r($data, true);
-        error_log($dataString);
-
         $updateData = '';
         foreach ($data as $key => $value) {
             $updateData .= "$key = $value, ";
