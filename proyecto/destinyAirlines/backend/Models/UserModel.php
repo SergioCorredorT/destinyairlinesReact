@@ -41,7 +41,7 @@ final class UserModel extends BaseModel
         return parent::select("*", "emailAddress = '$email' ");
     }
 
-    public function readFailedAttemptsById($id_USERS)
+    public function readUserById($id_USERS)
     {
         return parent::select("*", "id_USERS = $id_USERS ");
     }

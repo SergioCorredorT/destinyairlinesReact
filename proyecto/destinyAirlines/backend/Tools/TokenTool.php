@@ -9,12 +9,9 @@ class TokenTool
         $secretTokenPassword = $iniTool->getKeysAndValues("secretTokenPassword");
         $secret = $secretTokenPassword["secret"];
 
-        if(is_string($data))
-        {
-            $data = ["id"=>$data];
-        }
-        elseif(!is_array($data))
-        {
+        if (is_string($data)) {
+            $data = ["id" => $data];
+        } elseif (!is_array($data)) {
             $data = json_decode(json_encode($data), true);
         }
 
@@ -40,11 +37,11 @@ class TokenTool
             Access      1 hora,     30 min
         */
 
-        $payloadRefreshToken = TokenTool::decodeAndCheckToken($refreshToken);
+        $payloadRefreshToken = TokenTool::decodeAndCheckToken($refreshToken, "refresh");
         $rsp = [];
 
-        if ($payloadRefreshToken) {
-            $dataRefreshToken = $payloadRefreshToken->data;
+        if ($payloadRefreshToken["response"]) {
+            $dataRefreshToken = $payloadRefreshToken["response"]->data;
 
             $timeRemainingAccessTokenTime = TokenTool::getRemainingTokenTime($accessToken);
             if ($timeRemainingAccessTokenTime < $minLifeTimeAccessToken) {
@@ -62,9 +59,9 @@ class TokenTool
     public static function getRemainingTokenTime($token)
     {
         try {
-            $decoded = TokenTool::decodeAndCheckToken($token);
-            if ($decoded) {
-                $remainingTime = $decoded->exp - time();
+            $decodedToken = TokenTool::decodeAndCheckToken($token);
+            if ($decodedToken["response"]) {
+                $remainingTime = $decodedToken["response"]->exp - time();
                 return $remainingTime;
             }
             return 0;
@@ -75,10 +72,10 @@ class TokenTool
         }
     }
 
-    public static function decodeAndCheckToken($token)
+    public static function decodeAndCheckToken($token, $type = "")
     {
         $iniTool = new IniTool('./Config/cfg.ini');
-        $secretTokenPassword = $iniTool->getKeysAndValues("secretTokenPassword"); // Normalmente se recogería de una variable de entorno desde $_ENV
+        $secretTokenPassword = $iniTool->getKeysAndValues("secretTokenPassword");
         $secret = $secretTokenPassword["secret"];
 
         try {
@@ -88,20 +85,27 @@ class TokenTool
 
             //Retorna un objeto std
             $decoded = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($secret, "HS256"), $headers);
-
-            return $decoded;
+            if (!empty($type)) {
+                if (trim($type) != trim($decoded->data->type)) {
+                    throw new Exception('No coincide el tipo recibido con el tipo de token');
+                }
+            }
+            return ["response" => $decoded];
         } catch (\Firebase\JWT\ExpiredException $e) {
             // El token ha expirado
-            error_log('El token ha expirado');
-            return false;
+            return ["response" => false, "errorCode" => 1];
         } catch (\Firebase\JWT\SignatureInvalidException $e) {
             // La firma del token no coincide con la clave proporcionada
-            error_log('La firma del token no coincide con la clave proporcionada');
-            return false;
+            return ["response" => false, "errorCode" => 2];
         } catch (Exception $e) {
             // Otro error
-            error_log($e->getMessage());
-            return false;
+            return ["response" => false, "errorCode" => 3];
         }
+    }
+
+    public static function generateUUID() {
+
+        $uuid4 = Ramsey\Uuid\Uuid::uuid4();
+        return $uuid4->toString(); // i.e. 25769c6c-d34d-4bfe-ba98-e0ee856f3e7a
     }
 }

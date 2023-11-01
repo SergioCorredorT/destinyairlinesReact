@@ -34,18 +34,18 @@ class FailedAttemptsTemplate extends BaseTemplate
     <html lang='es'>
       <head>
         " . parent::getHeadContent($title) . "
-        </head>
-        <body>
-          <header>
-          " . parent::getHeaderContent($subject) . "
-          </header>
-          <main>
-          ". parent::getPMainText($message) ."
-          </main>
-          <footer>"
-            . parent::getFooterContent() .
-          "</footer>
-        </body>
-      </html>";
+      </head>
+      <body>
+        <header>
+        " . parent::getHeaderContent($subject) . "
+        </header>
+        <main>
+        ". parent::getPMainText($message) ."
+        </main>
+        <footer>"
+          . parent::getFooterContent() .
+        "</footer>
+      </body>
+    </html>";
   }
 }

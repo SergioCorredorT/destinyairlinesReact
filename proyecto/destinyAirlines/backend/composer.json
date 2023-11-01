@@ -1,6 +1,7 @@
 {
     "require": {
         "phpmailer/phpmailer": "^6.8",
-        "firebase/php-jwt": "^6.9"
+        "firebase/php-jwt": "^6.9",
+        "ramsey/uuid": "^4.7"
     }
 }

@@ -1,40 +1,5 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $new_password = $_POST['new_password'];
-    $confirm_password = $_POST['confirm_password'];
-    $unblockToken = $_POST['unblockToken'];
-
-    if ($new_password == $confirm_password) {
-        try {
-            require_once './Tools/TokenTool.php';
-            $dedodedUnblockToken = TokenTool::decodeAndCheckToken($unblockToken);
-            if ($dedodedUnblockToken) {
-                $userId = $dedodedUnblockToken->data->id;
-                require_once './Models/UserModel.php';
-                $UserModel = new UserModel();
-                //comprobar si el campo del email enviado es distinto de null
-                if (!is_null($UserModel->readLastPasswordResetEmailSentAt($userId)[0]["lastPasswordResetEmailSentAt"])) {
-                    //Reiniciamos el contador de intentos
-
-                    $UserModel->updateResetFailedAttempts($userId);
-
-                    //Insertamos en bbdd la nueva contraseña hasheada
-                    $UserModel->updatePasswordHashById(password_hash($new_password, PASSWORD_BCRYPT), $userId);
-
-                    //modificar a null el campo del email enviado de la tabla users
-                    $UserModel->updateLastPasswordResetEmailSentAt("NULL", $userId);
-
-                    echo '<span class="success">Contraseña cambiada con éxito, puede cerrar esta página.</span>';
-                } else {
-                    echo '<span class="warning">Contraseña ya fue cambiada en una anterior ocasión.</span>';
-                }
-            }
-        } catch (Exception $er) {
-            echo '<span class="error">Hubo un error en el cambio de contraseña.</span>';
-            error_log('Catched exception: ' .  $er->getMessage() . "\n");
-        }
-    }
-} elseif ($_GET) {
+if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
     $unblockTokenGet = $_GET['unblockToken'];
 ?>
     <!DOCTYPE html>
@@ -49,7 +14,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 padding: 0;
                 display: grid;
                 place-content: center;
-                height: 100vh;
+                min-height: 100vh;
+                min-width: 280px;
                 background-color: rgb(32, 35, 37);
             }
 
@@ -113,12 +79,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <body>
         <form onsubmit="validarFormulario(event);" method="post">
-            <p id="mensaje"></p>
+            <p id="mensaje"><?php
+                            try {
+                                require_once './Tools/TokenTool.php';
+                                $dedodedUnblockToken = TokenTool::decodeAndCheckToken($unblockTokenGet, "unblock");
+                                if (isset($dedodedUnblockToken["errorCode"])) {
+                                    if ($dedodedUnblockToken["errorCode"] === 1) {
+                                        echo '<span class="warning">Token caducado. Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>';
+                                        //poner a null el lastPasswordResetEmailSentAt de bbdd y haga algo (hacer post al login() o crear código aquí) para enviar nuevo token
+                                    }
+                                }
+                            } catch (Exception $er) {
+                                error_log('Catched exception: ' .  $er->getMessage() . "\n");
+                            }
+                            ?></p>
             <label for="new_password">Nueva contraseña:</label>
             <input type="password" id="new_password" name="new_password">
             <label for="confirm_password">Confirma tu nueva contraseña:</label>
             <input type="password" id="confirm_password" name="confirm_password">
             <input type="hidden" value="<?php echo $unblockTokenGet; ?>" name="unblockToken">
+            <input type="hidden" value="passwordReset" name="command">
             <input type="submit" value="Cambiar contraseña">
         </form>
         <script>
@@ -147,7 +127,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     !/[0-9]/.test(newPassword) || // Debe contener al menos un dígito
                     !/[\W_]/.test(newPassword)) { // Debe contener al menos un carácter especial
                     mensaje.innerHTML = "<span class='error'>La contraseña debe contener al menos una letra minúscula, una letra mayúscula, un dígito y un carácter especial.</span>";
-
                     return;
                 }
 
@@ -155,25 +134,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 var form = event.target;
                 var formData = new FormData(form);
 
-                fetch('<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>', {
+                fetch('MainController.php', {
                     method: form.method,
                     body: formData
                 }).then(response => {
                     if (response.ok) {
-                        return response.text();
+                        return response.json(); // Cambia esto
                     } else {
                         throw new Error('Error: ' + response.statusText);
                     }
-                }).then(text => {
-                    mensaje.innerHTML = text;
+                }).then(data => { // Cambia 'text' por 'data'
+                    mensaje.innerHTML = data.message;
+                    // Accede a las propiedades del objeto JSON como data.propiedad
                 }).catch(error => {
                     mensaje.innerHTML = '<span class="error">Hubo un error en el cambio de contraseña.</span>';
                     console.error('Error:', error);
                 });
+
             }
         </script>
     </body>
 
     </html>
 <?php
+
 }

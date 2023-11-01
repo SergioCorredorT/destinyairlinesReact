@@ -6,7 +6,16 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit2185d2f99bcd56787481d9357a5972d3
 {
+    public static $files = array (
+        'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
+        'R' => 
+        array (
+            'Ramsey\\Uuid\\' => 12,
+            'Ramsey\\Collection\\' => 18,
+        ),
         'P' => 
         array (
             'PHPMailer\\PHPMailer\\' => 20,
@@ -15,9 +24,21 @@ class ComposerStaticInit2185d2f99bcd56787481d9357a5972d3
         array (
             'Firebase\\JWT\\' => 13,
         ),
+        'B' => 
+        array (
+            'Brick\\Math\\' => 11,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Ramsey\\Uuid\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ramsey/uuid/src',
+        ),
+        'Ramsey\\Collection\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ramsey/collection/src',
+        ),
         'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
@@ -25,6 +46,10 @@ class ComposerStaticInit2185d2f99bcd56787481d9357a5972d3
         'Firebase\\JWT\\' => 
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+        ),
+        'Brick\\Math\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/brick/math/src',
         ),
     );
 
