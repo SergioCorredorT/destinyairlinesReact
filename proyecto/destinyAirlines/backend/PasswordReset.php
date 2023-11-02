@@ -79,21 +79,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
     </head>
 
     <body>
-        <form onsubmit="validarFormulario(event);" method="post">
-            <p id="mensaje"><?php
-                            try {
-                                require_once './Tools/TokenTool.php';
-                                $dedodedUnblockToken = TokenTool::decodeAndCheckToken($unblockTokenGet, "unblock");
-                                if (isset($dedodedUnblockToken["errorCode"])) {
-                                    if ($dedodedUnblockToken["errorCode"] === 1) {
-                                        echo '<span class="warning">Token caducado. 1Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>';
-                                        //poner a null el lastPasswordResetEmailSentAt de bbdd y haga algo (hacer post al login() o crear código aquí) para enviar nuevo token
-                                    }
-                                }
-                            } catch (Exception $er) {
-                                error_log('Catched exception: ' .  $er->getMessage() . "\n");
-                            }
-                            ?></p>
+        <form id="unblockForm" method="post">
+            <p id="mensaje"></p>
             <label for="new_password">Nueva contraseña:</label>
             <input type="password" id="new_password" name="new_password">
             <label for="confirm_password">Confirma tu nueva contraseña:</label>
@@ -131,33 +118,59 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
                     mensaje.innerHTML = "<span class='error'>La contraseña debe contener al menos una letra minúscula, una letra mayúscula, un dígito y un carácter especial.</span>";
                     return;
                 }
-
                 // Si todas las validaciones son correctas, realiza la acción de envío manualmente
-                var form = event.target;
+                sendToBackend();
+            }
+
+            function sendToBackend(password = "") {
+                var form = document.getElementById('unblockForm');
                 var formData = new FormData(form);
+
+                if (password != "") {
+                    formData.set('new_password', password);
+                    formData.set('confirm_password', password);
+                }
 
                 fetch('MainController.php', {
                     method: form.method,
                     body: formData
                 }).then(response => {
                     if (response.ok) {
-                        return response.json(); // Cambia esto
+                        return response.json();
                     } else {
                         throw new Error('Error: ' + response.statusText);
                     }
-                }).then(data => { // Cambia 'text' por 'data'
+                }).then(data => {
                     mensaje.innerHTML = data.message;
-                    // Accede a las propiedades del objeto JSON como data.propiedad
                 }).catch(error => {
                     mensaje.innerHTML = '<span class="error">Hubo un error en el cambio de contraseña.</span>';
                     console.error('Error:', error);
                 });
-
             }
+
+            document.getElementById("unblockForm").addEventListener("submit", (e) => {
+                e.preventDefault();
+                validarFormulario(e);
+            });
+
+            <?php
+            try {
+                require_once './Tools/TokenTool.php';
+                $dedodedUnblockToken = TokenTool::decodeAndCheckToken($unblockTokenGet, "unblock");
+                if (isset($dedodedUnblockToken["errorCode"])) {
+                    if ($dedodedUnblockToken["errorCode"] === 1) {
+                        $msgTokenCaducado = '<span class="warning">Token caducado. Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>';
+                        echo "document.getElementById('mensaje').innerHTML='$msgTokenCaducado';";
+                        echo 'sendToBackend("_Aa1234567");';
+                    }
+                }
+            } catch (Exception $er) {
+                error_log('Catched exception: ' .  $er->getMessage() . "\n");
+            }
+            ?>
         </script>
     </body>
 
     </html>
 <?php
-
 }

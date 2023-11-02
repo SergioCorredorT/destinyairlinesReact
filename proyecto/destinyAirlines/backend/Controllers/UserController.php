@@ -1,12 +1,8 @@
 <?php
 /*
-Login, editar usuario, eliminar cuenta
-
 tras logueo y envío de token al frontend
  en el frontend entonces se creará un localstorage con ese token para enviarlo al server cuando sea necesario.
 	Entonces cuando el usuario haga una acción en la que sea necesaria una comprobación de servidor, el frontend enviará al php el token, el cual comprobará con secretPass
-
-limitar intentos fallidos de sesión
 */
 require_once './Controllers/BaseController.php';
 require_once './Sanitizers/UserSanitizer.php';
@@ -308,7 +304,7 @@ final class UserController extends BaseController
                         //Generamos token
                         $cfgTokenSettings = $iniTool->getKeysAndValues("tokenSettings");
                         $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings["secondsMaxTimeLifeAccessToken"]);
-                        $unblockToken = TokenTool::generateToken(["id" => $user["id_USERS"], "type" => "unblock" ], $secondsMaxTimeLifeAccessToken);
+                        $unblockToken = TokenTool::generateToken(["id" => $user["id_USERS"], "type" => "unblock"], $secondsMaxTimeLifeAccessToken);
 
                         //Generamos id temporal en bbdd para después poder averiguar el id original del user y así saber su email en la página destino del link que se enviará por email
                         $tempId = TokenTool::generateUUID();
@@ -328,7 +324,6 @@ final class UserController extends BaseController
 
                         return ["response" => false, "message" => '<span class="warning">Token caducado. Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>'];
                     }
-
                 }
                 return ["response" => false, "message" => '<span class="warning">No se pudo actualizar la contraseña. Es posible que haya sido actualizada en una anterior ocasión</span>'];
             } catch (Exception $er) {
