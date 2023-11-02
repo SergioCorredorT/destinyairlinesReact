@@ -11,7 +11,7 @@ final class UserTempIdsModel extends BaseModel
 
     public function createTempId($userId, $tempId)
     {
-        return parent::insert(["id_USERS"=>$userId, "tempID"=>$tempId]);
+        return parent::insert(["id_USERS" => $userId, "tempID" => $tempId]);
     }
 
     public function deleteTempIdByUserId($userId)
@@ -21,12 +21,18 @@ final class UserTempIdsModel extends BaseModel
 
     public function readUserByTempId($tempId)
     {
-        return parent::select("*", "tempID = $tempId ");
+        return parent::select("*", "tempId = '$tempId' ");
     }
 
-
-
-
+    public function removeTempIdIfExistByIdUser($userId)
+    {
+        try {
+            return parent::delete("id_USERS = $userId");
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    //----------------------------------------------------------
 
     public function createUserTempIdsModel($data)
     {

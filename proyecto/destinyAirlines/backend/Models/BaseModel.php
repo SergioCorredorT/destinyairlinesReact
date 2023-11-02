@@ -93,6 +93,7 @@ abstract class BaseModel
         //Ejemplo:
         //print_r($usuario->select());
         $query = "SELECT $columns FROM $this->tableName";
+        
         if ($where) {
             $query .= " WHERE $where";
         }

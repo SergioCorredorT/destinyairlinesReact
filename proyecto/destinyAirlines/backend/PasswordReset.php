@@ -1,6 +1,7 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
     $unblockTokenGet = $_GET['unblockToken'];
+    $tempId = $_GET['tempId'];
 ?>
     <!DOCTYPE html>
     <html>
@@ -85,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
                                 $dedodedUnblockToken = TokenTool::decodeAndCheckToken($unblockTokenGet, "unblock");
                                 if (isset($dedodedUnblockToken["errorCode"])) {
                                     if ($dedodedUnblockToken["errorCode"] === 1) {
-                                        echo '<span class="warning">Token caducado. Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>';
+                                        echo '<span class="warning">Token caducado. 1Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>';
                                         //poner a null el lastPasswordResetEmailSentAt de bbdd y haga algo (hacer post al login() o crear código aquí) para enviar nuevo token
                                     }
                                 }
@@ -98,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
             <label for="confirm_password">Confirma tu nueva contraseña:</label>
             <input type="password" id="confirm_password" name="confirm_password">
             <input type="hidden" value="<?php echo $unblockTokenGet; ?>" name="unblockToken">
+            <input type="hidden" value="<?php echo $tempId; ?>" name="tempId">
             <input type="hidden" value="passwordReset" name="command">
             <input type="submit" value="Cambiar contraseña">
         </form>
