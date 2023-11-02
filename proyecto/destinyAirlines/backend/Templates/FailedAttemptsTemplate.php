@@ -16,7 +16,7 @@ class FailedAttemptsTemplate extends BaseTemplate
 
     $message = "Estimado usuario,
 
-    <p>Hemos detectado $maxFailedLoginAttemps intentos fallidos de inicio de sesión en su cuenta siendo el última con fecha $lastFailedAttempt. Por razones de seguridad, hemos bloqueado su cuenta y restablecido su contraseña.</p>
+    <p>Hemos detectado $maxFailedLoginAttemps intentos fallidos de inicio de sesión en su cuenta siendo el última con fecha $lastFailedAttempt. Por razones de seguridad, hemos bloqueado su cuenta.</p>
     
     <p>Puede desbloquear su cuenta accediendo al siguiente enlace: '$unblockLink'</p>
 

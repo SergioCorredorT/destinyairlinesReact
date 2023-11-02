@@ -31,9 +31,9 @@ final class ContactController extends BaseController
 
             //Recogemos del cfg.ini la cuenta remitente de correo
             $iniTool = new IniTool('./Config/cfg.ini');
-            $originEmailIni = $iniTool->getKeysAndValues("originEmail");
-            $contactData['fromEmail'] = $originEmailIni['email'];
-            $contactData['fromPassword'] = $originEmailIni['password'];
+            $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
+            $contactData['fromEmail'] = $cfgOriginEmailIni['email'];
+            $contactData['fromPassword'] = $cfgOriginEmailIni['password'];
 
             if (EmailTool::sendEmail($contactData, "contactTemplate")) {
                 return true;
@@ -47,11 +47,11 @@ final class ContactController extends BaseController
     {
         //devolver el "to" (correo destino) según el subject según el cfg.ini
         $iniTool = new IniTool('./Config/cfg.ini');
-        $subjectWithItsEmails = $iniTool->getKeysAndValues("destinyContactEmails");
-        if (isset($subjectWithItsEmails[$subject])) {
-            return $subjectWithItsEmails[$subject];
+        $cfgSubjectWithItsEmails = $iniTool->getKeysAndValues("destinyContactEmails");
+        if (isset($cfgSubjectWithItsEmails[$subject])) {
+            return $cfgSubjectWithItsEmails[$subject];
         }
 
-        return $subjectWithItsEmails["default"];
+        return $cfgSubjectWithItsEmails["default"];
     }
 }

@@ -11,9 +11,9 @@ abstract class BaseModel
     protected function __construct($tableName)
     {
         $this->iniTool = new IniTool('./Config/cfg.ini');
-        $config = $this->iniTool->getKeysAndValues("database");
+        $cfgDatabase = $this->iniTool->getKeysAndValues("database");
 
-        $this->con = Database::getInstance($config)->getConnection();
+        $this->con = Database::getInstance($cfgDatabase)->getConnection();
         $this->tableName = $tableName;
     }
 
