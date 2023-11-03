@@ -59,9 +59,15 @@ CREATE TABLE `USERS` (
   `companyName` varchar(50),
   `companyTaxNumber` varchar(50),
   `companyPhoneNumber` varchar(20),
-  `failedAttempts` tinyint NOT NULL DEFAULT 0,
-  `lastFailedAttempt` datetime,
-  `lastPasswordResetEmailSentAt` datetime
+  `currentLoginAttempts` tinyint NOT NULL DEFAULT 0,
+  `lastAttempt` datetime
+);
+
+CREATE TABLE `USER_TEMP_IDS` (
+  `id_USER_TEMP_IDS` int PRIMARY KEY AUTO_INCREMENT,
+  `id_USERS` int NOT NULL,
+  `tempId` varchar(40) UNIQUE NOT NULL,
+  `unlockEmailPending` datetime DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `BOOKS` (
@@ -71,7 +77,7 @@ CREATE TABLE `BOOKS` (
   `bookCode` varchar(10) UNIQUE NOT NULL,
   `price` double,
   `direction` ENUM ('departure', 'return') NOT NULL DEFAULT "departure",
-  `invoiced` date DEFAULT (now()),
+  `invoiced` datetime DEFAULT CURRENT_TIMESTAMP,
   `checkinDate` date
 );
 
@@ -130,6 +136,8 @@ ALTER TABLE `ITINERARIES` ADD FOREIGN KEY (`origin`) REFERENCES `AIRPORTS` (`id_
 ALTER TABLE `ITINERARIES` ADD FOREIGN KEY (`destiny`) REFERENCES `AIRPORTS` (`id_AIRPORTS`);
 
 ALTER TABLE `FLIGHTS` ADD FOREIGN KEY (`id_AIRPLANES`) REFERENCES `AIRPLANES` (`id_AIRPLANES`);
+
+ALTER TABLE `USER_TEMP_IDS` ADD FOREIGN KEY (`id_USERS`) REFERENCES `USERS` (`id_USERS`);
 
 ALTER TABLE `BOOKS` ADD FOREIGN KEY (`id_FLIGHTS`) REFERENCES `FLIGHTS` (`id_FLIGHTS`);
 

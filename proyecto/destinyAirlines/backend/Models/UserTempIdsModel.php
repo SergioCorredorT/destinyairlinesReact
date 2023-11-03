@@ -24,6 +24,11 @@ final class UserTempIdsModel extends BaseModel
         return parent::select("*", "tempId = '$tempId' ");
     }
 
+    public function readUserByUserId($userId)
+    {
+        return parent::select("*", "id_USERS = $userId");
+    }
+
     public function removeTempIdIfExistByIdUser($userId)
     {
         try {

@@ -60,9 +60,15 @@ Table USERS {
   companyName varchar(50)
   companyTaxNumber varchar(50)
   companyPhoneNumber varchar(20)
-  failedAttempts tinyint [default: 0, not null]
-  lastFailedAttempt datetime
-  lastPasswordResetEmailSentAt datetime
+  currentLoginAttempts tinyint [default: 0, not null]
+  lastAttempt datetime
+}
+
+Table USER_TEMP_IDS {
+  id_USER_TEMP_IDS int [pk, increment]
+  id_USERS int [not null, ref: > USERS.id_USERS]
+  tempId varchar(40) [UNIQUE, not null]
+  unlockEmailPending datetime [default: `CURRENT_TIMESTAMP`]
 }
 
 Table BOOKS {
@@ -72,7 +78,7 @@ Table BOOKS {
   bookCode varchar(10) [not null, unique]
   price double
   direction direction [not null, default: "departure"]
-  invoiced date [default: `now()`]
+  invoiced datetime [default: `CURRENT_TIMESTAMP`]
   checkinDate date
 }
 

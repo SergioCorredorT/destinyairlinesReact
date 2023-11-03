@@ -157,71 +157,70 @@ final class UserController extends BaseController
         $isValidate = UserValidator::validate($userData);
         if ($isValidate) {
             $UserModel = new UserModel();
+            $UserTempIdsModel = new UserTempIdsModel();
             $user = $UserModel->readUserByEmail($userData["emailAddress"]);
             if ($user) {
                 //Recogemos datos que necesitaremos
                 [$user] = $user;
                 $iniTool = new IniTool('./Config/cfg.ini');
                 $cfgAboutLogin = $iniTool->getKeysAndValues("aboutLogin");
-                $maxFailedLoginAttemps = intval($cfgAboutLogin["maxFailedLoginAttemps"]);
+                $maxLoginAttemps = intval($cfgAboutLogin["maxLoginAttemps"]);
                 $cfgTokenSettings = $iniTool->getKeysAndValues("tokenSettings");
                 $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings["secondsMaxTimeLifeAccessToken"]);
                 $secondsMaxTimeLifeRefreshToken = intval($cfgTokenSettings["secondsMaxTimeLifeRefreshToken"]);
 
-                if (intval($user["failedAttempts"]) < $maxFailedLoginAttemps - 1) {
-                    if (password_verify($userData["password"], $user["passwordHash"])) {
-                        $UserModel->updateResetFailedAttempts($user["id_USERS"]);
+                //El valor inicial de intentos de login es 0, entonces cada vez que iniciemos un intento le daremos un + 1 al que ya había
+                $user["currentLoginAttempts"] = intval($user["currentLoginAttempts"]) + 1;
 
-                        //Poner a null el email de reactivación pendiente si no lo estaba
-                        if ($user['lastPasswordResetEmailSentAt']) {
-                            $UserModel->updateLastPasswordResetEmailSentAt("NULL", $user["id_USERS"]);
-                        }
+                //En BBDD solo actualizamos si es necesario
+                if (intval($user["currentLoginAttempts"]) <= $maxLoginAttemps) {
+                    $UserModel->updateAddCurrentLoginAttempts($user["id_USERS"]);
+                    $user["lastAttempt"] = date('Y-m-d H:i:s');
+                }
 
-                        $accessToken = TokenTool::generateToken(["id" => $user["id_USERS"], "type" => "access"], $secondsMaxTimeLifeAccessToken);
-                        $refreshToken = TokenTool::generateToken(["id" => $user["id_USERS"], "type" => "refresh"], $secondsMaxTimeLifeRefreshToken);
+                //Si estamos dentro del número de intentos permitidos comprobamos el pass
+                if (intval($user["currentLoginAttempts"]) <= $maxLoginAttemps && password_verify($userData["password"], $user["passwordHash"])) {
+                    $UserModel->updateResetCurrentLoginAttempts($user["id_USERS"]);
 
-                        return ["tokens" => ["accessToken" => $accessToken, "refreshToken" => $refreshToken]];
-                    } else {
-                        $UserModel->updateAddFailedAttempts($user["id_USERS"]);
-                        [$userUpdated] = $UserModel->readUserById($user["id_USERS"]);
-                        return ["response" => false, "failedAttempts" => $userUpdated["failedAttempts"], "lastFailedAttempt" => $userUpdated["lastFailedAttempt"]];
-                    }
-                } else {
-                    //Comprobamos si se envió el correo
+                    $accessToken = TokenTool::generateToken(["id" => $user["id_USERS"], "type" => "access"], $secondsMaxTimeLifeAccessToken);
+                    $refreshToken = TokenTool::generateToken(["id" => $user["id_USERS"], "type" => "refresh"], $secondsMaxTimeLifeRefreshToken);
+
+                    return ["tokens" => ["accessToken" => $accessToken, "refreshToken" => $refreshToken]];
+                //Si hemos fallado contraseña o si estamos fuera del rango de intentos comprobamos si debemos mandar el email al usuario
+                } elseif (intval($user["currentLoginAttempts"]) >= $maxLoginAttemps) {
                     $isEmailSent = false;
                     //Comprobamos que no haya email de desbloqueo pendiente para saber si debemos enviarlo por primera vez
-                    if (!$user['lastPasswordResetEmailSentAt']) {
-                        $UserModel->updateAddFailedAttempts($user["id_USERS"]);
+                    if (!$UserTempIdsModel->readUserByUserId($user["id_USERS"])) {
                         $userRestartData['toEmail'] = $user['emailAddress'];
 
                         $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
                         $userRestartData['fromEmail'] = $cfgOriginEmailIni['email'];
                         $userRestartData['fromPassword'] = $cfgOriginEmailIni['password'];
-                        $userRestartData['lastFailedAttempt'] = $user["lastFailedAttempt"];
+                        $userRestartData['lastAttempt'] = $user["lastAttempt"];
                         $userRestartData['subject'] = "Cambio de contraseña";
 
                         //Crear token
-                        $unblockToken = TokenTool::generateToken(["id" => $user["id_USERS"], "type" => "unblock"], $secondsMaxTimeLifeAccessToken);
+                        $unlockToken = TokenTool::generateToken(["id" => $user["id_USERS"], "type" => "unlock"], $secondsMaxTimeLifeAccessToken);
 
                         //Insertar una id temporal en bbdd para enviarlo integrado en un link al email del user para evitar usar la id original del usuario.
                         //Esta id temporal sirve por si el token del link que se enviará por email caduca sin usarse, y entonces poder identificar de nuevo 
                         //  la dirección email del usuario.
                         $tempId = TokenTool::generateUUID();
-                        $this->updateCreateTempIdByUserId($user["id_USERS"], $tempId);
 
                         //Generamos link que se enviará por email
-                        $userRestartData["unblockLink"] = $this->generateUnblockLink($cfgAboutLogin["endpointResetPasswordLink"], ["unblockToken" => $unblockToken, "tempId" => $tempId]);
+                        $userRestartData["unlockLink"] = $this->generateUnlockLink($cfgAboutLogin["endpointResetPasswordLink"], ["unlockToken" => $unlockToken, "tempId" => $tempId]);
 
                         require_once './Tools/EmailTool.php';
                         $isEmailSent = EmailTool::sendEmail($userRestartData, "failedAttemptsTemplate");
                         if ($isEmailSent) {
-                            //Si el email se ha enviado guardamos la fecha de envío a la vez que se da a entender que hay un email de reactivación pendiente
-                            $UserModel->updateLastPasswordResetEmailSentAt(date('Y-m-d H:i:s'), $user["id_USERS"]);
+                            //Si el email se ha enviado creamos registro como que hay un email de reactivación pendiente
+                            $this->updateCreateTempIdByUserId($user["id_USERS"], $tempId);
                         }
                     }
-                    [$userUpdated] = $UserModel->readUserById($user["id_USERS"]);
-                    return ["response" => false, "failedAttempts" => $userUpdated["failedAttempts"], "emailSent" => $isEmailSent];
+                    return ["response" => false, "currentLoginAttempts" => $user["currentLoginAttempts"], "lastAttempt" => $user["lastAttempt"], "emailSent" => $isEmailSent];
                 }
+                //Si no hemos sobrepasado el número de intentos máximo y hemos fallado contraseña
+                return ["response" => false, "currentLoginAttempts" => $user["currentLoginAttempts"], "lastAttempt" => $user["lastAttempt"]];
             }
         }
         return false;
@@ -251,29 +250,28 @@ final class UserController extends BaseController
     {
         $new_password = $POST['new_password'];
         $confirm_password = $POST['confirm_password'];
-        $unblockToken = $POST['unblockToken'];
+        $unlockToken = $POST['unlockToken'];
         $tempId = $POST['tempId'];
 
         if ($new_password == $confirm_password) {
             try {
                 require_once './Tools/TokenTool.php';
                 require_once './Tools/EmailTool.php';
-                $dedodedUnblockToken = TokenTool::decodeAndCheckToken($unblockToken, "unblock");
+                $dedodedUnlockToken = TokenTool::decodeAndCheckToken($unlockToken, "unlock");
                 $UserModel = new UserModel();
                 $UserTempIdsModel = new UserTempIdsModel();
-                if ($dedodedUnblockToken["response"]) {
-                    $userId = $dedodedUnblockToken["response"]->data->id;
+                if ($dedodedUnlockToken["response"]) {
+                    $userId = $dedodedUnlockToken["response"]->data->id;
                     //Comprobamos si no hay un email de desbloqueo pendiente
-                    if (!is_null($UserModel->readLastPasswordResetEmailSentAt($userId)[0]["lastPasswordResetEmailSentAt"])) {
+                    if ($UserTempIdsModel->readUserByUserId($userId)) {
+                        //Eliminamos el registro que decía que había un email de desbloqueo pendiente
+                        $UserTempIdsModel->deleteTempIdByUserId($userId);
+
                         //Reiniciamos el contador de intentos
-                        $UserModel->updateResetFailedAttempts($userId);
+                        $UserModel->updateResetCurrentLoginAttempts($userId);
 
                         //Incorporamos la nueva pass en bbdd
                         $UserModel->updatePasswordHashById(password_hash($new_password, PASSWORD_BCRYPT), $userId);
-
-                        //Eliminamos el contenido del campo que decía que había un email de desbloqueo pendiente junto al id temporal
-                        $UserModel->updateLastPasswordResetEmailSentAt("NULL", $userId);
-                        $UserTempIdsModel->deleteTempIdByUserId($userId);
 
                         return ["response" => true, "message" => '<span class="success">Contraseña cambiada con éxito, puede cerrar esta página.</span>'];
                     } else {
@@ -282,44 +280,41 @@ final class UserController extends BaseController
                 } else {
                     //El código de error 1 corresponde a token caducado
                     //y comprobamos si aún no se ha resuelto el id temporal, ya que es posible que el usuario intente de nuevo cambiar el pass desde la página del link enviado al email
-                    if ($dedodedUnblockToken["errorCode"] === 1 && $UserTempIdsModel->readUserByTempId($tempId)) {
+                    if ($dedodedUnlockToken["errorCode"] === 1 && $UserTempIdsModel->readUserByTempId($tempId)) {
                         $readUserByTempIdResults = $UserTempIdsModel->readUserByTempId($tempId);
 
                         [$user] = $UserModel->readUserById($readUserByTempIdResults[0]["id_USERS"]);
                         $userId = $user["id_USERS"];
 
-                        //Eliminamos el contenido del campo que decía que había un email de desbloqueo pendiente junto al id temporal para después renovarlos
-                        $UserModel->updateLastPasswordResetEmailSentAt("NULL", $userId);
+                        //Eliminamos el registro que decía que había un email de desbloqueo pendiente para después renovarlos
                         $UserTempIdsModel->deleteTempIdByUserId($userId);
 
-                        //Creamos datos para el futuro email
+                        //Recopilamos datos para el futuro email
                         $iniTool = new IniTool('./Config/cfg.ini');
                         $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
                         $userRestartData['fromEmail'] = $cfgOriginEmailIni['email'];
                         $userRestartData['fromPassword'] = $cfgOriginEmailIni['password'];
                         $userRestartData['toEmail'] = $user['emailAddress'];
-                        $userRestartData['lastFailedAttempt'] = $user["lastFailedAttempt"];
+                        $userRestartData['lastAttempt'] = $user["lastAttempt"];
                         $userRestartData['subject'] = "Cambio de contraseña";
 
                         //Generamos token
                         $cfgTokenSettings = $iniTool->getKeysAndValues("tokenSettings");
                         $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings["secondsMaxTimeLifeAccessToken"]);
-                        $unblockToken = TokenTool::generateToken(["id" => $user["id_USERS"], "type" => "unblock"], $secondsMaxTimeLifeAccessToken);
+                        $unlockToken = TokenTool::generateToken(["id" => $user["id_USERS"], "type" => "unlock"], $secondsMaxTimeLifeAccessToken);
 
                         //Generamos id temporal en bbdd para después poder averiguar el id original del user y así saber su email en la página destino del link que se enviará por email
                         $tempId = TokenTool::generateUUID();
-                        $UserTempIdsModel = new UserTempIdsModel();
-                        $UserTempIdsModel->createTempId($userId, $tempId);
 
                         //Generamos link con el token e id temporal para identificar el id del user si caduca el token
                         $cfgAboutLogin = $iniTool->getKeysAndValues("aboutLogin");
-                        $userRestartData["unblockLink"] = $this->generateUnblockLink($cfgAboutLogin["endpointResetPasswordLink"], ["unblockToken" => $unblockToken, "tempId" => $tempId]);
+                        $userRestartData["unlockLink"] = $this->generateUnlockLink($cfgAboutLogin["endpointResetPasswordLink"], ["unlockToken" => $unlockToken, "tempId" => $tempId]);
 
                         //Enviamos email con link+token+id temporal
                         $isEmailSent = EmailTool::sendEmail($userRestartData, "failedAttemptsTemplate");
                         if ($isEmailSent) {
-                            //Si el email se ha enviado guardamos la fecha de envío
-                            $UserModel->updateLastPasswordResetEmailSentAt(date('Y-m-d H:i:s'), $user["id_USERS"]);
+                            //Si el email se ha enviado creamos registro de email de reactivación pendiente
+                            $UserTempIdsModel->createTempId($userId, $tempId);
                         }
 
                         return ["response" => false, "message" => '<span class="warning">Token caducado. Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>'];
@@ -341,7 +336,7 @@ final class UserController extends BaseController
         $UserTempIdsModel->createTempId($userId, $tempId);
     }
 
-    private function generateUnblockLink($base, $parametres)
+    private function generateUnlockLink($base, $parametres)
     {
         return $base . $this->generateLinkParametres($parametres);
     }

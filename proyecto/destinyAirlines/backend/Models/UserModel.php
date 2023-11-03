@@ -46,9 +46,9 @@ final class UserModel extends BaseModel
         return parent::select("*", "id_USERS = $id_USERS ");
     }
 
-    public function readLastPasswordResetEmailSentAt($id_USERS)
+    public function readUnlockEmailPending($id_USERS)
     {
-        return parent::select("lastPasswordResetEmailSentAt", "id_USERS = $id_USERS ");
+        return parent::select("unlockEmailPending", "id_USERS = $id_USERS ");
     }
 
     public function updateUsers($data, $where)
@@ -66,22 +66,22 @@ final class UserModel extends BaseModel
         return parent::update($data, " emailAddress = '$email'");
     }
 
-    public function updateAddFailedAttempts($id_USERS)
+    public function updateAddCurrentLoginAttempts($id_USERS)
     {
-        return parent::update(["failedAttempts" => "failedAttempts + 1", "lastFailedAttempt" => "'" . date('Y-m-d H:i:s') . "'"], "id_USERS = $id_USERS");
+        return parent::update(["currentLoginAttempts" => "currentLoginAttempts + 1", "lastAttempt" => "'" . date('Y-m-d H:i:s') . "'"], "id_USERS = $id_USERS");
     }
 
-    public function updateResetFailedAttempts($id_USERS)
+    public function updateResetCurrentLoginAttempts($id_USERS)
     {
-        return parent::update(["failedAttempts" => 0], " id_USERS = $id_USERS");
+        return parent::update(["currentLoginAttempts" => 0], " id_USERS = $id_USERS");
     }
 
-    public function updateLastPasswordResetEmailSentAt($lastPasswordResetEmailSentAt, $id_USERS)
+    public function updateUnlockEmailPending($unlockEmailPending, $id_USERS)
     {
-        if (strtolower($lastPasswordResetEmailSentAt) != "null") {
-            $lastPasswordResetEmailSentAt = "'" . $lastPasswordResetEmailSentAt . "'";
+        if (strtolower($unlockEmailPending) != "null") {
+            $unlockEmailPending = "'" . $unlockEmailPending . "'";
         }
-        return parent::update(["lastPasswordResetEmailSentAt" => $lastPasswordResetEmailSentAt], " id_USERS = $id_USERS");
+        return parent::update(["unlockEmailPending" => $unlockEmailPending], " id_USERS = $id_USERS");
     }
 
     public function deleteUsers($where)

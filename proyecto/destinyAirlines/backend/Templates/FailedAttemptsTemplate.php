@@ -7,18 +7,18 @@ class FailedAttemptsTemplate extends BaseTemplate
   {
     $iniTool = new IniTool('./Config/cfg.ini');
     $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
-    $maxFailedLoginAttemps = $aboutLogin['maxFailedLoginAttemps'];
+    $maxLoginAttemps = $aboutLogin['maxLoginAttemps'];
 
     $title = "Failed attempts";
-    $lastFailedAttempt = $data['lastFailedAttempt'];
-    $unblockLink = $data['unblockLink'];
+    $lastAttempt = $data['lastAttempt'];
+    $unlockLink = $data['unlockLink'];
     $subject = $data["subject"];
 
     $message = "Estimado usuario,
 
-    <p>Hemos detectado $maxFailedLoginAttemps intentos fallidos de inicio de sesión en su cuenta siendo el última con fecha $lastFailedAttempt. Por razones de seguridad, hemos bloqueado su cuenta.</p>
+    <p>Hemos detectado $maxLoginAttemps intentos fallidos de inicio de sesión en su cuenta siendo el última con fecha $lastAttempt. Por razones de seguridad, hemos bloqueado su cuenta.</p>
     
-    <p>Puede desbloquear su cuenta accediendo al siguiente enlace: '$unblockLink'</p>
+    <p>Puede desbloquear su cuenta accediendo al siguiente enlace: '$unlockLink'</p>
 
     <p>Si no ha intentado iniciar sesión recientemente y cree que alguien más podría estar intentando acceder a su cuenta, por favor, póngase en contacto con nuestro servicio de atención al cliente.</p>
 
