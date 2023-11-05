@@ -416,11 +416,11 @@ final class UserController extends BaseController
         if (!is_null($user['lastForgotPasswordEmail'])) {
             $now = new DateTime();
             $lastForgotPasswordEmail = new DateTime($user['lastForgotPasswordEmail']);
-            $interval = $now->diff($lastForgotPasswordEmail);
-
+            $interval = $now->getTimestamp() - $lastForgotPasswordEmail->getTimestamp();
+        
             $expireTimeTokenForgotPassword = intval($cfgTokenSettings['secondsMinTimeLifeForgotPasswordToken']);
-
-            if ($interval->s < $expireTimeTokenForgotPassword && $interval->i == 0 && $interval->h == 0 && $interval->d == 0) {
+        
+            if ($interval < $expireTimeTokenForgotPassword) {
                 return ['response' => false, 'errorCode' => 4];
             }
         }
