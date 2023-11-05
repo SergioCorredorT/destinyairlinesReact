@@ -391,7 +391,7 @@ final class UserController extends BaseController
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
         if (!$isValidate) {
-            return false;
+            return ['response' => false, 'errorCode' => 1];
         }
 
         //Recopilamos cfg
@@ -404,12 +404,25 @@ final class UserController extends BaseController
         [$user] = $UserModel->readUserByEmail($userData['emailAddress']);
 
         if (!$user) {
-            return false;
+            return ['response' => false, 'errorCode' => 2];
         }
 
         //Comprobamos que la cuenta no esté bloqueada por exceder el máximo de intentos permitidos de login
         if (intval($user['currentLoginAttempts']) >= intval($cfgAboutLogin['maxLoginAttemps'])) {
-            return false;
+            return ['response' => false, 'errorCode' => 3];
+        }
+
+        //Comprobamos si desde la última petición de forgot password ha pasado menos del tiempo de caducidad del token forgotPassword (estipulado en cfg.ini)
+        if (!is_null($user['lastForgotPasswordEmail'])) {
+            $now = new DateTime();
+            $lastForgotPasswordEmail = new DateTime($user['lastForgotPasswordEmail']);
+            $interval = $now->diff($lastForgotPasswordEmail);
+
+            $expireTimeTokenForgotPassword = intval($cfgTokenSettings['secondsMinTimeLifeForgotPasswordToken']);
+
+            if ($interval->s < $expireTimeTokenForgotPassword && $interval->i == 0 && $interval->h == 0 && $interval->d == 0) {
+                return ['response' => false, 'errorCode' => 4];
+            }
         }
 
         require_once './Tools/TokenTool.php';
@@ -428,7 +441,13 @@ final class UserController extends BaseController
         ];
 
         require_once './Tools/EmailTool.php';
-        return EmailTool::sendEmail($userRestartData, 'forgotPasswordTemplate');
+        $isSent = EmailTool::sendEmail($userRestartData, 'forgotPasswordTemplate');
+        if ($isSent) {
+            if($UserModel->updateLastForgotPasswordEmailById($user['id_USERS'])){
+                return ['response' => true];
+            }
+        }
+        return ['response' => false, 'errorCode' => 5];
     }
 
     private function updateCreateTempIdByUserId($userId, $tempId)

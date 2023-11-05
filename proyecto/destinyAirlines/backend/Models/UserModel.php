@@ -63,12 +63,17 @@ final class UserModel extends BaseModel
 
     public function updateAddCurrentLoginAttempts($id_USERS)
     {
-        return parent::update(["currentLoginAttempts" => "currentLoginAttempts + 1", "lastAttempt" => "'" . date('Y-m-d H:i:s') . "'"], "id_USERS = $id_USERS");
+        return parent::update(['currentLoginAttempts' => 'currentLoginAttempts + 1', 'lastAttempt' => "'" . date('Y-m-d H:i:s') . "'"], "id_USERS = $id_USERS");
     }
 
     public function updateResetCurrentLoginAttempts($id_USERS)
     {
         return parent::update(["currentLoginAttempts" => 0], " id_USERS = $id_USERS");
+    }
+
+    public function updateLastForgotPasswordEmailById($id_USERS)
+    {
+        return parent::update(['lastForgotPasswordEmail' => "'" . date('Y-m-d H:i:s') . "'"], " id_USERS = $id_USERS");
     }
 
     public function deleteUsers($where)

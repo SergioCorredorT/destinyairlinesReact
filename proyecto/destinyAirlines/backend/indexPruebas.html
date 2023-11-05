@@ -6,7 +6,18 @@
     <title>Formulario POST</title>
     <style>
       body {
-        background-color: black;
+        background-color: #000000;
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        grid-template-rows: max-content;
+      }
+
+      body > div {
+        display: grid;
+        align-content: space-between;
+        box-sizing: border-box;
+        padding: 10px;
       }
 
       span {
@@ -81,389 +92,400 @@
       href="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/indexPruebas.html"
       >Index en server</a
     >
-    <div id="formularios">
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-        id="updateForm"
-        style="grid-row: span 3"
-      >
-        <div class="filaForm">
-          <input type="text" readonly name="command" value="updateUser" /><span
-            >Null?</span
-          >
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="title"
-            data-name="title"
-            class="title"
-            placeholder="title"
-            value=""
-          />
-          <input
-            type="checkbox"
-            name="nullify_title"
-            onchange="nullifyInput(this, `#updateForm [data-name='title']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="firstName"
-            data-name="firstName"
-            class="firstName"
-            placeholder="First Name"
-            value="A555"
-          />
-          <input
-            type="checkbox"
-            name="nullify_firstName"
-            onchange="nullifyInput(this, `#updateForm [data-name='firstName']`)"
-          />
-        </div>
+    <div>
+      <div id="formularios">
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+          id="updateForm"
+          style="grid-row: span 3"
+        >
+          <div class="filaForm">
+            <input
+              type="text"
+              readonly
+              name="command"
+              value="updateUser"
+            /><span>Null?</span>
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="title"
+              data-name="title"
+              class="title"
+              placeholder="title"
+              value=""
+            />
+            <input
+              type="checkbox"
+              name="nullify_title"
+              onchange="nullifyInput(this, `#updateForm [data-name='title']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="firstName"
+              data-name="firstName"
+              class="firstName"
+              placeholder="First Name"
+              value="A555"
+            />
+            <input
+              type="checkbox"
+              name="nullify_firstName"
+              onchange="nullifyInput(this, `#updateForm [data-name='firstName']`)"
+            />
+          </div>
 
-        <div class="filaForm">
+          <div class="filaForm">
+            <input
+              type="text"
+              name="lastName"
+              data-name="lastName"
+              class="lastName"
+              placeholder="lastName"
+              value=""
+            />
+            <input
+              type="checkbox"
+              name="nullify_lastName"
+              onchange="nullifyInput(this, `#updateForm [data-name='lastName']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="townCity"
+              data-name="townCity"
+              class="townCity"
+              placeholder="townCity"
+              value=""
+            />
+            <input
+              type="checkbox"
+              name="nullify_townCity"
+              onchange="nullifyInput(this, `#updateForm [data-name='townCity']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="streetAddress"
+              data-name="streetAddress"
+              class="streetAddress"
+              placeholder="streetAddress"
+              value=""
+            />
+            <input
+              type="checkbox"
+              name="nullify_streetAddress"
+              onchange="nullifyInput(this, `#updateForm [data-name='streetAddress']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="zipCode"
+              data-name="zipCode"
+              class="zipCode"
+              placeholder="zipCode"
+              value="25"
+            />
+            <input
+              type="checkbox"
+              name="nullify_zipCode"
+              onchange="nullifyInput(this, `#updateForm [data-name='zipCode']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="country"
+              data-name="country"
+              class="country"
+              placeholder="country"
+              value=""
+            />
+            <input
+              type="checkbox"
+              name="nullify_country"
+              onchange="nullifyInput(this, `#updateForm [data-name='country']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="emailAddress"
+              data-name="emailAddress"
+              class="emailAddress"
+              placeholder="Email Address"
+              value="aaaa5@example.com"
+            />
+            <input
+              type="checkbox"
+              name="nullify_emailAddress"
+              onchange="nullifyInput(this, `#updateForm [data-name='emailAddress']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="password"
+              data-name="password"
+              class="password"
+              placeholder="Password"
+              value="contraseña5"
+            />
+            <input
+              type="checkbox"
+              name="nullify_password"
+              onchange="nullifyInput(this, `#updateForm [data-name='password']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="phoneNumber1"
+              data-name="phoneNumber1"
+              class="phoneNumber1"
+              placeholder="Phone Number 1"
+              value=""
+            />
+            <input
+              type="checkbox"
+              name="nullify_phoneNumber1"
+              onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber1']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="phoneNumber2"
+              data-name="phoneNumber2"
+              class="phoneNumber2"
+              placeholder="Phone Number 2"
+              value=""
+            />
+            <input
+              type="checkbox"
+              name="nullify_phoneNumber2"
+              onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber2']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="phoneNumber3"
+              data-name="phoneNumber3"
+              class="phoneNumber3"
+              placeholder="Phone Number 3"
+              value=""
+            />
+            <input
+              type="checkbox"
+              name="nullify_phoneNumber3"
+              onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber3']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="companyName"
+              data-name="companyName"
+              class="companyName"
+              placeholder="Company Name"
+              value=""
+            />
+            <input
+              type="checkbox"
+              name="nullify_companyName"
+              onchange="nullifyInput(this, `#updateForm [data-name='companyName']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="companyTaxNumber"
+              data-name="companyTaxNumber"
+              class="companyTaxNumber"
+              placeholder="Company Tax Number"
+            />
+            <input
+              type="checkbox"
+              name="nullify_companyTaxNumber"
+              onchange="nullifyInput(this, `#updateForm [data-name='companyTaxNumber']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="companyPhoneNumber"
+              data-name="companyPhoneNumber"
+              class="companyPhoneNumber"
+              placeholder="Company Phone Number"
+            />
+            <input
+              type="checkbox"
+              name="nullify_companyPhoneNumber"
+              onchange="nullifyInput(this, `#updateForm [data-name='companyPhoneNumber']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="emailAddressAuth"
+              data-name="emailAddressAuth"
+              class="emailAddress"
+              placeholder="Email Address Auth"
+              value="aaaa5@example.com"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="accessToken"
+              data-name="accessToken"
+              class="accessToken"
+              value=""
+              placeholder="accessToken"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              name="refreshToken"
+              data-name="refreshToken"
+              class="refreshToken"
+              value=""
+              placeholder="refreshToken"
+            />
+          </div>
+          <button type="submit">Enviar POST</button>
+        </form>
+
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" readonly name="command" value="contact" />
+          <input type="text" name="name" value="Sergio" />
+          <input type="text" name="email" value="waa@gmail.com" />
+          <input type="text" name="phoneNumber" value="111223344" />
+          <input type="text" name="subject" value="motivazo bueno" />
           <input
             type="text"
-            name="lastName"
-            data-name="lastName"
-            class="lastName"
-            placeholder="lastName"
-            value=""
+            name="message"
+            value="Mensaje guauuuuuuuuuuuuuuu"
           />
-          <input
-            type="checkbox"
-            name="nullify_lastName"
-            onchange="nullifyInput(this, `#updateForm [data-name='lastName']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="townCity"
-            data-name="townCity"
-            class="townCity"
-            placeholder="townCity"
-            value=""
-          />
-          <input
-            type="checkbox"
-            name="nullify_townCity"
-            onchange="nullifyInput(this, `#updateForm [data-name='townCity']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="streetAddress"
-            data-name="streetAddress"
-            class="streetAddress"
-            placeholder="streetAddress"
-            value=""
-          />
-          <input
-            type="checkbox"
-            name="nullify_streetAddress"
-            onchange="nullifyInput(this, `#updateForm [data-name='streetAddress']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="zipCode"
-            data-name="zipCode"
-            class="zipCode"
-            placeholder="zipCode"
-            value="25"
-          />
-          <input
-            type="checkbox"
-            name="nullify_zipCode"
-            onchange="nullifyInput(this, `#updateForm [data-name='zipCode']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="country"
-            data-name="country"
-            class="country"
-            placeholder="country"
-            value=""
-          />
-          <input
-            type="checkbox"
-            name="nullify_country"
-            onchange="nullifyInput(this, `#updateForm [data-name='country']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="emailAddress"
-            data-name="emailAddress"
-            class="emailAddress"
-            placeholder="Email Address"
-            value="aaaa5@example.com"
-          />
-          <input
-            type="checkbox"
-            name="nullify_emailAddress"
-            onchange="nullifyInput(this, `#updateForm [data-name='emailAddress']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="password"
-            data-name="password"
-            class="password"
-            placeholder="Password"
-            value="contraseña5"
-          />
-          <input
-            type="checkbox"
-            name="nullify_password"
-            onchange="nullifyInput(this, `#updateForm [data-name='password']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="phoneNumber1"
-            data-name="phoneNumber1"
-            class="phoneNumber1"
-            placeholder="Phone Number 1"
-            value=""
-          />
-          <input
-            type="checkbox"
-            name="nullify_phoneNumber1"
-            onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber1']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="phoneNumber2"
-            data-name="phoneNumber2"
-            class="phoneNumber2"
-            placeholder="Phone Number 2"
-            value=""
-          />
-          <input
-            type="checkbox"
-            name="nullify_phoneNumber2"
-            onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber2']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="phoneNumber3"
-            data-name="phoneNumber3"
-            class="phoneNumber3"
-            placeholder="Phone Number 3"
-            value=""
-          />
-          <input
-            type="checkbox"
-            name="nullify_phoneNumber3"
-            onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber3']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="companyName"
-            data-name="companyName"
-            class="companyName"
-            placeholder="Company Name"
-            value=""
-          />
-          <input
-            type="checkbox"
-            name="nullify_companyName"
-            onchange="nullifyInput(this, `#updateForm [data-name='companyName']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="companyTaxNumber"
-            data-name="companyTaxNumber"
-            class="companyTaxNumber"
-            placeholder="Company Tax Number"
-          />
-          <input
-            type="checkbox"
-            name="nullify_companyTaxNumber"
-            onchange="nullifyInput(this, `#updateForm [data-name='companyTaxNumber']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="companyPhoneNumber"
-            data-name="companyPhoneNumber"
-            class="companyPhoneNumber"
-            placeholder="Company Phone Number"
-          />
-          <input
-            type="checkbox"
-            name="nullify_companyPhoneNumber"
-            onchange="nullifyInput(this, `#updateForm [data-name='companyPhoneNumber']`)"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="emailAddressAuth"
-            data-name="emailAddressAuth"
-            class="emailAddress"
-            placeholder="Email Address Auth"
-            value="aaaa5@example.com"
-          />
-        </div>
-        <div class="filaForm">
-          <input
-            type="text"
-            name="accessToken"
-            data-name="accessToken"
-            class="accessToken"
-            value=""
-            placeholder="accessToken"
-          />
-        </div>
-        <div class="filaForm">
+          <button type="submit">Enviar POST</button>
+        </form>
+
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" readonly name="command" value="createuser" />
+          <input type="text" name="firstName" value="A555" />
+          <input type="text" name="zipCode" value="25" />
+          <input type="text" name="emailAddress" value="aaaa5@example.com" />
+          <input type="text" name="password" value="contraseña5" />
+          <button type="submit">Enviar POST</button>
+        </form>
+
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" readonly name="command" value="removeuser" />
+          <input type="text" name="emailAddress" value="aaaa5@example.com" />
+          <input type="text" name="password" value="contraseña5" />
           <input
             type="text"
             name="refreshToken"
-            data-name="refreshToken"
-            class="refreshToken"
             value=""
             placeholder="refreshToken"
           />
-        </div>
-        <button type="submit">Enviar POST</button>
-      </form>
+          <button type="submit">Enviar POST</button>
+        </form>
 
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <input type="text" readonly name="command" value="contact" />
-        <input type="text" name="name" value="Sergio" />
-        <input type="text" name="email" value="waa@gmail.com" />
-        <input type="text" name="phoneNumber" value="111223344" />
-        <input type="text" name="subject" value="motivazo bueno" />
-        <input type="text" name="message" value="Mensaje guauuuuuuuuuuuuuuu" />
-        <button type="submit">Enviar POST</button>
-      </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" readonly name="command" value="loginUser" />
+          <input
+            type="text"
+            name="emailAddress"
+            value="sergiodesarrolladorweb@gmail.com"
+          />
+          <input type="text" name="password" value="_Aa1234567" />
+          <button type="submit">Enviar POST</button>
+        </form>
 
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <input type="text" readonly name="command" value="createuser" />
-        <input type="text" name="firstName" value="A555" />
-        <input type="text" name="zipCode" value="25" />
-        <input type="text" name="emailAddress" value="aaaa5@example.com" />
-        <input type="text" name="password" value="contraseña5" />
-        <button type="submit">Enviar POST</button>
-      </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" readonly name="command" value="logoutUser" />
+          <input
+            type="text"
+            name="refreshToken"
+            value=""
+            placeholder="refreshToken"
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
 
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <input type="text" readonly name="command" value="removeuser" />
-        <input type="text" name="emailAddress" value="aaaa5@example.com" />
-        <input type="text" name="password" value="contraseña5" />
-        <input
-          type="text"
-          name="refreshToken"
-          value=""
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" readonly name="command" value="forgotPassword" />
+          <input
+            type="text"
+            name="emailAddress"
+            value="sergiodesarrolladorweb@gmail.com"
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+      </div>
+      <!-- Puedes agregar más formularios aquí -->
+      <div>
+        <textarea
+          placeholder="results"
+          id="responseTextArea"
+          oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+          onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+        ></textarea>
+        <textarea
+          placeholder="accessToken"
+          id="extraTextArea1"
+          oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+          onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+        ></textarea>
+        <textarea
           placeholder="refreshToken"
-        />
-        <button type="submit">Enviar POST</button>
-      </form>
-
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <input type="text" readonly name="command" value="loginUser" />
-        <input
-          type="text"
-          name="emailAddress"
-          value="sergiodesarrolladorweb@gmail.com"
-        />
-        <input type="text" name="password" value="_Aa1234567" />
-        <button type="submit">Enviar POST</button>
-      </form>
-
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <input type="text" readonly name="command" value="logoutUser" />
-        <input
-          type="text"
-          name="refreshToken"
-          value=""
-          placeholder="refreshToken"
-        />
-        <button type="submit">Enviar POST</button>
-      </form>
-
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <input type="text" readonly name="command" value="forgotPassword" />
-        <input
-          type="text"
-          name="emailAddress"
-          value="sergiodesarrolladorweb@gmail.com"
-        />
-        <button type="submit">Enviar POST</button>
-      </form>
+          id="extraTextArea2"
+          oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+          onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+        ></textarea>
+        <textarea
+          placeholder="Your notes"
+          id="extraTextArea3"
+          oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+          onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+        ></textarea>
+      </div>
     </div>
-    <!-- Puedes agregar más formularios aquí -->
-    <textarea
-      placeholder="results"
-      id="responseTextArea"
-      oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
-      onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
-    ></textarea>
-    <textarea
-      placeholder="accessToken"
-      id="extraTextArea1"
-      oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
-      onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
-    ></textarea>
-    <textarea
-      placeholder="refreshToken"
-      id="extraTextArea2"
-      oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
-      onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
-    ></textarea>
-    <textarea
-      placeholder="Your notes"
-      id="extraTextArea3"
-      oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
-      onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
-    ></textarea>
     <script>
       function nullifyInput(checkbox, querySelector) {
         //Solo se envían los campos que tengan name
