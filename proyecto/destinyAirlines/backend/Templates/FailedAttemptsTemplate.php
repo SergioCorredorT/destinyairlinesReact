@@ -11,14 +11,14 @@ class FailedAttemptsTemplate extends BaseTemplate
 
     $title = "Failed attempts";
     $lastAttempt = $data['lastAttempt'];
-    $unlockLink = $data['unlockLink'];
+    $passwordResetLink = $data['passwordResetLink'];
     $subject = $data["subject"];
 
     $message = "Estimado usuario,
 
     <p>Hemos detectado $maxLoginAttemps intentos fallidos de inicio de sesión en su cuenta siendo el última con fecha $lastAttempt. Por razones de seguridad, hemos bloqueado su cuenta.</p>
     
-    <p>Puede desbloquear su cuenta accediendo al siguiente enlace: '$unlockLink'</p>
+    <p>Puede desbloquear su cuenta accediendo al siguiente enlace: '$passwordResetLink'</p>
 
     <p>Si no ha intentado iniciar sesión recientemente y cree que alguien más podría estar intentando acceder a su cuenta, por favor, póngase en contacto con nuestro servicio de atención al cliente.</p>
 

@@ -26,7 +26,8 @@ $controllers = [
     'removeuser'    => ['controller' => 'UserController',       'method' => 'deleteUser'],
     'loginuser'     => ['controller' => 'UserController',       'method' => 'loginUser'],
     'logoutuser'    => ['controller' => 'UserController',       'method' => 'logoutUser'],
-    'passwordreset' => ['controller' => 'UserController',       'method' => 'passwordReset']
+    'passwordreset' => ['controller' => 'UserController',       'method' => 'passwordReset'],
+    'forgotpassword'=> ['controller' => 'UserController',       'method' => 'forgotPassword']
 ];
 
 if (array_key_exists(strtolower($command), $controllers)) {

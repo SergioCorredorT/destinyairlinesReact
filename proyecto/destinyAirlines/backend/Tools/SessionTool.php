@@ -5,7 +5,7 @@ class SessionTool
     {
         if (session_status() == PHP_SESSION_NONE) {
             session_name($sessionName);
-            session_set_cookie_params($sessionLifetime, "/", $_SERVER["HTTP_HOST"], isset($_SERVER["HTTPS"]), true);
+            session_set_cookie_params($sessionLifetime, '/', $_SERVER['HTTP_HOST'], isset($_SERVER['HTTPS']), true);
             session_start();
         }
     }

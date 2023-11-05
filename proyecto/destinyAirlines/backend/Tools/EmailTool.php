@@ -4,12 +4,12 @@ require_once './Tools/IniTool.php';
 include_once './Tools/TemplateTool.php';
 class EmailTool
 {
-    public static function sendEmail($data, $template = "")
+    public static function sendEmail($data, $template = '')
     {
-        $toEmail = $data["toEmail"];
-        $subject = $data["subject"];
-        $fromEmail = $data["fromEmail"];
-        $fromPassword = $data["fromPassword"];
+        $toEmail = $data['toEmail'];
+        $subject = $data['subject'];
+        $fromEmail = $data['fromEmail'];
+        $fromPassword = $data['fromPassword'];
         $message = TemplateTool::ApplyTemplate($data, $template);
 
         $phpmailer = new PHPMailer\PHPMailer\PHPMailer();

@@ -8,7 +8,7 @@
 //Indicador de si hay error
         private $ifError=false;
 
-        public function __construct($rutaIni="cfg.ini")
+        public function __construct($rutaIni='cfg.ini')
         {
             if(is_string($rutaIni))
             {

@@ -1,7 +1,12 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
-    $unlockTokenGet = $_GET['unlockToken'];
-    $tempId = $_GET['tempId'];
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
+    $tokenType = $_GET['type'];
+    //failedAttempts o forgotPassword
+    $passwordResetTokenGet = $_GET['passwordResetToken'];
+    $tempId = '';
+    if ($tokenType == 'failedAttempts') {
+        $tempId = $_GET['tempId'];
+    }
 ?>
     <!DOCTYPE html>
     <html>
@@ -79,15 +84,16 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
     </head>
 
     <body>
-        <form id="unlockForm" method="post">
+        <form id="passwordResetForm" method="post">
             <p id="mensaje"></p>
             <label for="new_password">Nueva contraseña:</label>
             <input type="password" id="new_password" name="new_password">
             <label for="confirm_password">Confirma tu nueva contraseña:</label>
             <input type="password" id="confirm_password" name="confirm_password">
-            <input type="hidden" value="<?php echo $unlockTokenGet; ?>" name="unlockToken">
+            <input type="hidden" value="<?php echo $passwordResetTokenGet; ?>" name="passwordResetToken">
             <input type="hidden" value="<?php echo $tempId; ?>" name="tempId">
             <input type="hidden" value="passwordReset" name="command">
+            <input type="hidden" value="<?php echo $tokenType; ?>" name="type">
             <input type="submit" value="Cambiar contraseña">
         </form>
         <script>
@@ -122,11 +128,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
                 sendToBackend();
             }
 
-            function sendToBackend(password = "") {
-                var form = document.getElementById('unlockForm');
+            function sendToBackend(password = '') {
+                var form = document.getElementById('passwordResetForm');
                 var formData = new FormData(form);
 
-                if (password != "") {
+                if (password != '') {
                     formData.set('new_password', password);
                     formData.set('confirm_password', password);
                 }
@@ -148,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
                 });
             }
 
-            document.getElementById("unlockForm").addEventListener("submit", (e) => {
+            document.getElementById('passwordResetForm').addEventListener('submit', (e) => {
                 e.preventDefault();
                 validarFormulario(e);
             });
@@ -156,14 +162,30 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && $_GET) {
             <?php
             try {
                 require_once './Tools/TokenTool.php';
-                $dedodedUnlockToken = TokenTool::decodeAndCheckToken($unlockTokenGet, "unlock");
-                if (isset($dedodedUnlockToken["errorCode"])) {
-                    if ($dedodedUnlockToken["errorCode"] === 1) {
-                        $msgTokenCaducado = '<span class="warning">Token caducado. Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>';
-                        echo "document.getElementById('mensaje').innerHTML='$msgTokenCaducado';";
-                        echo 'sendToBackend("_Aa1234567");';
-                    }
+                switch ($tokenType) {
+                    case 'failedAttempts': {
+                                $dedodedPasswordResetToken = TokenTool::decodeAndCheckToken($passwordResetTokenGet, 'failedAttempts');
+                                if (isset($dedodedPasswordResetToken['errorCode'])) {
+                                    if ($dedodedPasswordResetToken['errorCode'] === 1) {
+                                        $msgTokenCaducado = '<span class="warning">Token caducado. Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>';
+                                        echo "document.getElementById('mensaje').innerHTML='$msgTokenCaducado';";
+                                        echo 'sendToBackend("_Aa1234567");';
+                                    }
+                                }
+                            break;
+                        }
+                    case 'forgotPassword': {
+                                $dedodedPasswordResetToken = TokenTool::decodeAndCheckToken($passwordResetTokenGet, 'forgotPassword');
+                                if (isset($dedodedPasswordResetToken['errorCode'])) {
+                                    if ($dedodedPasswordResetToken['errorCode'] === 1) {
+                                        $msgTokenCaducado = '<span class="warning">Token caducado. Si continúa sin recordar su contraseña, inicie el proceso de nuevo.</span>';
+                                        echo "document.getElementById('mensaje').innerHTML='$msgTokenCaducado';";
+                                    }
+                                }
+                            break;
+                        }
                 }
+
             } catch (Exception $er) {
                 error_log('Catched exception: ' .  $er->getMessage() . "\n");
             }

@@ -40,11 +40,39 @@
       .filaForm {
         display: flex;
         flex-direction: row;
+        background-color: #3b3b3b;
       }
 
       input[type="text"],
       form {
         height: fit-content;
+      }
+
+      input,
+      button,
+      textarea {
+        color: #ffffff;
+        border: none;
+      }
+
+      input,
+      textarea {
+        background-color: #3b3b3b;
+      }
+
+      button {
+        background-color: #6b6b6b;
+        cursor: pointer;
+      }
+
+      input[name="command"] {
+        background-color: #272727;
+        text-align: center;
+        color: red;
+      }
+
+      input[type="checkbox"] {
+        margin: 0 auto;
       }
     </style>
   </head>
@@ -58,86 +86,11 @@
         onsubmit="return handleFormSubmit(event)"
         action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
         method="post"
-      >
-        <span>Contact</span>
-        <input type="text" name="command" value="contact" />
-        <input type="text" name="name" value="Sergio" />
-        <input type="text" name="email" value="waa@gmail.com" />
-        <input type="text" name="phoneNumber" value="111223344" />
-        <input type="text" name="subject" value="motivazo bueno" />
-        <input type="text" name="message" value="Mensaje guauuuuuuuuuuuuuuu" />
-        <button type="submit">Enviar POST</button>
-      </form>
-
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <span>CreateUser</span>
-        <input type="text" name="command" value="createuser" />
-        <input type="text" name="firstName" value="A555" />
-        <input type="text" name="zipCode" value="25" />
-        <input type="text" name="emailAddress" value="aaaa5@example.com" />
-        <input type="text" name="password" value="contraseña5" />
-        <button type="submit">Enviar POST</button>
-      </form>
-
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <span>RemoveUser</span>
-        <input type="text" name="command" value="removeuser" />
-        <input type="text" name="emailAddress" value="aaaa5@example.com" />
-        <input type="text" name="password" value="contraseña5" />
-        <input
-          type="text"
-          name="refreshToken"
-          value=""
-          placeholder="refreshToken"
-        />
-        <button type="submit">Enviar POST</button>
-      </form>
-
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <span>LoginUser</span>
-        <input type="text" name="command" value="loginUser" />
-        <input type="text" name="emailAddress" value="sergiodesarrolladorweb@gmail.com" />
-        <input type="text" name="password" value="_Aa1234567" />
-        <button type="submit">Enviar POST</button>
-      </form>
-
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <span>LogoutUser</span>
-        <input type="text" name="command" value="logoutUser" />
-        <input
-          type="text"
-          name="refreshToken"
-          value=""
-          placeholder="refreshToken"
-        />
-        <button type="submit">Enviar POST</button>
-      </form>
-
-      <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
         id="updateForm"
+        style="grid-row: span 3"
       >
-        <span>UpdateUser</span>
         <div class="filaForm">
-          <input type="text" name="command" value="updateUser" /><span
+          <input type="text" readonly name="command" value="updateUser" /><span
             >Null?</span
           >
         </div>
@@ -257,10 +210,10 @@
             value="aaaa5@example.com"
           />
           <input
-          type="checkbox"
-          name="nullify_emailAddress"
-          onchange="nullifyInput(this, `#updateForm [data-name='emailAddress']`)"
-        />
+            type="checkbox"
+            name="nullify_emailAddress"
+            onchange="nullifyInput(this, `#updateForm [data-name='emailAddress']`)"
+          />
         </div>
         <div class="filaForm">
           <input
@@ -395,6 +348,94 @@
             placeholder="refreshToken"
           />
         </div>
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <input type="text" readonly name="command" value="contact" />
+        <input type="text" name="name" value="Sergio" />
+        <input type="text" name="email" value="waa@gmail.com" />
+        <input type="text" name="phoneNumber" value="111223344" />
+        <input type="text" name="subject" value="motivazo bueno" />
+        <input type="text" name="message" value="Mensaje guauuuuuuuuuuuuuuu" />
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <input type="text" readonly name="command" value="createuser" />
+        <input type="text" name="firstName" value="A555" />
+        <input type="text" name="zipCode" value="25" />
+        <input type="text" name="emailAddress" value="aaaa5@example.com" />
+        <input type="text" name="password" value="contraseña5" />
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <input type="text" readonly name="command" value="removeuser" />
+        <input type="text" name="emailAddress" value="aaaa5@example.com" />
+        <input type="text" name="password" value="contraseña5" />
+        <input
+          type="text"
+          name="refreshToken"
+          value=""
+          placeholder="refreshToken"
+        />
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <input type="text" readonly name="command" value="loginUser" />
+        <input
+          type="text"
+          name="emailAddress"
+          value="sergiodesarrolladorweb@gmail.com"
+        />
+        <input type="text" name="password" value="_Aa1234567" />
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <input type="text" readonly name="command" value="logoutUser" />
+        <input
+          type="text"
+          name="refreshToken"
+          value=""
+          placeholder="refreshToken"
+        />
+        <button type="submit">Enviar POST</button>
+      </form>
+
+      <form
+        onsubmit="return handleFormSubmit(event)"
+        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+        method="post"
+      >
+        <input type="text" readonly name="command" value="forgotPassword" />
+        <input
+          type="text"
+          name="emailAddress"
+          value="sergiodesarrolladorweb@gmail.com"
+        />
         <button type="submit">Enviar POST</button>
       </form>
     </div>

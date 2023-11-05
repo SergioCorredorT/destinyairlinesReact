@@ -46,11 +46,6 @@ final class UserModel extends BaseModel
         return parent::select("*", "id_USERS = $id_USERS ");
     }
 
-    public function readUnlockEmailPending($id_USERS)
-    {
-        return parent::select("unlockEmailPending", "id_USERS = $id_USERS ");
-    }
-
     public function updateUsers($data, $where)
     {
         return parent::update($data, $where);
@@ -74,14 +69,6 @@ final class UserModel extends BaseModel
     public function updateResetCurrentLoginAttempts($id_USERS)
     {
         return parent::update(["currentLoginAttempts" => 0], " id_USERS = $id_USERS");
-    }
-
-    public function updateUnlockEmailPending($unlockEmailPending, $id_USERS)
-    {
-        if (strtolower($unlockEmailPending) != "null") {
-            $unlockEmailPending = "'" . $unlockEmailPending . "'";
-        }
-        return parent::update(["unlockEmailPending" => $unlockEmailPending], " id_USERS = $id_USERS");
     }
 
     public function deleteUsers($where)
