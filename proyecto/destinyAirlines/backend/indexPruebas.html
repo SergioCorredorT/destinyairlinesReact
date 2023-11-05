@@ -64,6 +64,19 @@
       textarea {
         color: #ffffff;
         border: none;
+        transition: 0.3s ease-in-out;
+      }
+
+      input:hover,
+      button:hover,
+      textarea:hover {
+        filter: brightness(130%);
+      }
+
+      input:focus,
+      button:focus,
+      textarea:focus {
+        filter: brightness(160%);
       }
 
       input,
@@ -84,7 +97,9 @@
 
       input[type="checkbox"] {
         margin: 0 auto;
+        cursor: pointer;
       }
+
     </style>
   </head>
   <body>

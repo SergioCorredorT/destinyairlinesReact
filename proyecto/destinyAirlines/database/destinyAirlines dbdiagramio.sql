@@ -47,10 +47,10 @@ CREATE TABLE `USERS` (
   `title` varchar(3),
   `firstName` varchar(50),
   `lastName` varchar(50),
+  `country` varchar(25),
   `townCity` varchar(50),
   `streetAddress` varchar(50),
   `zipCode` varchar(5),
-  `country` varchar(25),
   `emailAddress` varchar(50) UNIQUE NOT NULL,
   `passwordHash` varchar(100) NOT NULL,
   `phoneNumber1` varchar(20),
@@ -67,18 +67,47 @@ CREATE TABLE `USER_TEMP_IDS` (
   `id_USER_TEMP_IDS` int PRIMARY KEY AUTO_INCREMENT,
   `id_USERS` int NOT NULL,
   `tempId` varchar(40) UNIQUE NOT NULL,
-  `unlockEmailPending` datetime DEFAULT CURRENT_TIMESTAMP
+  `unlockEmailPending` datetime DEFAULT (CURRENT_TIMESTAMP)
 );
 
 CREATE TABLE `BOOKS` (
   `id_BOOKS` int PRIMARY KEY AUTO_INCREMENT,
   `id_FLIGHTS` int NOT NULL,
   `id_USERS` int NOT NULL,
+  `id_PRIMARY_CONTACT_INFORMATIONS` int NOT NULL,
   `bookCode` varchar(10) UNIQUE NOT NULL,
   `price` double,
   `direction` ENUM ('departure', 'return') NOT NULL DEFAULT "departure",
-  `invoiced` datetime DEFAULT CURRENT_TIMESTAMP,
-  `checkinDate` date
+  `checkinDate` date,
+  `adultsNumber` tinyint DEFAULT 1,
+  `childsNumber` tinyint DEFAULT 0,
+  `infantsNumber` tinyint DEFAULT 0
+);
+
+CREATE TABLE `PRIMARY_CONTACT_INFORMATIONS` (
+  `id_PRIMARY_CONTACT_INFORMATIONS` int PRIMARY KEY AUTO_INCREMENT,
+  `documentationType` ENUM ('DNI', 'Passport', 'Drivers_license', 'Residence_card_or_work_permit') NOT NULL,
+  `documentCode` varchar(30) NOT NULL,
+  `title` varchar(50),
+  `firstName` varchar(50) NOT NULL,
+  `lastName` varchar(50) NOT NULL,
+  `emailAddress` varchar(50) UNIQUE NOT NULL,
+  `phoneNumber1` varchar(20) NOT NULL,
+  `phoneNumber2` varchar(20),
+  `country` varchar(25) NOT NULL,
+  `townCity` varchar(50) NOT NULL,
+  `streetAddress` varchar(50) NOT NULL,
+  `zipCode` varchar(5) NOT NULL,
+  `companyName` varchar(50),
+  `companyTaxNumber` varchar(50),
+  `companyPhoneNumber` varchar(20)
+);
+
+CREATE TABLE `INVOICES` (
+  `id_INVOICES` int PRIMARY KEY AUTO_INCREMENT,
+  `id_BOOKS` int NOT NULL,
+  `invoiceCode` varchar(50) UNIQUE NOT NULL,
+  `invoicedDate` datetime DEFAULT (CURRENT_TIMESTAMP)
 );
 
 CREATE TABLE `SERVICES` (
@@ -142,6 +171,10 @@ ALTER TABLE `USER_TEMP_IDS` ADD FOREIGN KEY (`id_USERS`) REFERENCES `USERS` (`id
 ALTER TABLE `BOOKS` ADD FOREIGN KEY (`id_FLIGHTS`) REFERENCES `FLIGHTS` (`id_FLIGHTS`);
 
 ALTER TABLE `BOOKS` ADD FOREIGN KEY (`id_USERS`) REFERENCES `USERS` (`id_USERS`);
+
+ALTER TABLE `BOOKS` ADD FOREIGN KEY (`id_PRIMARY_CONTACT_INFORMATIONS`) REFERENCES `PRIMARY_CONTACT_INFORMATIONS` (`id_PRIMARY_CONTACT_INFORMATIONS`);
+
+ALTER TABLE `INVOICES` ADD FOREIGN KEY (`id_BOOKS`) REFERENCES `BOOKS` (`id_BOOKS`);
 
 ALTER TABLE `BOOKS_SERVICES` ADD FOREIGN KEY (`id_BOOKS`) REFERENCES `BOOKS` (`id_BOOKS`);
 

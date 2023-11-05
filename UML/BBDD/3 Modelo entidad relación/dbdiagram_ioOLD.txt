@@ -48,10 +48,10 @@ Table USERS {
   title varchar(3)
   firstName varchar(50)
   lastName varchar(50)
-  country varchar(25)
   townCity varchar(50)
   streetAddress varchar(50)
   zipCode varchar(5)
+  country varchar(25)
   emailAddress varchar(50) [not null, unique]
   passwordHash varchar(100) [not null]
   phoneNumber1 varchar(20)
@@ -75,45 +75,16 @@ Table BOOKS {
   id_BOOKS int [pk, increment]
   id_FLIGHTS int [not null, ref: > FLIGHTS.id_FLIGHTS]
   id_USERS int [not null, ref: > USERS.id_USERS]
-  id_PRIMARY_CONTACT_INFORMATIONS int [not null, ref: > PRIMARY_CONTACT_INFORMATIONS.id_PRIMARY_CONTACT_INFORMATIONS]
   bookCode varchar(10) [not null, unique]
   price double
   direction direction [not null, default: "departure"]
+  invoiced datetime [default: `CURRENT_TIMESTAMP`]
   checkinDate date
-  adultsNumber tinyint [default: 1]
-  childsNumber tinyint [default: 0]
-  infantsNumber tinyint [default: 0]
 }
 
 enum direction {
   departure
   return
-}
-
-Table PRIMARY_CONTACT_INFORMATIONS {
-  id_PRIMARY_CONTACT_INFORMATIONS int [pk, increment]
-  documentationType documentationType [not null]
-  documentCode varchar(30) [not null]
-  title varchar(50)
-  firstName varchar(50) [not null]
-  lastName varchar(50) [not null]
-  emailAddress varchar(50) [not null, unique]
-  phoneNumber1 varchar(20) [not null]
-  phoneNumber2 varchar(20)
-  country varchar(25) [not null]
-  townCity varchar(50) [not null]
-  streetAddress varchar(50) [not null]
-  zipCode varchar(5) [not null]
-  companyName varchar(50)
-  companyTaxNumber varchar(50)
-  companyPhoneNumber varchar(20)
-}
-
-Table INVOICES {
-  id_INVOICES int [pk, increment]
-  id_BOOKS int [not null, ref: > BOOKS.id_BOOKS]
-  invoiceCode varchar(50) [not null, unique]
-  invoicedDate datetime [default: `CURRENT_TIMESTAMP`]
 }
 
 Table SERVICES {
