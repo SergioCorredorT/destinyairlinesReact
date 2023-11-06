@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-11-2023 a las 21:15:03
+-- Tiempo de generación: 05-11-2023 a las 22:43:39
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -30,23 +30,21 @@ SET time_zone = "+00:00";
 CREATE TABLE `additional_informations` (
   `id_ADDITIONAL_INFORMATIONS` int(11) NOT NULL,
   `id_PASSENGERS` int(11) NOT NULL,
+  `nationality` varchar(50) DEFAULT NULL,
   `dateBirth` date DEFAULT NULL,
-  `assistiveDevices` enum('wheelchair','serviceAnimal','crutches','cane','other') DEFAULT NULL,
-  `medicalEquipment` enum('oxygenTank','CPAPMachine','other') DEFAULT NULL,
-  `mobilityLimitations` enum('difficultyWalking','difficultyClimbingStairs','other') DEFAULT NULL,
-  `communicationNeeds` enum('signLanguageInterpreter','hearingAid','other') DEFAULT NULL,
-  `medicationRequirements` enum('insulin','other') DEFAULT NULL
+  `country` varchar(50) DEFAULT NULL,
+  `expirationDate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `additional_informations`
 --
 
-INSERT INTO `additional_informations` (`id_ADDITIONAL_INFORMATIONS`, `id_PASSENGERS`, `dateBirth`, `assistiveDevices`, `medicalEquipment`, `mobilityLimitations`, `communicationNeeds`, `medicationRequirements`) VALUES
-(1, 1, '1985-05-15', NULL, NULL, NULL, NULL, NULL),
-(2, 2, '1990-08-20', NULL, NULL, NULL, NULL, NULL),
-(3, 3, '2010-03-02', NULL, NULL, NULL, NULL, NULL),
-(4, 4, '1982-11-10', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `additional_informations` (`id_ADDITIONAL_INFORMATIONS`, `id_PASSENGERS`, `nationality`, `dateBirth`, `country`, `expirationDate`) VALUES
+(1, 1, 'Spanish', '1985-05-15', 'Spain', '2023-10-16'),
+(2, 2, 'British', '1990-08-20', 'United Kingdom', '2023-10-16'),
+(3, 3, 'Spanish', '2010-03-02', 'Spain', '2023-10-16'),
+(4, 4, 'French', '1982-11-10', 'France', '2023-10-16');
 
 -- --------------------------------------------------------
 
@@ -180,8 +178,6 @@ INSERT INTO `currencies` (`id_CURRENCIES`, `name`, `idToEuro`, `euroToId`) VALUE
 CREATE TABLE `flights` (
   `id_FLIGHTS` int(11) NOT NULL,
   `id_AIRPLANES` int(11) DEFAULT NULL,
-  `id_ITINERARIES` int(11) NOT NULL,
-  `flightCode` varchar(50) NOT NULL,
   `date` date DEFAULT NULL,
   `hour` time DEFAULT NULL,
   `price` double DEFAULT NULL,
@@ -193,11 +189,33 @@ CREATE TABLE `flights` (
 -- Volcado de datos para la tabla `flights`
 --
 
-INSERT INTO `flights` (`id_FLIGHTS`, `id_AIRPLANES`, `id_ITINERARIES`, `flightCode`, `date`, `hour`, `price`, `freeSeats`, `arrivalHour`) VALUES
-(1, 1, 1, '1231', '2023-10-20', '08:00:00', 350, 150, '10:30:00'),
-(2, 2, 1, '345345', '2023-10-21', '15:30:00', 420, 200, '18:00:00'),
-(3, 3, 2, '324', '2023-10-22', '10:45:00', 280, 100, '13:15:00'),
-(4, 4, 3, '3545', '2023-10-23', '19:20:00', 500, 180, '22:00:00');
+INSERT INTO `flights` (`id_FLIGHTS`, `id_AIRPLANES`, `date`, `hour`, `price`, `freeSeats`, `arrivalHour`) VALUES
+(1, 1, '2023-10-20', '08:00:00', 350, 150, '10:30:00'),
+(2, 2, '2023-10-21', '15:30:00', 420, 200, '18:00:00'),
+(3, 3, '2023-10-22', '10:45:00', 280, 100, '13:15:00'),
+(4, 4, '2023-10-23', '19:20:00', 500, 180, '22:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `flights_itineraries`
+--
+
+CREATE TABLE `flights_itineraries` (
+  `id_ITINERARIES_FLIGHTS` int(11) NOT NULL,
+  `id_FLIGHTS` int(11) NOT NULL,
+  `id_ITINERARIES` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `flights_itineraries`
+--
+
+INSERT INTO `flights_itineraries` (`id_ITINERARIES_FLIGHTS`, `id_FLIGHTS`, `id_ITINERARIES`) VALUES
+(1, 1, 1),
+(2, 2, 1),
+(3, 3, 2),
+(4, 4, 3);
 
 -- --------------------------------------------------------
 
@@ -211,14 +229,6 @@ CREATE TABLE `invoices` (
   `invoiceCode` varchar(50) NOT NULL,
   `invoicedDate` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `invoices`
---
-
-INSERT INTO `invoices` (`id_INVOICES`, `id_BOOKS`, `invoiceCode`, `invoicedDate`) VALUES
-(1, 28, 'weaewwea23231', '2023-11-05 23:03:14'),
-(2, 28, 'ewqewqq2312', '2023-11-05 23:03:14');
 
 -- --------------------------------------------------------
 
@@ -254,9 +264,6 @@ CREATE TABLE `passengers` (
   `passengerCode` varchar(50) NOT NULL,
   `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
   `documentCode` varchar(30) NOT NULL,
-  `expirationDate` date DEFAULT NULL,
-  `nationality` varchar(50) NOT NULL,
-  `country` varchar(50) NOT NULL,
   `firstName` varchar(50) DEFAULT NULL,
   `lastName` varchar(50) DEFAULT NULL,
   `title` varchar(50) DEFAULT NULL,
@@ -268,11 +275,11 @@ CREATE TABLE `passengers` (
 -- Volcado de datos para la tabla `passengers`
 --
 
-INSERT INTO `passengers` (`id_PASSENGERS`, `passengerCode`, `documentationType`, `documentCode`, `expirationDate`, `nationality`, `country`, `firstName`, `lastName`, `title`, `ageCategory`, `billed`) VALUES
-(1, 'P001', 'DNI', '12345678A', '2023-10-16', '', '', 'David', 'García', 'Mr', 'adult', '2023-10-16'),
-(2, 'P002', 'Passport', 'AB123456', '2023-10-16', '', '', 'Laura', 'López', 'Ms', 'adult', '2023-10-16'),
-(3, 'P003', 'DNI', '87654321B', '2023-10-16', '', '', 'Carlos', 'Martín', 'Mr', 'child', '2023-10-16'),
-(4, 'P004', 'Passport', 'CD789012', '2023-10-16', '', '', 'Elena', 'Sánchez', 'Ms', 'adult', '2023-10-16');
+INSERT INTO `passengers` (`id_PASSENGERS`, `passengerCode`, `documentationType`, `documentCode`, `firstName`, `lastName`, `title`, `ageCategory`, `billed`) VALUES
+(1, 'P001', 'DNI', '12345678A', 'David', 'García', 'Mr', 'adult', '2023-10-16'),
+(2, 'P002', 'Passport', 'AB123456', 'Laura', 'López', 'Ms', 'adult', '2023-10-16'),
+(3, 'P003', 'DNI', '87654321B', 'Carlos', 'Martín', 'Mr', 'child', '2023-10-16'),
+(4, 'P004', 'Passport', 'CD789012', 'Elena', 'Sánchez', 'Ms', 'adult', '2023-10-16');
 
 -- --------------------------------------------------------
 
@@ -463,8 +470,14 @@ ALTER TABLE `currencies`
 --
 ALTER TABLE `flights`
   ADD PRIMARY KEY (`id_FLIGHTS`),
-  ADD UNIQUE KEY `flightCode` (`flightCode`),
-  ADD KEY `id_AIRPLANES` (`id_AIRPLANES`),
+  ADD KEY `id_AIRPLANES` (`id_AIRPLANES`);
+
+--
+-- Indices de la tabla `flights_itineraries`
+--
+ALTER TABLE `flights_itineraries`
+  ADD PRIMARY KEY (`id_ITINERARIES_FLIGHTS`),
+  ADD KEY `id_FLIGHTS` (`id_FLIGHTS`),
   ADD KEY `id_ITINERARIES` (`id_ITINERARIES`);
 
 --
@@ -576,10 +589,16 @@ ALTER TABLE `flights`
   MODIFY `id_FLIGHTS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT de la tabla `flights_itineraries`
+--
+ALTER TABLE `flights_itineraries`
+  MODIFY `id_ITINERARIES_FLIGHTS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT de la tabla `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id_INVOICES` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_INVOICES` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `itineraries`
@@ -603,7 +622,7 @@ ALTER TABLE `passengers_books_services`
 -- AUTO_INCREMENT de la tabla `primary_contact_informations`
 --
 ALTER TABLE `primary_contact_informations`
-  MODIFY `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `services`
@@ -658,8 +677,14 @@ ALTER TABLE `books_services`
 -- Filtros para la tabla `flights`
 --
 ALTER TABLE `flights`
-  ADD CONSTRAINT `flights_ibfk_1` FOREIGN KEY (`id_AIRPLANES`) REFERENCES `airplanes` (`id_AIRPLANES`),
-  ADD CONSTRAINT `flights_ibfk_2` FOREIGN KEY (`id_ITINERARIES`) REFERENCES `itineraries` (`id_ITINERARIES`);
+  ADD CONSTRAINT `flights_ibfk_1` FOREIGN KEY (`id_AIRPLANES`) REFERENCES `airplanes` (`id_AIRPLANES`);
+
+--
+-- Filtros para la tabla `flights_itineraries`
+--
+ALTER TABLE `flights_itineraries`
+  ADD CONSTRAINT `flights_itineraries_ibfk_1` FOREIGN KEY (`id_FLIGHTS`) REFERENCES `flights` (`id_FLIGHTS`),
+  ADD CONSTRAINT `flights_itineraries_ibfk_2` FOREIGN KEY (`id_ITINERARIES`) REFERENCES `itineraries` (`id_ITINERARIES`);
 
 --
 -- Filtros para la tabla `invoices`

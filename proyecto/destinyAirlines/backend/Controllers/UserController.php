@@ -15,7 +15,7 @@ final class UserController extends BaseController
         parent::__construct();
     }
 
-    public function createUser($POST)
+    public function createUser(array $POST)
     {
         $userData = [
             'title'                 => $POST['title'] ?? '',
@@ -50,7 +50,7 @@ final class UserController extends BaseController
         return false;
     }
 
-    public function updateUser($POST)
+    public function updateUser(array $POST)
     {
         //En $POST solo se deben recibir los campos que se desean editar dentro de los posibles definidos en $userData
         $userData = [
@@ -113,7 +113,7 @@ final class UserController extends BaseController
         return ['response' => false, 'tokens' => $newTokens];
     }
 
-    public function deleteUser($POST)
+    public function deleteUser(array $POST)
     {
         //eliminar tokens en el frontend
         require_once './Tools/TokenTool.php';
@@ -145,7 +145,7 @@ final class UserController extends BaseController
         return false;
     }
 
-    public function loginUser($POST)
+    public function loginUser(array $POST)
     {
         require_once './Tools/TokenTool.php';
         $userData = [
@@ -227,7 +227,7 @@ final class UserController extends BaseController
         return false;
     }
 
-    public function logoutUser($POST)
+    public function logoutUser(array $POST)
     {
         require_once './Tools/TokenTool.php';
 
@@ -247,7 +247,7 @@ final class UserController extends BaseController
         return false;
     }
 
-    public function passwordResetFailedAttempts($POST)
+    public function passwordResetFailedAttempts(array $POST)
     {
         $new_password = $POST['new_password'];
         $confirm_password = $POST['confirm_password'];
@@ -328,7 +328,7 @@ final class UserController extends BaseController
         return ['response' => false];
     }
 
-    public function passwordReset($POST)
+    public function passwordReset(array $POST)
     {
         //IMPLEMENTAR VALIDACIÓN en cada function de los case
         if ($POST['type']) {
@@ -343,7 +343,7 @@ final class UserController extends BaseController
         }
     }
 
-    public function passwordResetForgotPassword($POST)
+    public function passwordResetForgotPassword(array $POST)
     {
         $new_password = $POST['new_password'];
         $confirm_password = $POST['confirm_password'];
@@ -381,7 +381,7 @@ final class UserController extends BaseController
         return ['response' => false];
     }
 
-    public function forgotPassword($POST)
+    public function forgotPassword(array $POST)
     {
         $userData = [
             'emailAddress'  => $POST['emailAddress'] ?? '',
@@ -450,19 +450,19 @@ final class UserController extends BaseController
         return ['response' => false, 'errorCode' => 5];
     }
 
-    private function updateCreateTempIdByUserId($userId, $tempId)
+    private function updateCreateTempIdByUserId(int $userId, string $tempId)
     {
         $UserTempIdsModel = new UserTempIdsModel();
         $UserTempIdsModel->removeTempIdIfExistByIdUser($userId);
         $UserTempIdsModel->createTempId($userId, $tempId);
     }
 
-    private function generateLinkPasswordReset($base, $parametres)
+    private function generateLinkPasswordReset(string $base, array $parametres)
     {
         return $base . $this->generateLinkParametres($parametres);
     }
 
-    private function generateLinkParametres($parametres)
+    private function generateLinkParametres(array $parametres)
     {
         $linkParametres = '';
         foreach ($parametres as $key => $value) {

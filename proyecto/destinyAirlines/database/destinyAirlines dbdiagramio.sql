@@ -12,12 +12,6 @@ CREATE TABLE `CURRENCIES` (
   `euroToId` double(10,3)
 );
 
-CREATE TABLE `FLIGHTS_ITINERARIES` (
-  `id_ITINERARIES_FLIGHTS` int PRIMARY KEY AUTO_INCREMENT,
-  `id_FLIGHTS` int NOT NULL,
-  `id_ITINERARIES` int NOT NULL
-);
-
 CREATE TABLE `ITINERARIES` (
   `id_ITINERARIES` int PRIMARY KEY AUTO_INCREMENT,
   `origin` int NOT NULL,
@@ -28,6 +22,8 @@ CREATE TABLE `ITINERARIES` (
 CREATE TABLE `FLIGHTS` (
   `id_FLIGHTS` int PRIMARY KEY AUTO_INCREMENT,
   `id_AIRPLANES` int,
+  `id_ITINERARIES` int NOT NULL,
+  `flightCode` varchar(50) UNIQUE NOT NULL,
   `date` date,
   `hour` time,
   `price` double,
@@ -138,33 +134,36 @@ CREATE TABLE `PASSENGERS` (
   `passengerCode` varchar(50) UNIQUE NOT NULL,
   `documentationType` ENUM ('DNI', 'Passport', 'Drivers_license', 'Residence_card_or_work_permit') NOT NULL,
   `documentCode` varchar(30) NOT NULL,
-  `firstName` varchar(50),
-  `lastName` varchar(50),
+  `expirationDate` date NOT NULL,
   `title` varchar(50),
+  `firstName` varchar(50) NOT NULL,
+  `lastName` varchar(50) NOT NULL,
   `ageCategory` ENUM ('infant', 'child', 'adult') NOT NULL DEFAULT "adult",
+  `nationality` varchar(50) NOT NULL,
+  `country` varchar(50) NOT NULL,
   `billed` date
 );
 
 CREATE TABLE `ADDITIONAL_INFORMATIONS` (
   `id_ADDITIONAL_INFORMATIONS` int PRIMARY KEY AUTO_INCREMENT,
-  `id_PASSENGERS` int NOT NULL,
-  `nationality` varchar(50),
+  `id_PASSENGERS` UNIQUE int NOT NULL,
   `dateBirth` date,
-  `country` varchar(50),
-  `expirationDate` date
+  `assistiveDevices` ENUM ('wheelchair', 'serviceAnimal', 'crutches', 'cane', 'other'),
+  `medicalEquipment` ENUM ('oxygenTank', 'CPAPMachine', 'other'),
+  `mobilityLimitations` ENUM ('difficultyWalking', 'difficultyClimbingStairs', 'other'),
+  `communicationNeeds` ENUM ('signLanguageInterpreter', 'hearingAid', 'other'),
+  `medicationRequirements` ENUM ('insulin', 'other')
 );
 
 ALTER TABLE `AIRPORTS` ADD FOREIGN KEY (`id_CURRENCIES`) REFERENCES `CURRENCIES` (`id_CURRENCIES`);
-
-ALTER TABLE `FLIGHTS_ITINERARIES` ADD FOREIGN KEY (`id_FLIGHTS`) REFERENCES `FLIGHTS` (`id_FLIGHTS`);
-
-ALTER TABLE `FLIGHTS_ITINERARIES` ADD FOREIGN KEY (`id_ITINERARIES`) REFERENCES `ITINERARIES` (`id_ITINERARIES`);
 
 ALTER TABLE `ITINERARIES` ADD FOREIGN KEY (`origin`) REFERENCES `AIRPORTS` (`id_AIRPORTS`);
 
 ALTER TABLE `ITINERARIES` ADD FOREIGN KEY (`destiny`) REFERENCES `AIRPORTS` (`id_AIRPORTS`);
 
 ALTER TABLE `FLIGHTS` ADD FOREIGN KEY (`id_AIRPLANES`) REFERENCES `AIRPLANES` (`id_AIRPLANES`);
+
+ALTER TABLE `FLIGHTS` ADD FOREIGN KEY (`id_ITINERARIES`) REFERENCES `ITINERARIES` (`id_ITINERARIES`);
 
 ALTER TABLE `USER_TEMP_IDS` ADD FOREIGN KEY (`id_USERS`) REFERENCES `USERS` (`id_USERS`);
 

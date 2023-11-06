@@ -8,7 +8,7 @@ abstract class BaseModel
     private $tableName;
     private $iniTool;
 
-    protected function __construct($tableName)
+    protected function __construct(string $tableName)
     {
         $this->iniTool = new IniTool('./Config/cfg.ini');
         $cfgDatabase = $this->iniTool->getKeysAndValues("database");
@@ -24,7 +24,7 @@ abstract class BaseModel
         }
     }
 
-    protected function insert($datas)
+    protected function insert(array $datas)
     {
         //Ejemplos:
         /*
@@ -63,7 +63,7 @@ abstract class BaseModel
         }
     }
 
-    private function insertOne($data)
+    private function insertOne(array $data)
     {
         $data = $this->sanitizeAll($data);
         $columns = implode(', ', array_keys($data));
@@ -88,7 +88,7 @@ abstract class BaseModel
         }
     }
 
-    protected function select($columns = '*', $where = '')
+    protected function select(string $columns = '*', string $where = '')
     {
         //Ejemplo:
         //print_r($usuario->select());
@@ -112,7 +112,7 @@ abstract class BaseModel
             return false;
         }
     }
-    protected function update($data, $where)
+    protected function update(array $data, string $where)
     {
         $updateData = '';
         foreach ($data as $key => $value) {
@@ -137,7 +137,7 @@ abstract class BaseModel
         }
     }
 
-    protected function delete($where)
+    protected function delete(string $where)
     {
         // Ejecuta DELETE sin filtro WHERE
         $query = "DELETE FROM $this->tableName WHERE $where";
@@ -173,7 +173,7 @@ abstract class BaseModel
         return $this->con->rollBack();
     }
 
-    private function sanitizeAll($data)
+    private function sanitizeAll(array|string $data)
     {
         if (is_array($data)) {
             $cleanedData = [];
@@ -187,7 +187,7 @@ abstract class BaseModel
         }
     }
 
-    private function sanitizeString($myString)
+    private function sanitizeString(string $myString)
     {
         $restrictedWords = ["<script>", "</script>", "<script src", "<script type=", "SELECT * FROM", "SELECT ", " SELECT ", "DELETE FROM", "INSERT INTO", "DROP TABLE", "DROP DATABASE", "TRUNCATE TABLE", "SHOW TABLES", "SHOW DATABASES", "<?php", "?>", "--", "^", "<", ">", "==", "=", ";", "::"];
 

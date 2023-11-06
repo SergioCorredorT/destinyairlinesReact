@@ -3,7 +3,7 @@ require_once "./Tools/IniTool.php";
 require_once "./Templates/BaseTemplate.php";
 class ContactTemplate extends BaseTemplate
 {
-  static function applyContactTemplate($data)
+  static function applyContactTemplate(array $data)
   {
     $title = "Contact";
     $userName = $data["name"];

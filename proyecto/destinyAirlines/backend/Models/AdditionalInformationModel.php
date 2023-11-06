@@ -9,7 +9,7 @@ final class AdditionalInformationModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function createAdditionalInformations($data)
+    public function createAdditionalInformations(array $data)
     {
         return parent::insert($data);
     }
@@ -19,12 +19,12 @@ final class AdditionalInformationModel extends BaseModel
         return parent::select("*");
     }
 
-    public function updateAdditionalInformations($data, $where)
+    public function updateAdditionalInformations(array $data, string $where)
     {
         return parent::update($data, $where);
     }
 
-    public function deleteAdditionalInformations($where = "")
+    public function deleteAdditionalInformations(string $where = "")
     {
         return parent::delete($where);
     }

@@ -13,12 +13,6 @@ Table CURRENCIES {
   euroToId double(10,3)
 }
 
-Table FLIGHTS_ITINERARIES {
-  id_ITINERARIES_FLIGHTS int [pk, increment]
-  id_FLIGHTS int [not null, ref: > FLIGHTS.id_FLIGHTS]
-  id_ITINERARIES int [not null, ref: > ITINERARIES.id_ITINERARIES]
-}
-
 Table ITINERARIES {
   id_ITINERARIES int [pk, increment]
   origin int [not null, ref: > AIRPORTS.id_AIRPORTS]
@@ -29,6 +23,8 @@ Table ITINERARIES {
 Table FLIGHTS {
   id_FLIGHTS int [pk, increment]
   id_AIRPLANES int [ref: > AIRPLANES.id_AIRPLANES]
+  id_ITINERARIES int [not null, ref: > ITINERARIES.id_ITINERARIES]
+  flightCode varchar(50) [not null, unique]
   date date
   hour time
   price double
@@ -150,10 +146,13 @@ Table PASSENGERS {
   passengerCode varchar(50) [not null, unique]
   documentationType documentationType [not null]
   documentCode varchar(30) [not null]
-  firstName varchar(50)
-  lastName varchar(50)
+  expirationDate date [not null]
   title varchar(50)
+  firstName varchar(50) [not null]
+  lastName varchar(50) [not null]
   ageCategory ageCategory [not null, default: "adult"]
+  nationality varchar(50) [not null]
+  country varchar(50) [not null]
   billed date
 }
 
@@ -172,9 +171,42 @@ enum ageCategory {
 
 Table ADDITIONAL_INFORMATIONS {
   id_ADDITIONAL_INFORMATIONS int [pk, increment]
-  id_PASSENGERS int [not null, ref: > PASSENGERS.id_PASSENGERS]
-  nationality varchar(50)
+  id_PASSENGERS int [unique, not null, ref: > PASSENGERS.id_PASSENGERS]
   dateBirth date
-  country varchar(50)
-  expirationDate date
+  assistiveDevices assistiveDevicesEnum
+  medicalEquipment medicalEquipmentEnum
+  mobilityLimitations mobilityLimitationsEnum
+  communicationNeeds communicationNeedsEnum
+  medicationRequirements medicationRequirementsEnum
+}
+
+Enum assistiveDevicesEnum {
+  wheelchair
+  serviceAnimal
+  crutches
+  cane
+  other
+}
+
+Enum medicalEquipmentEnum {
+  oxygenTank
+  CPAPMachine
+  other
+}
+
+Enum mobilityLimitationsEnum {
+  difficultyWalking
+  difficultyClimbingStairs
+  other
+}
+
+Enum communicationNeedsEnum {
+  signLanguageInterpreter
+  hearingAid
+  other
+}
+
+Enum medicationRequirementsEnum {
+  insulin
+  other
 }

@@ -3,7 +3,7 @@ require_once "./Tools/IniTool.php";
 require_once "./Templates/BaseTemplate.php";
 class FailedAttemptsTemplate extends BaseTemplate
 {
-  static function applyFailedAttemptsTemplate($data)
+  static function applyFailedAttemptsTemplate(array $data)
   {
     $iniTool = new IniTool('./Config/cfg.ini');
     $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");

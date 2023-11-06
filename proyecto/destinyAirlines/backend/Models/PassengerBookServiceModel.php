@@ -9,7 +9,7 @@ final class PassengerBookServiceModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function createPassengerService($data)
+    public function createPassengerService(array $data)
     {
         return parent::insert($data);
     }
@@ -19,12 +19,12 @@ final class PassengerBookServiceModel extends BaseModel
         return parent::select("*");
     }
 
-    public function updatePassengerService($data, $where)
+    public function updatePassengerService(array $data, string $where)
     {
         return parent::update($data, $where);
     }
 
-    public function deletePassengerService($where = "")
+    public function deletePassengerService(string $where = "")
     {
         return parent::delete($where);
     }

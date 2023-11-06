@@ -3,7 +3,7 @@ require_once './Tools/IniTool.php';
 require_once './vendor/autoload.php';
 class TokenTool
 {
-    public static function generateToken($data, $timeLife = 60 * 60, $role = 'user')
+    public static function generateToken(array $data, int $timeLife = 60 * 60, string $role = 'user')
     {
         $iniTool = new IniTool('./Config/cfg.ini');
         $secretTokenPassword = $iniTool->getKeysAndValues('secretTokenPassword');
@@ -28,7 +28,7 @@ class TokenTool
         $jwt = \Firebase\JWT\JWT::encode($payload, $secret, 'HS256');
         return $jwt;
     }
-    public static function checkUpdateByRemainingTokenTimes($accessToken, $refreshToken, $minLifeTimeAccessToken, $minLifeTimeRefreshToken, $initialLifeTimeAccessToken, $initialLifeTimeRefreshToken)
+    public static function checkUpdateByRemainingTokenTimes(string $accessToken, string $refreshToken, int $minLifeTimeAccessToken, int $minLifeTimeRefreshToken, int $initialLifeTimeAccessToken, int $initialLifeTimeRefreshToken)
     {
         /*
             Destiny Airlines
@@ -56,7 +56,7 @@ class TokenTool
         return $rsp;
     }
 
-    public static function getRemainingTokenTime($token)
+    public static function getRemainingTokenTime(string $token)
     {
         try {
             $decodedToken = TokenTool::decodeAndCheckToken($token);
@@ -72,7 +72,7 @@ class TokenTool
         }
     }
 
-    public static function decodeAndCheckToken($token, $type = '')
+    public static function decodeAndCheckToken(string $token, string $type = '')
     {
         $iniTool = new IniTool('./Config/cfg.ini');
         $secretTokenPassword = $iniTool->getKeysAndValues('secretTokenPassword');

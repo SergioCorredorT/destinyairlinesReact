@@ -12,7 +12,7 @@ final class ContactController extends BaseController
         parent::__construct();
     }
 
-    public function sendContact($POST)
+    public function sendContact(array $POST)
     {
         $contactData = [
             'name'          => $POST['name'] ?? "",
@@ -43,7 +43,7 @@ final class ContactController extends BaseController
         }
     }
 
-    private function chooseToFromSubject($subject)
+    private function chooseToFromSubject(string $subject)
     {
         //devolver el "to" (correo destino) según el subject según el cfg.ini
         $iniTool = new IniTool('./Config/cfg.ini');

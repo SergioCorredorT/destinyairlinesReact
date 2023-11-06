@@ -1,7 +1,7 @@
 <?php
 $command = $_POST['command'] ?? "";
 
-function executeCommand($controllerName, $methodName, $params)
+function executeCommand(string $controllerName, string $methodName, array $params)
 {
     try {
         $controller = new $controllerName();

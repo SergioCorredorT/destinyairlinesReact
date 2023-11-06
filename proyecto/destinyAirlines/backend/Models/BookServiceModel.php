@@ -9,7 +9,7 @@ final class BookServiceModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function createBookServices($data)
+    public function createBookServices(array $data)
     {
         return parent::insert($data);
     }
@@ -19,12 +19,12 @@ final class BookServiceModel extends BaseModel
         return parent::select("*");
     }
 
-    public function updateBookServices($data, $where)
+    public function updateBookServices(array $data, string $where)
     {
         return parent::update($data, $where);
     }
 
-    public function deleteBookServices($where = "")
+    public function deleteBookServices(string $where = "")
     {
         return parent::delete($where);
     }

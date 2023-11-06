@@ -8,7 +8,7 @@
 //Indicador de si hay error
         private $ifError=false;
 
-        public function __construct($rutaIni='cfg.ini')
+        public function __construct(string $rutaIni='cfg.ini')
         {
             if(is_string($rutaIni))
             {
@@ -42,7 +42,7 @@
             return $this->ifError;
         }
 
-        function getKey($section,$key)
+        function getKey(string $section, string $key)
         {
             if(isset($this->iniContain[$section][$key]))
             {
@@ -54,7 +54,7 @@
             }
         }
 
-        function getKeysAndValues($section)
+        function getKeysAndValues(string $section)
         {
             if(isset($this->iniContain[$section]))
             {
@@ -66,7 +66,7 @@
             }
         }
 
-        public function getSection($section)
+        public function getSection(string $section)
         {
             if(isset($this->iniContain[$section]))
             {

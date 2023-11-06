@@ -1,7 +1,7 @@
 <?php
 class TemplateTool
 {
-    static function ApplyTemplate($data, $template)
+    static function ApplyTemplate(array $data, string $template)
     {
         switch (strtolower($template)) {
             case 'contacttemplate': {

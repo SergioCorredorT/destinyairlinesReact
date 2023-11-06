@@ -3,7 +3,7 @@ require_once './Tools/IniTool.php';
 require_once './Templates/BaseTemplate.php';
 class ForgotPasswordTemplate extends BaseTemplate
 {
-  static function applyForgotPasswordTemplate($data)
+  static function applyForgotPasswordTemplate(array $data)
   {
     $title = 'Forgot password';
     $forgotPasswordLink = $data['forgotPasswordLink'];

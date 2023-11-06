@@ -4,7 +4,7 @@ require_once './Tools/IniTool.php';
 include_once './Tools/TemplateTool.php';
 class EmailTool
 {
-    public static function sendEmail($data, $template = '')
+    public static function sendEmail(array $data, string $template = '')
     {
         $toEmail = $data['toEmail'];
         $subject = $data['subject'];
