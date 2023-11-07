@@ -78,40 +78,49 @@ final class BookController extends BaseController
         $passengers = $POST['passengers'];
         $passegersDetails = [];
 
-        //Primero recogemos los datos de los pasajeros
+        //Vamos recogiendo los datos de los pasajeros
         foreach ($passengers as $passenger) {
             $passegerDetails = [];
-            $passegerDetails['documentationType']     = $passenger['documentationType'] ?? '';
-            $passegerDetails['documentCode']          = $passenger['documentCode'] ?? '';
-            $passegerDetails['expirationDate']        = $passenger['expirationDate'] ?? '';
-            $passegerDetails['title']                 = $passenger['title'] ?? '';
-            $passegerDetails['firstName']             = $passenger['firstName'] ?? '';
-            $passegerDetails['lastName']              = $passenger['lastName'] ?? '';
-            $passegerDetails['ageCategory']           = $passenger['ageCategory'] ?? '';
-            $passegerDetails['nationality']           = $passenger['nationality'] ?? '';
-            $passegerDetails['country']               = $passenger['country'] ?? '';
-            $passegerDetails['dateBirth']             = $passenger['dateBirth'] ?? '';
-            $passegerDetails['assistiveDevices']      = $passenger['assistiveDevices'] ?? '';
-            $passegerDetails['medicalEquipment']      = $passenger['medicalEquipment'] ?? '';
-            $passegerDetails['mobilityLimitations']   = $passenger['mobilityLimitations'] ?? '';
-            $passegerDetails['communicationNeeds']    = $passenger['communicationNeeds'] ?? '';
-            $passegerDetails['medicationRequirements'] = $passenger['medicationRequirements'] ?? '';
 
-            //Después los saneamos y validamos
-            $passengersDetails = PassengerSanitizer::sanitize($fligthDetails);
-            $isValidate = PassengerValidator::validate($fligthDetails);
+            $keys_default = [
+                'documentationType' => '',
+                'documentCode' => '',
+                'expirationDate' => '',
+                'title' => '',
+                'firstName' => '',
+                'lastName' => '',
+                'ageCategory' => '',
+                'nationality' => '',
+                'country' => '',
+                'dateBirth' => '',
+                'assistiveDevices' => '',
+                'medicalEquipment' => '',
+                'mobilityLimitations' => '',
+                'communicationNeeds' => '',
+                'medicationRequirements' => ''
+            ];
+
+            foreach ($keys_default as $key => $defaultValue) {
+                $passegerDetails[$key] = $passenger[$key] ?? $defaultValue;
+            }
+
+            //Cada pasajero lo saneamos y validamos
+            $passengersDetails = PassengerSanitizer::sanitize($passegerDetails);
+            $isValidate = PassengerValidator::validate($passengersDetails);
+            if(!$isValidate) {
+                return false;
+            }
 
             array_push($passegersDetails, $passegerDetails);
         }
 
-        if ($isValidate) {
-            //Metemos en session
-            SessionTool::set('passengersDetails', $passegersDetails);
-        }
+        //Si todo ha ido bien metemos en session a los pasajeros
+        SessionTool::set('passengersDetails', $passegersDetails);
     }
 
     public function storeServicesDetails(array $POST)
     {
+        
     }
 
     public function storePrimaryContactInformationDetails(array $POST)

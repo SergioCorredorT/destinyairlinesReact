@@ -14,15 +14,20 @@ final class ContactController extends BaseController
 
     public function sendContact(array $POST)
     {
-        $contactData = [
-            'name'          => $POST['name'] ?? "",
-            'email'         => $POST['email'] ?? "",
-            'phoneNumber'   => $POST['phoneNumber'] ?? "",
-            'subject'       => $POST['subject'] ?? "",
-            'message'       => $POST['message'] ?? "",
-            'dateTime'      => date('Y-m-d H:i:s')
+        $keys_default = [
+            'name' => '',
+            'email' => '',
+            'phoneNumber' => '',
+            'subject' => '',
+            'message' => ''
         ];
 
+        foreach ($keys_default as $key => $defaultValue) {
+            $contactData[$key] = $POST[$key] ?? $defaultValue;
+        }
+
+        $contactData['dateTime'] = date('Y-m-d H:i:s');
+        
         $contactData = ContactSanitizer::sanitize($contactData);
         $isValidate = ContactValidator::validate($contactData);
         if ($isValidate) {

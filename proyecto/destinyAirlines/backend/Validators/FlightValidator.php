@@ -49,10 +49,8 @@ class FlightValidator
 
     public static function validate($data)
     {
-        $isValid = true;
-
         if (isset($data['flightCode']) && !self::validateFlightCode($data['flightCode'])) {
-            $isValid = false;
+            return false;
         }
 
         if (isset($data['adultsNumber']) && !self::validateAdultsNumber($data['adultsNumber'])) {
@@ -67,6 +65,6 @@ class FlightValidator
             return false;
         }
 
-        return $isValid;
+        return true;
     }
 }

@@ -43,24 +43,22 @@ class ContactValidator
 
     public static function validate($data)
     {
-        $isValid = true;
-
         if (isset($data['name']) && !self::validateName($data['name'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['email']) && !self::validateEmail($data['email'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['subject']) && !self::validateSubject($data['subject'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['message']) && !self::validateMessage($data['message'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['phoneNumber']) && !self::validatePhone($data['phoneNumber'])) {
-            $isValid = false;
+            return false;
         }
 
-        return $isValid;
+        return true;
     }
 }

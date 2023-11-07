@@ -17,24 +17,29 @@ final class UserController extends BaseController
 
     public function createUser(array $POST)
     {
-        $userData = [
-            'title'                 => $POST['title'] ?? '',
-            'firstName'             => $POST['firstName'] ?? '',
-            'lastName'              => $POST['lastName'] ?? '',
-            'townCity'              => $POST['townCity'] ?? '',
-            'streetAddress'         => $POST['streetAddress'] ?? '',
-            'zipCode'               => $POST['zipCode'] ?? '',
-            'country'               => $POST['country'] ?? '',
-            'emailAddress'          => $POST['emailAddress'] ?? '',
-            'password'              => $POST['password'] ?? '',
-            'phoneNumber1'          => $POST['phoneNumber1'] ?? '',
-            'phoneNumber2'          => $POST['phoneNumber2'] ?? '',
-            'phoneNumber3'          => $POST['phoneNumber3'] ?? '',
-            'companyName'           => $POST['companyName'] ?? '',
-            'companyTaxNumber'      => $POST['companyTaxNumber'] ?? '',
-            'companyPhoneNumber'    => $POST['companyPhoneNumber'] ?? '',
-            'dateTime'  => date('Y-m-d H:i:s')
+        $keys_default = [
+            'title' => '',
+            'firstName' => '',
+            'lastName' => '',
+            'townCity' => '',
+            'streetAddress' => '',
+            'zipCode' => '',
+            'country' => '',
+            'emailAddress' => '',
+            'password' => '',
+            'phoneNumber1' => '',
+            'phoneNumber2' => '',
+            'phoneNumber3' => '',
+            'companyName' => '',
+            'companyTaxNumber' => '',
+            'companyPhoneNumber' => ''
         ];
+
+        foreach ($keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+
+        $userData['dateTime'] = date('Y-m-d H:i:s');
 
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
@@ -53,27 +58,32 @@ final class UserController extends BaseController
     public function updateUser(array $POST)
     {
         //En $POST solo se deben recibir los campos que se desean editar dentro de los posibles definidos en $userData
-        $userData = [
-            'title'                 => $POST['title'] ?? null,
-            'firstName'             => $POST['firstName'] ?? null,
-            'lastName'              => $POST['lastName'] ?? null,
-            'townCity'              => $POST['townCity'] ?? null,
-            'streetAddress'         => $POST['streetAddress'] ?? null,
-            'zipCode'               => $POST['zipCode'] ?? null,
-            'country'               => $POST['country'] ?? null,
-            'emailAddress'          => $POST['emailAddress'] ?? null,
-            'password'              => $POST['password'] ?? null,
-            'phoneNumber1'          => $POST['phoneNumber1'] ?? null,
-            'phoneNumber2'          => $POST['phoneNumber2'] ?? null,
-            'phoneNumber3'          => $POST['phoneNumber3'] ?? null,
-            'companyName'           => $POST['companyName'] ?? null,
-            'companyTaxNumber'      => $POST['companyTaxNumber'] ?? null,
-            'companyPhoneNumber'    => $POST['companyPhoneNumber'] ?? null,
-            'refreshToken'          => $POST['refreshToken'] ?? null,
-            'accessToken'           => $POST['accessToken'] ?? null,
-            'emailAddressAuth'      => $POST['emailAddressAuth'] ?? null,
-            'dateTime'  => date('Y-m-d H:i:s')
+        $keys_default = [
+            'title' => null,
+            'firstName' => null,
+            'lastName' => null,
+            'townCity' => null,
+            'streetAddress' => null,
+            'zipCode' => null,
+            'country' => null,
+            'emailAddress' => null,
+            'password' => null,
+            'phoneNumber1' => null,
+            'phoneNumber2' => null,
+            'phoneNumber3' => null,
+            'companyName' => null,
+            'companyTaxNumber' => null,
+            'companyPhoneNumber' => null,
+            'refreshToken' => null,
+            'accessToken' => null,
+            'emailAddressAuth' => null
         ];
+
+        foreach ($keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+
+        $userData['dateTime'] = date('Y-m-d H:i:s');
 
         require_once './Tools/TokenTool.php';
         $iniTool = new IniTool('./Config/cfg.ini');
@@ -117,12 +127,16 @@ final class UserController extends BaseController
     {
         //eliminar tokens en el frontend
         require_once './Tools/TokenTool.php';
-        $userData = [
-            'emailAddress'          => $POST['emailAddress'] ?? '',
-            'password'              => $POST['password'] ?? '',
-            'refreshToken'          => $POST['refreshToken'] ?? '',
-            'dateTime'  => date('Y-m-d H:i:s')
+        $keys = [
+            'emailAddress' => '',
+            'password' => '',
+            'refreshToken' => ''
         ];
+        foreach ($keys as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+        $userData['dateTime'] = date('Y-m-d H:i:s');
+
         $decodedToken = TokenTool::decodeAndCheckToken($userData['refreshToken'], 'refresh');
         $UserModel = new UserModel();
 
@@ -148,11 +162,15 @@ final class UserController extends BaseController
     public function loginUser(array $POST)
     {
         require_once './Tools/TokenTool.php';
-        $userData = [
-            'emailAddress'          => $POST['emailAddress'] ?? '',
-            'password'              => $POST['password'] ?? '',
-            'dateTime'  => date('Y-m-d H:i:s')
+        $keys = [
+            'emailAddress' => '',
+            'password' => ''
         ];
+        foreach ($keys as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+        $userData['dateTime'] = date('Y-m-d H:i:s');
+
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
         if ($isValidate) {
@@ -417,9 +435,9 @@ final class UserController extends BaseController
             $now = new DateTime();
             $lastForgotPasswordEmail = new DateTime($user['lastForgotPasswordEmail']);
             $interval = $now->getTimestamp() - $lastForgotPasswordEmail->getTimestamp();
-        
+
             $expireTimeTokenForgotPassword = intval($cfgTokenSettings['secondsMinTimeLifeForgotPasswordToken']);
-        
+
             if ($interval < $expireTimeTokenForgotPassword) {
                 return ['response' => false, 'errorCode' => 4];
             }
@@ -443,7 +461,7 @@ final class UserController extends BaseController
         require_once './Tools/EmailTool.php';
         $isSent = EmailTool::sendEmail($userRestartData, 'forgotPasswordTemplate');
         if ($isSent) {
-            if($UserModel->updateLastForgotPasswordEmailById($user['id_USERS'])){
+            if ($UserModel->updateLastForgotPasswordEmailById($user['id_USERS'])) {
                 return ['response' => true];
             }
         }

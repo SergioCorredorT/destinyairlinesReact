@@ -72,7 +72,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            error_log('Se ha capturado una excepción: '.  $er->getMessage(). "\n");
+            error_log('Se ha capturado una excepción: ' .  $er->getMessage() . "\n");
             return false;
         }
         // Bind parameters
@@ -93,7 +93,7 @@ abstract class BaseModel
         //Ejemplo:
         //print_r($usuario->select());
         $query = "SELECT $columns FROM $this->tableName";
-        
+
         if ($where) {
             $query .= " WHERE $where";
         }
@@ -102,7 +102,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            error_log('Se ha capturado una excepción: '.  $er->getMessage(). "\n");
+            error_log('Se ha capturado una excepción: ' .  $er->getMessage() . "\n");
             return false;
         }
         $stmt->execute();
@@ -112,6 +112,7 @@ abstract class BaseModel
             return false;
         }
     }
+
     protected function update(array $data, string $where)
     {
         $updateData = '';
@@ -120,7 +121,7 @@ abstract class BaseModel
         }
         $updateData = rtrim($updateData, ', ');
         $query = "UPDATE $this->tableName SET $updateData WHERE $where";
-    
+
         // Prepare the query
         try {
             $stmt = $this->con->prepare($query);
@@ -128,7 +129,7 @@ abstract class BaseModel
             error_log('Catched exception: ' . $er->getMessage() . "\n");
             return false;
         }
-        
+
         $stmt->execute();
         if (intval($stmt->errorCode()) === 0) {
             return true;
@@ -141,11 +142,11 @@ abstract class BaseModel
     {
         // Ejecuta DELETE sin filtro WHERE
         $query = "DELETE FROM $this->tableName WHERE $where";
-    
+
         try {
             $stmt = $this->con->prepare($query);
             $stmt->execute();
-    
+
             if (intval($stmt->errorCode()) === 0) {
                 return true; // La eliminación fue exitosa
             } else {
@@ -154,6 +155,29 @@ abstract class BaseModel
         } catch (Exception $er) {
             // Manejo de excepciones en caso de error
             // echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
+            return false;
+        }
+    }
+
+    public function selectAllowedValues($columnName)
+    {
+        $query = "SELECT COLUMN_TYPE 
+                  FROM INFORMATION_SCHEMA.COLUMNS 
+                  WHERE TABLE_NAME = '$this->tableName' 
+                  AND COLUMN_NAME = '$columnName'";
+
+        // Prepare and execute the query
+        try {
+            $stmt = $this->con->prepare($query);
+        } catch (Exception $er) {
+            error_log('Se ha capturado una excepción: ' .  $er->getMessage() . "\n");
+            return false;
+        }
+        $stmt->execute();
+        if (intval($stmt->errorCode()) === 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return explode(",", str_replace("'", "", substr($result[0]['COLUMN_TYPE'], 5, (strlen($result[0]['COLUMN_TYPE']) - 6))));
+        } else {
             return false;
         }
     }

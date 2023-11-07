@@ -122,54 +122,52 @@ class UserValidator
 
     public static function validate($data)
     {
-        $isValid = true;
-
         if (isset($data['title']) && !self::validateTitle($data['title'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['firstName']) && !self::validateFirstName($data['firstName'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['lastName']) && !self::validateLastName($data['lastName'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['townCity']) && !self::validateTownCity($data['townCity'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['streetAddress']) && !self::validateStreetAddress($data['streetAddress'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['zipCode']) && !self::validateZipCode($data['zipCode'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['country']) && !self::validateCountry($data['country'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['emailAddress']) && !self::validateEmailAddress($data['emailAddress'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['password']) && !self::validatePassword($data['password'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['phoneNumber1']) && !self::validatePhoneNumber1($data['phoneNumber1'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['phoneNumber2']) && !self::validatePhoneNumber2($data['phoneNumber2'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['phoneNumber3']) && !self::validatePhoneNumber3($data['phoneNumber3'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['companyName']) && !self::validateCompanyName($data['companyName'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['companyTaxNumber']) && !self::validateCompanyTaxNumber($data['companyTaxNumber'])) {
-            $isValid = false;
+            return false;
         }
         if (isset($data['companyPhoneNumber']) && !self::validateCompanyPhoneNumber($data['companyPhoneNumber'])) {
-            $isValid = false;
+            return false;
         }
 
-        return $isValid;
+        return true;
     }
 }
