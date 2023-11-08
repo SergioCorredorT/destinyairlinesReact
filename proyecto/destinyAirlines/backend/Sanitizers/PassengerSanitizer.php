@@ -103,6 +103,13 @@ class PassengerSanitizer
         return htmlspecialchars(trim($sanitizedMedicationRequirements));
     }
 
+    public static function sanitizeIndividualServiceCodes($individualServiceCodes)
+    {
+        if (is_array($individualServiceCodes)) {
+            return array_map('trim', array_map('htmlspecialchars', $individualServiceCodes));
+        }
+        return $individualServiceCodes;
+    }
 
     public static function sanitize(array $data)
     {
@@ -123,6 +130,7 @@ class PassengerSanitizer
         if (!empty($data['mobilityLimitations'])) $arraySanitized["mobilityLimitations"] = self::sanitizeMobilityLimitations($data['mobilityLimitations']);
         if (!empty($data['communicationNeeds'])) $arraySanitized["communicationNeeds"] = self::sanitizeCommunicationNeeds($data['communicationNeeds']);
         if (!empty($data['medicationRequirements'])) $arraySanitized["medicationRequirements"] = self::sanitizeMedicationRequirements($data['medicationRequirements']);
+        if (!empty($data['individualServiceCodes'])) $arraySanitized["individualServiceCodes"] = self::sanitizeIndividualServiceCodes($data['individualServiceCodes']);
 
         return $arraySanitized;
     }

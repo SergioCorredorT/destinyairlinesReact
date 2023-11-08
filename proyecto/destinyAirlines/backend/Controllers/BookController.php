@@ -80,51 +80,95 @@ final class BookController extends BaseController
 
         //Vamos recogiendo los datos de los pasajeros
         foreach ($passengers as $passenger) {
-            $passegerDetails = [];
+            $passengerDetails = [];
 
             $keys_default = [
                 'documentationType' => '',
                 'documentCode' => '',
                 'expirationDate' => '',
-                'title' => '',
+                'title' => null,
                 'firstName' => '',
                 'lastName' => '',
                 'ageCategory' => '',
                 'nationality' => '',
                 'country' => '',
-                'dateBirth' => '',
-                'assistiveDevices' => '',
-                'medicalEquipment' => '',
-                'mobilityLimitations' => '',
-                'communicationNeeds' => '',
-                'medicationRequirements' => ''
+                'dateBirth' => null,
+                'assistiveDevices' => null,
+                'medicalEquipment' => null,
+                'mobilityLimitations' => null,
+                'communicationNeeds' => null,
+                'medicationRequirements' => null,
+                'individualServiceCodes' => null //Este campo debe ser un array
             ];
 
             foreach ($keys_default as $key => $defaultValue) {
-                $passegerDetails[$key] = $passenger[$key] ?? $defaultValue;
+                $passengerDetails[$key] = $passenger[$key] ?? $defaultValue;
             }
 
             //Cada pasajero lo saneamos y validamos
-            $passengersDetails = PassengerSanitizer::sanitize($passegerDetails);
-            $isValidate = PassengerValidator::validate($passengersDetails);
+            $passengerDetails = PassengerSanitizer::sanitize($passengerDetails);
+            $isValidate = PassengerValidator::validate($passengerDetails);
             if(!$isValidate) {
                 return false;
             }
 
-            array_push($passegersDetails, $passegerDetails);
+            array_push($passegersDetails, $passengerDetails);
         }
 
         //Si todo ha ido bien metemos en session a los pasajeros
         SessionTool::set('passengersDetails', $passegersDetails);
     }
 
-    public function storeServicesDetails(array $POST)
+    public function storeBookServicesDetails(array $POST)
     {
-        
+        //$POST será un array de códigos de servicios
+        require_once './Sanitizers/BookServicesSanitizer.php';
+        require_once './Validators/BookServicesValidator.php';
+
+
+        $servicesDetails = $POST;
+
+        //Sanear el array de servicesDetails
+        //Validar si todos están en bbdd
+        $servicesDetails = BookServicesSanitizer::sanitize($servicesDetails);
+        $isValidate      = BookServicesValidator::validate($servicesDetails);
+
+        if ($isValidate) {
+            //Metemos en session
+            SessionTool::set('bookServicesDetails', $servicesDetails);
+        }
     }
 
     public function storePrimaryContactInformationDetails(array $POST)
     {
+        $primaryContactDetails = [
+            'documentationType' => '',
+            'documentCode' => '',
+            'expirationDate' => '',
+            'title' => null,
+            'firstName' => '',
+            'lastName' => '',
+            'emailAddress' => '',
+            'phoneNumber1' => '',
+            'phoneNumber2' => null,
+            'country' => '',
+            'townCity' => '',
+            'streetAddress' => '',
+            'zipCode' => '',
+            'companyName' => null,
+            'companyTaxNumber' => null,
+            'companyPhoneNumber' => null
+        ];
+
+        foreach ($primaryContactDetails as $key => $defaultValue) {
+            $primaryContactDetails[$key] = $POST[$key] ?? $defaultValue;
+        }
+
+        $primaryContactDetails = PrimaryContactDetailsSanitizer::sanitize($primaryContactDetails);
+        $isValidate = PrimaryContactDetailsValidator::validate($primaryContactDetails);
+        if($isValidate) {
+            SessionTool::set('primaryContactDetails', $primaryContactDetails);
+        }
     }
     public function doPayment(array $POST)
     {

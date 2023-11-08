@@ -109,11 +109,12 @@ CREATE TABLE `INVOICES` (
 CREATE TABLE `SERVICES` (
   `id_SERVICES` int PRIMARY KEY AUTO_INCREMENT,
   `serviceCode` varchar(10) UNIQUE NOT NULL,
-  `serviceGroupingType` ENUM ('individual', 'colective', 'both') NOT NULL,
+  `serviceGroupingType` ENUM ('individual', 'collective', 'both') NOT NULL,
   `type` varchar(30) NOT NULL,
-  `subtype` varchar(30) NOT NULL,
-  `description` varchar(600),
-  `price` double
+  `subtype` varchar(50) NOT NULL,
+  `billingCategory` ENUM ('PaidService', 'PercentageDiscount') NOT NULL,
+  `priceOrDiscount` double NOT NULL,
+  `description` varchar(600)
 );
 
 CREATE TABLE `BOOKS_SERVICES` (
@@ -146,7 +147,7 @@ CREATE TABLE `PASSENGERS` (
 
 CREATE TABLE `ADDITIONAL_INFORMATIONS` (
   `id_ADDITIONAL_INFORMATIONS` int PRIMARY KEY AUTO_INCREMENT,
-  `id_PASSENGERS` UNIQUE int NOT NULL,
+  `id_PASSENGERS` int UNIQUE NOT NULL,
   `dateBirth` date,
   `assistiveDevices` ENUM ('wheelchair', 'serviceAnimal', 'crutches', 'cane', 'other'),
   `medicalEquipment` ENUM ('oxygenTank', 'CPAPMachine', 'other'),

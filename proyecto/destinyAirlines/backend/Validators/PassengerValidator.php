@@ -264,6 +264,32 @@ class PassengerValidator
         return false;
     }
 
+    public static function validateIndividualServiceCodes($individualServiceCodes)
+    {
+        if (!is_array($individualServiceCodes)) {
+            return false;
+        }
+
+        require_once './Models/ServicesModel';
+        $servicesModel = new ServicesModel();
+        //Obtener serviceCode s donde sean individuales y paidService
+        $individualServicePaidCodes = $servicesModel->readIndividualServicePaidCodes();
+
+        foreach ($individualServiceCodes as $individualServiceCode) {
+            $found = false;
+            foreach ($individualServicePaidCodes as $individualServicePaidCode) {
+                if ($individualServiceCode === $individualServicePaidCode['serviceCode']) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static function validate($data)
     {
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
@@ -315,6 +341,10 @@ class PassengerValidator
         }
 
         if (isset($data['medicationRequirements']) && !self::validateMedicationRequirements($data['medicationRequirements'])) {
+            return false;
+        }
+
+        if (isset($data['individualServiceCodes']) && !self::validateIndividualServiceCodes($data['individualServiceCodes'])) {
             return false;
         }
 

@@ -117,14 +117,20 @@ Table SERVICES {
   serviceCode varchar(10) [not null, unique]
   serviceGroupingType serviceGroupingType [not null]
   type varchar(30) [not null]
-  subtype varchar(30) [not null]
+  subtype varchar(50) [not null]
+  billingCategory billingCategory [not null]
+  priceOrDiscount double [not null]
   description varchar(600)
-  price double
+}
+
+enum billingCategory {
+  PaidService
+  PercentageDiscount
 }
 
 enum serviceGroupingType {
   individual
-  colective
+  collective
   both
 }
 
