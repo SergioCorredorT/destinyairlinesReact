@@ -64,10 +64,11 @@ final class BookController extends BaseController
 
         $fligthDetails = FlightSanitizer::sanitize($fligthDetails);
         $isValidate = FlightValidator::validate($fligthDetails);
-        if ($isValidate) {
-            //Metemos en session
-            SessionTool::set('fligthDetails', $fligthDetails);
+        if (!$isValidate) {
+            return false;
         }
+        SessionTool::set('fligthDetails', $fligthDetails);
+        return true;
     }
 
     public function storePassengerDetails(array $POST)
@@ -108,7 +109,7 @@ final class BookController extends BaseController
             //Cada pasajero lo saneamos y validamos
             $passengerDetails = PassengerSanitizer::sanitize($passengerDetails);
             $isValidate = PassengerValidator::validate($passengerDetails);
-            if(!$isValidate) {
+            if (!$isValidate) {
                 return false;
             }
 
@@ -117,6 +118,7 @@ final class BookController extends BaseController
 
         //Si todo ha ido bien metemos en session a los pasajeros
         SessionTool::set('passengersDetails', $passegersDetails);
+        return true;
     }
 
     public function storeBookServicesDetails(array $POST)
@@ -133,10 +135,11 @@ final class BookController extends BaseController
         $servicesDetails = BookServicesSanitizer::sanitize($servicesDetails);
         $isValidate      = BookServicesValidator::validate($servicesDetails);
 
-        if ($isValidate) {
-            //Metemos en session
-            SessionTool::set('bookServicesDetails', $servicesDetails);
+        if (!$isValidate) {
+            return false;
         }
+        SessionTool::set('bookServicesDetails', $servicesDetails);
+        return true;
     }
 
     public function storePrimaryContactInformationDetails(array $POST)
@@ -164,23 +167,67 @@ final class BookController extends BaseController
             $primaryContactDetails[$key] = $POST[$key] ?? $defaultValue;
         }
 
+        require_once './Sanitizers/PrimaryContactSanitizer.php';
+        require_once './Validators/PrimaryContactValidator.php';
         $primaryContactDetails = PrimaryContactDetailsSanitizer::sanitize($primaryContactDetails);
         $isValidate = PrimaryContactDetailsValidator::validate($primaryContactDetails);
-        if($isValidate) {
-            SessionTool::set('primaryContactDetails', $primaryContactDetails);
+        if (!$isValidate) {
+            return false;
         }
+        SessionTool::set('primaryContactDetails', $primaryContactDetails);
+        return true;
     }
-    public function doPayment(array $POST)
+    public function paymentDetails(array $POST)
     {
+        $paymentDetails = [
+            'cardholderName' => '',
+            'cardNumber' => '',
+            'expirationDate' => '',
+            'cvc' => '',
+            'billingAddress' => ''
+        ];
 
-        $this->saveBook();
+        foreach ($paymentDetails as $key => $defaultValue) {
+            $paymentDetails[$key] = $POST[$key] ?? $defaultValue;
+        }
+
+        require_once './Sanitizers/PaymentSanitizer.php';
+        require_once './Validators/PaymentValidator.php';
+        $paymentDetails = PaymentSanitizer::sanitize($paymentDetails);
+        $isValidate = PaymentValidator::validate($paymentDetails);
+
+        if ($isValidate) {
+            if ($this->doPayment($paymentDetails)) {
+                if ($this->saveBooking()) {
+                    $invoice = $this->generateInvoice();
+                    if ($invoice) {
+                        //enviar factura por email
+                        //devolver factura
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
-    //Añade a BBDD la reserva con todo sus datos y se muestra factura pagada para su descarga
-    public function saveBook()
+    public function doPayment($paymentDetails)
+    {
+        //Proceso de pago
+        require './Tools/paymentTool.php';
+        $PaymentTool = new PaymentTool();
+        $PaymentTool->createPaymentPaypal();
+    }
+
+    public function saveBooking()
     {
         $BookModel = new BookModel();
-        //Enviar factura al email o/ mostrarla en un modal
+        //Recoger todos los datos de la session y guardar el book
+    }
+
+    public function generateInvoice()
+    {
+        return '';
     }
 
     //Para obtener la tarjeta de embarque, solo se puede hacer desde 24 a 48 hrs antes del vuelo
