@@ -112,15 +112,20 @@
       label {
         display: flex;
       }
+
+      h1 {
+        text-shadow: 0 0 10px #ffffff;
+      }
     </style>
   </head>
   <body>
     <a
-      href="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/indexPruebas.html"
+      href="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/debugIndex.html"
       >Index en server</a
     >
     <main>
       <section class="CONTACT">
+        <h1>contactController</h1>
         <form
           onsubmit="return handleFormSubmit(event)"
           action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
@@ -140,6 +145,7 @@
         </form>
       </section>
       <section class="USER">
+        <h1>userController</h1>
         <form
           onsubmit="return handleFormSubmit(event)"
           action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
@@ -485,6 +491,7 @@
         </form>
       </section>
       <section class="BOOK">
+        <h1>bookController</h1>
         <form
           onsubmit="return handleFormSubmit(event)"
           action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
