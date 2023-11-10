@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Formulario POST</title>
     <style>
+      html {
+        color-scheme: dark;
+      }
+
       body {
         background-color: #000000;
         min-height: 100vh;
@@ -13,11 +17,12 @@
         grid-template-rows: max-content;
       }
 
-      body > div {
+      main {
         display: grid;
         align-content: space-between;
         box-sizing: border-box;
         padding: 10px;
+        gap: 10px;
       }
 
       span {
@@ -26,13 +31,14 @@
         font-weight: bold;
       }
 
-      #formularios {
+      section {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         grid-auto-flow: dense;
         gap: 10px;
         box-sizing: border-box;
         padding: 10px;
+        background-color: #101010;
       }
 
       form {
@@ -61,7 +67,8 @@
 
       input,
       button,
-      textarea {
+      textarea,
+      label {
         color: #ffffff;
         border: none;
         transition: 0.3s ease-in-out;
@@ -80,13 +87,15 @@
       }
 
       input,
-      textarea {
+      textarea,
+      label {
         background-color: #3b3b3b;
       }
 
       button {
         background-color: #6b6b6b;
         cursor: pointer;
+        user-select: none;
       }
 
       input[name="command"] {
@@ -100,6 +109,9 @@
         cursor: pointer;
       }
 
+      label {
+        display: flex;
+      }
     </style>
   </head>
   <body>
@@ -107,8 +119,27 @@
       href="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/indexPruebas.html"
       >Index en server</a
     >
-    <div>
-      <div id="formularios">
+    <main>
+      <section class="CONTACT">
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" readonly name="command" value="contact" />
+          <input type="text" name="name" value="Sergio" />
+          <input type="text" name="email" value="waa@gmail.com" />
+          <input type="text" name="phoneNumber" value="111223344" />
+          <input type="text" name="subject" value="motivazo bueno" />
+          <input
+            type="text"
+            name="message"
+            value="Mensaje guauuuuuuuuuuuuuuu"
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+      </section>
+      <section class="USER">
         <form
           onsubmit="return handleFormSubmit(event)"
           action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
@@ -380,25 +411,6 @@
           </div>
           <button type="submit">Enviar POST</button>
         </form>
-
-        <form
-          onsubmit="return handleFormSubmit(event)"
-          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-          method="post"
-        >
-          <input type="text" readonly name="command" value="contact" />
-          <input type="text" name="name" value="Sergio" />
-          <input type="text" name="email" value="waa@gmail.com" />
-          <input type="text" name="phoneNumber" value="111223344" />
-          <input type="text" name="subject" value="motivazo bueno" />
-          <input
-            type="text"
-            name="message"
-            value="Mensaje guauuuuuuuuuuuuuuu"
-          />
-          <button type="submit">Enviar POST</button>
-        </form>
-
         <form
           onsubmit="return handleFormSubmit(event)"
           action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
@@ -411,7 +423,6 @@
           <input type="text" name="password" value="contraseña5" />
           <button type="submit">Enviar POST</button>
         </form>
-
         <form
           onsubmit="return handleFormSubmit(event)"
           action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
@@ -472,7 +483,355 @@
           />
           <button type="submit">Enviar POST</button>
         </form>
-      </div>
+      </section>
+      <section class="BOOK">
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="storeFlightDetails"
+            readonly
+          />
+          <input
+            type="text"
+            name="flightCode"
+            placeholder="flightCode"
+            value="1231"
+          />
+          <input
+            type="number"
+            name="adultsNumber"
+            placeholder="adultsNumber"
+            value="1"
+          />
+          <input
+            type="number"
+            name="childsNumber"
+            placeholder="childsNumber"
+            value="0"
+          />
+          <input
+            type="number"
+            name="infantsNumber"
+            placeholder="infantsNumber"
+            value="0"
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          accept-charset="UTF-8"
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="storePassengerDetails"
+            readonly
+          />
+          <input
+            type="text"
+            id="documentationType"
+            name="passengers[0][documentationType]"
+            placeholder="documentationType"
+            value="DNI"
+          />
+          <input
+            type="text"
+            id="documentCode"
+            name="passengers[0][documentCode]"
+            placeholder="documentCode"
+            value="12345678A"
+          />
+          <input
+            type="date"
+            id="expirationDate"
+            name="passengers[0][expirationDate]"
+            placeholder="expirationDate"
+            value="2024-12-01"
+          />
+          <input
+            type="text"
+            id="title"
+            name="passengers[0][title]"
+            placeholder="title"
+            value="Mr"
+          />
+          <input
+            type="text"
+            id="firstName"
+            name="passengers[0][firstName]"
+            placeholder="firstName"
+            value="Sergio"
+          />
+          <input
+            type="text"
+            id="lastName"
+            name="passengers[0][lastName]"
+            placeholder="lastName"
+            value="Corredor"
+          />
+          <input
+            type="text"
+            id="ageCategory"
+            name="passengers[0][ageCategory]"
+            placeholder="ageCategory"
+            value="adult"
+          />
+          <input
+            type="text"
+            id="nationality"
+            name="passengers[0][nationality]"
+            placeholder="nationality"
+            value="Española"
+          />
+          <input
+            type="text"
+            id="country"
+            name="passengers[0][country]"
+            placeholder="country"
+            value="España"
+          />
+          <input
+            type="date"
+            id="dateBirth"
+            name="passengers[0][dateBirth]"
+            placeholder="dateBirth"
+            value="2013-11-01"
+          />
+          <input
+            type="text"
+            id="assistiveDevices"
+            name="passengers[0][assistiveDevices]"
+            placeholder="assistiveDevices"
+            value="cane"
+          />
+          <input
+            type="text"
+            id="medicalEquipment"
+            name="passengers[0][medicalEquipment]"
+            placeholder="medicalEquipment"
+          />
+          <input
+            type="text"
+            id="mobilityLimitations"
+            name="passengers[0][mobilityLimitations]"
+            placeholder="mobilityLimitations"
+          />
+          <input
+            type="text"
+            id="communicationNeeds"
+            name="passengers[0][communicationNeeds]"
+            placeholder="communicationNeeds"
+          />
+          <input
+            type="text"
+            id="medicationRequirements"
+            name="passengers[0][medicationRequirements]"
+            placeholder="medicationRequirements"
+          />
+          <input
+            type="text"
+            id="individualServiceCodes"
+            name="passengers[0][individualServiceCodes]"
+            placeholder="individualServiceCodes"
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="storeBookServicesDetails"
+            readonly
+          />
+          <label
+            >SRV010 <input type="checkbox" name="SRV010" value="SRV010"
+          /></label>
+          <label
+            >SRV004 <input type="checkbox" name="SRV004" value="SRV004"
+          /></label>
+          <label
+            >SRV003 <input type="checkbox" name="SRV003" value="SRV003"
+          /></label>
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="storePrimaryContactInformationDetails"
+            readonly
+          />
+          <input
+            type="text"
+            id="documentationType"
+            name="documentationType"
+            placeholder="documentationType"
+            value="DNI"
+          />
+          <input
+            type="text"
+            id="documentCode"
+            name="documentCode"
+            placeholder="documentCode"
+            value="12345678A"
+          />
+          <input
+            type="date"
+            id="expirationDate"
+            name="expirationDate"
+            placeholder="expirationDate"
+            value="2024-12-01"
+          />
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="title"
+            value="Mr"
+          />
+          <input
+            type="text"
+            id="firstName"
+            name="firstName"
+            placeholder="firstName"
+            value="Sergio"
+          />
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            placeholder="lastName"
+            value="Corredor"
+          />
+          <input
+            type="text"
+            id="emailAddress"
+            name="emailAddress"
+            placeholder="emailAddress"
+            value="aaaa5@example.com"
+          />
+          <input
+            type="text"
+            id="phoneNumber1"
+            name="phoneNumber1"
+            placeholder="phoneNumber1"
+            value="123456789"
+          />
+          <input
+            type="text"
+            id="phoneNumber2"
+            name="phoneNumber2"
+            placeholder="phoneNumber2"
+            value="123456788"
+          />
+          <input
+            type="text"
+            id="country"
+            name="country"
+            placeholder="country"
+            value="España"
+          />
+          <input
+            type="text"
+            id="townCity"
+            name="townCity"
+            placeholder="townCity"
+            value="Albacete"
+          />
+          <input
+            type="text"
+            id="streetAddress"
+            name="streetAddress"
+            placeholder="streetAddress"
+            value="calle falsa 123"
+          />
+          <input
+            type="text"
+            id="zipCode"
+            name="zipCode"
+            placeholder="zipCode"
+            value="3127"
+          />
+          <input
+            type="text"
+            id="companyName"
+            name="companyName"
+            placeholder="companyName"
+            value="Compañía turbia"
+          />
+          <input
+            type="text"
+            id="companyTaxNumber"
+            name="companyTaxNumber"
+            placeholder="companyTaxNumber"
+          />
+          <input
+            type="text"
+            id="companyPhoneNumber"
+            name="companyPhoneNumber"
+            placeholder="companyPhoneNumber"
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" name="command" value="paymentDetails" readonly />
+          <input
+            type="text"
+            id="cardholderName"
+            name="cardholderName"
+            placeholder="cardholderName"
+            value="Juan Pérez"
+          />
+          <input
+            type="text"
+            id="cardNumber"
+            name="cardNumber"
+            placeholder="cardNumber"
+            value="1234567812345678"
+          />
+          <input
+            type="month"
+            id="expirationDate"
+            name="expirationDate"
+            placeholder="expirationDate"
+            value="2025-12"
+          />
+          <input
+            type="text"
+            id="cvc"
+            name="cvc"
+            placeholder="cvc"
+            value="123"
+          />
+          <input
+            type="text"
+            id="billingAddress"
+            name="billingAddress"
+            placeholder="billingAddress"
+            value="Calle Mayor, 1, Madrid"
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+      </section>
       <!-- Puedes agregar más formularios aquí -->
       <div>
         <textarea
@@ -500,7 +859,7 @@
           onmouseover="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
         ></textarea>
       </div>
-    </div>
+    </main>
     <script>
       function nullifyInput(checkbox, querySelector) {
         //Solo se envían los campos que tengan name

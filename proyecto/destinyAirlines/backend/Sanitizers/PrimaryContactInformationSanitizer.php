@@ -1,5 +1,5 @@
 <?php
-class PrimaryContactDetailsSanitizer
+class PrimaryContactInformationSanitizer
 {
     public static function sanitizeDocumentationType($documentationType)
     {

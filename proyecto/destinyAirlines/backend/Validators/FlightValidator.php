@@ -6,7 +6,13 @@ class FlightValidator
         if ($flightCode != "" && strlen($flightCode) < 3) {
             return false;
         }
-        return true;
+
+        require_once './Models/FlightModel.php';
+        $FlightModel = new FlightModel();
+        if($FlightModel->isValidFlight($flightCode)) {
+            return true;
+        }
+        return false;
     }
 
     public static function validatePeopleNumber($adultsNumber, $childsNumber, $infantsNumber)

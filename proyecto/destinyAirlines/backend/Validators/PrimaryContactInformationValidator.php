@@ -1,5 +1,5 @@
 <?php
-class PrimaryContactDetailsValidator
+class PrimaryContactInformationValidator
 {
     public static function validateDocumentation($documentationType, $documentCode)
     {
@@ -20,7 +20,7 @@ class PrimaryContactDetailsValidator
             return false;
         }
 
-        require_once './Models/PassengerModel';
+        require_once './Models/PassengerModel.php';
         $passengerModel = new PassengerModel();
         if (!$passengerModel->isAllowedValue($documentationType, 'documentationType')) {
             return false;
@@ -105,7 +105,7 @@ class PrimaryContactDetailsValidator
         }
 
         // Comprueba si el nombre solo contiene letras y espacios
-        if (!preg_match('/^[a-zA-Z ]+$/', $firstName)) {
+        if (!preg_match('/^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$/', $firstName)) {
             return false;
         }
 
@@ -120,7 +120,7 @@ class PrimaryContactDetailsValidator
         }
 
         // Comprueba si el apellido solo contiene letras y espacios
-        if (!preg_match('/^[a-zA-Z ]+$/', $lastName)) {
+        if (!preg_match('/^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$/', $lastName)) {
             return false;
         }
 
@@ -159,7 +159,7 @@ class PrimaryContactDetailsValidator
         }
 
         // Comprueba si el país solo contiene letras y espacios
-        if (!preg_match('/^[a-zA-Z ]+$/', $country)) {
+        if (!preg_match('/^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$/', $country)) {
             return false;
         }
 

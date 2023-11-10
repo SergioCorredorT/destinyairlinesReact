@@ -7,7 +7,7 @@ class BookServicesValidator
             return false;
         }
 
-        require_once './Models/ServicesModel';
+        require_once './Models/ServicesModel.php';
         $servicesModel = new ServicesModel();
         $collectiveServicePaidCodes = $servicesModel->readCollectiveServicePaidCodes();
 

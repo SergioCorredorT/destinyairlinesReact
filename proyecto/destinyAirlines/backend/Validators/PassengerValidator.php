@@ -20,7 +20,7 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/PassengerModel';
+        require_once './Models/PassengerModel.php';
         $passengerModel = new PassengerModel();
         if (!$passengerModel->isAllowedValue($documentationType, 'documentationType')) {
             return false;
@@ -105,7 +105,7 @@ class PassengerValidator
         }
 
         // Comprueba si el nombre solo contiene letras y espacios
-        if (!preg_match('/^[a-zA-Z ]+$/', $firstName)) {
+        if (!preg_match('/^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$/', $firstName)) {
             return false;
         }
 
@@ -120,7 +120,7 @@ class PassengerValidator
         }
 
         // Comprueba si el apellido solo contiene letras y espacios
-        if (!preg_match('/^[a-zA-Z ]+$/', $lastName)) {
+        if (!preg_match('/^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$/', $lastName)) {
             return false;
         }
 
@@ -133,7 +133,7 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/PassengerModel';
+        require_once './Models/PassengerModel.php';
         $passengerModel = new PassengerModel();
 
         if (!$passengerModel->isAllowedValue($ageCategory, 'ageCategory')) {
@@ -151,7 +151,7 @@ class PassengerValidator
         }
 
         // Comprueba si la nacionalidad solo contiene letras y espacios
-        if (!preg_match('/^[a-zA-Z ]+$/', $nationality)) {
+        if (!preg_match('/^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$/', $nationality)) {
             return false;
         }
 
@@ -166,7 +166,7 @@ class PassengerValidator
         }
 
         // Comprueba si el país solo contiene letras y espacios
-        if (!preg_match('/^[a-zA-Z ]+$/', $country)) {
+        if (!preg_match('/^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$/', $country)) {
             return false;
         }
 
@@ -179,14 +179,13 @@ class PassengerValidator
         if (empty($dateBirth)) {
             return false;
         }
-
         // Comprueba si la fecha de nacimiento tiene el formato correcto (DD-MM-YYYY)
-        if (!preg_match('/^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[012])-([0-9]{4})$/', $dateBirth)) {
+        if (!preg_match('/^([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/', $dateBirth)) {
             return false;
         }
 
         // Comprueba si la fecha de nacimiento es una fecha válida
-        list($day, $month, $year) = explode('-', $dateBirth);
+        list($year, $month, $day) = explode('-', $dateBirth);
         if (!checkdate($month, $day, $year)) {
             return false;
         }
@@ -200,9 +199,9 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/PassengerModel';
-        $passengerModel = new PassengerModel();
-        if ($passengerModel->isAllowedValue($assistiveDevices, 'assistiveDevices')) {
+        require_once './Models/AdditionalInformationModel.php';
+        $AdditionalInformationModel = new AdditionalInformationModel();
+        if ($AdditionalInformationModel->isAllowedValue($assistiveDevices, 'assistiveDevices')) {
             return true;
         }
         return false;
@@ -214,9 +213,9 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/PassengerModel';
-        $passengerModel = new PassengerModel();
-        if ($passengerModel->isAllowedValue($medicalEquipment, 'medicalEquipment')) {
+        require_once './Models/AdditionalInformationModel.php';
+        $AdditionalInformationModel = new AdditionalInformationModel();
+        if ($AdditionalInformationModel->isAllowedValue($medicalEquipment, 'medicalEquipment')) {
             return true;
         }
         return false;
@@ -228,9 +227,9 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/PassengerModel';
-        $passengerModel = new PassengerModel();
-        if ($passengerModel->isAllowedValue($mobilityLimitations, 'mobilityLimitations')) {
+        require_once './Models/AdditionalInformationModel.php';
+        $AdditionalInformationModel = new AdditionalInformationModel();
+        if ($AdditionalInformationModel->isAllowedValue($mobilityLimitations, 'mobilityLimitations')) {
             return true;
         }
         return false;
@@ -242,9 +241,9 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/PassengerModel';
-        $passengerModel = new PassengerModel();
-        if ($passengerModel->isAllowedValue($communicationNeeds, 'communicationNeeds')) {
+        require_once './Models/AdditionalInformationModel.php';
+        $AdditionalInformationModel = new AdditionalInformationModel();
+        if ($AdditionalInformationModel->isAllowedValue($communicationNeeds, 'communicationNeeds')) {
             return true;
         }
         return false;
@@ -256,9 +255,9 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/PassengerModel';
-        $passengerModel = new PassengerModel();
-        if ($passengerModel->isAllowedValue($medicationRequirements, 'medicationRequirements')) {
+        require_once './Models/AdditionalInformationModel.php';
+        $AdditionalInformationModel = new AdditionalInformationModel();
+        if ($AdditionalInformationModel->isAllowedValue($medicationRequirements, 'medicationRequirements')) {
             return true;
         }
         return false;
@@ -270,7 +269,7 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/ServicesModel';
+        require_once './Models/ServicesModel.php';
         $servicesModel = new ServicesModel();
         //Obtener serviceCode s donde sean individuales y paidService
         $individualServicePaidCodes = $servicesModel->readIndividualServicePaidCodes();
@@ -311,7 +310,7 @@ class PassengerValidator
         if (isset($data['ageCategory']) && !self::validateAgeCategory($data['ageCategory'])) {
             return false;
         }
-
+ 
         if (isset($data['nationality']) && !self::validateNationality($data['nationality'])) {
             return false;
         }

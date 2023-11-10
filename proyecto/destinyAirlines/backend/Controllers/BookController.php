@@ -73,11 +73,11 @@ final class BookController extends BaseController
 
     public function storePassengerDetails(array $POST)
     {
-        require_once './Sanitizers/PassengersSanitizer.php';
-        require_once './Validators/PassengersValidator.php';
+        require_once './Sanitizers/PassengerSanitizer.php';
+        require_once './Validators/PassengerValidator.php';
 
         $passengers = $POST['passengers'];
-        $passegersDetails = [];
+        $passengersDetails = [];
 
         //Vamos recogiendo los datos de los pasajeros
         foreach ($passengers as $passenger) {
@@ -113,24 +113,31 @@ final class BookController extends BaseController
                 return false;
             }
 
-            array_push($passegersDetails, $passengerDetails);
+            array_push($passengersDetails, $passengerDetails);
         }
 
         //Si todo ha ido bien metemos en session a los pasajeros
-        SessionTool::set('passengersDetails', $passegersDetails);
+        SessionTool::set('passengersDetails', $passengersDetails);
         return true;
     }
 
     public function storeBookServicesDetails(array $POST)
     {
-        //$POST será un array de códigos de servicios
+        //$POST será un array que contendrá códigos de servicios que solicita el cliente
         require_once './Sanitizers/BookServicesSanitizer.php';
         require_once './Validators/BookServicesValidator.php';
 
+        $servicesDetails = [
+            'SRV003' => null,
+            'SRV004' => null,
+            'SRV010' => null
+        ];
 
-        $servicesDetails = $POST;
+        foreach ($servicesDetails as $key => $defaultValue) {
+            $servicesDetails[$key] = $POST[$key] ?? $defaultValue;
+        }
 
-        //Sanear el array de servicesDetails
+        //Sanear
         //Validar si todos están en bbdd
         $servicesDetails = BookServicesSanitizer::sanitize($servicesDetails);
         $isValidate      = BookServicesValidator::validate($servicesDetails);
@@ -167,10 +174,10 @@ final class BookController extends BaseController
             $primaryContactDetails[$key] = $POST[$key] ?? $defaultValue;
         }
 
-        require_once './Sanitizers/PrimaryContactSanitizer.php';
-        require_once './Validators/PrimaryContactValidator.php';
-        $primaryContactDetails = PrimaryContactDetailsSanitizer::sanitize($primaryContactDetails);
-        $isValidate = PrimaryContactDetailsValidator::validate($primaryContactDetails);
+        require_once './Sanitizers/PrimaryContactInformationSanitizer.php';
+        require_once './Validators/PrimaryContactInformationValidator.php';
+        $primaryContactDetails = PrimaryContactInformationSanitizer::sanitize($primaryContactDetails);
+        $isValidate = PrimaryContactInformationValidator::validate($primaryContactDetails);
         if (!$isValidate) {
             return false;
         }
@@ -203,8 +210,9 @@ final class BookController extends BaseController
                     if ($invoice) {
                         //enviar factura por email
                         //devolver factura
+                        return true;
                     }
-                    return true;
+                    
                 }
             }
         }
@@ -216,18 +224,21 @@ final class BookController extends BaseController
         //Proceso de pago
         require './Tools/paymentTool.php';
         $PaymentTool = new PaymentTool();
-        $PaymentTool->createPaymentPaypal();
+//Algunos párametros se recogeran desde el ini
+//$PaymentTool->createPaymentPaypal();
+        return true;
     }
 
     public function saveBooking()
     {
         $BookModel = new BookModel();
         //Recoger todos los datos de la session y guardar el book
+        return true;
     }
 
     public function generateInvoice()
     {
-        return '';
+        return 'Invoice chulooo';
     }
 
     //Para obtener la tarjeta de embarque, solo se puede hacer desde 24 a 48 hrs antes del vuelo

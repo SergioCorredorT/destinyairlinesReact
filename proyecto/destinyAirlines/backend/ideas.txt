@@ -1,7 +1,0 @@
-tras 3 intentos dentro de una franja de tiempo:
-	bloqueo de cuenta
-	se podría enviar un correo para cambiar de contraseña o login directo
-
-quizás se podría verificar los 2 primeros caracteres de la password
- para que cuente el intento como fallido o no, para evitar que bloqueen 
- terceros una cuenta ajena fallando login a propósito

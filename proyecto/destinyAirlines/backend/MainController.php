@@ -20,14 +20,19 @@ function executeCommand(string $controllerName, string $methodName, array $param
 }
 
 $controllers = [
-    'contact'       => ['controller' => 'ContactController',    'method' => 'sendContact'],
-    'createuser'    => ['controller' => 'UserController',       'method' => 'createUser'],
-    'updateuser'    => ['controller' => 'UserController',       'method' => 'updateUser'],
-    'removeuser'    => ['controller' => 'UserController',       'method' => 'deleteUser'],
-    'loginuser'     => ['controller' => 'UserController',       'method' => 'loginUser'],
-    'logoutuser'    => ['controller' => 'UserController',       'method' => 'logoutUser'],
-    'passwordreset' => ['controller' => 'UserController',       'method' => 'passwordReset'],
-    'forgotpassword'=> ['controller' => 'UserController',       'method' => 'forgotPassword']
+    'contact'                                   => ['controller' => 'ContactController',    'method' => 'sendContact'],
+    'createuser'                                => ['controller' => 'UserController',       'method' => 'createUser'],
+    'updateuser'                                => ['controller' => 'UserController',       'method' => 'updateUser'],
+    'removeuser'                                => ['controller' => 'UserController',       'method' => 'deleteUser'],
+    'loginuser'                                 => ['controller' => 'UserController',       'method' => 'loginUser'],
+    'logoutuser'                                => ['controller' => 'UserController',       'method' => 'logoutUser'],
+    'passwordreset'                             => ['controller' => 'UserController',       'method' => 'passwordReset'],
+    'forgotpassword'                            => ['controller' => 'UserController',       'method' => 'forgotPassword'],
+    'storeflightdetails'                        => ['controller' => 'BookController',       'method' => 'storeFlightDetails'],
+    'storepassengerdetails'                     => ['controller' => 'BookController',       'method' => 'storePassengerDetails'],
+    'storebookservicesdetails'                  => ['controller' => 'BookController',       'method' => 'storeBookServicesDetails'],
+    'storeprimarycontactinformationdetails'     => ['controller' => 'BookController',       'method' => 'storePrimaryContactInformationDetails'],
+    'paymentdetails'                            => ['controller' => 'BookController',       'method' => 'paymentDetails']
 ];
 
 if (array_key_exists(strtolower($command), $controllers)) {

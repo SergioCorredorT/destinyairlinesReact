@@ -9,6 +9,17 @@ final class AdditionalInformationModel extends BaseModel
         parent::__construct(self::table);
     }
 
+    public function isAllowedValue($value, $columnName)
+    {
+        $allowedValues = parent::selectAllowedValues($columnName);
+
+        if (in_array($value, $allowedValues)) {
+            return true;
+        }
+        return false;
+    }
+
+//-------------------------------------------------------
     public function createAdditionalInformations(array $data)
     {
         return parent::insert($data);

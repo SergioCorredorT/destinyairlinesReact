@@ -4,7 +4,8 @@ class BookServicesSanitizer
     public static function sanitizeCollectiveServiceCodes($collectiveServiceCodes)
     {
         if (is_array($collectiveServiceCodes)) {
-            return array_map('trim', array_map('htmlspecialchars', $collectiveServiceCodes));
+            $collectiveServiceCodes = array_map('trim', array_map('htmlspecialchars', $collectiveServiceCodes));
+            return array_filter($collectiveServiceCodes);
         }
         return $collectiveServiceCodes;
     }

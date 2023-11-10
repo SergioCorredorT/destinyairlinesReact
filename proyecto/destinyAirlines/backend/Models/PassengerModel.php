@@ -17,6 +17,7 @@ final class PassengerModel extends BaseModel
     public function isAllowedValue($value, $columnName)
     {
         $allowedValues = parent::selectAllowedValues($columnName);
+
         if (in_array($value, $allowedValues)) {
             return true;
         }

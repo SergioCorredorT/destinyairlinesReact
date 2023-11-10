@@ -1,3 +1,0 @@
-conforme el usuario avance en las pantallas de nuevo viaje se irán validando y metiendo los datos en las entidades,
-    tras pagar, los objetos se enviarán a los controller y estos a los modelos para insertar datos en bbdd
-        en la introducción de datos en bbdd usar transacciones para poder revertir cambios con rollback en caso de error

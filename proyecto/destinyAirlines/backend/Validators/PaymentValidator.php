@@ -17,21 +17,22 @@ class PaymentValidator
 
     public static function validateExpirationDate($expirationDate)
     {
-        // Comprueba si la fecha de expiración está en el formato correcto (MM/AA)
-        if (!preg_match('/^(0[1-9]|1[0-2])\/[0-9]{2}$/', $expirationDate)) {
+        // Comprueba si la fecha de expiración está en el formato correcto (AAAA-MM)
+        if (!preg_match('/^(19|20)\d\d\-(0[1-9]|1[0-2])$/', $expirationDate)) {
             return false;
         }
-
+    
         // Comprueba si la fecha de expiración es una fecha futura
-        $currentDate = date('m/y');
+        $currentDate = date('Y-m');
         $exp = strtotime($expirationDate);
         $current = strtotime($currentDate);
         if ($current > $exp) {
             return false;
         }
-
+    
         return true;
     }
+    
 
     public static function validateCvc($cvc)
     {
