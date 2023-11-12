@@ -43,9 +43,8 @@ final class ContactController extends BaseController
             if (EmailTool::sendEmail($contactData, "contactTemplate")) {
                 return true;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     private function chooseToFromSubject(string $subject)

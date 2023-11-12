@@ -343,7 +343,16 @@ class PassengerValidator
             return false;
         }
 
-        if (isset($data['individualServiceCodes']) && !self::validateIndividualServiceCodes($data['individualServiceCodes'])) {
+        $serviceCodes = ['SRV001', 'SRV005', 'SRV006', 'SRV007', 'SRV008', 'SRV011', 'SRV013', 'SRV014', 'SRV015', 'SRV016', 'SRV017', 'SRV018', 'SRV019'];
+        $individualServiceCodes = [];
+
+        foreach ($serviceCodes as $code) {
+            if (isset($data[$code])) {
+                array_push($individualServiceCodes, $data[$code]);
+            }
+        }
+
+        if (!self::validateIndividualServiceCodes($individualServiceCodes)) {
             return false;
         }
 

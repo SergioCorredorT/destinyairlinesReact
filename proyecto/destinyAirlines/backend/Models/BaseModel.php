@@ -117,7 +117,7 @@ abstract class BaseModel
     {
         $updateData = '';
         foreach ($data as $key => $value) {
-            $updateData .= "$key = $value, ";
+            $updateData .= "$key = '$value', ";
         }
         $updateData = rtrim($updateData, ', ');
         $query = "UPDATE $this->tableName SET $updateData WHERE $where";

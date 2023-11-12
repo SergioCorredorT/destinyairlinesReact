@@ -57,6 +57,7 @@ final class UserController extends BaseController
 
     public function updateUser(array $POST)
     {
+        require_once './Tools/TokenTool.php';
         //En $POST solo se deben recibir los campos que se desean editar dentro de los posibles definidos en $userData
         $keys_default = [
             'title' => null,
@@ -74,9 +75,8 @@ final class UserController extends BaseController
             'companyName' => null,
             'companyTaxNumber' => null,
             'companyPhoneNumber' => null,
-            'refreshToken' => null,
-            'accessToken' => null,
-            'emailAddressAuth' => null
+            'accessToken' => '',
+            'emailAddressAuth' => ''
         ];
 
         foreach ($keys_default as $key => $defaultValue) {
@@ -85,25 +85,12 @@ final class UserController extends BaseController
 
         $userData['dateTime'] = date('Y-m-d H:i:s');
 
-        require_once './Tools/TokenTool.php';
-        $iniTool = new IniTool('./Config/cfg.ini');
-        $cfgTokenSettings = $iniTool->getKeysAndValues('tokenSettings');
-        $secondsMinTimeLifeAccessToken = intval($cfgTokenSettings['secondsMinTimeLifeAccessToken']);
-        $secondsMinTimeLifeRefreshToken = intval($cfgTokenSettings['secondsMinTimeLifeRefreshToken']);
-        $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);
-        $secondsMaxTimeLifeRefreshToken = intval($cfgTokenSettings['secondsMaxTimeLifeRefreshToken']);
-
-        $decodedToken = null;
-
-        $newTokens = TokenTool::checkUpdateByRemainingTokenTimes($userData['accessToken'], $userData['refreshToken'], $secondsMinTimeLifeAccessToken, $secondsMinTimeLifeRefreshToken, $secondsMaxTimeLifeAccessToken, $secondsMaxTimeLifeRefreshToken);
-        if (isset($newTokens['accessToken'])) {
-            $decodedToken = TokenTool::decodeAndCheckToken($newTokens['accessToken'], 'access');
-        } else {
-            $decodedToken = TokenTool::decodeAndCheckToken($userData['accessToken'], 'access');
-        }
+        $rsp['response'] = false;
+        $decodedToken = TokenTool::decodeAndCheckToken($userData['accessToken'], 'access');
 
         if ($decodedToken['response']) {
             $UserModel = new UserModel();
+
             $email = $UserModel->getEmailById($decodedToken['response']->data->id);
 
             if ($email === $POST['emailAddressAuth']) {
@@ -115,12 +102,13 @@ final class UserController extends BaseController
                     }
 
                     if ($UserModel->updateUsersByEmail(array_filter($userData), $email)) {
-                        return ['response' => true, 'tokens' => $newTokens];
+                        $rsp['response'] = true;
                     }
                 }
             }
         }
-        return ['response' => false, 'tokens' => $newTokens];
+
+        return $rsp;
     }
 
     public function deleteUser(array $POST)
@@ -300,7 +288,7 @@ final class UserController extends BaseController
                     //El código de error 1 corresponde a token caducado
                     //y comprobamos si aún no se ha resuelto el id temporal, ya que es posible que el usuario intente de nuevo cambiar el pass desde la página del link enviado al email
                     $readUserByTempIdResults = $UserTempIdsModel->readUserByTempId($tempId);
-                    if ($dedodedPasswordResetToken['errorCode'] === 1 &&  $readUserByTempIdResults) {
+                    if ($dedodedPasswordResetToken['errorName'] === 'expired_token' &&  $readUserByTempIdResults) {
                         [$user] = $UserModel->readUserById($readUserByTempIdResults[0]['id_USERS']);
                         $userId = $user['id_USERS'];
 
@@ -459,6 +447,7 @@ final class UserController extends BaseController
         ];
 
         require_once './Tools/EmailTool.php';
+
         $isSent = EmailTool::sendEmail($userRestartData, 'forgotPasswordTemplate');
         if ($isSent) {
             if ($UserModel->updateLastForgotPasswordEmailById($user['id_USERS'])) {

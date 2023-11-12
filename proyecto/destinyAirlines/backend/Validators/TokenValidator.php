@@ -1,0 +1,15 @@
+<?php
+class TokenValidator
+{
+    public static function validateToken(string $token)
+    {
+        // Si el token está vacío, devuelve false
+        if (empty($token)) {
+            return false;
+        }
+    
+        // Devuelve true si el número de ocurrencias de '.' en el token es exactamente 2
+        return substr_count($token, '.') == 2;
+    }
+    
+}

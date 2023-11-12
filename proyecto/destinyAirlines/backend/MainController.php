@@ -20,6 +20,8 @@ function executeCommand(string $controllerName, string $methodName, array $param
 }
 
 $controllers = [
+    'checkupdateaccesstoken'                    => ['controller' => 'TokenController',      'method' => 'checkUpdateAccessToken'],
+    'checkupdaterefreshtoken'                   => ['controller' => 'TokenController',      'method' => 'checkUpdateRefreshToken'],
     'contact'                                   => ['controller' => 'ContactController',    'method' => 'sendContact'],
     'createuser'                                => ['controller' => 'UserController',       'method' => 'createUser'],
     'updateuser'                                => ['controller' => 'UserController',       'method' => 'updateUser'],

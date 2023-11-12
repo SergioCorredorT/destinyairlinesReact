@@ -165,8 +165,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
                 switch ($tokenType) {
                     case 'failedAttempts': {
                                 $dedodedPasswordResetToken = TokenTool::decodeAndCheckToken($passwordResetTokenGet, 'failedAttempts');
-                                if (isset($dedodedPasswordResetToken['errorCode'])) {
-                                    if ($dedodedPasswordResetToken['errorCode'] === 1) {
+                                if (isset($dedodedPasswordResetToken['errorName'])) {
+                                    if ($dedodedPasswordResetToken['errorName'] === 'expired_token') {
                                         $msgTokenCaducado = '<span class="warning">Token caducado. Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>';
                                         echo "document.getElementById('mensaje').innerHTML='$msgTokenCaducado';";
                                         echo 'sendToBackend("_Aa1234567");';
@@ -176,8 +176,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
                         }
                     case 'forgotPassword': {
                                 $dedodedPasswordResetToken = TokenTool::decodeAndCheckToken($passwordResetTokenGet, 'forgotPassword');
-                                if (isset($dedodedPasswordResetToken['errorCode'])) {
-                                    if ($dedodedPasswordResetToken['errorCode'] === 1) {
+                                if (isset($dedodedPasswordResetToken['errorName'])) {
+                                    if ($dedodedPasswordResetToken['errorName'] === 'expired_token') {
                                         $msgTokenCaducado = '<span class="warning">Token caducado. Si continúa sin recordar su contraseña, inicie el proceso de nuevo.</span>';
                                         echo "document.getElementById('mensaje').innerHTML='$msgTokenCaducado';";
                                     }

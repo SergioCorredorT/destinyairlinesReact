@@ -1,7 +1,7 @@
 <?php
 require_once './vendor/autoload.php';
 require_once './Tools/IniTool.php';
-include_once './Tools/TemplateTool.php';
+require_once './Tools/TemplateTool.php';
 class EmailTool
 {
     public static function sendEmail(array $data, string $template = '')
@@ -11,7 +11,6 @@ class EmailTool
         $fromEmail = $data['fromEmail'];
         $fromPassword = $data['fromPassword'];
         $message = TemplateTool::ApplyTemplate($data, $template);
-
         $phpmailer = new PHPMailer\PHPMailer\PHPMailer();
         $phpmailer->isSMTP();
         $phpmailer->SMTPSecure = 'ssl';
@@ -30,8 +29,7 @@ class EmailTool
 
         if ($phpmailer->send()) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 }
