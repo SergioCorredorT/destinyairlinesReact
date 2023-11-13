@@ -28,14 +28,22 @@ class SessionTool
         return isset($_SESSION[$key]) ? unserialize($_SESSION[$key]) : null;
     }
 
+    public static function getAll(string $sessionName = 'MiSesion')
+    {
+        self::startSession($sessionName);
+        $sessionArray = array_map('unserialize', $_SESSION);
+        return $sessionArray;
+    }
+
     public static function remove(string $key, string $sessionName = 'MiSesion')
     {
         self::startSession($sessionName);
         unset($_SESSION[$key]);
     }
 
-    public static function destroy()
+    public static function destroy(string $sessionName = 'MiSesion')
     {
+        self::startSession($sessionName);
         if (session_status() === PHP_SESSION_ACTIVE) {
             $_SESSION = array();
             return session_destroy();

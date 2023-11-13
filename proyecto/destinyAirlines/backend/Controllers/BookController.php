@@ -2,44 +2,10 @@
 //Ver vuelos/reservas hechos y pendientes, crear reserva, editar los servicios contratados, crear nuevo vuelo
 /*
 PLAN
-    -AÑADIR adultsNumber childsNumber infantsNumber a books como tinyint
     -QUITAR precio de books ya que no tiene sentido, estas filas se crean o añaden
-    -AÑADIR tabla PrimaryContactInformation
     -AÑADIR tabla invoices con su id, código, fecha y dejar en BOOKS el id foráneo de invoices
-    -ACTUALIZAR UML y revisar plan
-
-    BookController
-        fase book
-            bookEntity
-                un id vuelo
-                un id user
-                bookcode se autogenera
-                números de pasajeros
-                dirección
-        fase passengers
-            passengerEntity (contiene info adicional también)
-                cada pasajero es una posición asociativa del array (adults, infants,...) que se meterá en session
-                cada entidad tiene un arraylist de serviceEntity individuales
-                un bebé es otra entidad más pero con otros datos que normalmente estarían a null en la entidad
-        fase services
-            serviceEntity
-                cada servicio es una posición de un array que se mete en session
-        fase PrimaryContactInformation
-            fase PrimaryContactInformationEntity
-                esto se guarda en session (tras el payment se insertará en la tabla PrimaryContactInformation)
-        fase payment
-            paymentEntity
-            se hace el pago
-            se inserta todo en bbdd
-            se genera factura
 */
 
-//Checkin
-//solo se puede hacer desde 24 a 48 horas antes del vuelo
-//se confirma asistencia o se cancela
-//se obtiene tarjeta de embarque (que no es lo mismo que la factura)
-//si el cliente tiene una reserva, se le notifica por mail y sms (sms se considera servicio con precio)
-//se podrá seleccionar asiento si se pagó ese servicio
 require_once './Controllers/BaseController.php';
 require_once './Tools/SessionTool.php';
 final class BookController extends BaseController
@@ -161,7 +127,7 @@ final class BookController extends BaseController
         return true;
     }
 
-//se debe exige login en este paso
+    //se debe exige login en este paso
     public function storePrimaryContactInformationDetails(array $POST)
     {
         $primaryContactDetails = [
@@ -198,40 +164,35 @@ final class BookController extends BaseController
         return true;
     }
 
-
-//Comprobar token de login
     public function paymentDetails(array $POST)
     {
-//¿¿ es necesario tener estos campos si paypal hará todo¿¿        
-        $paymentDetails = [
-            'cardholderName' => '',
-            'cardNumber' => '',
-            'expirationDate' => '',
-            'cvc' => '',
-            'billingAddress' => ''
-        ];
+        require_once './Sanitizers/TokenSanitizer.php';
+        require_once './Validators/TokenValidator.php';
 
-        foreach ($paymentDetails as $key => $defaultValue) {
-            $paymentDetails[$key] = $POST[$key] ?? $defaultValue;
-        }
-
-        require_once './Sanitizers/PaymentSanitizer.php';
-        require_once './Validators/PaymentValidator.php';
-        $paymentDetails = PaymentSanitizer::sanitize($paymentDetails);
-        $isValidate = PaymentValidator::validate($paymentDetails);
-
-        if (!$isValidate) {
+        $accessToken = $POST['accessToken'];
+        $accessToken = TokenSanitizer::sanitizeToken($accessToken);
+        if (!TokenValidator::validateToken($accessToken)) {
             return false;
         }
 
-        if (!$this->doPayment($paymentDetails)) {
+        $totalPrice = $this->generateTotalPrice();
+
+        if (!$this->doPayment($totalPrice)) {
             return false;
         }
 
         return true;
     }
 
-    public function doPayment($paymentDetails)
+    public function generateTotalPrice()
+    {
+        //SessionTool::get();
+        //Recoger variables de session
+        //Comprobar precio en bbdd
+        return 11;
+    }
+
+    public function doPayment($totalPrice)
     {
         //Proceso de pago
         require_once './Tools/PaymentTool.php';
@@ -243,13 +204,13 @@ final class BookController extends BaseController
 
         //Metemos los datos de factura en la bbdd en la tabla INVOICES (Añadir campos de los gastos)
         //Generamos token de vida corta (con el id del usuario y el de la factura) para mandarlo por get al returnUrl (allí se descodifica y se muestra la factura además de enviar por email)
-            //OJO: si caduca el token, en el returnUrl se le debe avisar al cliente de que si quiere que se le expida la factura, se loguee y lo solicite en "Mis reservas".
+        //OJO: si caduca el token, en el returnUrl se le debe avisar al cliente de que si quiere que se le expida la factura, se loguee y lo solicite en "Mis reservas".
         //El cancelUrl solo contendrá un aviso de que se canceló
         if ($this->saveBooking()) {
             $PaymentTool->createPaymentPaypal($paypal['clientId'], $paypal['clientSecret'], $totalPrice, 'EUR', $paypal['returnUrl'], $paypal['cancelUrl']);
             //Aquí solo devolvemos true para que en el frontend ponga un modal con un botón para comprobar si se hizo la compra
-                //si sí, avisa de ello, va al index.html y elimina las variables de session del viaje
-                //si no, dará opción de volver a intentar compra (simplemente desaparece el modal, y se comprueba si siguen las variables de session y el login, (si no están pues al index y eliminar variables de session)), o de ir al index.html (entonces se eliminan las variables de session del viaje)
+            //si sí, avisa de ello, va al index.html y elimina las variables de session del viaje
+            //si no, dará opción de volver a intentar compra (simplemente desaparece el modal, y se comprueba si siguen las variables de session y el login, (si no están pues al index y eliminar variables de session)), o de ir al index.html (entonces se eliminan las variables de session del viaje)
             return true;
         }
         return false;
@@ -265,6 +226,12 @@ final class BookController extends BaseController
     //Para obtener la tarjeta de embarque, solo se puede hacer desde 24 a 48 hrs antes del vuelo
     public function confirmCheckin(array $POST)
     {
+        //Checkin
+        //solo se puede hacer desde 24 a 48 horas antes del vuelo
+        //se confirma asistencia o se cancela
+        //se obtiene tarjeta de embarque (que no es lo mismo que la factura)
+        //si el cliente tiene una reserva, se le notifica por mail y sms (sms se considera servicio con precio)
+        //se podrá seleccionar asiento si se pagó ese servicio
     }
 
     //Recibe id del usuario y devuelve un array o un JSON de los books

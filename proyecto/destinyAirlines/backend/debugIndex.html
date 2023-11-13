@@ -855,41 +855,7 @@
           method="post"
         >
           <input type="text" name="command" value="paymentDetails" readonly />
-          <input
-            type="text"
-            id="cardholderName"
-            name="cardholderName"
-            placeholder="cardholderName"
-            value="Juan Pérez"
-          />
-          <input
-            type="text"
-            id="cardNumber"
-            name="cardNumber"
-            placeholder="cardNumber"
-            value="1234567812345678"
-          />
-          <input
-            type="month"
-            id="expirationDate"
-            name="expirationDate"
-            placeholder="expirationDate"
-            value="2025-12"
-          />
-          <input
-            type="text"
-            id="cvc"
-            name="cvc"
-            placeholder="cvc"
-            value="123"
-          />
-          <input
-            type="text"
-            id="billingAddress"
-            name="billingAddress"
-            placeholder="billingAddress"
-            value="Calle Mayor, 1, Madrid"
-          />
+          <input type="text" name="accessToken" placeholder="accessToken" />
           <button type="submit">Enviar POST</button>
         </form>
       </section>
@@ -921,6 +887,22 @@
             readonly
           />
           <input type="text" name="refreshToken" placeholder="refreshToken" />
+          <button type="submit">Enviar POST</button>
+        </form>
+      </section>
+      <section>
+        <h1>debugController</h1>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="obtenerVariablesDeSesionDebug"
+            readonly
+          />
           <button type="submit">Enviar POST</button>
         </form>
       </section>

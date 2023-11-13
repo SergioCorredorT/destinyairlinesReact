@@ -34,7 +34,8 @@ $controllers = [
     'storepassengerdetails'                     => ['controller' => 'BookController',       'method' => 'storePassengerDetails'],
     'storebookservicesdetails'                  => ['controller' => 'BookController',       'method' => 'storeBookServicesDetails'],
     'storeprimarycontactinformationdetails'     => ['controller' => 'BookController',       'method' => 'storePrimaryContactInformationDetails'],
-    'paymentdetails'                            => ['controller' => 'BookController',       'method' => 'paymentDetails']
+    'paymentdetails'                            => ['controller' => 'BookController',       'method' => 'paymentDetails'],
+    'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',      'method' => 'obtenerVariablesDeSesionDebug']
 ];
 
 if (array_key_exists(strtolower($command), $controllers)) {
