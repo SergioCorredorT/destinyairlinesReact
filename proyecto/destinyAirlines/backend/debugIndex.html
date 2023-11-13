@@ -73,7 +73,7 @@
       label {
         color: #ffffff;
         border: none;
-        transition: 0.3s ease-in-out;
+        transition: filter 0.3s ease-in-out;
       }
 
       input:hover,
@@ -100,6 +100,10 @@
         user-select: none;
       }
 
+      button:active {
+        transform: scale(0.95);
+      }
+
       input[name="command"] {
         background-color: #272727;
         text-align: center;
@@ -113,6 +117,7 @@
 
       label {
         display: flex;
+        cursor: pointer;
       }
 
       h1 {
@@ -148,7 +153,11 @@
         >
           <input type="text" readonly name="command" value="contact" />
           <input type="text" name="name" value="Sergio" />
-          <input type="text" name="email" value="sergiodesarrolladorweb@gmail.com" />
+          <input
+            type="text"
+            name="email"
+            value="sergiodesarrolladorweb@gmail.com"
+          />
           <input type="text" name="phoneNumber" value="111223344" />
           <input type="text" name="subject" value="motivazo bueno" />
           <input
@@ -189,7 +198,6 @@
               type="checkbox"
               name="nullify_title"
               onchange="nullifyInput(this, `#updateForm [data-name='title']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -205,7 +213,6 @@
               type="checkbox"
               name="nullify_firstName"
               onchange="nullifyInput(this, `#updateForm [data-name='firstName']`)"
-              
             />
           </div>
 
@@ -222,7 +229,6 @@
               type="checkbox"
               name="nullify_lastName"
               onchange="nullifyInput(this, `#updateForm [data-name='lastName']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -238,7 +244,6 @@
               type="checkbox"
               name="nullify_townCity"
               onchange="nullifyInput(this, `#updateForm [data-name='townCity']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -254,7 +259,6 @@
               type="checkbox"
               name="nullify_streetAddress"
               onchange="nullifyInput(this, `#updateForm [data-name='streetAddress']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -270,7 +274,6 @@
               type="checkbox"
               name="nullify_zipCode"
               onchange="nullifyInput(this, `#updateForm [data-name='zipCode']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -286,7 +289,6 @@
               type="checkbox"
               name="nullify_country"
               onchange="nullifyInput(this, `#updateForm [data-name='country']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -302,7 +304,6 @@
               type="checkbox"
               name="nullify_password"
               onchange="nullifyInput(this, `#updateForm [data-name='password']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -318,7 +319,6 @@
               type="checkbox"
               name="nullify_phoneNumber1"
               onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber1']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -334,7 +334,6 @@
               type="checkbox"
               name="nullify_phoneNumber2"
               onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber2']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -350,7 +349,6 @@
               type="checkbox"
               name="nullify_phoneNumber3"
               onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber3']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -366,7 +364,6 @@
               type="checkbox"
               name="nullify_companyName"
               onchange="nullifyInput(this, `#updateForm [data-name='companyName']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -381,7 +378,6 @@
               type="checkbox"
               name="nullify_companyTaxNumber"
               onchange="nullifyInput(this, `#updateForm [data-name='companyTaxNumber']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -396,7 +392,6 @@
               type="checkbox"
               name="nullify_companyPhoneNumber"
               onchange="nullifyInput(this, `#updateForm [data-name='companyPhoneNumber']`)"
-              
             />
           </div>
           <div class="filaForm">
@@ -429,7 +424,11 @@
           <input type="text" readonly name="command" value="createuser" />
           <input type="text" name="firstName" value="A555" />
           <input type="text" name="zipCode" value="25" />
-          <input type="text" name="emailAddress" value="sergiodesarrolladorweb@gmail.com" />
+          <input
+            type="text"
+            name="emailAddress"
+            value="sergiodesarrolladorweb@gmail.com"
+          />
           <input type="text" name="password" value="_Aa1234567" />
           <button type="submit">Enviar POST</button>
         </form>
@@ -439,7 +438,11 @@
           method="post"
         >
           <input type="text" readonly name="command" value="removeuser" />
-          <input type="text" name="emailAddress" value="sergiodesarrolladorweb@gmail.com" />
+          <input
+            type="text"
+            name="emailAddress"
+            value="sergiodesarrolladorweb@gmail.com"
+          />
           <input type="text" name="password" value="_Aa1234567" />
           <input
             type="text"

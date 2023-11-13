@@ -58,7 +58,7 @@ final class UserController extends BaseController
     public function updateUser(array $POST)
     {
         require_once './Tools/TokenTool.php';
-        //En $POST solo se deben recibir los campos que se desean editar dentro de los posibles definidos en $userData
+        //En $POST solo se deben recibir los campos que se desea usar, ya sea para enviar a BBDD o hacer algo, al final, justo antes del update, se extraerán los campos no usados para el update
         $keys_default = [
             'title' => null,
             'firstName' => null,
@@ -67,7 +67,6 @@ final class UserController extends BaseController
             'streetAddress' => null,
             'zipCode' => null,
             'country' => null,
-            'emailAddress' => null,
             'password' => null,
             'phoneNumber1' => null,
             'phoneNumber2' => null,
@@ -85,14 +84,76 @@ final class UserController extends BaseController
 
         $userData['dateTime'] = date('Y-m-d H:i:s');
 
-        $rsp['response'] = false;
+        //SANEAR y VALIDAR
+        $userData = UserSanitizer::sanitize($userData);
+        if (!UserValidator::validate($userData)) {
+            return false;
+        }
+
+        $decodedToken = TokenTool::decodeAndCheckToken($userData['accessToken'], 'access');
+
+        if (!$decodedToken['response']) {
+            return false;
+        }
+        $UserModel = new UserModel();
+
+        $email = $UserModel->getEmailById($decodedToken['response']->data->id);
+
+        if ($email !== $POST['emailAddressAuth']) {
+            return false;
+        }
+
+        if (isset($userData['password'])) {
+            $userData['passwordHash'] = "'" . password_hash($userData["password"], PASSWORD_BCRYPT) . "'";
+            unset($userData['password']);
+        }
+
+        //Quitamos los datos que no se deben editar en BBDD antes del update
+        unset($userData['emailAddressAuth']);
+        unset($userData['accessToken']);
+        if ($UserModel->updateUsersByEmail(array_filter($userData), $email)) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    public function updateUser(array $POST)
+    {
+        require_once './Tools/TokenTool.php';
+        //En $POST solo se deben recibir los campos que se desean editar dentro de los posibles definidos en $userData
+        $keys_default = [
+            'title' => null,
+            'firstName' => null,
+            'lastName' => null,
+            'townCity' => null,
+            'streetAddress' => null,
+            'zipCode' => null,
+            'country' => null,
+            'password' => null,
+            'phoneNumber1' => null,
+            'phoneNumber2' => null,
+            'phoneNumber3' => null,
+            'companyName' => null,
+            'companyTaxNumber' => null,
+            'companyPhoneNumber' => null,
+            'accessToken' => '',
+            'emailAddressAuth' => ''
+        ];
+
+        foreach ($keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+
+        $userData['dateTime'] = date('Y-m-d H:i:s');
+
         $decodedToken = TokenTool::decodeAndCheckToken($userData['accessToken'], 'access');
 
         if ($decodedToken['response']) {
             $UserModel = new UserModel();
 
             $email = $UserModel->getEmailById($decodedToken['response']->data->id);
-
+            //no se sanea el emailAddressAuth ni el token
             if ($email === $POST['emailAddressAuth']) {
                 $userData = UserSanitizer::sanitize($userData);
                 if (UserValidator::validate($userData)) {
@@ -101,26 +162,66 @@ final class UserController extends BaseController
                         unset($userData['password']);
                     }
 
+                    unset($userData['emailAddressAuth']);
                     if ($UserModel->updateUsersByEmail(array_filter($userData), $email)) {
-                        $rsp['response'] = true;
+                        return true;
                     }
                 }
             }
         }
-
-        return $rsp;
+        return false;
     }
-
+*/
     public function deleteUser(array $POST)
     {
         //eliminar tokens en el frontend
         require_once './Tools/TokenTool.php';
-        $keys = [
+        $keys_default = [
             'emailAddress' => '',
             'password' => '',
             'refreshToken' => ''
         ];
-        foreach ($keys as $key => $defaultValue) {
+        foreach ($keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+        $userData['dateTime'] = date('Y-m-d H:i:s');
+
+        $userData = UserSanitizer::sanitize($userData);
+        if (!UserValidator::validate($userData)) {
+            return false;
+        }
+
+        $decodedToken = TokenTool::decodeAndCheckToken($userData['refreshToken'], 'refresh');
+
+
+        if (!$decodedToken['response']) {
+            return false;
+        }
+        $UserModel = new UserModel();
+        $email = $UserModel->getEmailById($decodedToken['response']->data->id);
+
+        if ($email !== $POST['emailAddress']) {
+            return false;
+        }
+        require_once './Tools/SessionTool.php';
+        SessionTool::destroy();
+        if ($UserModel->deleteUserByEmailAndPassword($userData['emailAddress'], $userData['password'])) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    public function deleteUser(array $POST)
+    {
+        //eliminar tokens en el frontend
+        require_once './Tools/TokenTool.php';
+        $keys_default = [
+            'emailAddress' => '',
+            'password' => '',
+            'refreshToken' => ''
+        ];
+        foreach ($keys_default as $key => $defaultValue) {
             $userData[$key] = $POST[$key] ?? $defaultValue;
         }
         $userData['dateTime'] = date('Y-m-d H:i:s');
@@ -146,25 +247,27 @@ final class UserController extends BaseController
         }
         return false;
     }
-
+*/
     public function loginUser(array $POST)
     {
         require_once './Tools/TokenTool.php';
-        $keys = [
+        $keys_default = [
             'emailAddress' => '',
             'password' => ''
         ];
-        foreach ($keys as $key => $defaultValue) {
+        foreach ($keys_default as $key => $defaultValue) {
             $userData[$key] = $POST[$key] ?? $defaultValue;
         }
         $userData['dateTime'] = date('Y-m-d H:i:s');
 
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
+
         if ($isValidate) {
             $UserModel = new UserModel();
             $UserTempIdsModel = new UserTempIdsModel();
             $user = $UserModel->readUserByEmail($userData['emailAddress']);
+
             if ($user) {
                 //Recogemos datos que necesitaremos
                 [$user] = $user;
@@ -241,6 +344,12 @@ final class UserController extends BaseController
             'refreshToken'  => $POST['refreshToken'] ?? '',
             'dateTime'      => date('Y-m-d H:i:s')
         ];
+
+        $userData = UserSanitizer::sanitize($userData);
+        if (!UserValidator::validate($userData)) {
+            return false;
+        }
+
         $decodedToken = TokenTool::decodeAndCheckToken($userData['refreshToken'], 'refresh');
         if ($decodedToken['response']) {
             //Recuerda que debemos eliminar tokens en el frontend
@@ -336,14 +445,29 @@ final class UserController extends BaseController
 
     public function passwordReset(array $POST)
     {
-        //IMPLEMENTAR VALIDACIÓN en cada function de los case
+        $keys_default = [
+            'type' => '',
+            'new_password' => '',
+            'confirm_password' => '',
+            'passwordResetToken' => '',
+            'tempId' => ''
+        ];
+        foreach ($keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+        $userData['dateTime'] = date('Y-m-d H:i:s');
+
+//Por probar!!!!!!!!
+        require_once './Sanitizers/PasswordResetSanitizer.php';
+        $userData = PasswordResetSanitizer::sanitize($userData);
+
         if ($POST['type']) {
             switch ($POST['type']) {
                 case "failedAttempts": {
-                        return $this->passwordResetFailedAttempts($POST);
+                        return $this->passwordResetFailedAttempts($userData);
                     }
                 case "forgotPassword": {
-                        return $this->passwordResetForgotPassword($POST);
+                        return $this->passwordResetForgotPassword($userData);
                     }
             }
         }

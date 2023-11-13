@@ -1,4 +1,6 @@
 <?php
+require_once './Sanitizers/TokenSanitizer.php';
+require_once './Validators/TokenValidator.php';
 class UserValidator
 {
     public static function validateTitle($title)
@@ -165,6 +167,12 @@ class UserValidator
             return false;
         }
         if (isset($data['companyPhoneNumber']) && !self::validateCompanyPhoneNumber($data['companyPhoneNumber'])) {
+            return false;
+        }
+        if (isset($data['accessToken']) && !TokenValidator::validateToken($data['accessToken'])) {
+            return false;
+        }
+        if (isset($data['refreshToken']) && !TokenValidator::validateToken($data['refreshToken'])) {
             return false;
         }
 

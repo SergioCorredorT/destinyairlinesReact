@@ -72,7 +72,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            error_log('Se ha capturado una excepción: ' .  $er->getMessage() . "\n");
+            error_log('Catched exception: ' .  $er->getMessage() . "\n");
             return false;
         }
         // Bind parameters
@@ -102,7 +102,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
-            error_log('Se ha capturado una excepción: ' .  $er->getMessage() . "\n");
+            error_log('Catched exception: ' .  $er->getMessage() . "\n");
             return false;
         }
         $stmt->execute();
@@ -113,11 +113,73 @@ abstract class BaseModel
         }
     }
 
+    public function addQuotesIfNecessary($miString)
+    {
+        if (is_string($miString)) {
+            $miString = trim($miString);
+            $firstChar = $miString[0];
+            $lastChar = $miString[strlen($miString) - 1];
+
+            if (($firstChar != '"' && $lastChar != '"') && ($firstChar != "'" && $lastChar != "'")) {
+                $miString = "'" . $miString . "'";
+            }
+        }
+
+        return $miString;
+    }
+
+    //Esta versión previene mejor el injection
+    protected function update(array $data, string $where)
+    {
+        $updateData = '';
+        $bindValues = [];
+        $i = 1;
+        foreach ($data as $key => $value) {
+            if (preg_match('/[\\+\\-\\*\\/]/', $value)) {
+                // Handle mathematical expressions specially
+                $updateData .= "$key = $value, ";
+            } else {
+                $updateData .= "$key = :value$i, ";
+                $bindValues[":value$i"] = $value;
+                $i++;
+            }
+        }
+        $updateData = rtrim($updateData, ', ');
+        $query = "UPDATE $this->tableName SET $updateData WHERE $where";
+
+        // Prepare the query
+        try {
+            $stmt = $this->con->prepare($query);
+            foreach ($bindValues as $param => $value) {
+                $stmt->bindValue($param, $value);
+            }
+        } catch (Exception $er) {
+            error_log('Catched exception: ' . $er->getMessage() . "\n");
+            return false;
+        }
+
+        $stmt->execute();
+        if (intval($stmt->errorCode()) === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+/*
+//Con addQuotesUfNecessary
     protected function update(array $data, string $where)
     {
         $updateData = '';
         foreach ($data as $key => $value) {
-            $updateData .= "$key = '$value', ";
+            if (preg_match('/[\\+\\-\\*\\/]/', $value)) {
+                // Handle mathematical expressions specially
+                $updateData .= "$key = $value, ";
+            } else {
+                $value = $this->addQuotesIfNecessary($value);
+                $updateData .= "$key = $value, ";
+            }
         }
         $updateData = rtrim($updateData, ', ');
         $query = "UPDATE $this->tableName SET $updateData WHERE $where";
@@ -137,7 +199,7 @@ abstract class BaseModel
             return false;
         }
     }
-
+*/
     protected function delete(string $where)
     {
         // Ejecuta DELETE sin filtro WHERE

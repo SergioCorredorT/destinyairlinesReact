@@ -1,4 +1,5 @@
 <?php
+require_once './Sanitizers/TokenSanitizer.php';
 class UserSanitizer
 {
     public static function sanitizeTitle($title)
@@ -74,7 +75,6 @@ class UserSanitizer
         if (!empty($data['streetAddress'])) $arraySanitized["streetAddress"] = self::sanitizeStreetAddress($data['streetAddress']);
         if (!empty($data['zipCode'])) $arraySanitized["zipCode"] = self::sanitizeZipCode($data['zipCode']);
         if (!empty($data['country'])) $arraySanitized["country"] = self::sanitizeCountry($data['country']);
-        if (!empty($data['emailAddress'])) $arraySanitized["emailAddress"] = self::sanitizeEmailAddress($data['emailAddress']);
         if (!empty($data['password'])) $arraySanitized["password"] = self::sanitizePassword($data['password']);
         if (!empty($data['phoneNumber1'])) $arraySanitized["phoneNumber1"] = self::sanitizePhoneNumber1($data['phoneNumber1']);
         if (!empty($data['phoneNumber2'])) $arraySanitized["phoneNumber2"] = self::sanitizePhoneNumber2($data['phoneNumber2']);
@@ -82,6 +82,10 @@ class UserSanitizer
         if (!empty($data['companyName'])) $arraySanitized["companyName"] = self::sanitizeCompanyName($data['companyName']);
         if (!empty($data['companyTaxNumber'])) $arraySanitized["companyTaxNumber"] = self::sanitizeCompanyTaxNumber($data['companyTaxNumber']);
         if (!empty($data['companyPhoneNumber'])) $arraySanitized["companyPhoneNumber"] = self::sanitizeCompanyPhoneNumber($data['companyPhoneNumber']);
+        if (!empty($data['emailAddress'])) $arraySanitized["emailAddress"] = self::sanitizeEmailAddress($data['emailAddress']);
+        if (!empty($data['emailAddressAuth'])) $arraySanitized["emailAddressAuth"] = self::sanitizeEmailAddress($data['emailAddressAuth']);
+        if (!empty($data['accessToken'])) $arraySanitized["accessToken"] = TokenSanitizer::sanitizeToken($data['accessToken']);
+        if (!empty($data['refreshToken'])) $arraySanitized["refreshToken"] = TokenSanitizer::sanitizeToken($data['refreshToken']);
         
         return $arraySanitized;        
     }
