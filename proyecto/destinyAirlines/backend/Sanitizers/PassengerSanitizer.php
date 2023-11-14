@@ -130,7 +130,7 @@ class PassengerSanitizer
         if (!empty($data['mobilityLimitations'])) $arraySanitized["mobilityLimitations"] = self::sanitizeMobilityLimitations($data['mobilityLimitations']);
         if (!empty($data['communicationNeeds'])) $arraySanitized["communicationNeeds"] = self::sanitizeCommunicationNeeds($data['communicationNeeds']);
         if (!empty($data['medicationRequirements'])) $arraySanitized["medicationRequirements"] = self::sanitizeMedicationRequirements($data['medicationRequirements']);
-        if (!empty($data['individualServiceCodes'])) $arraySanitized["individualServiceCodes"] = self::sanitizeIndividualServiceCodes($data['individualServiceCodes']);
+        if (!empty($data['services'])) $arraySanitized["services"] = self::sanitizeIndividualServiceCodes($data['services']);
 
         return $arraySanitized;
     }

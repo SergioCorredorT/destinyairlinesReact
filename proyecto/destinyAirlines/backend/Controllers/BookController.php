@@ -1,10 +1,5 @@
 <?php
 //Ver vuelos/reservas hechos y pendientes, crear reserva, editar los servicios contratados, crear nuevo vuelo
-/*
-PLAN
-    -QUITAR precio de books ya que no tiene sentido, estas filas se crean o añaden
-    -AÑADIR tabla invoices con su id, código, fecha y dejar en BOOKS el id foráneo de invoices
-*/
 
 require_once './Controllers/BaseController.php';
 require_once './Tools/SessionTool.php';
@@ -33,6 +28,7 @@ final class BookController extends BaseController
         if (!$isValidate) {
             return false;
         }
+        //Comprobar si caben en el viaje
         SessionTool::set('fligthDetails', $fligthDetails);
         return true;
     }
@@ -65,19 +61,7 @@ final class BookController extends BaseController
                 'mobilityLimitations' => null,
                 'communicationNeeds' => null,
                 'medicationRequirements' => null,
-                'SRV001' => null,
-                'SRV005' => null,
-                'SRV006' => null,
-                'SRV007' => null,
-                'SRV008' => null,
-                'SRV011' => null,
-                'SRV013' => null,
-                'SRV014' => null,
-                'SRV015' => null,
-                'SRV016' => null,
-                'SRV017' => null,
-                'SRV018' => null,
-                'SRV019' => null
+                'services' => null
             ];
 
             foreach ($keys_default as $key => $defaultValue) {
@@ -168,31 +152,102 @@ final class BookController extends BaseController
     {
         require_once './Sanitizers/TokenSanitizer.php';
         require_once './Validators/TokenValidator.php';
+        require_once './Tools/TokenTool.php';
 
         $accessToken = $POST['accessToken'];
         $accessToken = TokenSanitizer::sanitizeToken($accessToken);
         if (!TokenValidator::validateToken($accessToken)) {
             return false;
         }
+        //Comprobar accessToken aquí
+
+        $decodedToken = TokenTool::decodeAndCheckToken($userData['accessToken'], 'access');
+
+        if (!$decodedToken['response']) {
+            return false;
+        }
 
         $totalPrice = $this->generateTotalPrice();
 
-        if (!$this->doPayment($totalPrice)) {
+        if (!$this->saveBooking()) {
             return false;
         }
+
+        //if (!$this->doPayment($totalPrice)) {
+        //   return false;
+        // }
 
         return true;
     }
 
-    public function generateTotalPrice()
+    private function generateTotalPrice()
     {
-        //SessionTool::get();
+        //Recogemos las sesiones
+        $allSessions = SessionTool::getAll();
+        $flightDetails = $allSessions['flightDetails'];
+        $passengersDetails = $allSessions['passengersDetails'];
+        $bookServicesDetails = $allSessions['bookServicesDetails'];
+        $primaryContactDetails = $allSessions['primaryContactDetails'];
+
+        $totalPrice = 0;
+        $flightPrice = 0.0;
+        $individualServicesPrice = 0.0;
+
+        //Calculate flight price
+        $flightModel = new FlightModel();
+        $flightPrice = $flightModel->getFlightPrice($flightDetails['flightCode']);
+        $adults = 0;
+        $childs = 0;
+        $infants = 0;
+
+        //Calculate passengers price
+        $passengersServices = [];
+        $serviceCodes = [];
+        foreach ($passengersDetails as $passenger) {
+            switch ($passenger['ageCategory']) {
+                case 'adult': {
+                        $passengersServices[$passenger['documentCode']] = $passenger['services'];
+                        $adults++;
+                        break;
+                    }
+                case 'child': {
+                        $passengersServices[$passenger['documentCode']] = $passenger['services'];
+                        //Aplicar aquí la rebaja que hay en el ini
+                        $childs++;
+                        break;
+                    }
+                case 'infant': {
+                        $passengersServices[$passenger['documentCode']] = $passenger['services'];
+                        //Aplicar aquí la rebaja que hay en el ini
+                        $infants++;
+                        break;
+                    }
+            }
+            foreach ($passenger['services'] as $serviceCode) {
+                $serviceCodes[$serviceCode] = $serviceCode;
+            }
+        }
+
+        //Recoger precios de los serviceCode recopilados en $serviceCodes desde BBDD
+        //Meter dentro de individualServicesPrice la Suma de todos precios de todos los servicios que haya en $passengerServices
+
+        //Comprobar si caben en el viaje
+
+        /*Recoger para comprobar su precio:
+            flightCode
+            adultsNumber
+            childsNumber
+            InfantsNumber (con el descuento del ini)
+            servicios de cada pasajero
+            bookServices
+        */
+        error_log("waaaaaa" . print_r($allSessions, true));
         //Recoger variables de session
         //Comprobar precio en bbdd
         return 11;
     }
 
-    public function doPayment($totalPrice)
+    private function doPayment($totalPrice)
     {
         //Proceso de pago
         require_once './Tools/PaymentTool.php';
@@ -206,17 +261,14 @@ final class BookController extends BaseController
         //Generamos token de vida corta (con el id del usuario y el de la factura) para mandarlo por get al returnUrl (allí se descodifica y se muestra la factura además de enviar por email)
         //OJO: si caduca el token, en el returnUrl se le debe avisar al cliente de que si quiere que se le expida la factura, se loguee y lo solicite en "Mis reservas".
         //El cancelUrl solo contendrá un aviso de que se canceló
-        if ($this->saveBooking()) {
-            $PaymentTool->createPaymentPaypal($paypal['clientId'], $paypal['clientSecret'], $totalPrice, 'EUR', $paypal['returnUrl'], $paypal['cancelUrl']);
-            //Aquí solo devolvemos true para que en el frontend ponga un modal con un botón para comprobar si se hizo la compra
-            //si sí, avisa de ello, va al index.html y elimina las variables de session del viaje
-            //si no, dará opción de volver a intentar compra (simplemente desaparece el modal, y se comprueba si siguen las variables de session y el login, (si no están pues al index y eliminar variables de session)), o de ir al index.html (entonces se eliminan las variables de session del viaje)
-            return true;
-        }
-        return false;
+        $PaymentTool->createPaymentPaypal($paypal['clientId'], $paypal['clientSecret'], $totalPrice, 'EUR', $paypal['returnUrl'], $paypal['cancelUrl']);
+        //Aquí solo devolvemos true para que en el frontend ponga un modal con un botón para comprobar si se hizo la compra
+        //si sí, avisa de ello, va al index.html y elimina las variables de session del viaje
+        //si no, dará opción de volver a intentar compra (simplemente desaparece el modal, y se comprueba si siguen las variables de session y el login, (si no están pues al index y eliminar variables de session)), o de ir al index.html (entonces se eliminan las variables de session del viaje)
+        return true;
     }
 
-    public function saveBooking()
+    private function saveBooking()
     {
         $BookModel = new BookModel();
         //Recoger todos los datos de la session y guardar el book

@@ -7,9 +7,7 @@ class SessionTool
             session_name($sessionName);
             session_set_cookie_params($sessionLifetime, '/', $_SERVER['HTTP_HOST'], isset($_SERVER['HTTPS']), true);
             session_start();
-        }
-        elseif(session_name() != $sessionName)
-        {
+        } elseif (session_name() != $sessionName) {
             session_destroy();
             session_name($sessionName);
             session_start();
@@ -44,9 +42,7 @@ class SessionTool
     public static function destroy(string $sessionName = 'MiSesion')
     {
         self::startSession($sessionName);
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            $_SESSION = array();
-            return session_destroy();
-        }
+        $_SESSION = array();
+        return session_destroy();
     }
 }
