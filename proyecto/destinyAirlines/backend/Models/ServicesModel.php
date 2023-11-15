@@ -18,6 +18,20 @@ final class ServicesModel extends BaseModel
     {
         return parent::select('serviceCode','serviceGroupingType = "collective" AND billingCategory = "PaidService" ');
     }
+    
+    public function readServicePrices(array $services)
+    {
+        $serviceCodes = "'" . implode("','", $services) . "'";
+        $prices = parent::select('serviceCode, priceOrDiscount AS price', "serviceCode IN ($serviceCodes)");
+    
+        $servicePrices = array();
+        foreach ($prices as $priceInfo) {
+            $servicePrices[$priceInfo['serviceCode']] = floatval($priceInfo['price']);
+        }
+    
+        return $servicePrices;
+    }
+    
 
 //----------------------------------------------------
     public function createServices(array $data)

@@ -289,7 +289,7 @@ class PassengerValidator
         return true;
     }
 
-    public static function validate($data)
+    public static function validate(array $data)
     {
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
             return false;

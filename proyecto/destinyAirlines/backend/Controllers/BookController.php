@@ -15,7 +15,7 @@ final class BookController extends BaseController
         require_once './Sanitizers/FlightSanitizer.php';
         require_once './Validators/FlightValidator.php';
 
-        $fligthDetails = [
+        $flightDetails = [
             'flightCode'      => $POST['flightCode'] ?? '',
             'adultsNumber'    => $POST['adultsNumber'] ?? '',
             'childsNumber'    => $POST['childsNumber'] ?? '',
@@ -23,13 +23,13 @@ final class BookController extends BaseController
             'dateTime'        => date('Y-m-d H:i:s')
         ];
 
-        $fligthDetails = FlightSanitizer::sanitize($fligthDetails);
-        $isValidate = FlightValidator::validate($fligthDetails);
+        $flightDetails = FlightSanitizer::sanitize($flightDetails);
+        $isValidate = FlightValidator::validate($flightDetails);
         if (!$isValidate) {
             return false;
         }
         //Comprobar si caben en el viaje
-        SessionTool::set('fligthDetails', $fligthDetails);
+        SessionTool::set('flightDetails', $flightDetails);
         return true;
     }
 
@@ -37,6 +37,7 @@ final class BookController extends BaseController
     {
         require_once './Sanitizers/PassengerSanitizer.php';
         require_once './Validators/PassengerValidator.php';
+        require_once './Validators/PassengersValidator.php';
 
         $passengers = $POST['passengers'];
         $passengersDetails = [];
@@ -76,6 +77,11 @@ final class BookController extends BaseController
             }
 
             array_push($passengersDetails, $passengerDetails);
+        }
+
+        if(!PassengersValidator::validate($passengersDetails))
+        {
+            return false;
         }
 
         //Si todo ha ido bien metemos en session a los pasajeros
@@ -161,7 +167,7 @@ final class BookController extends BaseController
         }
         //Comprobar accessToken aquí
 
-        $decodedToken = TokenTool::decodeAndCheckToken($userData['accessToken'], 'access');
+        $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
 
         if (!$decodedToken['response']) {
             return false;
@@ -182,69 +188,80 @@ final class BookController extends BaseController
 
     private function generateTotalPrice()
     {
-        //Recogemos las sesiones
         $allSessions = SessionTool::getAll();
-        $flightDetails = $allSessions['flightDetails'];
-        $passengersDetails = $allSessions['passengersDetails'];
-        $bookServicesDetails = $allSessions['bookServicesDetails'];
         $primaryContactDetails = $allSessions['primaryContactDetails'];
 
-        $totalPrice = 0;
-        $flightPrice = 0.0;
-        $individualServicesPrice = 0.0;
+        $passengersTotalPrice = $this->calculatePassengersPrice($allSessions);
+        $bookServicesTotalPrice = $this->calculateBookServicesPrice($allSessions);
+        //Comprobar si caben en el viaje
+
+        error_log("Sesiones" . print_r($allSessions, true));
+        error_log("Passengers Total Price: " . print_r($passengersTotalPrice, true));
+        error_log("Book services Total Price: " . print_r($bookServicesTotalPrice, true));
+
+        return $passengersTotalPrice + $bookServicesTotalPrice;
+    }
+
+    private function calculatePassengersPrice($allSessions)
+    {
+        require_once './Tools/IniTool.php';
+
+        $flightDetails = $allSessions['flightDetails'];
+        $passengersDetails = $allSessions['passengersDetails'];
+
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $flightModel = new FlightModel();
+        $servicesModel = new ServicesModel();
+
+        $priceSettings = $iniTool->getKeysAndValues("priceSettings");
+        $childDiscountPercentage = intval($priceSettings['childDiscountPercentage']);
+        $infantDiscountPercentage = intval($priceSettings['infantDiscountPercentage']);
 
         //Calculate flight price
-        $flightModel = new FlightModel();
         $flightPrice = $flightModel->getFlightPrice($flightDetails['flightCode']);
-        $adults = 0;
-        $childs = 0;
-        $infants = 0;
+
+        $discountedPrices = [
+            'adult' => $flightPrice,
+            'child' => $flightPrice * (1 - $childDiscountPercentage),
+            'infant' => $flightPrice * (1 - $infantDiscountPercentage)
+        ];
+        $passengerCount = ['adult' => 0, 'child' => 0, 'infant' => 0];
 
         //Calculate passengers price
-        $passengersServices = [];
         $serviceCodes = [];
         foreach ($passengersDetails as $passenger) {
-            switch ($passenger['ageCategory']) {
-                case 'adult': {
-                        $passengersServices[$passenger['documentCode']] = $passenger['services'];
-                        $adults++;
-                        break;
-                    }
-                case 'child': {
-                        $passengersServices[$passenger['documentCode']] = $passenger['services'];
-                        //Aplicar aquí la rebaja que hay en el ini
-                        $childs++;
-                        break;
-                    }
-                case 'infant': {
-                        $passengersServices[$passenger['documentCode']] = $passenger['services'];
-                        //Aplicar aquí la rebaja que hay en el ini
-                        $infants++;
-                        break;
-                    }
-            }
+            $passengerCount[$passenger['ageCategory']]++;
+            //Recogemos todos los servicios individuales contratados sin repetir de todos los pasajeros
             foreach ($passenger['services'] as $serviceCode) {
                 $serviceCodes[$serviceCode] = $serviceCode;
             }
         }
 
-        //Recoger precios de los serviceCode recopilados en $serviceCodes desde BBDD
-        //Meter dentro de individualServicesPrice la Suma de todos precios de todos los servicios que haya en $passengerServices
+        //Recogemos los precios de la variedad de servicios de nuestros pasajeros
+        $servicesWithPrices = $servicesModel->readServicePrices($serviceCodes);
+        //Sumamos todos los precios de los servicios individuales
+        $passengerServicesPrice = 0.0;
+        foreach ($passengersDetails as $passenger) {
+            foreach ($passenger['services'] as $serviceCode) {
+                $passengerServicesPrice += $servicesWithPrices[$serviceCode];
+            }
+        }
 
-        //Comprobar si caben en el viaje
+        $passengerFlightPrice = $passengerCount['adult'] * $discountedPrices['adult'] + $passengerCount['child'] * $discountedPrices['child'] + $passengerCount['infant'] * $discountedPrices['infant'];
+        return $passengerFlightPrice + $passengerServicesPrice;
+    }
 
-        /*Recoger para comprobar su precio:
-            flightCode
-            adultsNumber
-            childsNumber
-            InfantsNumber (con el descuento del ini)
-            servicios de cada pasajero
-            bookServices
-        */
-        error_log("waaaaaa" . print_r($allSessions, true));
-        //Recoger variables de session
-        //Comprobar precio en bbdd
-        return 11;
+    private function calculateBookServicesPrice($allSessions)
+    {
+        $bookServicesDetails = $allSessions['bookServicesDetails'];
+        $servicesModel = new ServicesModel();
+        $servicesWithPrices = $servicesModel->readServicePrices($bookServicesDetails);
+        $bookServicesTotalPrice = 0.0;
+
+        foreach ($servicesWithPrices as $price) {
+            $bookServicesTotalPrice += $price;
+        }
+        return $bookServicesTotalPrice;
     }
 
     private function doPayment($totalPrice)
