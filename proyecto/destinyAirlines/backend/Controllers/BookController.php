@@ -20,6 +20,7 @@ final class BookController extends BaseController
             'adultsNumber'    => $POST['adultsNumber'] ?? '',
             'childsNumber'    => $POST['childsNumber'] ?? '',
             'infantsNumber'   => $POST['infantsNumber'] ?? '',
+            'direction'       => $POST['direction'] ?? '',
             'dateTime'        => date('Y-m-d H:i:s')
         ];
 
@@ -65,22 +66,21 @@ final class BookController extends BaseController
                 'services' => null
             ];
 
+            //$passengersDetails['direction'] = $POST['direction'] ?? '';
             foreach ($keys_default as $key => $defaultValue) {
                 $passengerDetails[$key] = $passenger[$key] ?? $defaultValue;
             }
 
             //Cada pasajero lo saneamos y validamos
             $passengerDetails = PassengerSanitizer::sanitize($passengerDetails);
-            $isValidate = PassengerValidator::validate($passengerDetails);
-            if (!$isValidate) {
+            if (!PassengerValidator::validate($passengerDetails)) {
                 return false;
             }
 
             array_push($passengersDetails, $passengerDetails);
         }
 
-        if(!PassengersValidator::validate($passengersDetails))
-        {
+        if (!PassengersValidator::validate($passengersDetails)) {
             return false;
         }
 
@@ -95,24 +95,28 @@ final class BookController extends BaseController
         require_once './Sanitizers/BookServicesSanitizer.php';
         require_once './Validators/BookServicesValidator.php';
 
+
         $servicesDetails = [
-            'SRV003' => null,
-            'SRV004' => null,
-            'SRV010' => null
+            'direction' => '',
+            'services' => [
+                'SRV003' => null,
+                'SRV004' => null,
+                'SRV010' => null
+            ]
         ];
 
-        foreach ($servicesDetails as $key => $defaultValue) {
-            $servicesDetails[$key] = $POST[$key] ?? $defaultValue;
+        $servicesDetails['direction'] = $POST['direction'] ?? '';
+        foreach ($servicesDetails['services'] as $key => $defaultValue) {
+            $servicesDetails['services'][$key] = $POST[$key] ?? $defaultValue;
         }
 
         //Sanear
         //Validar si todos están en bbdd
         $servicesDetails = BookServicesSanitizer::sanitize($servicesDetails);
-        $isValidate      = BookServicesValidator::validate($servicesDetails);
-
-        if (!$isValidate) {
+        if (!BookServicesValidator::validate($servicesDetails)) {
             return false;
         }
+
         SessionTool::set('bookServicesDetails', $servicesDetails);
         return true;
     }
@@ -136,7 +140,8 @@ final class BookController extends BaseController
             'zipCode' => '',
             'companyName' => null,
             'companyTaxNumber' => null,
-            'companyPhoneNumber' => null
+            'companyPhoneNumber' => null,
+            'direction' => ''
         ];
 
         foreach ($primaryContactDetails as $key => $defaultValue) {
@@ -146,8 +151,7 @@ final class BookController extends BaseController
         require_once './Sanitizers/PrimaryContactInformationSanitizer.php';
         require_once './Validators/PrimaryContactInformationValidator.php';
         $primaryContactDetails = PrimaryContactInformationSanitizer::sanitize($primaryContactDetails);
-        $isValidate = PrimaryContactInformationValidator::validate($primaryContactDetails);
-        if (!$isValidate) {
+        if (!PrimaryContactInformationValidator::validate($primaryContactDetails)) {
             return false;
         }
         SessionTool::set('primaryContactDetails', $primaryContactDetails);
@@ -216,14 +220,18 @@ final class BookController extends BaseController
         $priceSettings = $iniTool->getKeysAndValues("priceSettings");
         $childDiscountPercentage = intval($priceSettings['childDiscountPercentage']);
         $infantDiscountPercentage = intval($priceSettings['infantDiscountPercentage']);
+        $discountForMoreThanXPersons = intval($priceSettings['discountForMoreThanXPersons']);
+        if (!$discountForMoreThanXPersons) {
+            $discountForMoreThanXPersons = 0;
+        }
 
         //Calculate flight price
         $flightPrice = $flightModel->getFlightPrice($flightDetails['flightCode']);
 
         $discountedPrices = [
-            'adult' => $flightPrice,
-            'child' => $flightPrice * (1 - $childDiscountPercentage),
-            'infant' => $flightPrice * (1 - $infantDiscountPercentage)
+            'adult'  => $flightPrice,
+            'child'  => $flightPrice * (1 - ($childDiscountPercentage / 100)),
+            'infant' => $flightPrice * (1 - ($infantDiscountPercentage / 100))
         ];
         $passengerCount = ['adult' => 0, 'child' => 0, 'infant' => 0];
 
@@ -232,34 +240,47 @@ final class BookController extends BaseController
         foreach ($passengersDetails as $passenger) {
             $passengerCount[$passenger['ageCategory']]++;
             //Recogemos todos los servicios individuales contratados sin repetir de todos los pasajeros
-            foreach ($passenger['services'] as $serviceCode) {
-                $serviceCodes[$serviceCode] = $serviceCode;
+            if (!empty($passenger['services'])) {
+                foreach ($passenger['services'] as $serviceCode) {
+                    $serviceCodes[$serviceCode] = $serviceCode;
+                }
             }
         }
 
-        //Recogemos los precios de la variedad de servicios de nuestros pasajeros
-        $servicesWithPrices = $servicesModel->readServicePrices($serviceCodes);
-        //Sumamos todos los precios de los servicios individuales
         $passengerServicesPrice = 0.0;
-        foreach ($passengersDetails as $passenger) {
-            foreach ($passenger['services'] as $serviceCode) {
-                $passengerServicesPrice += $servicesWithPrices[$serviceCode];
+        if (!empty($passenger['services'])) {
+            //Recogemos los precios de la variedad de servicios de nuestros pasajeros
+            $servicesWithPrices = $servicesModel->readServicePrices($serviceCodes);
+            //Sumamos todos los precios de los servicios individuales
+            foreach ($passengersDetails as $passenger) {
+                foreach ($passenger['services'] as $serviceCode) {
+                    $passengerServicesPrice += $servicesWithPrices[$serviceCode];
+                }
             }
         }
-
         $passengerFlightPrice = $passengerCount['adult'] * $discountedPrices['adult'] + $passengerCount['child'] * $discountedPrices['child'] + $passengerCount['infant'] * $discountedPrices['infant'];
-        return $passengerFlightPrice + $passengerServicesPrice;
+        $passengersTotalPrice = $passengerFlightPrice + $passengerServicesPrice;
+
+        //Aplicamos el descuento de si supera X personas y no está configurado a 0 personas
+        if ($passengerCount['adult'] + $passengerCount['child'] + $passengerCount['infant'] > $discountForMoreThanXPersons && $discountForMoreThanXPersons > 0) {
+            $discountPercentage = $servicesModel->readServiceDiscount('SRV009');
+            $passengersTotalPrice = $passengersTotalPrice - ($passengersTotalPrice * ($discountPercentage / 100));
+        }
+        return $passengersTotalPrice;
     }
 
     private function calculateBookServicesPrice($allSessions)
     {
         $bookServicesDetails = $allSessions['bookServicesDetails'];
-        $servicesModel = new ServicesModel();
-        $servicesWithPrices = $servicesModel->readServicePrices($bookServicesDetails);
-        $bookServicesTotalPrice = 0.0;
-
-        foreach ($servicesWithPrices as $price) {
-            $bookServicesTotalPrice += $price;
+        $bookServicesTotalPrice = 0;
+        if(!empty($bookServicesDetails['services'])) {
+            $servicesModel = new ServicesModel();
+            $servicesWithPrices = $servicesModel->readServicePrices($bookServicesDetails['services']);
+            $bookServicesTotalPrice = 0.0;
+    
+            foreach ($servicesWithPrices as $price) {
+                $bookServicesTotalPrice += $price;
+            }
         }
         return $bookServicesTotalPrice;
     }

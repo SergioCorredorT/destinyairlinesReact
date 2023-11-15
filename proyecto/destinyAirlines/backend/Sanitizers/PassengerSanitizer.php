@@ -111,6 +111,11 @@ class PassengerSanitizer
         return $individualServiceCodes;
     }
 
+    public static function sanitizeDirection($direction)
+    {
+        return htmlspecialchars(trim($direction));
+    }
+
     public static function sanitize(array $data)
     {
         $arraySanitized = [];
@@ -131,6 +136,7 @@ class PassengerSanitizer
         if (!empty($data['communicationNeeds'])) $arraySanitized["communicationNeeds"] = self::sanitizeCommunicationNeeds($data['communicationNeeds']);
         if (!empty($data['medicationRequirements'])) $arraySanitized["medicationRequirements"] = self::sanitizeMedicationRequirements($data['medicationRequirements']);
         if (!empty($data['services'])) $arraySanitized["services"] = self::sanitizeIndividualServiceCodes($data['services']);
+        if (!empty($data['direction'])) $arraySanitized["direction"] = self::sanitizeDirection($data['direction']);
 
         return $arraySanitized;
     }

@@ -35,7 +35,7 @@ $controllers = [
     'storebookservicesdetails'                  => ['controller' => 'BookController',       'method' => 'storeBookServicesDetails'],
     'storeprimarycontactinformationdetails'     => ['controller' => 'BookController',       'method' => 'storePrimaryContactInformationDetails'],
     'paymentdetails'                            => ['controller' => 'BookController',       'method' => 'paymentDetails'],
-    'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',      'method' => 'obtenerVariablesDeSesionDebug']
+    'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',      'method' => 'obtenerVariablesDeSesionDebug']//SOLO PARA DEBUG
 ];
 
 if (array_key_exists(strtolower($command), $controllers)) {

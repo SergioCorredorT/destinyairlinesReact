@@ -14,6 +14,11 @@ class FlightSanitizer
         }
     }
 
+    public static function sanitizeDirection($direction)
+    {
+        return htmlspecialchars(trim($direction));
+    }
+
     public static function sanitize(array $data)
     {
         $arraySanitized = [];
@@ -22,6 +27,7 @@ class FlightSanitizer
         if (!empty($data['adultsNumber'])) $arraySanitized["adultsNumber"] = self::sanitizePeopleNumber($data['adultsNumber']);
         if (!empty($data['childsNumber'])) $arraySanitized["childsNumber"] = self::sanitizePeopleNumber($data['childsNumber']);
         if (!empty($data['infantsNumber'])) $arraySanitized["infantsNumber"] = self::sanitizePeopleNumber($data['infantsNumber']);
+        if (!empty($data['direction'])) $arraySanitized["direction"] = self::sanitizeDirection($data['direction']);
 
         return $arraySanitized;
     }

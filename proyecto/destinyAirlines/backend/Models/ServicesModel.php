@@ -31,7 +31,11 @@ final class ServicesModel extends BaseModel
     
         return $servicePrices;
     }
-    
+
+    public function readServiceDiscount(string $serviceCode)
+    {
+        return parent::select('priceOrDiscount', "serviceCode = '$serviceCode' ")[0]['priceOrDiscount'];
+    }
 
 //----------------------------------------------------
     public function createServices(array $data)

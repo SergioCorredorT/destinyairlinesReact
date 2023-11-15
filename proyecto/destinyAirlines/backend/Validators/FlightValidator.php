@@ -53,6 +53,14 @@ class FlightValidator
         return true;
     }
 
+    public static function validateDirection($direction)
+    {
+        if ($direction !== 'departure' && $direction !== 'return') {
+            return false;
+        }
+        return true;
+    }
+
     public static function validate($data)
     {
         if (isset($data['flightCode']) && !self::validateFlightCode($data['flightCode'])) {
@@ -68,6 +76,10 @@ class FlightValidator
         }
 
         if (isset($data['infantsNumber']) && !self::validateInfantsNumber($data['infantsNumber'])) {
+            return false;
+        }
+
+        if (isset($data['direction']) && !self::validateDirection($data['direction'])) {
             return false;
         }
 

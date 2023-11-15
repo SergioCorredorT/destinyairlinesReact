@@ -26,9 +26,21 @@ class BookServicesValidator
         return true;
     }
 
+    public static function validateDirection($direction)
+    {
+        if ($direction !== 'departure' && $direction !== 'return') {
+            return false;
+        }
+        return true;
+    }
+
     public static function validate($data)
     {
-        if (isset($data) && !self::validateCollectiveServiceCodes($data)) {
+        if (isset($data['services']) && !self::validateCollectiveServiceCodes($data['services'])) {
+            return false;
+        }
+
+        if (isset($data['direction']) && !self::validateDirection($data['direction'])) {
             return false;
         }
 
