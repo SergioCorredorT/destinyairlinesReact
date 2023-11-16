@@ -10,17 +10,11 @@ class BookServicesSanitizer
         return $collectiveServiceCodes;
     }
 
-    public static function sanitizeDirection($direction)
-    {
-        return htmlspecialchars(trim($direction));
-    }
-
     public static function sanitize(array $data)
     {
         $arraySanitized = [];
 
-        if (!empty($data['services'])) $arraySanitized["services"] = self::sanitizeCollectiveServiceCodes($data['services']);
-        if (!empty($data['direction'])) $arraySanitized["direction"] = self::sanitizeDirection($data['direction']);
+        if (!empty($data)) $arraySanitized = self::sanitizeCollectiveServiceCodes($data);
 
         return $arraySanitized;
     }

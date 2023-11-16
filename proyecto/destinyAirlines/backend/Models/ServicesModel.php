@@ -9,14 +9,14 @@ final class ServicesModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function readIndividualServicePaidCodes()
+    public function readIndividualActiveServicePaidCodes()
     {
-        return parent::select('serviceCode','serviceGroupingType = "individual" AND billingCategory = "PaidService" ');
+        return parent::select('serviceCode','serviceGroupingType = "individual" AND billingCategory = "PaidService" AND status = "active" ');
     }
 
-    public function readCollectiveServicePaidCodes()
+    public function readCollectiveActiveServicePaidCodes()
     {
-        return parent::select('serviceCode','serviceGroupingType = "collective" AND billingCategory = "PaidService" ');
+        return parent::select('serviceCode','serviceGroupingType = "collective" AND billingCategory = "PaidService"  AND status = "active" ');
     }
     
     public function readServicePrices(array $services)
@@ -34,7 +34,7 @@ final class ServicesModel extends BaseModel
 
     public function readServiceDiscount(string $serviceCode)
     {
-        return parent::select('priceOrDiscount', "serviceCode = '$serviceCode' ")[0]['priceOrDiscount'];
+        return parent::select('priceOrDiscount', "serviceCode = '$serviceCode'  AND status = 'active'  ")[0]['priceOrDiscount'];
     }
 
 //----------------------------------------------------

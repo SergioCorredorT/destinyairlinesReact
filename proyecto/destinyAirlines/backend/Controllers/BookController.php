@@ -20,17 +20,22 @@ final class BookController extends BaseController
             'adultsNumber'    => $POST['adultsNumber'] ?? '',
             'childsNumber'    => $POST['childsNumber'] ?? '',
             'infantsNumber'   => $POST['infantsNumber'] ?? '',
-            'direction'       => $POST['direction'] ?? '',
             'dateTime'        => date('Y-m-d H:i:s')
         ];
 
+        $direction = $POST['direction'] ?? '';
+
         $flightDetails = FlightSanitizer::sanitize($flightDetails);
-        $isValidate = FlightValidator::validate($flightDetails);
-        if (!$isValidate) {
+        if (!FlightValidator::validate($flightDetails)) {
             return false;
         }
+
+        if (!$this->validateDirection($direction)) {
+            return false;
+        }
+
         //Comprobar si caben en el viaje
-        SessionTool::set('flightDetails', $flightDetails);
+        SessionTool::set([$direction, 'flightDetails'], $flightDetails);
         return true;
     }
 
@@ -66,7 +71,6 @@ final class BookController extends BaseController
                 'services' => null
             ];
 
-            //$passengersDetails['direction'] = $POST['direction'] ?? '';
             foreach ($keys_default as $key => $defaultValue) {
                 $passengerDetails[$key] = $passenger[$key] ?? $defaultValue;
             }
@@ -80,12 +84,19 @@ final class BookController extends BaseController
             array_push($passengersDetails, $passengerDetails);
         }
 
+        $direction = $POST['direction'] ?? '';
+
+
         if (!PassengersValidator::validate($passengersDetails)) {
             return false;
         }
 
+        if (!$this->validateDirection($direction)) {
+            return false;
+        }
+
         //Si todo ha ido bien metemos en session a los pasajeros
-        SessionTool::set('passengersDetails', $passengersDetails);
+        SessionTool::set([$direction, 'passengersDetails'], $passengersDetails);
         return true;
     }
 
@@ -97,17 +108,14 @@ final class BookController extends BaseController
 
 
         $servicesDetails = [
-            'direction' => '',
-            'services' => [
-                'SRV003' => null,
-                'SRV004' => null,
-                'SRV010' => null
-            ]
+            'SRV003' => null,
+            'SRV004' => null,
+            'SRV010' => null
         ];
 
-        $servicesDetails['direction'] = $POST['direction'] ?? '';
-        foreach ($servicesDetails['services'] as $key => $defaultValue) {
-            $servicesDetails['services'][$key] = $POST[$key] ?? $defaultValue;
+        $direction = $POST['direction'] ?? '';
+        foreach ($servicesDetails as $key => $defaultValue) {
+            $servicesDetails[$key] = $POST[$key] ?? $defaultValue;
         }
 
         //Sanear
@@ -117,7 +125,11 @@ final class BookController extends BaseController
             return false;
         }
 
-        SessionTool::set('bookServicesDetails', $servicesDetails);
+        if (!$this->validateDirection($direction)) {
+            return false;
+        }
+
+        SessionTool::set([$direction, 'bookServicesDetails'], $servicesDetails);
         return true;
     }
 
@@ -141,12 +153,12 @@ final class BookController extends BaseController
             'companyName' => null,
             'companyTaxNumber' => null,
             'companyPhoneNumber' => null,
-            'direction' => ''
         ];
 
         foreach ($primaryContactDetails as $key => $defaultValue) {
             $primaryContactDetails[$key] = $POST[$key] ?? $defaultValue;
         }
+        $direction = $POST['direction'] ?? '';
 
         require_once './Sanitizers/PrimaryContactInformationSanitizer.php';
         require_once './Validators/PrimaryContactInformationValidator.php';
@@ -154,7 +166,12 @@ final class BookController extends BaseController
         if (!PrimaryContactInformationValidator::validate($primaryContactDetails)) {
             return false;
         }
-        SessionTool::set('primaryContactDetails', $primaryContactDetails);
+
+        if (!$this->validateDirection($direction)) {
+            return false;
+        }
+
+        SessionTool::set([$direction, 'primaryContactDetails'], $primaryContactDetails);
         return true;
     }
 
@@ -177,41 +194,47 @@ final class BookController extends BaseController
             return false;
         }
 
-        $totalPrice = $this->generateTotalPrice();
+        //En vez de generar precio total, generar objeto factura y devuelva un array asociativo con precios y un total
+        $departureTotalPrice = $this->generateTotalPrice('departure');
+        $returnTotalPrice = 0;
+        if (!is_null(SessionTool::get('return'))) {
+            $returnTotalPrice = $this->generateTotalPrice('return');
+        }
 
         if (!$this->saveBooking()) {
             return false;
         }
 
-        //if (!$this->doPayment($totalPrice)) {
-        //   return false;
-        // }
+        /*if (!$this->doPayment($totalPrice)) {
+           return false;
+        }*/
+        //Guardar factura
 
         return true;
     }
 
-    private function generateTotalPrice()
+    private function generateTotalPrice($direction)
     {
         $allSessions = SessionTool::getAll();
-        $primaryContactDetails = $allSessions['primaryContactDetails'];
+        //$primaryContactDetails = $allSessions[$direction]['primaryContactDetails'];
 
-        $passengersTotalPrice = $this->calculatePassengersPrice($allSessions);
-        $bookServicesTotalPrice = $this->calculateBookServicesPrice($allSessions);
+        $passengersTotalPrice = $this->calculatePassengersPrice($allSessions[$direction]);
+        $bookServicesTotalPrice = $this->calculateBookServicesPrice($allSessions[$direction]);
         //Comprobar si caben en el viaje
 
-        error_log("Sesiones" . print_r($allSessions, true));
-        error_log("Passengers Total Price: " . print_r($passengersTotalPrice, true));
-        error_log("Book services Total Price: " . print_r($bookServicesTotalPrice, true));
+        error_log("Sesiones $direction:" . print_r($allSessions, true));
+        error_log("Passengers Total Price $direction: " . print_r($passengersTotalPrice, true));
+        error_log("Book services Total Price $direction: " . print_r($bookServicesTotalPrice, true));
 
         return $passengersTotalPrice + $bookServicesTotalPrice;
     }
 
-    private function calculatePassengersPrice($allSessions)
+    private function calculatePassengersPrice($allSessionsInDirection)
     {
         require_once './Tools/IniTool.php';
 
-        $flightDetails = $allSessions['flightDetails'];
-        $passengersDetails = $allSessions['passengersDetails'];
+        $flightDetails = $allSessionsInDirection['flightDetails'];
+        $passengersDetails = $allSessionsInDirection['passengersDetails'];
 
         $iniTool = new IniTool('./Config/cfg.ini');
         $flightModel = new FlightModel();
@@ -264,20 +287,22 @@ final class BookController extends BaseController
         //Aplicamos el descuento de si supera X personas y no está configurado a 0 personas
         if ($passengerCount['adult'] + $passengerCount['child'] + $passengerCount['infant'] > $discountForMoreThanXPersons && $discountForMoreThanXPersons > 0) {
             $discountPercentage = $servicesModel->readServiceDiscount('SRV009');
-            $passengersTotalPrice = $passengersTotalPrice - ($passengersTotalPrice * ($discountPercentage / 100));
+            if ($discountPercentage) {
+                $passengersTotalPrice = $passengersTotalPrice - ($passengersTotalPrice * ($discountPercentage / 100));
+            }
         }
         return $passengersTotalPrice;
     }
 
-    private function calculateBookServicesPrice($allSessions)
+    private function calculateBookServicesPrice($allSessionsInDirection)
     {
-        $bookServicesDetails = $allSessions['bookServicesDetails'];
+        $bookServicesDetails = $allSessionsInDirection['bookServicesDetails'];
         $bookServicesTotalPrice = 0;
-        if(!empty($bookServicesDetails['services'])) {
+        if (!empty($bookServicesDetails)) {
             $servicesModel = new ServicesModel();
-            $servicesWithPrices = $servicesModel->readServicePrices($bookServicesDetails['services']);
+            $servicesWithPrices = $servicesModel->readServicePrices($bookServicesDetails);
             $bookServicesTotalPrice = 0.0;
-    
+
             foreach ($servicesWithPrices as $price) {
                 $bookServicesTotalPrice += $price;
             }
@@ -332,5 +357,14 @@ final class BookController extends BaseController
     //Recibirá un array de entidades y se aplicarán
     public function editBook()
     {
+    }
+
+    private function validateDirection($direction)
+    {
+        $direction = htmlspecialchars(trim($direction));
+        if ($direction !== 'departure' && $direction !== 'return') {
+            return false;
+        }
+        return true;
     }
 }

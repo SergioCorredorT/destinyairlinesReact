@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-11-2023 a las 18:48:56
+-- Tiempo de generación: 16-11-2023 a las 17:52:39
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -107,7 +107,6 @@ CREATE TABLE `books` (
   `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL,
   `bookCode` varchar(10) NOT NULL,
   `checkinDate` date DEFAULT NULL,
-  `price` double DEFAULT NULL,
   `direction` enum('departure','return') NOT NULL DEFAULT 'departure',
   `invoiced` datetime DEFAULT current_timestamp(),
   `adultsNumber` tinyint(3) DEFAULT 1,
@@ -119,11 +118,11 @@ CREATE TABLE `books` (
 -- Volcado de datos para la tabla `books`
 --
 
-INSERT INTO `books` (`id_BOOKS`, `id_FLIGHTS`, `id_USERS`, `id_PRIMARY_CONTACT_INFORMATIONS`, `bookCode`, `checkinDate`, `price`, `direction`, `invoiced`, `adultsNumber`, `childsNumber`, `infantsNumber`) VALUES
-(25, 1, 1, 1, 'BK123', '2023-10-19', 350, 'departure', '2023-10-20 00:00:00', 1, 0, 0),
-(26, 2, 2, 1, 'BK456', '2023-10-20', 420, 'departure', '2023-10-21 00:00:00', 1, 0, 0),
-(27, 3, 3, 1, 'BK789', '2023-10-21', 280, 'departure', '2023-10-22 00:00:00', 1, 0, 0),
-(28, 4, 4, 1, 'BK012', '2023-10-22', 500, 'departure', '2023-10-23 00:00:00', 1, 0, 0);
+INSERT INTO `books` (`id_BOOKS`, `id_FLIGHTS`, `id_USERS`, `id_PRIMARY_CONTACT_INFORMATIONS`, `bookCode`, `checkinDate`, `direction`, `invoiced`, `adultsNumber`, `childsNumber`, `infantsNumber`) VALUES
+(25, 1, 1, 1, 'BK123', '2023-10-19', 'departure', '2023-10-20 00:00:00', 1, 0, 0),
+(26, 2, 2, 1, 'BK456', '2023-10-20', 'departure', '2023-10-21 00:00:00', 1, 0, 0),
+(27, 3, 3, 1, 'BK789', '2023-10-21', 'departure', '2023-10-22 00:00:00', 1, 0, 0),
+(28, 4, 4, 1, 'BK012', '2023-10-22', 'departure', '2023-10-23 00:00:00', 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -194,7 +193,7 @@ CREATE TABLE `flights` (
 --
 
 INSERT INTO `flights` (`id_FLIGHTS`, `id_AIRPLANES`, `id_ITINERARIES`, `flightCode`, `date`, `hour`, `price`, `freeSeats`, `arrivalHour`) VALUES
-(1, 1, 1, '1231', '2023-10-20', '08:00:00', 350, 150, '10:30:00'),
+(1, 1, 1, '1231', '2024-10-20', '08:00:00', 350, 150, '10:30:00'),
 (2, 2, 1, '345345', '2023-10-21', '15:30:00', 420, 200, '18:00:00'),
 (3, 3, 2, '324', '2023-10-22', '10:45:00', 280, 100, '13:15:00'),
 (4, 4, 3, '3545', '2023-10-23', '19:20:00', 500, 180, '22:00:00');
@@ -209,16 +208,17 @@ CREATE TABLE `invoices` (
   `id_INVOICES` int(11) NOT NULL,
   `id_BOOKS` int(11) NOT NULL,
   `invoiceCode` varchar(50) NOT NULL,
-  `invoicedDate` datetime DEFAULT current_timestamp()
+  `invoicedDate` datetime DEFAULT current_timestamp(),
+  `price` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `invoices`
 --
 
-INSERT INTO `invoices` (`id_INVOICES`, `id_BOOKS`, `invoiceCode`, `invoicedDate`) VALUES
-(1, 28, 'weaewwea23231', '2023-11-05 23:03:14'),
-(2, 28, 'ewqewqq2312', '2023-11-05 23:03:14');
+INSERT INTO `invoices` (`id_INVOICES`, `id_BOOKS`, `invoiceCode`, `invoicedDate`, `price`) VALUES
+(1, 28, 'weaewwea23231', '2023-11-05 23:03:14', 30),
+(2, 28, 'ewqewqq2312', '2023-11-05 23:03:14', 40);
 
 -- --------------------------------------------------------
 
@@ -343,32 +343,48 @@ CREATE TABLE `services` (
   `subtype` varchar(50) NOT NULL,
   `billingCategory` enum('PaidService','PercentageDiscount') NOT NULL,
   `priceOrDiscount` double DEFAULT NULL,
-  `description` varchar(600) DEFAULT NULL
+  `description` varchar(600) DEFAULT NULL,
+  `status` enum('active','inactive') NOT NULL DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `services`
 --
 
-INSERT INTO `services` (`id_SERVICES`, `serviceCode`, `serviceGroupingType`, `type`, `subtype`, `billingCategory`, `priceOrDiscount`, `description`) VALUES
-(1, 'SRV001', 'individual', 'Elige tu Trono', 'Elige tu Trono', 'PaidService', 15, 'Los pasajeros pueden elegir su asiento preferido por un costo adicional'),
-(3, 'SRV003', 'collective', 'Traslado sin Estrés', 'Traslado sin Estrés', 'PaidService', 30, 'Ofrece un servicio de transporte para llevar a todos los pasajeros de la reserva al aeropuerto'),
-(4, 'SRV004', 'collective', 'Paquetes de Ensueño', 'Paquetes de Ensueño', 'PaidService', 25, 'Ofrece paquetes que incluyen vuelos, alojamiento y actividades turísticas'),
-(5, 'SRV005', 'individual', 'Más Espacio, Más Aventuras', 'Más Espacio, Más Aventuras', 'PaidService', 20, 'Los pasajeros pueden pagar por equipaje adicional'),
-(6, 'SRV006', 'individual', 'Check-in Exprés', 'Check-in Exprés', 'PaidService', 10, 'Ofrece un check-in más rápido en el aeropuerto'),
-(7, 'SRV007', 'individual', 'Embarque Real', 'Embarque Real', 'PaidService', 10, 'Los pasajeros pueden ser los primeros en abordar el avión'),
-(8, 'SRV008', 'individual', 'Conexión Nube', 'Navegación Básica', 'PaidService', 5, 'Para navegación web y correo electrónico'),
-(9, 'SRV009', 'collective', 'Reserva en Equipo', 'Reserva en Equipo', 'PercentageDiscount', 10, 'Ofrece descuentos para reservas de grupo'),
-(10, 'SRV010', 'collective', 'Tu Asistente de Viaje', 'Tu Asistente de Viaje', 'PaidService', 100, 'Ofrece servicios de conserjería para ayudar a los pasajeros a planificar su viaje'),
-(11, 'SRV011', 'individual', 'Acceso al Paraíso VIP', 'Acceso Básico', 'PaidService', 50, 'Acceso a la sala VIP con bebidas y snacks gratuitos'),
-(12, 'SRV012', 'collective', 'Descuento de Vuelo Redondo', 'Descuento de Vuelo Redondo', 'PercentageDiscount', 15, 'Un descuento para los clientes que reserven un vuelo de ida y vuelta. Esto puede incentivar a los clientes a reservar ambos vuelos con la misma aerolínea'),
-(13, 'SRV013', 'individual', 'Delicias Gourmet', 'Delicias del mar', 'PaidService', 20, 'Una selección de platos de mariscos'),
-(14, 'SRV014', 'individual', 'Delicias Gourmet', 'Sabores del Mundo', 'PaidService', 15, 'Platos internacionales de varios países'),
-(15, 'SRV015', 'individual', 'Delicias Gourmet', 'Opción Saludable', 'PaidService', 12, 'Comidas bajas en calorías y nutritivas.'),
-(19, 'SRV016', 'individual', 'Acceso al Paraíso VIP', 'Acceso Premium', 'PaidService', 50, 'Acceso a la sala VIP con comidas completas, duchas y áreas de descanso.'),
-(20, 'SRV017', 'individual', 'Acceso al Paraíso VIP', 'Acceso Familiar', 'PaidService', 50, 'Acceso a la sala VIP con áreas de juegos para niños'),
-(22, 'SRV018', 'individual', 'Conexión Nube', 'Streaming', 'PaidService', 5, 'Para ver vídeos y escuchar música online'),
-(23, 'SRV019', 'individual', 'Conexión Nube', 'Máxima velocidad', 'PaidService', 5, 'Experimenta la libertad de navegar por la web a la velocidad de la luz');
+INSERT INTO `services` (`id_SERVICES`, `serviceCode`, `serviceGroupingType`, `type`, `subtype`, `billingCategory`, `priceOrDiscount`, `description`, `status`) VALUES
+(1, 'SRV001', 'individual', 'Elige tu Trono', 'Elige tu Trono', 'PaidService', 15, 'Los pasajeros pueden elegir su asiento preferido por un costo adicional', 'active'),
+(3, 'SRV003', 'collective', 'Traslado sin Estrés', 'Traslado sin Estrés', 'PaidService', 30, 'Ofrece un servicio de transporte para llevar a todos los pasajeros de la reserva al aeropuerto', 'active'),
+(4, 'SRV004', 'collective', 'Paquetes de Ensueño', 'Paquetes de Ensueño', 'PaidService', 25, 'Ofrece paquetes que incluyen vuelos, alojamiento y actividades turísticas', 'active'),
+(5, 'SRV005', 'individual', 'Más Espacio, Más Aventuras', 'Más Espacio, Más Aventuras', 'PaidService', 20, 'Los pasajeros pueden pagar por equipaje adicional', 'active'),
+(6, 'SRV006', 'individual', 'Check-in Exprés', 'Check-in Exprés', 'PaidService', 10, 'Ofrece un check-in más rápido en el aeropuerto', 'active'),
+(7, 'SRV007', 'individual', 'Embarque Real', 'Embarque Real', 'PaidService', 10, 'Los pasajeros pueden ser los primeros en abordar el avión', 'active'),
+(8, 'SRV008', 'individual', 'Conexión Nube', 'Navegación Básica', 'PaidService', 5, 'Para navegación web y correo electrónico', 'active'),
+(9, 'SRV009', 'collective', 'Reserva en Equipo', 'Reserva en Equipo', 'PercentageDiscount', 10, 'Ofrece descuentos para reservas de grupo para más de X personas', 'active'),
+(10, 'SRV010', 'collective', 'Tu Asistente de Viaje', 'Tu Asistente de Viaje', 'PaidService', 100, 'Ofrece servicios de conserjería para ayudar a los pasajeros a planificar su viaje', 'active'),
+(11, 'SRV011', 'individual', 'Acceso al Paraíso VIP', 'Acceso Básico', 'PaidService', 50, 'Acceso a la sala VIP con bebidas y snacks gratuitos', 'active'),
+(12, 'SRV012', 'collective', 'Descuento de Vuelo Redondo', 'Descuento de Vuelo Redondo', 'PercentageDiscount', 15, 'Un descuento para los clientes que reserven un vuelo de ida y vuelta. Esto puede incentivar a los clientes a reservar ambos vuelos con la misma aerolínea', 'active'),
+(13, 'SRV013', 'individual', 'Delicias Gourmet', 'Delicias del mar', 'PaidService', 20, 'Una selección de platos de mariscos', 'active'),
+(14, 'SRV014', 'individual', 'Delicias Gourmet', 'Sabores del Mundo', 'PaidService', 15, 'Platos internacionales de varios países', 'active'),
+(15, 'SRV015', 'individual', 'Delicias Gourmet', 'Opción Saludable', 'PaidService', 12, 'Comidas bajas en calorías y nutritivas.', 'active'),
+(19, 'SRV016', 'individual', 'Acceso al Paraíso VIP', 'Acceso Premium', 'PaidService', 50, 'Acceso a la sala VIP con comidas completas, duchas y áreas de descanso.', 'active'),
+(20, 'SRV017', 'individual', 'Acceso al Paraíso VIP', 'Acceso Familiar', 'PaidService', 50, 'Acceso a la sala VIP con áreas de juegos para niños', 'active'),
+(22, 'SRV018', 'individual', 'Conexión Nube', 'Streaming', 'PaidService', 5, 'Para ver vídeos y escuchar música online', 'active'),
+(23, 'SRV019', 'individual', 'Conexión Nube', 'Máxima velocidad', 'PaidService', 5, 'Experimenta la libertad de navegar por la web a la velocidad de la luz', 'active');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `services_invoices`
+--
+
+CREATE TABLE `services_invoices` (
+  `id_SERVICES_INVOICES` int(11) NOT NULL,
+  `id_INVOICES` int(11) NOT NULL,
+  `id_SERVICES` int(11) NOT NULL,
+  `id_PASSENGERS` int(11) DEFAULT NULL,
+  `addRemove` enum('add','remove') NOT NULL DEFAULT 'add',
+  `oldPrice` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -406,7 +422,8 @@ INSERT INTO `users` (`id_USERS`, `title`, `firstName`, `lastName`, `townCity`, `
 (1, 'Mr', 'John', 'Doe', 'New York', '123 Main St', '11113', 'USA', 'john.doe@example.com', '', '123456789', '987654321', '123456', '', '', '', 0, NULL, NULL),
 (2, 'Ms', 'Alice', 'Smith', 'London', '456 Elm St', 'SW1A ', 'UK', 'alice.smith@example.com', '', '111222333', '', '', 'XYZ Company', '12345678', '999888777', 0, NULL, NULL),
 (96, 'Dr', 'Michael', 'Anderson', 'Sydney', '456 George St', '2000', 'Australia', 'michael.anderson@example.com', '', '987654321', '987123654', '789456123', 'Tech Corp', 'AUS098765432', '+61 987 654 321', 0, NULL, NULL),
-(130, NULL, 'A5554', NULL, NULL, NULL, '29', NULL, 'sergiodesarrolladorweb@gmail.com', '$2y$10$3Pgu7t/t/zkiQjcz5o.wUe/Z8ZqoflTjyKikawD8Yezqqk6REdsZS', NULL, NULL, NULL, NULL, NULL, NULL, 0, '2023-11-05 01:05:23', '2023-11-05 14:20:37');
+(131, NULL, 'A555', NULL, NULL, NULL, '25', NULL, 'aaaa5@example.com', '$2y$10$.EG9ubn2GmCllCHzXNdCau/4Tc9HQC8dugE8TjilPfmcHsuPx0yT2', NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(138, NULL, 'Serg', NULL, NULL, NULL, '25', NULL, 'sergiodesarrolladorweb@gmail.com', '$2y$10$uiwtsHD/9wWlP0H5m1Y14eRtGJ8BaTAWiLcR96vgkzFd8kaORR8ra', NULL, NULL, NULL, NULL, NULL, NULL, 0, '2023-11-16 02:43:37', NULL);
 
 -- --------------------------------------------------------
 
@@ -530,6 +547,15 @@ ALTER TABLE `services`
   ADD UNIQUE KEY `serviceCode` (`serviceCode`);
 
 --
+-- Indices de la tabla `services_invoices`
+--
+ALTER TABLE `services_invoices`
+  ADD PRIMARY KEY (`id_SERVICES_INVOICES`),
+  ADD KEY `id_INVOICES` (`id_INVOICES`),
+  ADD KEY `id_SERVICES` (`id_SERVICES`),
+  ADD KEY `id_PASSENGERS` (`id_PASSENGERS`);
+
+--
 -- Indices de la tabla `users`
 --
 ALTER TABLE `users`
@@ -627,10 +653,16 @@ ALTER TABLE `services`
   MODIFY `id_SERVICES` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
+-- AUTO_INCREMENT de la tabla `services_invoices`
+--
+ALTER TABLE `services_invoices`
+  MODIFY `id_SERVICES_INVOICES` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_USERS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
+  MODIFY `id_USERS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
 
 --
 -- AUTO_INCREMENT de la tabla `user_temp_ids`
@@ -696,6 +728,14 @@ ALTER TABLE `passengers_books_services`
   ADD CONSTRAINT `passengers_books_services_ibfk_1` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`),
   ADD CONSTRAINT `passengers_books_services_ibfk_2` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`),
   ADD CONSTRAINT `passengers_books_services_ibfk_3` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`);
+
+--
+-- Filtros para la tabla `services_invoices`
+--
+ALTER TABLE `services_invoices`
+  ADD CONSTRAINT `services_invoices_ibfk_1` FOREIGN KEY (`id_INVOICES`) REFERENCES `invoices` (`id_INVOICES`),
+  ADD CONSTRAINT `services_invoices_ibfk_2` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`),
+  ADD CONSTRAINT `services_invoices_ibfk_3` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`);
 
 --
 -- Filtros para la tabla `user_temp_ids`

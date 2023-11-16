@@ -89,11 +89,6 @@ class PrimaryContactInformationSanitizer
         return htmlspecialchars(trim($companyPhoneNumber));
     }
 
-    public static function sanitizeDirection($direction)
-    {
-        return htmlspecialchars(trim($direction));
-    }
-
     public static function sanitize(array $data)
     {
         $arraySanitized = [];
@@ -114,7 +109,6 @@ class PrimaryContactInformationSanitizer
         if (!empty($data['companyName'])) $arraySanitized["companyName"] = self::sanitizeCompanyName($data['companyName']);
         if (!empty($data['companyTaxNumber'])) $arraySanitized["companyTaxNumber"] = self::sanitizeCompanyTaxNumber($data['companyTaxNumber']);
         if (!empty($data['companyPhoneNumber'])) $arraySanitized["companyPhoneNumber"] = self::sanitizeCompanyPhoneNumber($data['companyPhoneNumber']);
-        if (!empty($data['direction'])) $arraySanitized["direction"] = self::sanitizeDirection($data['direction']);
 
         return $arraySanitized;
     }

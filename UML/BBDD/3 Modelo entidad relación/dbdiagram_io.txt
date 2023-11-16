@@ -73,7 +73,6 @@ Table BOOKS {
   id_USERS int [not null, ref: > USERS.id_USERS]
   id_PRIMARY_CONTACT_INFORMATIONS int [not null, ref: > PRIMARY_CONTACT_INFORMATIONS.id_PRIMARY_CONTACT_INFORMATIONS]
   bookCode varchar(10) [not null, unique]
-  price double
   direction direction [not null, default: "departure"]
   checkinDate date
   adultsNumber tinyint [default: 1]
@@ -110,6 +109,21 @@ Table INVOICES {
   id_BOOKS int [not null, ref: > BOOKS.id_BOOKS]
   invoiceCode varchar(50) [not null, unique]
   invoicedDate datetime [default: `CURRENT_TIMESTAMP`]
+  price double [not null]
+}
+
+Table SERVICES_INVOICES {
+  id_SERVICES_INVOICES int [pk, increment]
+  id_INVOICES int [ref: > INVOICES.id_INVOICES, not null]
+  id_SERVICES int [ref: > SERVICES.id_SERVICES, not null]
+  id_PASSENGERS int [ref: > PASSENGERS.id_PASSENGERS]
+  addRemove addRemove [not null, default: 'add']
+  oldPrice double [not null]
+}
+
+enum addRemove {
+  add
+  remove
 }
 
 Table SERVICES {
@@ -120,6 +134,7 @@ Table SERVICES {
   subtype varchar(50) [not null]
   billingCategory billingCategory [not null]
   priceOrDiscount double [not null]
+  status enum('active', 'inactive') [not null, default: 'active']
   description varchar(600)
 }
 

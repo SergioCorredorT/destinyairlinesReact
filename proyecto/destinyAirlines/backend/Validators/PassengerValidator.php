@@ -272,7 +272,7 @@ class PassengerValidator
         require_once './Models/ServicesModel.php';
         $servicesModel = new ServicesModel();
         //Obtener serviceCode s donde sean individuales y paidService
-        $individualServicePaidCodes = $servicesModel->readIndividualServicePaidCodes();
+        $individualServicePaidCodes = $servicesModel->readIndividualActiveServicePaidCodes();
 
         foreach ($individualServiceCodes as $individualServiceCode) {
             $found = false;
@@ -285,14 +285,6 @@ class PassengerValidator
             if (!$found) {
                 return false;
             }
-        }
-        return true;
-    }
-
-    public static function validateDirection($direction)
-    {
-        if ($direction !== 'departure' && $direction !== 'return') {
-            return false;
         }
         return true;
     }
@@ -352,10 +344,6 @@ class PassengerValidator
         }
 
         if (isset($data['services']) && !self::validateIndividualServiceCodes($data['services'])) {
-            return false;
-        }
-
-        if (isset($data['direction']) && !self::validateDirection($data['direction'])) {
             return false;
         }
 

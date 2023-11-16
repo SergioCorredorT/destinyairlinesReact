@@ -9,7 +9,7 @@ class BookServicesValidator
 
         require_once './Models/ServicesModel.php';
         $servicesModel = new ServicesModel();
-        $collectiveServicePaidCodes = $servicesModel->readCollectiveServicePaidCodes();
+        $collectiveServicePaidCodes = $servicesModel->readCollectiveActiveServicePaidCodes();
 
         foreach ($collectiveServiceCodes as $collectiveServiceCode) {
             $found = false;
@@ -26,21 +26,10 @@ class BookServicesValidator
         return true;
     }
 
-    public static function validateDirection($direction)
-    {
-        if ($direction !== 'departure' && $direction !== 'return') {
-            return false;
-        }
-        return true;
-    }
 
     public static function validate($data)
     {
-        if (isset($data['services']) && !self::validateCollectiveServiceCodes($data['services'])) {
-            return false;
-        }
-
-        if (isset($data['direction']) && !self::validateDirection($data['direction'])) {
+        if (isset($data) && !self::validateCollectiveServiceCodes($data)) {
             return false;
         }
 

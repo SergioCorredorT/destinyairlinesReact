@@ -214,14 +214,6 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateDirection($direction)
-    {
-        if ($direction !== 'departure' && $direction !== 'return') {
-            return false;
-        }
-        return true;
-    }
-
     public static function validate($data)
     {
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
@@ -272,10 +264,6 @@ class PrimaryContactInformationValidator
             return false;
         }
         if (isset($data['companyPhoneNumber']) && !self::validateCompanyPhoneNumber($data['companyPhoneNumber'])) {
-            return false;
-        }
-
-        if (isset($data['direction']) && !self::validateDirection($data['direction'])) {
             return false;
         }
 
