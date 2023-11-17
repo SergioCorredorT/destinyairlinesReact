@@ -180,6 +180,11 @@ final class BookController extends BaseController
         require_once './Sanitizers/TokenSanitizer.php';
         require_once './Validators/TokenValidator.php';
         require_once './Tools/TokenTool.php';
+        require_once './Tools/BookingPriceCalculatorTool.php';
+        require_once './Tools/BookingDataEnricherTool.php';
+
+        $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
+        $BookingDataEnricherTool = new BookingDataEnricherTool();
 
         $accessToken = $POST['accessToken'];
         $accessToken = TokenSanitizer::sanitizeToken($accessToken);
@@ -194,16 +199,24 @@ final class BookController extends BaseController
             return false;
         }
 
-        //En vez de generar precio total, generar objeto factura y devuelva un array asociativo con precios y un total
-        $departureTotalPrice = $this->generateTotalPrice('departure');
-        $returnTotalPrice = 0;
-        if (!is_null(SessionTool::get('return'))) {
-            $returnTotalPrice = $this->generateTotalPrice('return');
-        }
+        //Obtenemos lo que hemos guardado en sesiones pero con precios, y además, siendo precios actualizados
+        $departureWithPrices = $BookingDataEnricherTool->getCompleteBookWithPricesFromSession('departure');
+        $departureTotalPrice = $BookingPriceCalculatorTool->calculateTotalPriceFromBookWithPrices($departureWithPrices);
 
-        if (!$this->saveBooking()) {
+        if (!$this->saveBooking($departureWithPrices)) {
             return false;
         }
+
+        $returnWithPrices;
+        $returnTotalPrice = 0;
+        if (!is_null(SessionTool::get('return'))) {
+            $returnWithPrices = $BookingDataEnricherTool->getCompleteBookWithPricesFromSession('return');
+            $returnTotalPrice = $BookingPriceCalculatorTool->calculateTotalPriceFromBookWithPrices($returnWithPrices);
+            if (!$this->saveBooking($returnWithPrices)) {
+                return false;
+            }
+        }
+        $totalPrice = $departureTotalPrice + $returnTotalPrice;
 
         /*if (!$this->doPayment($totalPrice)) {
            return false;
@@ -213,101 +226,11 @@ final class BookController extends BaseController
         return true;
     }
 
-    private function generateTotalPrice($direction)
+    private function saveBooking(array $bookData)
     {
-        $allSessions = SessionTool::getAll();
-        //$primaryContactDetails = $allSessions[$direction]['primaryContactDetails'];
-
-        $passengersTotalPrice = $this->calculatePassengersPrice($allSessions[$direction]);
-        $bookServicesTotalPrice = $this->calculateBookServicesPrice($allSessions[$direction]);
-        //Comprobar si caben en el viaje
-
-        error_log("Sesiones $direction:" . print_r($allSessions, true));
-        error_log("Passengers Total Price $direction: " . print_r($passengersTotalPrice, true));
-        error_log("Book services Total Price $direction: " . print_r($bookServicesTotalPrice, true));
-
-        return $passengersTotalPrice + $bookServicesTotalPrice;
-    }
-
-    private function calculatePassengersPrice($allSessionsInDirection)
-    {
-        require_once './Tools/IniTool.php';
-
-        $flightDetails = $allSessionsInDirection['flightDetails'];
-        $passengersDetails = $allSessionsInDirection['passengersDetails'];
-
-        $iniTool = new IniTool('./Config/cfg.ini');
-        $flightModel = new FlightModel();
-        $servicesModel = new ServicesModel();
-
-        $priceSettings = $iniTool->getKeysAndValues("priceSettings");
-        $childDiscountPercentage = intval($priceSettings['childDiscountPercentage']);
-        $infantDiscountPercentage = intval($priceSettings['infantDiscountPercentage']);
-        $discountForMoreThanXPersons = intval($priceSettings['discountForMoreThanXPersons']);
-        if (!$discountForMoreThanXPersons) {
-            $discountForMoreThanXPersons = 0;
-        }
-
-        //Calculate flight price
-        $flightPrice = $flightModel->getFlightPrice($flightDetails['flightCode']);
-
-        $discountedPrices = [
-            'adult'  => $flightPrice,
-            'child'  => $flightPrice * (1 - ($childDiscountPercentage / 100)),
-            'infant' => $flightPrice * (1 - ($infantDiscountPercentage / 100))
-        ];
-        $passengerCount = ['adult' => 0, 'child' => 0, 'infant' => 0];
-
-        //Calculate passengers price
-        $serviceCodes = [];
-        foreach ($passengersDetails as $passenger) {
-            $passengerCount[$passenger['ageCategory']]++;
-            //Recogemos todos los servicios individuales contratados sin repetir de todos los pasajeros
-            if (!empty($passenger['services'])) {
-                foreach ($passenger['services'] as $serviceCode) {
-                    $serviceCodes[$serviceCode] = $serviceCode;
-                }
-            }
-        }
-
-        $passengerServicesPrice = 0.0;
-        if (!empty($passenger['services'])) {
-            //Recogemos los precios de la variedad de servicios de nuestros pasajeros
-            $servicesWithPrices = $servicesModel->readServicePrices($serviceCodes);
-            //Sumamos todos los precios de los servicios individuales
-            foreach ($passengersDetails as $passenger) {
-                foreach ($passenger['services'] as $serviceCode) {
-                    $passengerServicesPrice += $servicesWithPrices[$serviceCode];
-                }
-            }
-        }
-        $passengerFlightPrice = $passengerCount['adult'] * $discountedPrices['adult'] + $passengerCount['child'] * $discountedPrices['child'] + $passengerCount['infant'] * $discountedPrices['infant'];
-        $passengersTotalPrice = $passengerFlightPrice + $passengerServicesPrice;
-
-        //Aplicamos el descuento de si supera X personas y no está configurado a 0 personas
-        if ($passengerCount['adult'] + $passengerCount['child'] + $passengerCount['infant'] > $discountForMoreThanXPersons && $discountForMoreThanXPersons > 0) {
-            $discountPercentage = $servicesModel->readServiceDiscount('SRV009');
-            if ($discountPercentage) {
-                $passengersTotalPrice = $passengersTotalPrice - ($passengersTotalPrice * ($discountPercentage / 100));
-            }
-        }
-        return $passengersTotalPrice;
-    }
-
-    private function calculateBookServicesPrice($allSessionsInDirection)
-    {
-        $bookServicesDetails = $allSessionsInDirection['bookServicesDetails'];
-        $bookServicesTotalPrice = 0;
-        if (!empty($bookServicesDetails)) {
-            $servicesModel = new ServicesModel();
-            $servicesWithPrices = $servicesModel->readServicePrices($bookServicesDetails);
-            $bookServicesTotalPrice = 0.0;
-
-            foreach ($servicesWithPrices as $price) {
-                $bookServicesTotalPrice += $price;
-            }
-        }
-        return $bookServicesTotalPrice;
+        $BookModel = new BookModel();
+        //Recoger todos los datos de la session y guardar el book
+        return true;
     }
 
     private function doPayment($totalPrice)
@@ -328,13 +251,6 @@ final class BookController extends BaseController
         //Aquí solo devolvemos true para que en el frontend ponga un modal con un botón para comprobar si se hizo la compra
         //si sí, avisa de ello, va al index.html y elimina las variables de session del viaje
         //si no, dará opción de volver a intentar compra (simplemente desaparece el modal, y se comprueba si siguen las variables de session y el login, (si no están pues al index y eliminar variables de session)), o de ir al index.html (entonces se eliminan las variables de session del viaje)
-        return true;
-    }
-
-    private function saveBooking()
-    {
-        $BookModel = new BookModel();
-        //Recoger todos los datos de la session y guardar el book
         return true;
     }
 

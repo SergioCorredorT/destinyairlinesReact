@@ -3,7 +3,7 @@ require_once './Tools/IniTool.php';
 require_once './vendor/autoload.php';
 class TokenTool
 {
-    public static function generateToken(array $data, int $timeLife = 60 * 60, string $role = 'user')
+    public static function generateToken($data, int $timeLife = 60 * 60, string $role = 'user')
     {
         $iniTool = new IniTool('./Config/cfg.ini');
         $secretTokenPassword = $iniTool->getKeysAndValues('secretTokenPassword');
@@ -78,8 +78,10 @@ class TokenTool
             $timeRemainingRefreshTokenTime = TokenTool::getRemainingTokenTime($refreshToken);
             if ($timeRemainingRefreshTokenTime < $minLifeTimeRefreshToken) {
                 $rsp['refreshToken'] = TokenTool::generateToken($dataRefreshToken, $initialLifeTimeRefreshToken);
-                $rsp['accessToken'] = TokenTool::generateToken($dataRefreshToken, $initialLifeTimeAccessToken);
             }
+            $dataAccessToken = clone $dataRefreshToken;
+            $dataAccessToken->type = 'access';
+            $rsp['accessToken'] = TokenTool::generateToken($dataAccessToken, $initialLifeTimeAccessToken);
         }
         return $rsp;
     }

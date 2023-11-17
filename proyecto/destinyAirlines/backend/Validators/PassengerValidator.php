@@ -274,7 +274,8 @@ class PassengerValidator
         //Obtener serviceCode s donde sean individuales y paidService
         $individualServicePaidCodes = $servicesModel->readIndividualActiveServicePaidCodes();
 
-        foreach ($individualServiceCodes as $individualServiceCode) {
+        //Para buscar en la key
+        foreach ($individualServiceCodes as $individualServiceCode => $value) {
             $found = false;
             foreach ($individualServicePaidCodes as $individualServicePaidCode) {
                 if ($individualServiceCode === $individualServicePaidCode['serviceCode']) {

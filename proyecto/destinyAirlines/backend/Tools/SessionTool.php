@@ -14,53 +14,6 @@ class SessionTool
         }
     }
 
-    /*
-//sin serializado
-    public static function set(string|array $key, $value, string $sessionName = 'MiSesion')
-    {
-        self::startSession($sessionName);
-        if (is_array($key)) {
-            $session =& $_SESSION;
-            foreach ($key as $k) {
-                if (!isset($session[$k])) {
-                    $session[$k] = [];
-                }
-                $session =& $session[$k];
-            }
-            $session = $value;
-        } else {
-            $_SESSION[$key] = $value;
-        }
-    }
-
-    public static function get($key, string $sessionName = 'MiSesion')
-    {
-        self::startSession($sessionName);
-        if (is_array($key)) {
-            $session =& $_SESSION;
-            foreach ($key as $k) {
-                if (!isset($session[$k])) {
-                    return null;
-                }
-                $session =& $session[$k];
-            }
-            return $session;
-        } else {
-            return isset($_SESSION[$key]) ? ($_SESSION[$key]) : null;
-        }
-    }
-
-    public static function getAll(string $sessionName = 'MiSesion')
-    {
-        self::startSession($sessionName);
-        $sessionArray = [];
-        foreach ($_SESSION as $key => $value) {
-            $sessionArray[$key] = $value;
-        }
-        return $sessionArray;
-    }
-*/
-
     public static function set(string|array $key, $value, string $sessionName = 'MiSesion')
     {
         self::startSession($sessionName);
