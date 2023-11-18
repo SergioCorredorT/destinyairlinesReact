@@ -17,8 +17,26 @@ class PassengersValidator
         return true;
     }
 
+    public static function validateAdultNumber($data)
+    {
+        foreach ($data as $passenger) {
+            if ($passenger['ageCategory'] === 'adult') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function validate(array $data)
     {
+        if (count($data) < 1) {
+            return false;
+        }
+
+        if (!self::validateAdultNumber($data)) {
+            return false;
+        }
+
         if (!self::validateUniqueDocTypeAndDocCode($data)) {
             return false;
         }

@@ -191,11 +191,12 @@ final class BookController extends BaseController
         if (!TokenValidator::validateToken($accessToken)) {
             return false;
         }
-        //Comprobar accessToken aquí
 
-        $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
+        if (!TokenTool::decodeAndCheckToken($accessToken, 'access')) {
+            return false;
+        }
 
-        if (!$decodedToken['response']) {
+        if ($this->checkDetails('departure')) {
             return false;
         }
 
@@ -210,6 +211,9 @@ final class BookController extends BaseController
         $returnWithPrices;
         $returnTotalPrice = 0;
         if (!is_null(SessionTool::get('return'))) {
+            if ($this->checkDetails('return')) {
+                return false;
+            }
             $returnWithPrices = $BookingDataEnricherTool->getCompleteBookWithPricesFromSession('return');
             $returnTotalPrice = $BookingPriceCalculatorTool->calculateTotalPriceFromBookWithPrices($returnWithPrices);
             if (!$this->saveBooking($returnWithPrices)) {
@@ -218,18 +222,57 @@ final class BookController extends BaseController
         }
         $totalPrice = $departureTotalPrice + $returnTotalPrice;
 
-        /*if (!$this->doPayment($totalPrice)) {
+        /*
+        if (!$this->doPayment($totalPrice)) {
            return false;
-        }*/
+        }
+        */
         //Guardar factura
+
+        return true;
+    }
+
+    private function checkDetails($direction)
+    {
+        $detailsToCheck = ['flightDetails', 'passengersDetails', 'bookServicesDetails', 'primaryContactDetails'];
+
+        foreach ($detailsToCheck as $detail) {
+            if (is_null(SessionTool::get([$direction, $detail]))) {
+                return false;
+            }
+        }
 
         return true;
     }
 
     private function saveBooking(array $bookData)
     {
+        require_once './Tools/BookDataManipulatorTool.php';
+        $BookDataManipulatorTool = new BookDataManipulatorTool();
+        $flightModel = new FlightModel();
+        $airplaneModel = new AirplaneModel();
+
+        //Primero comprobamos si el número de asientos necesarios es menor que los disponibles
+        $seatsNeeded = $BookDataManipulatorTool->getSeatsNeeded($bookData['passengersDetails']);
+        $freeSeats = $flightModel->getFreeSeats($bookData['flightDetails']['flightCode']);
+        if (is_null($freeSeats)) {
+            $idAirplane = $flightModel->getIdAirplanes($bookData['flightDetails']['flightCode']);
+            $freeSeats = $airplaneModel->getSeats($idAirplane);
+        }
+
+        if ($seatsNeeded > $freeSeats) {
+            return false;
+        }
+
+        //Introducimos datos en BBDD
+        $passengerModel = new PassengerModel();
+        $userModel = new UserModel();
+
+
         $BookModel = new BookModel();
-        //Recoger todos los datos de la session y guardar el book
+
+        //Comprobar asientos libres para childs y adults
+        //Meter en bbdd los datos
         return true;
     }
 

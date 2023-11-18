@@ -16,10 +16,20 @@ final class FlightModel extends BaseModel
 
     public function getFlightPrice($flightCode)
     {
-        return floatval(parent::select('price', 'flightCode = '.$flightCode)[0]['price']);
+        return floatval(parent::select('price', 'flightCode = ' . $flightCode)[0]['price']);
     }
 
-//-----------------------------------------------------------------
+    public function getFreeSeats($flightCode)
+    {
+        return intval(parent::select('freeSeats', 'flightCode = ' . $flightCode)[0]['freeSeats']);
+    }
+
+    public function getIdAirplanes($flightCode)
+    {
+        return intval(parent::select('id_AIRPLANES', "flightCode = '$flightCode' ")[0]['id_AIRPLANES']);
+    }
+
+    //-----------------------------------------------------------------
     public function createBooks(array $data)
     {
         return parent::insert($data);
