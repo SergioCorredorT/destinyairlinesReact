@@ -38,9 +38,9 @@ final class ServicesModel extends BaseModel
     }
 
 //----------------------------------------------------
-    public function createServices(array $data)
+    public function createServices(array $data, bool $getId = false)
     {
-        return parent::insert($data);
+        return parent::insert($data, $getId);
     }
 
     public function readServices()

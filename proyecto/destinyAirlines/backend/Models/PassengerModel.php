@@ -25,9 +25,9 @@ final class PassengerModel extends BaseModel
     }
 
     //------------------------------------------------------------
-    public function createPassengers(array $data)
+    public function createPassengers(array $data, bool $getId = false)
     {
-        return parent::insert($data);
+        return parent::insert($data, $getId);
     }
 
     public function readPassengers()

@@ -24,7 +24,7 @@ abstract class BaseModel
         }
     }
 
-    protected function insert(array $datas)
+    protected function insert(array $datas, bool $getId = false)
     {
         //Ejemplos:
         /*
@@ -45,17 +45,24 @@ abstract class BaseModel
         }
 
         $this->con->beginTransaction();
+        $insertedIds = [];
 
         try {
             foreach ($datas as $data) {
-                if (!$this->insertOne($data)) {
+                $insertResult = $this->insertOne($data, $getId);
+
+                if (!$insertResult) {
                     $this->con->rollBack();
                     return false;
+                }
+
+                if ($getId) {
+                    $insertedIds[] = $insertResult;
                 }
             }
 
             $this->con->commit();
-            return true;
+            return $getId ? $insertedIds : true;
         } catch (PDOException $e) {
             $this->con->rollBack();
             error_log('Catched exception: ' . $e->getMessage() . "\n");
@@ -63,7 +70,7 @@ abstract class BaseModel
         }
     }
 
-    private function insertOne(array $data)
+    private function insertOne(array $data, bool $getId = false)
     {
         $data = $this->sanitizeAll($data);
         $columns = implode(', ', array_keys($data));
@@ -82,7 +89,7 @@ abstract class BaseModel
 
         $stmt->execute();
         if (intval($stmt->errorCode()) === 0) {
-            return true;
+            return $getId ? $this->con->lastInsertId() : true;
         } else {
             return false;
         }
@@ -167,7 +174,7 @@ abstract class BaseModel
     }
 
 
-/*
+    /*
 //Con addQuotesUfNecessary
     protected function update(array $data, string $where)
     {

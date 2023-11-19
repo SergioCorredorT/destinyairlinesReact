@@ -30,9 +30,9 @@ final class FlightModel extends BaseModel
     }
 
     //-----------------------------------------------------------------
-    public function createBooks(array $data)
+    public function createBooks(array $data, bool $getId = false)
     {
-        return parent::insert($data);
+        return parent::insert($data, $getId);
     }
 
     public function readBooks()

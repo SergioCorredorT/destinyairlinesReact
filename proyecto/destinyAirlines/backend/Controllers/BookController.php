@@ -196,7 +196,7 @@ final class BookController extends BaseController
             return false;
         }
 
-        if ($this->checkDetails('departure')) {
+        if (!$this->checkDetails('departure')) {
             return false;
         }
 
@@ -211,7 +211,7 @@ final class BookController extends BaseController
         $returnWithPrices;
         $returnTotalPrice = 0;
         if (!is_null(SessionTool::get('return'))) {
-            if ($this->checkDetails('return')) {
+            if (!$this->checkDetails('return')) {
                 return false;
             }
             $returnWithPrices = $BookingDataEnricherTool->getCompleteBookWithPricesFromSession('return');
@@ -228,12 +228,17 @@ final class BookController extends BaseController
         }
         */
         //Guardar factura
+        //Enviar factura al email
 
         return true;
     }
 
     private function checkDetails($direction)
     {
+        if (is_null(SessionTool::get($direction))) {
+            return false;
+        }
+
         $detailsToCheck = ['flightDetails', 'passengersDetails', 'bookServicesDetails', 'primaryContactDetails'];
 
         foreach ($detailsToCheck as $detail) {
@@ -264,15 +269,20 @@ final class BookController extends BaseController
             return false;
         }
 
-        //Introducimos datos en BBDD
-        $passengerModel = new PassengerModel();
+error_log(print_r($bookData,true));
+        //insertar el primaryContactInformation
+        //insertar el book
+        //insertar book services
+        //insertar pasajeros+aditional_information
+        //insertar passengers_books_services
+        //insertar Invoice
+        //insertar services_invoice
+        //actualizar freeSeats de flights
+
+
         $userModel = new UserModel();
-
-
         $BookModel = new BookModel();
 
-        //Comprobar asientos libres para childs y adults
-        //Meter en bbdd los datos
         return true;
     }
 
@@ -283,7 +293,7 @@ final class BookController extends BaseController
         require_once './Tools/IniTool.php';
         $PaymentTool = new PaymentTool();
         $iniTool = new IniTool('./Config/cfg.ini');
-        $paypal = $iniTool->getKeysAndValues("paypal");
+        $paypal = $iniTool->getKeysAndValues('paypal');
         //calcular precio aquí para enviarselo a createPaymentPaypal()
 
         //Metemos los datos de factura en la bbdd en la tabla INVOICES (Añadir campos de los gastos)

@@ -9,9 +9,9 @@ final class UserModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function createUser(array $data)
+    public function createUser(array $data, bool $getId = false)
     {
-        return parent::insert($data);
+        return parent::insert($data, $getId);
     }
 
     public function readUsers()

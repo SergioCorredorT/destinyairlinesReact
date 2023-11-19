@@ -39,22 +39,22 @@ final class UserTempIdsModel extends BaseModel
     }
     //----------------------------------------------------------
 
-    public function createUserTempIdsModel($data)
+    public function createUserTempIds($data)
     {
         return parent::insert($data);
     }
 
-    public function readUserTempIdsModel()
+    public function readUserTempIds()
     {
         return parent::select("*");
     }
 
-    public function updateUserTempIdsModel($data, $where)
+    public function updateUserTempIds($data, $where)
     {
         return parent::update($data, $where);
     }
 
-    public function deleteUserTempIdsModel($where = "")
+    public function deleteUserTempIds($where = "")
     {
         return parent::delete($where);
     }
