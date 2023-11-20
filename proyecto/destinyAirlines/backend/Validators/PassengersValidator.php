@@ -27,6 +27,27 @@ class PassengersValidator
         return false;
     }
 
+    public static function validateMaxNumberOfPassengersPerAgeCategory($data)
+    {
+        require_once './Tools/IniTool.php';
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $bookSettings = $iniTool->getKeysAndValues('bookSettings');
+        $maxNumberOfPassengersPerAgeCategory = intval($bookSettings['maxNumberOfPassengersPerAgeCategory']);
+        $countsAgeCategories = ['adult' => 0, 'child' => 0, 'infant' => 0];
+
+        foreach ($data as $passenger) {
+            $countsAgeCategories[$passenger['ageCategory']]++;
+        }
+
+        foreach ($countsAgeCategories as $count) {
+            if ($count > $maxNumberOfPassengersPerAgeCategory) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static function validate(array $data)
     {
         if (count($data) < 1) {
@@ -38,6 +59,10 @@ class PassengersValidator
         }
 
         if (!self::validateUniqueDocTypeAndDocCode($data)) {
+            return false;
+        }
+
+        if (!self::validateMaxNumberOfPassengersPerAgeCategory($data)) {
             return false;
         }
 

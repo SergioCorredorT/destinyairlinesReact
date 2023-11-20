@@ -29,6 +29,11 @@ final class FlightModel extends BaseModel
         return intval(parent::select('id_AIRPLANES', "flightCode = '$flightCode' ")[0]['id_AIRPLANES']);
     }
 
+    public function getIdFlightFromFlightCode($flightCode)
+    {
+        return intval(parent::select('id_FLIGHTS', "flightCode = '$flightCode' ")[0]['id_FLIGHTS']);
+    }
+
     //-----------------------------------------------------------------
     public function createBooks(array $data, bool $getId = false)
     {

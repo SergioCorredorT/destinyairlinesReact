@@ -17,4 +17,20 @@ class BookDataManipulatorTool
         return $count;
     }
     
+    public static function generateUUID()
+    {
+        $uuid4 = Ramsey\Uuid\Uuid::uuid4();
+        return $uuid4->toString(); // i.e. 25769c6c-d34d-4bfe-ba98-e0ee856f3e7a
+    }
+
+    public static function getPassengersNumberByAgeCategory($passengers)
+    {
+        $countsAgeCategories = ['adult' => 0, 'child' => 0, 'infant' => 0];
+
+        foreach ($passengers as $passenger) {
+            $countsAgeCategories[$passenger['ageCategory']]++;
+        }
+
+        return $countsAgeCategories;
+    }
 }

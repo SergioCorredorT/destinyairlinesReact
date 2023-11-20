@@ -192,7 +192,9 @@ final class BookController extends BaseController
             return false;
         }
 
-        if (!TokenTool::decodeAndCheckToken($accessToken, 'access')) {
+        $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
+
+        if (!$decodedToken['response']) {
             return false;
         }
 
@@ -204,7 +206,7 @@ final class BookController extends BaseController
         $departureWithPrices = $BookingDataEnricherTool->getCompleteBookWithPricesFromSession('departure');
         $departureTotalPrice = $BookingPriceCalculatorTool->calculateTotalPriceFromBookWithPrices($departureWithPrices);
 
-        if (!$this->saveBooking($departureWithPrices)) {
+        if (!$this->saveBooking($departureWithPrices, $decodedToken['response']->data->id, 'departure')) {
             return false;
         }
 
@@ -216,7 +218,7 @@ final class BookController extends BaseController
             }
             $returnWithPrices = $BookingDataEnricherTool->getCompleteBookWithPricesFromSession('return');
             $returnTotalPrice = $BookingPriceCalculatorTool->calculateTotalPriceFromBookWithPrices($returnWithPrices);
-            if (!$this->saveBooking($returnWithPrices)) {
+            if (!$this->saveBooking($returnWithPrices, $decodedToken['response']->data->id, 'return')) {
                 return false;
             }
         }
@@ -250,7 +252,7 @@ final class BookController extends BaseController
         return true;
     }
 
-    private function saveBooking(array $bookData)
+    private function saveBooking(array $bookData, $idUser, $direction = 'departure')
     {
         require_once './Tools/BookDataManipulatorTool.php';
         $BookDataManipulatorTool = new BookDataManipulatorTool();
@@ -269,19 +271,44 @@ final class BookController extends BaseController
             return false;
         }
 
-error_log(print_r($bookData,true));
+        error_log(print_r($bookData, true));
+        $PrimaryContactInformationModel = new PrimaryContactInformationModel();
+        $BookModel = new BookModel();
+        $bookServiceModel = new BookServiceModel();
+        $passengerModel = new PassengerModel();
+
         //insertar el primaryContactInformation
+        [$idPrimaryContactInfo] = $PrimaryContactInformationModel->createPrimaryContactInformation($bookData['primaryContactDetails'], true);
+
         //insertar el book
-        //insertar book services
+        $idFlight = $flightModel->getIdFlightFromFlightCode($bookData['flightDetails']['flightCode']);
+        $countsAgeCategories = $BookDataManipulatorTool->getPassengersNumberByAgeCategory($bookData['passengersDetails']);
+        [$idBook] = $BookModel->createBooks([
+            'id_FLIGHTS' => $idFlight,
+            'id_USERS' => $idUser,
+            'id_PRIMARY_CONTACT_INFORMATIONS' => $idPrimaryContactInfo,
+            'bookCode' => $BookDataManipulatorTool->generateUUID(),
+            'direction' => $direction,
+            'adultsNumber' => $countsAgeCategories['adult'],
+            'childsNumber' => $countsAgeCategories['child'],
+            'infantsNumber' => $countsAgeCategories['infant']
+        ], true);
+
+        //insertar books_services
+        if (isset($bookData['bookServicesDetails']) && count($array) > 0) {
+            $bookServices = [];
+            foreach ($bookData['bookServicesDetails'] as $serviceCode => $key) {
+                $bookServices[] = ['id_BOOKS' => $idBook, 'id_SERVICES' => $serviceCode];
+            }
+            $bookServiceModel->createBookServices($bookServices);
+        }
         //insertar pasajeros+aditional_information
+        $passengers = [];
+        //$passengerModel->createPassengers();
         //insertar passengers_books_services
         //insertar Invoice
         //insertar services_invoice
         //actualizar freeSeats de flights
-
-
-        $userModel = new UserModel();
-        $BookModel = new BookModel();
 
         return true;
     }
