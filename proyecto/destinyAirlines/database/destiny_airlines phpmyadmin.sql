@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-11-2023 a las 17:52:39
+-- Tiempo de generación: 21-11-2023 a las 19:19:55
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -122,7 +122,8 @@ INSERT INTO `books` (`id_BOOKS`, `id_FLIGHTS`, `id_USERS`, `id_PRIMARY_CONTACT_I
 (25, 1, 1, 1, 'BK123', '2023-10-19', 'departure', '2023-10-20 00:00:00', 1, 0, 0),
 (26, 2, 2, 1, 'BK456', '2023-10-20', 'departure', '2023-10-21 00:00:00', 1, 0, 0),
 (27, 3, 3, 1, 'BK789', '2023-10-21', 'departure', '2023-10-22 00:00:00', 1, 0, 0),
-(28, 4, 4, 1, 'BK012', '2023-10-22', 'departure', '2023-10-23 00:00:00', 1, 0, 0);
+(28, 4, 4, 1, 'BK012', '2023-10-22', 'departure', '2023-10-23 00:00:00', 1, 0, 0),
+(29, 1, 138, 1, 'd5336a6d-5', NULL, 'departure', '2023-11-20 19:12:53', 2, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -307,6 +308,7 @@ CREATE TABLE `primary_contact_informations` (
   `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL,
   `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
   `documentCode` varchar(30) NOT NULL,
+  `expirationDate` date NOT NULL,
   `title` varchar(50) DEFAULT NULL,
   `firstName` varchar(50) NOT NULL,
   `lastName` varchar(50) NOT NULL,
@@ -326,8 +328,8 @@ CREATE TABLE `primary_contact_informations` (
 -- Volcado de datos para la tabla `primary_contact_informations`
 --
 
-INSERT INTO `primary_contact_informations` (`id_PRIMARY_CONTACT_INFORMATIONS`, `documentationType`, `documentCode`, `title`, `firstName`, `lastName`, `emailAddress`, `phoneNumber1`, `phoneNumber2`, `country`, `townCity`, `streetAddress`, `zipCode`, `companyName`, `companyTaxNumber`, `companyPhoneNumber`) VALUES
-(1, 'DNI', '232332', NULL, 'Sergi', 'waa', 'aaa@gmail.com', '11111111', NULL, 'España', 'Albacete', 'Calle falsa 123', '0909', NULL, NULL, NULL);
+INSERT INTO `primary_contact_informations` (`id_PRIMARY_CONTACT_INFORMATIONS`, `documentationType`, `documentCode`, `expirationDate`, `title`, `firstName`, `lastName`, `emailAddress`, `phoneNumber1`, `phoneNumber2`, `country`, `townCity`, `streetAddress`, `zipCode`, `companyName`, `companyTaxNumber`, `companyPhoneNumber`) VALUES
+(1, 'DNI', '232332', '2026-11-20', NULL, 'Sergi', 'waa', 'aaa@gmail.com', '11111111', NULL, 'España', 'Albacete', 'Calle falsa 123', '0909', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -423,7 +425,7 @@ INSERT INTO `users` (`id_USERS`, `title`, `firstName`, `lastName`, `townCity`, `
 (2, 'Ms', 'Alice', 'Smith', 'London', '456 Elm St', 'SW1A ', 'UK', 'alice.smith@example.com', '', '111222333', '', '', 'XYZ Company', '12345678', '999888777', 0, NULL, NULL),
 (96, 'Dr', 'Michael', 'Anderson', 'Sydney', '456 George St', '2000', 'Australia', 'michael.anderson@example.com', '', '987654321', '987123654', '789456123', 'Tech Corp', 'AUS098765432', '+61 987 654 321', 0, NULL, NULL),
 (131, NULL, 'A555', NULL, NULL, NULL, '25', NULL, 'aaaa5@example.com', '$2y$10$.EG9ubn2GmCllCHzXNdCau/4Tc9HQC8dugE8TjilPfmcHsuPx0yT2', NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
-(138, NULL, 'Serg', NULL, NULL, NULL, '25', NULL, 'sergiodesarrolladorweb@gmail.com', '$2y$10$uiwtsHD/9wWlP0H5m1Y14eRtGJ8BaTAWiLcR96vgkzFd8kaORR8ra', NULL, NULL, NULL, NULL, NULL, NULL, 0, '2023-11-16 02:43:37', NULL);
+(138, NULL, 'Serg', NULL, NULL, NULL, '25', NULL, 'sergiodesarrolladorweb@gmail.com', '$2y$10$uiwtsHD/9wWlP0H5m1Y14eRtGJ8BaTAWiLcR96vgkzFd8kaORR8ra', NULL, NULL, NULL, NULL, NULL, NULL, 0, '2023-11-20 18:10:44', NULL);
 
 -- --------------------------------------------------------
 
@@ -596,7 +598,7 @@ ALTER TABLE `airports`
 -- AUTO_INCREMENT de la tabla `books`
 --
 ALTER TABLE `books`
-  MODIFY `id_BOOKS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id_BOOKS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `books_services`
@@ -644,7 +646,7 @@ ALTER TABLE `passengers_books_services`
 -- AUTO_INCREMENT de la tabla `primary_contact_informations`
 --
 ALTER TABLE `primary_contact_informations`
-  MODIFY `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `services`

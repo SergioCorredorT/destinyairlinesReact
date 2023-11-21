@@ -25,6 +25,11 @@ final class AdditionalInformationModel extends BaseModel
         return parent::insert($data);
     }
 
+    public function createMultipleAdditionalInformations(array $data)
+    {
+        return parent::insertMultiple($data);
+    }
+
     public function readAdditionalInformations()
     {
         return parent::select("*");

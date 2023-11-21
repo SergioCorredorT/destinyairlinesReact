@@ -11,24 +11,24 @@ final class ServicesModel extends BaseModel
 
     public function readIndividualActiveServicePaidCodes()
     {
-        return parent::select('serviceCode','serviceGroupingType = "individual" AND billingCategory = "PaidService" AND status = "active" ');
+        return parent::select('serviceCode', 'serviceGroupingType = "individual" AND billingCategory = "PaidService" AND status = "active" ');
     }
 
     public function readCollectiveActiveServicePaidCodes()
     {
-        return parent::select('serviceCode','serviceGroupingType = "collective" AND billingCategory = "PaidService"  AND status = "active" ');
+        return parent::select('serviceCode', 'serviceGroupingType = "collective" AND billingCategory = "PaidService"  AND status = "active" ');
     }
-    
+
     public function readServicePrices(array $services)
     {
         $serviceCodes = "'" . implode("','", $services) . "'";
         $prices = parent::select('serviceCode, priceOrDiscount AS price', "serviceCode IN ($serviceCodes)");
-    
+
         $servicePrices = array();
         foreach ($prices as $priceInfo) {
             $servicePrices[$priceInfo['serviceCode']] = floatval($priceInfo['price']);
         }
-    
+
         return $servicePrices;
     }
 
@@ -37,7 +37,23 @@ final class ServicesModel extends BaseModel
         return parent::select('priceOrDiscount', "serviceCode = '$serviceCode'  AND status = 'active'  ")[0]['priceOrDiscount'];
     }
 
-//----------------------------------------------------
+    public function getServiceIdsFromCodes($serviceCodes) {
+        if (is_array($serviceCodes)) {
+            $serviceCodes = "'" . implode("','", $serviceCodes) . "'";
+            $results = parent::select('id_SERVICES, serviceCode', "serviceCode IN ($serviceCodes)");
+            $assocArray = [];
+            foreach ($results as $result) {
+                $assocArray[$result['serviceCode']] = $result['id_SERVICES'];
+            }
+            return $assocArray;
+        } else {
+            return parent::select('id_SERVICES', "serviceCode = '$serviceCodes' ")[0]['id_SERVICES'];
+        }
+    }
+    
+
+
+    //----------------------------------------------------
     public function createServices(array $data, bool $getId = false)
     {
         return parent::insert($data, $getId);

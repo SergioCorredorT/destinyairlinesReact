@@ -24,6 +24,36 @@ abstract class BaseModel
         }
     }
 
+    protected function insertMultiple(array $datas, bool $getId = false)
+    {
+        if (array_keys($datas) !== range(0, count($datas) - 1)) {
+            $datas = [$datas];
+        }
+    
+        $columns = implode(', ', array_keys($datas[0]));
+        $placeholders = rtrim(str_repeat('(' . implode(', ', array_fill(0, count($datas[0]), '?')) . '), ', count($datas)), ', ');
+        $query = "INSERT INTO $this->tableName ($columns) VALUES $placeholders";
+    
+        $values = [];
+        foreach ($datas as $data) {
+            $values = array_merge($values, array_values($data));
+        }
+    
+        try {
+            $stmt = $this->con->prepare($query);
+            $stmt->execute($values);
+            if (intval($stmt->errorCode()) === 0) {
+                return $getId ? $this->con->lastInsertId() : true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log('Catched exception: ' . $e->getMessage() . "\n");
+            return false;
+        }
+    }
+    
+
     protected function insert(array $datas, bool $getId = false)
     {
         //Ejemplos:
@@ -251,17 +281,17 @@ abstract class BaseModel
         }
     }
 
-    protected function beginTransaction()
+    public function beginTransaction()
     {
         return $this->con->beginTransaction();
     }
 
-    protected function commit()
+    public function commit()
     {
         return $this->con->commit();
     }
 
-    protected function rollBack()
+    public function rollBack()
     {
         return $this->con->rollBack();
     }

@@ -285,9 +285,10 @@ final class BookController extends BaseController
         [$idPrimaryContactInfo] = $PrimaryContactInformationModel->createPrimaryContactInformation($bookData['primaryContactDetails'], true);
 
         //insertar el book
+        $idFlight = $flightModel->getIdFlightFromFlightCode($bookData['flightDetails']['flightCode']);
         $countsAgeCategories = $BookDataManipulatorTool->getPassengersNumberByAgeCategory($bookData['passengersDetails']);
         [$idBook] = $BookModel->createBooks([
-            'id_FLIGHTS' => $flightModel->getIdFlightFromFlightCode($bookData['flightDetails']['flightCode']),
+            'id_FLIGHTS' => $idFlight,
             'id_USERS' => $idUser,
             'id_PRIMARY_CONTACT_INFORMATIONS' => $idPrimaryContactInfo,
             'bookCode' => $BookDataManipulatorTool->generateUUID(),
@@ -311,25 +312,21 @@ final class BookController extends BaseController
             $bookServices = [];
             $individualServicesInvoices = [];
 
-            $serviceIdsFromCodes = $servicesModel->getServiceIdsFromCodes(array_keys($bookData['bookServicesDetails']));
+            $idsServices = $servicesModel->getServiceIdsFromCodes(array_keys($bookData['bookServicesDetails']));
             foreach ($bookData['bookServicesDetails'] as $serviceCode => $price) {
-                $bookServices[] = ['id_BOOKS' => $idBook, 'id_SERVICES' => $serviceIdsFromCodes[$serviceCode]];
+                $bookServices[] = ['id_BOOKS' => $idBook, 'id_SERVICES' => $idsServices[$serviceCode]];
 
                 $individualServicesInvoices[] = [
                     'id_INVOICES' => $idInvoice,
-                    'id_SERVICES' => $serviceIdsFromCodes[$serviceCode],
+                    'id_SERVICES' => $idsServices[$serviceCode],
                     'id_PASSENGERS' => 'NULL',
                     'id_addRemove' => 'add',
                     'oldPrice' => $price,
                 ];
             }
-            $bookServiceModel->createMultipleBookServices($bookServices);
-            $servicesInvoicesModel->createMultipleServicesInvoices($individualServicesInvoices);
+            $bookServiceModel->createBookServices($bookServices);
+            $servicesInvoicesModel->createServicesInvoices($individualServicesInvoices);
         }
-
-        $additionalInformationData = [];
-        $passengerServiceData = [];
-        $servicesInvoicesData = [];
 
         //insertar pasajeros + aditional_information
         foreach ($bookData['passengersDetails'] as $passenger) {
@@ -346,7 +343,7 @@ final class BookController extends BaseController
                 'country' => $passenger['country'] ?? ''
             ], true);
 
-            $additionalInformationData[] = [
+            $additionalInformationModel->createAdditionalInformations([
                 'id_PASSENGERS' => $idPassenger,
                 'dateBirth' => $passenger['dateBirth'] ?? '',
                 'assistiveDevices' => $passenger['assistiveDevices'] ?? 'NULL',
@@ -354,31 +351,27 @@ final class BookController extends BaseController
                 'mobilityLimitations' => $passenger['mobilityLimitations'] ?? 'NULL',
                 'communicationNeeds' => $passenger['communicationNeeds'] ?? 'NULL',
                 'medicationRequirements' => $passenger['medicationRequirements'] ?? 'NULL'
-            ];
+            ]);
 
             //insertar passengers_books_services
             $idsServices = $servicesModel->getServiceIdsFromCodes(array_keys($passenger['services']));
             foreach ($passenger['services'] as $serviceCode => $price) {
-                $passengerServiceData[] = [
+                $passengerBookServiceModel->createPassengerService([
                     'id_PASSENGERS' => $idPassenger,
                     'id_BOOKS' => $idBook,
                     'id_SERVICES' => $idsServices[$serviceCode]
-                ];
+                ]);
 
                 //insertar individual services_invoice
-                $servicesInvoicesData[] = [
+                $servicesInvoicesModel->createServicesInvoices([
                     'id_INVOICES' => $idInvoice,
                     'id_SERVICES' => $idsServices[$serviceCode],
                     'id_PASSENGERS' => $idPassenger,
                     'id_addRemove' => 'add',
                     'oldPrice' => $price,
-                ];
+                ]);
             }
         }
-
-        $additionalInformationModel->createMultipleAdditionalInformations($additionalInformationData);
-        $passengerBookServiceModel->createMultiplePassengerService($passengerServiceData);
-        $servicesInvoicesModel->createMultipleServicesInvoices($servicesInvoicesData);
 
         //actualizar freeSeats de flights
         error_log(print_r($bookData, true));

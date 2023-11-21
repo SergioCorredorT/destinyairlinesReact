@@ -9,6 +9,11 @@ final class BookServiceModel extends BaseModel
         parent::__construct(self::table);
     }
 
+    public function createMultipleBookServices(array $data, bool $getId = false)
+    {
+        return parent::insertMultiple($data, $getId);
+    }
+
     public function createBookServices(array $data, bool $getId = false)
     {
         return parent::insert($data, $getId);

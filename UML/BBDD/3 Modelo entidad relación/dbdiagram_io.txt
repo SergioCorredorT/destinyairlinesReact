@@ -89,6 +89,7 @@ Table PRIMARY_CONTACT_INFORMATIONS {
   id_PRIMARY_CONTACT_INFORMATIONS int [pk, increment]
   documentationType documentationType [not null]
   documentCode varchar(30) [not null]
+  expirationDate date [not null]
   title varchar(50)
   firstName varchar(50) [not null]
   lastName varchar(50) [not null]

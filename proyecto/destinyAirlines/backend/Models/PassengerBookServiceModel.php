@@ -9,6 +9,11 @@ final class PassengerBookServiceModel extends BaseModel
         parent::__construct(self::table);
     }
 
+    public function createMultiplePassengerService(array $data, bool $getId = false)
+    {
+        return parent::insertMultiple($data, $getId);
+    }
+
     public function createPassengerService(array $data, bool $getId = false)
     {
         return parent::insert($data, $getId);

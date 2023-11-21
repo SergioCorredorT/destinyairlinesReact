@@ -83,6 +83,7 @@ CREATE TABLE `PRIMARY_CONTACT_INFORMATIONS` (
   `id_PRIMARY_CONTACT_INFORMATIONS` int PRIMARY KEY AUTO_INCREMENT,
   `documentationType` ENUM ('DNI', 'Passport', 'Drivers_license', 'Residence_card_or_work_permit') NOT NULL,
   `documentCode` varchar(30) NOT NULL,
+  `expirationDate` date NOT NULL,
   `title` varchar(50),
   `firstName` varchar(50) NOT NULL,
   `lastName` varchar(50) NOT NULL,
