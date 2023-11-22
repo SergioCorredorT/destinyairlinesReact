@@ -34,23 +34,28 @@ final class FlightModel extends BaseModel
         return intval(parent::select('id_FLIGHTS', "flightCode = '$flightCode' ")[0]['id_FLIGHTS']);
     }
 
+    public function decreaseAvailableSeats($seatsNumber, $flightCode) {
+        
+        return parent::update(['freeSeats' => "freeSeats - $seatsNumber "], "flightCode = '$flightCode' ");
+    }
+
     //-----------------------------------------------------------------
-    public function createBooks(array $data, bool $getId = false)
+    public function createFlights(array $data, bool $getId = false)
     {
         return parent::insert($data, $getId);
     }
 
-    public function readBooks()
+    public function readFlights()
     {
         return parent::select('*');
     }
 
-    public function updateBooks(array $data, string $where)
+    public function updateFlights(array $data, string $where)
     {
         return parent::update($data, $where);
     }
 
-    public function deleteBooks(string $where = "")
+    public function deleteFlights(string $where = "")
     {
         return parent::delete($where);
     }
