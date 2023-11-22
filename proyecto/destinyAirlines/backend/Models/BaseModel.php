@@ -24,21 +24,22 @@ abstract class BaseModel
         }
     }
 
+    //Hace insert un INSERT para todos los registros pudiendo devolver la id generada del último registro insertado
     protected function insertMultiple(array $datas, bool $getId = false)
     {
         if (array_keys($datas) !== range(0, count($datas) - 1)) {
             $datas = [$datas];
         }
-    
+
         $columns = implode(', ', array_keys($datas[0]));
         $placeholders = rtrim(str_repeat('(' . implode(', ', array_fill(0, count($datas[0]), '?')) . '), ', count($datas)), ', ');
         $query = "INSERT INTO $this->tableName ($columns) VALUES $placeholders";
-    
+
         $values = [];
         foreach ($datas as $data) {
             $values = array_merge($values, array_values($data));
         }
-    
+
         try {
             $stmt = $this->con->prepare($query);
             $stmt->execute($values);
@@ -52,8 +53,8 @@ abstract class BaseModel
             return false;
         }
     }
-    
 
+    //Hace insert un INSERT por cada registro pudiendo devolver un array con las id generadas
     protected function insert(array $datas, bool $getId = false)
     {
         //Ejemplos:
@@ -74,7 +75,7 @@ abstract class BaseModel
             $datas = [$datas];
         }
 
-        $this->con->beginTransaction();
+        //$this->con->beginTransaction();
         $insertedIds = [];
 
         try {
@@ -91,10 +92,10 @@ abstract class BaseModel
                 }
             }
 
-            $this->con->commit();
+            //$this->con->commit();
             return $getId ? $insertedIds : true;
         } catch (PDOException $e) {
-            $this->con->rollBack();
+            //$this->con->rollBack();
             error_log('Catched exception: ' . $e->getMessage() . "\n");
             return false;
         }
@@ -203,40 +204,6 @@ abstract class BaseModel
         }
     }
 
-
-    /*
-//Con addQuotesUfNecessary
-    protected function update(array $data, string $where)
-    {
-        $updateData = '';
-        foreach ($data as $key => $value) {
-            if (preg_match('/[\\+\\-\\*\\/]/', $value)) {
-                // Handle mathematical expressions specially
-                $updateData .= "$key = $value, ";
-            } else {
-                $value = $this->addQuotesIfNecessary($value);
-                $updateData .= "$key = $value, ";
-            }
-        }
-        $updateData = rtrim($updateData, ', ');
-        $query = "UPDATE $this->tableName SET $updateData WHERE $where";
-
-        // Prepare the query
-        try {
-            $stmt = $this->con->prepare($query);
-        } catch (Exception $er) {
-            error_log('Catched exception: ' . $er->getMessage() . "\n");
-            return false;
-        }
-
-        $stmt->execute();
-        if (intval($stmt->errorCode()) === 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-*/
     protected function delete(string $where)
     {
         // Ejecuta DELETE sin filtro WHERE
