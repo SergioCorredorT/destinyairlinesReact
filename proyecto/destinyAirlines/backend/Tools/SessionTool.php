@@ -32,7 +32,7 @@ class SessionTool
         }
     }
 
-    public static function get($key, string $sessionName = 'MiSesion')
+    public static function get(string|array $key, string $sessionName = 'MiSesion')
     {
         self::startSession($sessionName);
         if (is_array($key)) {
@@ -59,11 +59,24 @@ class SessionTool
         return $sessionArray;
     }
 
-
-    public static function remove(string $key, string $sessionName = 'MiSesion')
+    public static function remove($key, string $sessionName = 'MiSesion')
     {
         self::startSession($sessionName);
-        unset($_SESSION[$key]);
+        if (is_array($key)) {
+            $session = &$_SESSION;
+            foreach ($key as $i => $k) {
+                if (!isset($session[$k])) {
+                    return;
+                }
+                if ($i == count($key) - 2) {
+                    unset($session[$k][$key[$i + 1]]);
+                    return;
+                }
+                $session = &$session[$k];
+            }
+        } else {
+            unset($_SESSION[$key]);
+        }
     }
 
     public static function destroy(string $sessionName = 'MiSesion')

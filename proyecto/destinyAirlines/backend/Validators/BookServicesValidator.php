@@ -11,11 +11,13 @@ class BookServicesValidator
         $servicesModel = new ServicesModel();
         $collectiveServicePaidCodes = $servicesModel->readCollectiveActiveServicePaidCodes();
 
-        foreach ($collectiveServiceCodes as $collectiveServiceCode) {
+        foreach ($collectiveServiceCodes as $keyCollectiveServiceCode => $collectiveServiceCode) {
             $found = false;
             foreach ($collectiveServicePaidCodes as $collectiveServicePaidCode) {
                 if ($collectiveServiceCode === $collectiveServicePaidCode['serviceCode']) {
-                    $found = true;
+                    if($keyCollectiveServiceCode === $collectiveServiceCode) {
+                        $found = true;
+                    }
                     break;
                 }
             }

@@ -106,34 +106,29 @@ final class BookController extends BaseController
         require_once './Sanitizers/BookServicesSanitizer.php';
         require_once './Validators/BookServicesValidator.php';
 
+        //No ponemos aquí las variables admitidas porque todas son opcionales (valor por defecto null), y
+        // porque en el validate ya se hace una solicitud a BBDD para comprobar las key y value que se envíen,
+        // así evitamos una llamada extra a BBDD
 
-        $servicesDetails = [
-            'SRV003' => null,
-            'SRV004' => null,
-            'SRV010' => null
-        ];
-
+        $servicesDetails = $POST['bookServices'] ?? [];
         $direction = $POST['direction'] ?? '';
-        foreach ($servicesDetails as $key => $defaultValue) {
-            $servicesDetails[$key] = $POST[$key] ?? $defaultValue;
-        }
-
-        //Sanear
-        //Validar si todos están en bbdd
-        $servicesDetails = BookServicesSanitizer::sanitize($servicesDetails);
-        if (!BookServicesValidator::validate($servicesDetails)) {
-            return false;
-        }
 
         if (!$this->validateDirection($direction)) {
             return false;
         }
 
+        if (is_array($servicesDetails) && count($servicesDetails) > 0) {
+            //Sanear
+            //Validar si todos están en bbdd
+            $servicesDetails = BookServicesSanitizer::sanitize($servicesDetails);
+            if (!BookServicesValidator::validate($servicesDetails)) {
+                return false;
+            }
+        }
         SessionTool::set([$direction, 'bookServicesDetails'], $servicesDetails);
         return true;
     }
 
-    //se debe exige login en este paso
     public function storePrimaryContactInformationDetails(array $POST)
     {
         $primaryContactDetails = [
@@ -218,22 +213,31 @@ final class BookController extends BaseController
             }
             $returnWithPrices = $BookingDataEnricherTool->getCompleteBookWithPricesFromSession('return');
             $returnTotalPrice = $BookingPriceCalculatorTool->calculateTotalPriceFromBookWithPrices($returnWithPrices);
-            if (!$this->saveBooking($returnWithPrices, $decodedToken['response']->data->id, 'return', $returnWithPrice)) {
+            if (!$this->saveBooking($returnWithPrices, $decodedToken['response']->data->id, 'return', $returnTotalPrice)) {
                 return false;
             }
         }
         $totalPrice = $departureTotalPrice + $returnTotalPrice;
+        $this->generateInvoiceData();
+        //Aquí llamamos a sendEmail enviando los datos y el nombre de la template
 
         /*
         if (!$this->doPayment($totalPrice)) {
            return false;
         }
         */
+
         //Guardar factura
         //Enviar factura al email
 
         return true;
     }
+
+    private function generateInvoiceData() {
+        //generamos los datos
+    }
+
+
 
     private function checkDetails($direction)
     {
@@ -259,7 +263,7 @@ final class BookController extends BaseController
         $BookingProcessTool = new BookingProcessTool();
         $flightModel = new FlightModel();
 
-        if(!$BookingProcessTool->validateSeatAvailability($bookData['passengersDetails'], $bookData['flightDetails']['flightCode'])){
+        if (!$BookingProcessTool->validateSeatAvailability($bookData['passengersDetails'], $bookData['flightDetails']['flightCode'])) {
             return false;
         }
 
@@ -277,7 +281,7 @@ final class BookController extends BaseController
 
             //insertar books_services
             //insertar collective services_invoice
-            if (isset($bookData['bookServicesDetails']) && count($bookData['bookServicesDetails']) > 0) {
+            if (isset($bookData['bookServicesDetails']) && is_array($bookData['bookServicesDetails']) && count($bookData['bookServicesDetails']) > 0) {
                 $BookingProcessTool->saveBookServicesAndServicesInvoices($idBook, $bookData['bookServicesDetails'], $idInvoice);
             }
 
@@ -297,7 +301,6 @@ final class BookController extends BaseController
             return false;
         }
 
-        error_log(print_r($bookData, true));
         return true;
     }
 

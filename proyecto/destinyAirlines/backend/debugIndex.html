@@ -148,6 +148,11 @@
       hr {
         margin: 0;
       }
+
+      .nullButton {
+        cursor: pointer;
+        user-select: none;
+      }
     </style>
   </head>
   <body>
@@ -196,7 +201,7 @@
               readonly
               name="command"
               value="updateUser"
-            /><span>Null?</span>
+            /><span class="nullButton">Null?</span>
           </div>
           <div class="filaForm">
             <input
@@ -209,6 +214,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_title"
               onchange="nullifyInput(this, `#updateForm [data-name='title']`)"
             />
@@ -224,6 +230,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_firstName"
               onchange="nullifyInput(this, `#updateForm [data-name='firstName']`)"
             />
@@ -240,6 +247,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_lastName"
               onchange="nullifyInput(this, `#updateForm [data-name='lastName']`)"
             />
@@ -255,6 +263,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_townCity"
               onchange="nullifyInput(this, `#updateForm [data-name='townCity']`)"
             />
@@ -270,6 +279,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_streetAddress"
               onchange="nullifyInput(this, `#updateForm [data-name='streetAddress']`)"
             />
@@ -285,6 +295,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_zipCode"
               onchange="nullifyInput(this, `#updateForm [data-name='zipCode']`)"
             />
@@ -300,6 +311,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_country"
               onchange="nullifyInput(this, `#updateForm [data-name='country']`)"
             />
@@ -315,6 +327,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_password"
               onchange="nullifyInput(this, `#updateForm [data-name='password']`)"
             />
@@ -330,6 +343,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_phoneNumber1"
               onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber1']`)"
             />
@@ -345,6 +359,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_phoneNumber2"
               onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber2']`)"
             />
@@ -360,6 +375,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_phoneNumber3"
               onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber3']`)"
             />
@@ -375,6 +391,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_companyName"
               onchange="nullifyInput(this, `#updateForm [data-name='companyName']`)"
             />
@@ -389,6 +406,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_companyTaxNumber"
               onchange="nullifyInput(this, `#updateForm [data-name='companyTaxNumber']`)"
             />
@@ -403,6 +421,7 @@
             />
             <input
               type="checkbox"
+              class="checkNullify"
               name="nullify_companyPhoneNumber"
               onchange="nullifyInput(this, `#updateForm [data-name='companyPhoneNumber']`)"
             />
@@ -938,13 +957,13 @@
             readonly
           />
           <label
-            >SRV010 <input type="checkbox" name="SRV010" value="SRV010"
+            >SRV010 <input type="checkbox" name="bookServices[SRV010]" value="SRV010"
           /></label>
           <label
-            >SRV004 <input type="checkbox" name="SRV004" value="SRV004"
+            >SRV004 <input type="checkbox" name="bookServices[SRV004]" value="SRV004"
           /></label>
           <label
-            >SRV003 <input type="checkbox" name="SRV003" value="SRV003"
+            >SRV003 <input type="checkbox" name="bookServices[SRV003]" value="SRV003"
           /></label>
           <input type="text" name="direction" value="departure" />
           <button type="submit">Enviar POST</button>
@@ -1196,6 +1215,21 @@
         brillo.style.top = e.pageY - 25 + "px";
         brillo.style.display = "block";
       });
+
+      document
+        .querySelector(".nullButton")
+        .addEventListener("click", function (e) {
+          var checkboxes = document.getElementsByClassName("checkNullify");
+          let valueCheckbox = true;
+          if (checkboxes[0].checked) {
+            valueCheckbox = false;
+          }
+          for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = valueCheckbox;
+            var event = new Event("change");
+            checkboxes[i].dispatchEvent(event);
+          }
+        });
     </script>
   </body>
 </html>
