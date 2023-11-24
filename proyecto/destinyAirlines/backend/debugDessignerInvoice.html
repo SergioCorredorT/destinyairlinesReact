@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <title>Invoice</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      .container {
+        display: grid;
+        row-gap: 20px;
+        padding: 50px;
+        min-height: 100dvh;
+        grid-template-columns: 1fr;
+        grid-template-rows: 50px 1fr 30px;
+      }
+      header {
+        grid-column: span 2;
+        display: grid;
+        place-content: center;
+      }
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 20px;
+        padding: 20px;
+      }
+      footer {
+        grid-column: span 2;
+        display: grid;
+        place-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>Factura</h1>
+      </header>
+      <main>
+        <div class="customer-info">
+          <h2>Información del cliente</h2>
+          <!-- Detalles del cliente aquí -->
+        </div>
+        <div class="invoice-info">
+          <h2>Información de la factura</h2>
+          <!-- Detalles de la factura aquí -->
+        </div>
+        <div class="items">
+          <h2>Artículos</h2>
+          <!-- Lista de artículos aquí -->
+        </div>
+        <div class="total">
+          <h2>Total</h2>
+          <!-- Total de la factura aquí -->
+        </div>
+      </main>
+      <footer>
+        <p>Gracias por su compra!</p>
+      </footer>
+    </div>
+  </body>
+</html>

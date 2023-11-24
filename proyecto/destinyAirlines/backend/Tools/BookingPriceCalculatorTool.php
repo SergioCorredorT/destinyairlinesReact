@@ -20,7 +20,7 @@ class BookingPriceCalculatorTool
         }
 
         // Suma el precio de los servicios de reserva
-        $totalPrice += $this->calculateBookServicesPrice($bookData);
+        $totalPrice += $this->calculateBookServicesPrice($bookData['bookServicesDetails']);
 
         return $totalPrice;
     }
@@ -41,7 +41,7 @@ class BookingPriceCalculatorTool
         return $passengerPrice;
     }
 
-    private function calculatePassengerServicesPrice($passenger)
+    public function calculatePassengerServicesPrice($passenger)
     {
         $servicesPrice = 0;
         if (!empty($passenger['services'])) {
@@ -52,14 +52,28 @@ class BookingPriceCalculatorTool
         return $servicesPrice;
     }
 
-    private function calculateBookServicesPrice($bookData)
+    public function calculateBookServicesPrice($bookServicesDetails)
     {
         $servicesPrice = 0;
-        if (!empty($bookData['bookServicesDetails'])) {
-            foreach ($bookData['bookServicesDetails'] as $servicePrice) {
+        if (!empty($bookServicesDetails)) {
+            foreach ($bookServicesDetails as $servicePrice) {
                 $servicesPrice += $servicePrice;
             }
         }
         return $servicesPrice;
+    }
+
+    public function getPassengersServicesSummary($passengers) {
+        $services = [];
+        foreach($passengers as $passenger) {
+            foreach($passenger['services'] as $serviceCode => $price) {
+                if (!isset($services[$serviceCode])) {
+                    $services[$serviceCode] = ['priceByOne' => $price, 'number' => 1];
+                } else {
+                    $services[$serviceCode]['number']++;
+                }
+            }
+        }
+        return $services;
     }
 }

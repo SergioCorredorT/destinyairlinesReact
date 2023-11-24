@@ -180,6 +180,7 @@ final class BookController extends BaseController
 
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
         $BookingDataEnricherTool = new BookingDataEnricherTool();
+        $BookingProcessTool = new BookingProcessTool();
 
         $accessToken = $POST['accessToken'];
         $accessToken = TokenSanitizer::sanitizeToken($accessToken);
@@ -205,6 +206,11 @@ final class BookController extends BaseController
             return false;
         }
 
+        $invoiceData = $BookingProcessTool->generateInvoiceData($departureWithPrices, $departureTotalPrice, 'departure'); //Generamos los datos de invoice
+        //$this->generateInvoiceHtml();//Generamos el html de invoice con los datos
+        //$this->generateInvoicePDF();//Generamos el PDF de invoice con html
+        //Aquí llamamos a sendEmail enviando el pdf adjuntado y con el template invoice
+
         $returnWithPrices;
         $returnTotalPrice = 0;
         if (!is_null(SessionTool::get('return'))) {
@@ -216,28 +222,20 @@ final class BookController extends BaseController
             if (!$this->saveBooking($returnWithPrices, $decodedToken['response']->data->id, 'return', $returnTotalPrice)) {
                 return false;
             }
+            $invoiceData = $BookingProcessTool->generateInvoiceData($returnWithPrices, $returnTotalPrice, 'return'); //Generamos los datos de invoice
+            //$this->generateInvoiceHtml();//Generamos el html de invoice con los datos
+            //$this->generateInvoicePDF();//Generamos el PDF de invoice con html
+            //Aquí llamamos a sendEmail enviando el pdf adjuntado y con el template invoice
         }
-        $totalPrice = $departureTotalPrice + $returnTotalPrice;
-        $this->generateInvoiceData();
-        //Aquí llamamos a sendEmail enviando los datos y el nombre de la template
 
         /*
         if (!$this->doPayment($totalPrice)) {
-           return false;
+            return false;
         }
         */
 
-        //Guardar factura
-        //Enviar factura al email
-
         return true;
     }
-
-    private function generateInvoiceData() {
-        //generamos los datos
-    }
-
-
 
     private function checkDetails($direction)
     {
@@ -311,14 +309,14 @@ final class BookController extends BaseController
         require_once './Tools/IniTool.php';
         $PaymentTool = new PaymentTool();
         $iniTool = new IniTool('./Config/cfg.ini');
-        $paypal = $iniTool->getKeysAndValues('paypal');
+        $paypalCfg = $iniTool->getKeysAndValues('paypal');
         //calcular precio aquí para enviarselo a createPaymentPaypal()
 
         //Metemos los datos de factura en la bbdd en la tabla INVOICES (Añadir campos de los gastos)
         //Generamos token de vida corta (con el id del usuario y el de la factura) para mandarlo por get al returnUrl (allí se descodifica y se muestra la factura además de enviar por email)
         //OJO: si caduca el token, en el returnUrl se le debe avisar al cliente de que si quiere que se le expida la factura, se loguee y lo solicite en "Mis reservas".
         //El cancelUrl solo contendrá un aviso de que se canceló
-        $PaymentTool->createPaymentPaypal($paypal['clientId'], $paypal['clientSecret'], $totalPrice, 'EUR', $paypal['returnUrl'], $paypal['cancelUrl']);
+        $PaymentTool->createPaymentPaypal($paypalCfg['clientId'], $paypalCfg['clientSecret'], $totalPrice, 'EUR', $paypalCfg['returnUrl'], $paypalCfg['cancelUrl']);
         //Aquí solo devolvemos true para que en el frontend ponga un modal con un botón para comprobar si se hizo la compra
         //si sí, avisa de ello, va al index.html y elimina las variables de session del viaje
         //si no, dará opción de volver a intentar compra (simplemente desaparece el modal, y se comprueba si siguen las variables de session y el login, (si no están pues al index y eliminar variables de session)), o de ir al index.html (entonces se eliminan las variables de session del viaje)

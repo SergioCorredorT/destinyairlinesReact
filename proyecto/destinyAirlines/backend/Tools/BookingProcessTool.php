@@ -243,4 +243,39 @@ class BookingProcessTool
 
         return false;
     }
+
+    public function generateInvoiceData($bookDataInOneDirection, $totalPrice, $direction) {
+        require_once './Tools/BookingPriceCalculatorTool.php';
+        $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
+        $servicesModel = new ServicesModel();
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $priceSettings = $iniTool->getKeysAndValues("priceSettings");
+
+        $numberPeopleForDiscountForMoreThanXPersons = intval($priceSettings['discountForMoreThanXPersons']) ?? 0;
+        $discountPercentageForDiscountMoreThanXPersons = $servicesModel->readServiceDiscount('SRV009');
+        $discountPercentageReturn = $servicesModel->readServiceDiscount('SRV012');
+
+        $flightPrice = $bookDataInOneDirection['flightDetails']['flightPrice'];
+        $passengersNumbers = $this->getPassengersNumberByAgeCategory($bookDataInOneDirection['passengersDetails']);
+        $discountPercentageForDiscountMoreThanXPersons = $servicesModel->readServiceDiscount('SRV009');
+        $passengersServices = $BookingPriceCalculatorTool->getPassengersServicesSummary($bookDataInOneDirection['passengersDetails']);
+
+        $bookServicesWithPrices = $bookDataInOneDirection['bookServicesDetails'];
+        $bookServicesTotalPrice = $BookingPriceCalculatorTool->calculateBookServicesPrice($bookServicesWithPrices);
+
+        return [
+            'flightPrice' => $flightPrice,
+            'passengersNumbers' => $passengersNumbers,
+            'numberPeopleForDiscountForMoreThanXPersons' => $numberPeopleForDiscountForMoreThanXPersons,
+            'discountPercentageForDiscountMoreThanXPersons' => $discountPercentageForDiscountMoreThanXPersons,
+            'direction' => $direction,
+            'discountPercentageReturn' => $discountPercentageReturn,
+            'passengersServices' => $passengersServices,
+            'bookServicesWithPrices' => $bookServicesWithPrices,
+            'bookServicesTotalPrice' => $bookServicesTotalPrice,
+            'totalPrice' => $totalPrice
+        ];
+        //Falta código de respuesta de paypal respecto al pago
+        //generamos los datos
+    }
 }
