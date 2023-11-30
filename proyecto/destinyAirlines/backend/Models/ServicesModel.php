@@ -19,9 +19,9 @@ final class ServicesModel extends BaseModel
         return parent::select('serviceCode', 'serviceGroupingType = "collective" AND billingCategory = "PaidService"  AND status = "active" ');
     }
 
-    public function readServicePrices(array $services)
+    public function readServicePrices(array $serviceCodes)
     {
-        $serviceCodes = "'" . implode("','", $services) . "'";
+        $serviceCodes = "'" . implode("','", $serviceCodes) . "'";
         $prices = parent::select('serviceCode, priceOrDiscount AS price', "serviceCode IN ($serviceCodes)");
 
         $servicePrices = array();
@@ -31,6 +31,19 @@ final class ServicesModel extends BaseModel
 
         return $servicePrices;
     }
+
+    public function readServicePrice(string $serviceCode)
+    {
+        $price = parent::select('priceOrDiscount AS price', "serviceCode = '$serviceCode'");
+    
+        $servicePrice = 0;
+        if (count($price) > 0) {
+            $servicePrice = floatval($price[0]['price']);
+        }
+    
+        return $servicePrice;
+    }
+    
 
     public function readServiceDiscount(string $serviceCode)
     {

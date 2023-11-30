@@ -197,7 +197,7 @@ class BookingProcessTool
 
         return [$additionalInformationData, $passengerServiceData, $servicesInvoicesData];
     }
-    
+
     public function createAdditionalInformation($additionalInformationData) {
         require_once './Models/AdditionalInformationModel.php';
         $additionalInformationModel = new AdditionalInformationModel();
@@ -249,15 +249,16 @@ class BookingProcessTool
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
         $servicesModel = new ServicesModel();
         $iniTool = new IniTool('./Config/cfg.ini');
+        $databaseFieldMappings = $iniTool->getKeysAndValues("databaseFieldMappings");
         $priceSettings = $iniTool->getKeysAndValues("priceSettings");
 
         $numberPeopleForDiscountForMoreThanXPersons = intval($priceSettings['discountForMoreThanXPersons']) ?? 0;
-        $discountPercentageForDiscountMoreThanXPersons = $servicesModel->readServiceDiscount('SRV009');
-        $discountPercentageReturn = $servicesModel->readServiceDiscount('SRV012');
+        $discountPercentageForDiscountMoreThanXPersons = $servicesModel->readServiceDiscount($databaseFieldMappings['discountForMoreThanXPersonsCode']);
+        $discountPercentageReturn = $servicesModel->readServiceDiscount($databaseFieldMappings['discountReturnFlightCode']);
 
         $flightPrice = $bookDataInOneDirection['flightDetails']['flightPrice'];
         $passengersNumbers = $this->getPassengersNumberByAgeCategory($bookDataInOneDirection['passengersDetails']);
-        $discountPercentageForDiscountMoreThanXPersons = $servicesModel->readServiceDiscount('SRV009');
+        $discountPercentageForDiscountMoreThanXPersons = $servicesModel->readServiceDiscount($databaseFieldMappings['discountForMoreThanXPersonsCode']);
         $passengersServices = $BookingPriceCalculatorTool->getPassengersServicesSummary($bookDataInOneDirection['passengersDetails']);
 
         $bookServicesWithPrices = $bookDataInOneDirection['bookServicesDetails'];

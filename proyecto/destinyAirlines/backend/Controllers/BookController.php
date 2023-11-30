@@ -19,8 +19,7 @@ final class BookController extends BaseController
             'flightCode'      => $POST['flightCode'] ?? '',
             'adultsNumber'    => $POST['adultsNumber'] ?? '',
             'childsNumber'    => $POST['childsNumber'] ?? '',
-            'infantsNumber'   => $POST['infantsNumber'] ?? '',
-            'dateTime'        => date('Y-m-d H:i:s')
+            'infantsNumber'   => $POST['infantsNumber'] ?? ''
         ];
 
         $direction = $POST['direction'] ?? '';
@@ -72,7 +71,8 @@ final class BookController extends BaseController
             ];
 
             foreach ($keys_default as $key => $defaultValue) {
-                $passengerDetails[$key] = $passenger[$key] ?? $defaultValue;
+                //$passengerDetails[$key] = (isset($passenger[$key]) && $passenger[$key] !== '') ? $passenger[$key] : $defaultValue;
+                $passengerDetails[$key] = $POST[$key] ?? $defaultValue;
             }
 
             //Cada pasajero lo saneamos y validamos
@@ -151,6 +151,7 @@ final class BookController extends BaseController
         ];
 
         foreach ($primaryContactDetails as $key => $defaultValue) {
+            //$primaryContactDetails[$key] = (isset($primaryContactDetails[$key]) && $primaryContactDetails[$key] !== '') ? $primaryContactDetails[$key] : $defaultValue;
             $primaryContactDetails[$key] = $POST[$key] ?? $defaultValue;
         }
         $direction = $POST['direction'] ?? '';
@@ -180,7 +181,6 @@ final class BookController extends BaseController
 
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
         $BookingDataEnricherTool = new BookingDataEnricherTool();
-        $BookingProcessTool = new BookingProcessTool();
 
         $accessToken = $POST['accessToken'];
         $accessToken = TokenSanitizer::sanitizeToken($accessToken);
@@ -198,42 +198,47 @@ final class BookController extends BaseController
             return false;
         }
 
+        $idUser = $decodedToken['response']->data->id;
+
         //Obtenemos lo que hemos guardado en sesiones pero con precios, y además, siendo precios actualizados
         $departureWithPrices = $BookingDataEnricherTool->getCompleteBookWithPricesFromSession('departure');
         $departureTotalPrice = $BookingPriceCalculatorTool->calculateTotalPriceFromBookWithPrices($departureWithPrices);
 
-        if (!$this->saveBooking($departureWithPrices, $decodedToken['response']->data->id, 'departure', $departureTotalPrice)) {
+        $idInvoiceD = $this->saveBooking($departureWithPrices, $idUser, 'departure', $departureTotalPrice);
+        if (!$idInvoiceD) {
             return false;
         }
 
-        $invoiceData = $BookingProcessTool->generateInvoiceData($departureWithPrices, $departureTotalPrice, 'departure'); //Generamos los datos de invoice
+        //LO SIGUIENTE EN EL RETURNURL DE PAYPAL
+        //$departureInvoiceData = $BookingProcessTool->generateInvoiceData($departureWithPrices, $departureTotalPrice, 'departure'); //Generamos los datos de invoice
         //$this->generateInvoiceHtml();//Generamos el html de invoice con los datos
         //$this->generateInvoicePDF();//Generamos el PDF de invoice con html
         //Aquí llamamos a sendEmail enviando el pdf adjuntado y con el template invoice
 
         $returnWithPrices;
         $returnTotalPrice = 0;
+        $idInvoiceR = null;
         if (!is_null(SessionTool::get('return'))) {
             if (!$this->checkDetails('return')) {
                 return false;
             }
             $returnWithPrices = $BookingDataEnricherTool->getCompleteBookWithPricesFromSession('return');
             $returnTotalPrice = $BookingPriceCalculatorTool->calculateTotalPriceFromBookWithPrices($returnWithPrices);
-            if (!$this->saveBooking($returnWithPrices, $decodedToken['response']->data->id, 'return', $returnTotalPrice)) {
+            $idInvoiceR = $this->saveBooking($returnWithPrices, $idUser, 'return', $returnTotalPrice);
+            if (!$idInvoiceR) {
                 return false;
             }
-            $invoiceData = $BookingProcessTool->generateInvoiceData($returnWithPrices, $returnTotalPrice, 'return'); //Generamos los datos de invoice
+            //LO SIGUIENTE EN EL RETURNURL DE PAYPAL
+            //$returnInvoiceData = $BookingProcessTool->generateInvoiceData($returnWithPrices, $returnTotalPrice, 'return'); //Generamos los datos de invoice
             //$this->generateInvoiceHtml();//Generamos el html de invoice con los datos
             //$this->generateInvoicePDF();//Generamos el PDF de invoice con html
             //Aquí llamamos a sendEmail enviando el pdf adjuntado y con el template invoice
         }
-
         /*
-        if (!$this->doPayment($totalPrice)) {
+        if (!$this->doPayment($totalPrice,  $idUser, $idInvoiceD, $idInvoiceR)) {
             return false;
         }
-        */
-
+*/
         return true;
     }
 
@@ -256,10 +261,12 @@ final class BookController extends BaseController
 
     private function saveBooking(array $bookData, $idUser, $direction = 'departure', $totalPrice)
     {
+        require_once './Tools/IniTool.php';
         require_once './Tools/BookingProcessTool.php';
-        require_once './Models/FlightModel.php';
         $BookingProcessTool = new BookingProcessTool();
         $flightModel = new FlightModel();
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $priceSettings = $iniTool->getKeysAndValues('priceSettings');
 
         if (!$BookingProcessTool->validateSeatAvailability($bookData['passengersDetails'], $bookData['flightDetails']['flightCode'])) {
             return false;
@@ -289,7 +296,30 @@ final class BookController extends BaseController
             $BookingProcessTool->createPassengerBookService($passengerServiceData);
             $BookingProcessTool->createServicesInvoices($servicesInvoicesData);
 
-            //volvemos a revisar si siguen habiendo libres y actualizamos freeSeats del vuelo correspondiente
+            //Discounts
+            //Almacenar descuento de más de x pasajeros
+            $servicesModel = new ServicesModel();
+            $databaseFieldMappings = $iniTool->getKeysAndValues("databaseFieldMappings");
+            $discounts = [];
+            if (count($bookData['passengersDetails']) > intval($priceSettings['discountForMoreThanXPersons'])) {
+                $discountForMoreThanXPersonsCode = $databaseFieldMappings['discountForMoreThanXPersonsCode'];
+                $discountForMoreThanXPersonsPrice = $servicesModel->readServicePrice($discountForMoreThanXPersonsCode);
+                $discounts[$discountForMoreThanXPersonsCode] = $discountForMoreThanXPersonsPrice;
+            }
+
+            //Almacenar descuento de vuelta
+            if ($direction === 'return') {
+                $discountReturnCode = $databaseFieldMappings['discountForMoreThanXPersonsCode'];
+                $discountReturnPrice = $servicesModel->readServicePrice($discountReturnCode);
+                $discounts[$discountReturnCode] = $discountReturnPrice;
+            }
+
+            //Guardamos descuentos en BBDD
+            if (!empty($discounts)) {
+                $BookingProcessTool->saveBookServicesAndServicesInvoices($idBook, $discounts, $idInvoice);
+            }
+
+            //Volvemos a revisar si siguen habiendo libres y actualizamos freeSeats del vuelo correspondiente
             $BookingProcessTool->decreaseAvailableSeats($bookData['passengersDetails'], $bookData['flightDetails']['flightCode']);
 
             $flightModel->commit();
@@ -299,24 +329,26 @@ final class BookController extends BaseController
             return false;
         }
 
-        return true;
+        return $idInvoice;
     }
 
-    private function doPayment($totalPrice)
+    private function doPayment($totalPrice, $idUser, $idInvoiceD, $idInvoiceR = null)
     {
-        //Proceso de pago
         require_once './Tools/PaymentTool.php';
+        require_once './Tools/TokenTool.php';
         require_once './Tools/IniTool.php';
         $PaymentTool = new PaymentTool();
         $iniTool = new IniTool('./Config/cfg.ini');
         $paypalCfg = $iniTool->getKeysAndValues('paypal');
-        //calcular precio aquí para enviarselo a createPaymentPaypal()
 
-        //Metemos los datos de factura en la bbdd en la tabla INVOICES (Añadir campos de los gastos)
-        //Generamos token de vida corta (con el id del usuario y el de la factura) para mandarlo por get al returnUrl (allí se descodifica y se muestra la factura además de enviar por email)
-        //OJO: si caduca el token, en el returnUrl se le debe avisar al cliente de que si quiere que se le expida la factura, se loguee y lo solicite en "Mis reservas".
-        //El cancelUrl solo contendrá un aviso de que se canceló
-        $PaymentTool->createPaymentPaypal($paypalCfg['clientId'], $paypalCfg['clientSecret'], $totalPrice, 'EUR', $paypalCfg['returnUrl'], $paypalCfg['cancelUrl']);
+        //CREAR TOKEN de 3 horas (caducidad de paypal en su web)
+        $data = ['id' => $idUser, 'idUser' => $idUser, 'idInvoiceD' => $idInvoiceD, 'type' => 'payment'];
+        if ($idInvoiceR) {
+            $data['idInvoiceR'] = $idInvoiceR;
+        }
+        $paymentToken = TokenTool::generateToken($data, intval($paypalCfg['secondsTimeLifePaymentReturnUrl']));
+
+        $PaymentTool->createPaymentPaypal($paypalCfg['clientId'], $paypalCfg['clientSecret'], $totalPrice, 'EUR', $paypalCfg['returnUrl'] . '?token=' . $paymentToken . '&command=paypalredirectok', $paypalCfg['cancelUrl'] . '&command=paypalredirectcancel');
         //Aquí solo devolvemos true para que en el frontend ponga un modal con un botón para comprobar si se hizo la compra
         //si sí, avisa de ello, va al index.html y elimina las variables de session del viaje
         //si no, dará opción de volver a intentar compra (simplemente desaparece el modal, y se comprueba si siguen las variables de session y el login, (si no están pues al index y eliminar variables de session)), o de ir al index.html (entonces se eliminan las variables de session del viaje)
@@ -350,6 +382,13 @@ final class BookController extends BaseController
         if ($direction !== 'departure' && $direction !== 'return') {
             return false;
         }
+        return true;
+    }
+
+    public function cancelBooking()
+    {
+        SessionTool::remove('departure');
+        SessionTool::remove('return');
         return true;
     }
 }

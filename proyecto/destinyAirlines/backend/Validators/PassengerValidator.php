@@ -292,38 +292,39 @@ class PassengerValidator
 
     public static function validate(array $data)
     {
+        
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
             return false;
         }
-
+        
         if (isset($data['title']) && !self::validateTitle($data['title'])) {
             return false;
         }
-
+        
         if (isset($data['firstName']) && !self::validateFirstName($data['firstName'])) {
             return false;
         }
-
+        
         if (isset($data['lastName']) && !self::validateLastName($data['lastName'])) {
             return false;
         }
-
+        
         if (isset($data['ageCategory']) && !self::validateAgeCategory($data['ageCategory'])) {
             return false;
         }
- 
+        
         if (isset($data['nationality']) && !self::validateNationality($data['nationality'])) {
             return false;
         }
-
+        
         if (isset($data['country']) && !self::validateCountry($data['country'])) {
             return false;
         }
-
+        
         if (isset($data['dateBirth']) && !self::validateDateBirth($data['dateBirth'])) {
             return false;
         }
-
+        
         if (isset($data['assistiveDevices']) && !self::validateAssistiveDevices($data['assistiveDevices'])) {
             return false;
         }
@@ -331,23 +332,23 @@ class PassengerValidator
         if (isset($data['medicalEquipment']) && !self::validateMedicalEquipment($data['medicalEquipment'])) {
             return false;
         }
-
+        
         if (isset($data['mobilityLimitations']) && !self::validateMobilityLimitations($data['mobilityLimitations'])) {
             return false;
         }
-
+        
         if (isset($data['communicationNeeds']) && !self::validateCommunicationNeeds($data['communicationNeeds'])) {
             return false;
         }
-
+        
         if (isset($data['medicationRequirements']) && !self::validateMedicationRequirements($data['medicationRequirements'])) {
             return false;
         }
-
+        
         if (isset($data['services']) && !self::validateIndividualServiceCodes($data['services'])) {
             return false;
         }
-
+        
         return true;
     }
 }

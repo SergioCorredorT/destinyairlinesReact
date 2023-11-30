@@ -203,6 +203,53 @@
               value="updateUser"
             /><span class="nullButton">Null?</span>
           </div>
+
+          <div class="filaForm">
+            <input
+              type="text"
+              id="documentationType"
+              name="documentationType"
+              data-name="documentationType"
+              placeholder="documentationType"
+              value="DNI"
+            />
+            <input
+              type="checkbox"
+              class="checkNullify"
+              onchange="nullifyInput(this, `#updateForm [data-name='documentationType']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="text"
+              id="documentCode"
+              name="documentCode"
+              data-name="documentCode"
+              placeholder="documentCode"
+              value="12345678A"
+            />
+            <input
+              type="checkbox"
+              class="checkNullify"
+              onchange="nullifyInput(this, `#updateForm [data-name='documentCode']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
+              type="date"
+              id="expirationDate"
+              name="expirationDate"
+              data-name="expirationDate"
+              placeholder="expirationDate"
+              value="2024-12-01"
+            />
+            <input
+              type="checkbox"
+              class="checkNullify"
+              onchange="nullifyInput(this, `#updateForm [data-name='expirationDate']`)"
+            />
+          </div>
+
           <div class="filaForm">
             <input
               type="text"
@@ -215,7 +262,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_title"
               onchange="nullifyInput(this, `#updateForm [data-name='title']`)"
             />
           </div>
@@ -231,7 +277,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_firstName"
               onchange="nullifyInput(this, `#updateForm [data-name='firstName']`)"
             />
           </div>
@@ -248,7 +293,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_lastName"
               onchange="nullifyInput(this, `#updateForm [data-name='lastName']`)"
             />
           </div>
@@ -264,7 +308,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_townCity"
               onchange="nullifyInput(this, `#updateForm [data-name='townCity']`)"
             />
           </div>
@@ -280,7 +323,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_streetAddress"
               onchange="nullifyInput(this, `#updateForm [data-name='streetAddress']`)"
             />
           </div>
@@ -296,7 +338,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_zipCode"
               onchange="nullifyInput(this, `#updateForm [data-name='zipCode']`)"
             />
           </div>
@@ -312,7 +353,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_country"
               onchange="nullifyInput(this, `#updateForm [data-name='country']`)"
             />
           </div>
@@ -328,7 +368,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_password"
               onchange="nullifyInput(this, `#updateForm [data-name='password']`)"
             />
           </div>
@@ -344,7 +383,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_phoneNumber1"
               onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber1']`)"
             />
           </div>
@@ -360,7 +398,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_phoneNumber2"
               onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber2']`)"
             />
           </div>
@@ -376,7 +413,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_phoneNumber3"
               onchange="nullifyInput(this, `#updateForm [data-name='phoneNumber3']`)"
             />
           </div>
@@ -392,7 +428,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_companyName"
               onchange="nullifyInput(this, `#updateForm [data-name='companyName']`)"
             />
           </div>
@@ -407,7 +442,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_companyTaxNumber"
               onchange="nullifyInput(this, `#updateForm [data-name='companyTaxNumber']`)"
             />
           </div>
@@ -422,7 +456,6 @@
             <input
               type="checkbox"
               class="checkNullify"
-              name="nullify_companyPhoneNumber"
               onchange="nullifyInput(this, `#updateForm [data-name='companyPhoneNumber']`)"
             />
           </div>
@@ -454,14 +487,76 @@
           method="post"
         >
           <input type="text" readonly name="command" value="createuser" />
+
+          <input
+            type="text"
+            name="documentationType"
+            placeholder="documentationType"
+            value="DNI"
+          />
+          <input
+            type="text"
+            name="documentCode"
+            placeholder="documentCode"
+            value="12345678A"
+          />
+          <input
+            type="date"
+            name="expirationDate"
+            placeholder="expirationDate"
+            value="2024-12-01"
+          />
           <input type="text" name="firstName" value="A555" />
+          <input type="text" name="lastName" placeholder="lastName" value="Corredor" />
+          <input type="text" name="townCity" placeholder="townCity" value="Albacete" />
+          <input
+            type="text"
+            name="streetAddress"
+            placeholder="streetAddress"
+            value="Calle falsa 123"
+          />
           <input type="text" name="zipCode" value="25" />
+          <input type="text" name="country" placeholder="country" value="España" />
           <input
             type="text"
             name="emailAddress"
             value="sergiodesarrolladorweb@gmail.com"
           />
           <input type="text" name="password" value="_Aa1234567" />
+          <input
+            type="text"
+            name="phoneNumber1"
+            placeholder="Phone Number 1"
+            value="111223344"
+          />
+          <input
+            type="text"
+            name="phoneNumber2"
+            placeholder="Phone Number 2"
+            value=""
+          />
+          <input
+            type="text"
+            name="phoneNumber3"
+            placeholder="Phone Number 3"
+            value=""
+          />
+          <input
+            type="text"
+            name="companyName"
+            placeholder="Company Name"
+            value=""
+          />
+          <input
+            type="text"
+            name="companyTaxNumber"
+            placeholder="Company Tax Number"
+          />
+          <input
+            type="text"
+            name="companyPhoneNumber"
+            placeholder="Company Phone Number"
+          />
           <button type="submit">Enviar POST</button>
         </form>
         <form
@@ -957,13 +1052,16 @@
             readonly
           />
           <label
-            >SRV010 <input type="checkbox" name="bookServices[SRV010]" value="SRV010"
+            >SRV010
+            <input type="checkbox" name="bookServices[SRV010]" value="SRV010"
           /></label>
           <label
-            >SRV004 <input type="checkbox" name="bookServices[SRV004]" value="SRV004"
+            >SRV004
+            <input type="checkbox" name="bookServices[SRV004]" value="SRV004"
           /></label>
           <label
-            >SRV003 <input type="checkbox" name="bookServices[SRV003]" value="SRV003"
+            >SRV003
+            <input type="checkbox" name="bookServices[SRV003]" value="SRV003"
           /></label>
           <input type="text" name="direction" value="departure" />
           <button type="submit">Enviar POST</button>

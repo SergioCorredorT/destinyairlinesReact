@@ -6,12 +6,13 @@ class BookingPriceCalculatorTool
     {
         $totalPrice = 0;
         $iniTool = new IniTool('./Config/cfg.ini');
+        $databaseFieldMappings = $iniTool->getKeysAndValues("databaseFieldMappings");
         $priceSettings = $iniTool->getKeysAndValues("priceSettings");
         $numberPeopleForDiscountForMoreThanXPersons = intval($priceSettings['discountForMoreThanXPersons']) ?? 0;
         $discountPercentageForDiscountMoreThanXPersons = 0;
         if (count($bookData['passengersDetails']) > $numberPeopleForDiscountForMoreThanXPersons) {
             $servicesModel = new ServicesModel();
-            $discountPercentageForDiscountMoreThanXPersons = $servicesModel->readServiceDiscount('SRV009');
+            $discountPercentageForDiscountMoreThanXPersons = $servicesModel->readServiceDiscount($databaseFieldMappings['discountForMoreThanXPersonsCode']);
         }
 
         // Suma el precio del vuelo para cada pasajero

@@ -19,10 +19,13 @@ $cancelUrl: Esta es la URL a la que PayPal redirigirá al cliente si decide canc
     {
         require 'vendor/autoload.php';
 
+        define('PAYMENT_METHOD', 'paypal');
+        define('PAYMENT_INTENT', 'sale');
+
         $apiContext = new \PayPal\Rest\ApiContext(
             new \PayPal\Auth\OAuthTokenCredential(
                 $clientId,     // ClientID
-                $clientSecret      // ClientSecret
+                $clientSecret  // ClientSecret
             )
         );
 
@@ -33,7 +36,7 @@ $cancelUrl: Esta es la URL a la que PayPal redirigirá al cliente si decide canc
         );
 
         $payer = new \PayPal\Api\Payer();
-        $payer->setPaymentMethod('paypal');
+        $payer->setPaymentMethod(PAYMENT_METHOD);
 
         $amount = new \PayPal\Api\Amount();
         $amount->setTotal($total);
@@ -47,7 +50,7 @@ $cancelUrl: Esta es la URL a la que PayPal redirigirá al cliente si decide canc
             ->setCancelUrl($cancelUrl);
 
         $payment = new \PayPal\Api\Payment();
-        $payment->setIntent('sale')
+        $payment->setIntent(PAYMENT_INTENT)
             ->setPayer($payer)
             ->setTransactions(array($transaction))
             ->setRedirectUrls($redirectUrls);
@@ -56,6 +59,7 @@ $cancelUrl: Esta es la URL a la que PayPal redirigirá al cliente si decide canc
             $payment->create($apiContext);
             return $payment;
         } catch (Exception $ex) {
+            error_log($ex->getMessage());
             return false;
         }
     }

@@ -25,8 +25,6 @@ final class ContactController extends BaseController
         foreach ($keys_default as $key => $defaultValue) {
             $contactData[$key] = $POST[$key] ?? $defaultValue;
         }
-
-        $contactData['dateTime'] = date('Y-m-d H:i:s');
         
         $contactData = ContactSanitizer::sanitize($contactData);
         $isValidate = ContactValidator::validate($contactData);

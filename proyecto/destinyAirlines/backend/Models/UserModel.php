@@ -21,7 +21,11 @@ final class UserModel extends BaseModel
 
     public function getEmailById(int $id_USERS)
     {
-        return parent::select('emailAddress', "id_USERS = $id_USERS")[0]['emailAddress'];
+        $results = parent::select('emailAddress', "id_USERS = $id_USERS");
+        if(empty($results)) {
+            return false;
+        }
+        return $results[0]['emailAddress'];
     }
 
     public function readUserByEmailPassword(string $email, string $password)

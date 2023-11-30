@@ -18,7 +18,10 @@ final class UserController extends BaseController
     public function createUser(array $POST)
     {
         $keys_default = [
-            'title' => '',
+            'documentationType' => '',
+            'documentCode' => '',
+            'expirationDate' => '',
+            'title' => null,
             'firstName' => '',
             'lastName' => '',
             'townCity' => '',
@@ -28,18 +31,16 @@ final class UserController extends BaseController
             'emailAddress' => '',
             'password' => '',
             'phoneNumber1' => '',
-            'phoneNumber2' => '',
-            'phoneNumber3' => '',
-            'companyName' => '',
-            'companyTaxNumber' => '',
-            'companyPhoneNumber' => ''
+            'phoneNumber2' => null,
+            'phoneNumber3' => null,
+            'companyName' => null,
+            'companyTaxNumber' => null,
+            'companyPhoneNumber' => null
         ];
 
         foreach ($keys_default as $key => $defaultValue) {
             $userData[$key] = $POST[$key] ?? $defaultValue;
         }
-
-        $userData['dateTime'] = date('Y-m-d H:i:s');
 
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
@@ -59,30 +60,41 @@ final class UserController extends BaseController
     {
         require_once './Tools/TokenTool.php';
         //En $POST solo se deben recibir los campos que se desea usar, ya sea para enviar a BBDD o hacer algo, al final, justo antes del update, se extraerán los campos no usados para el update
-        $keys_default = [
+        $optional_keys_default = [
             'title' => null,
-            'firstName' => null,
-            'lastName' => null,
-            'townCity' => null,
-            'streetAddress' => null,
-            'zipCode' => null,
-            'country' => null,
-            'password' => null,
-            'phoneNumber1' => null,
+            'firstName' => '',
+            'lastName' => '',
+            'townCity' => '',
+            'streetAddress' => '',
+            'zipCode' => '',
+            'country' => '',
+            'password' => '',
+            'phoneNumber1' => '',
             'phoneNumber2' => null,
             'phoneNumber3' => null,
             'companyName' => null,
             'companyTaxNumber' => null,
             'companyPhoneNumber' => null,
+            'documentationType' => '',
+            'documentCode' => '',
+            'expirationDate' => ''
+        ];
+
+        $fixed_keys_default = [
             'accessToken' => '',
             'emailAddressAuth' => ''
         ];
 
-        foreach ($keys_default as $key => $defaultValue) {
-            $userData[$key] = $POST[$key] ?? $defaultValue;
+        //Recogemos los campos opcionales, con valor opcional (null), o con valor a validar ('')
+        foreach ($optional_keys_default as $key => $defaultValue) {
+            if (isset($POST[$key])) {
+                $userData[$key] = !empty($POST[$key]) ? $POST[$key] : $defaultValue; //Antes que poner un '' ponemos un null
+            }
         }
 
-        $userData['dateTime'] = date('Y-m-d H:i:s');
+        foreach ($fixed_keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
 
         //SANEAR y VALIDAR
         $userData = UserSanitizer::sanitize($userData);
@@ -99,6 +111,10 @@ final class UserController extends BaseController
 
         $email = $UserModel->getEmailById($decodedToken['response']->data->id);
 
+        if (!$email) {
+            return false;
+        }
+
         if ($email !== $POST['emailAddressAuth']) {
             return false;
         }
@@ -111,7 +127,7 @@ final class UserController extends BaseController
         //Quitamos los datos que no se deben editar en BBDD antes del update
         unset($userData['emailAddressAuth']);
         unset($userData['accessToken']);
-        if ($UserModel->updateUsersByEmail(array_filter($userData), $email)) {
+        if ($UserModel->updateUsersByEmail($userData, $email)) {
             return true;
         }
         return false;
@@ -129,7 +145,6 @@ final class UserController extends BaseController
         foreach ($keys_default as $key => $defaultValue) {
             $userData[$key] = $POST[$key] ?? $defaultValue;
         }
-        $userData['dateTime'] = date('Y-m-d H:i:s');
 
         $userData = UserSanitizer::sanitize($userData);
         if (!UserValidator::validate($userData)) {
@@ -166,7 +181,6 @@ final class UserController extends BaseController
         foreach ($keys_default as $key => $defaultValue) {
             $userData[$key] = $POST[$key] ?? $defaultValue;
         }
-        $userData['dateTime'] = date('Y-m-d H:i:s');
 
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
@@ -249,8 +263,7 @@ final class UserController extends BaseController
         require_once './Tools/TokenTool.php';
 
         $userData = [
-            'refreshToken'  => $POST['refreshToken'] ?? '',
-            'dateTime'      => date('Y-m-d H:i:s')
+            'refreshToken'  => $POST['refreshToken'] ?? ''
         ];
 
         $userData = UserSanitizer::sanitize($userData);
@@ -264,7 +277,7 @@ final class UserController extends BaseController
             //Un método más seguro es hacer en server una lista blanca o negra para dejar pasar solo a los refresh tokens adecuados,
             //  pero requeriría carga en el server, y se desaprovecha la ventaja de rendimiento frente a un logueo basado en session
             require_once './Tools/SessionTool.php';
-            if(SessionTool::destroy()){
+            if (SessionTool::destroy()) {
                 return true;
             }
         }
@@ -364,9 +377,7 @@ final class UserController extends BaseController
         foreach ($keys_default as $key => $defaultValue) {
             $userData[$key] = $POST[$key] ?? $defaultValue;
         }
-        $userData['dateTime'] = date('Y-m-d H:i:s');
 
-//Por probar!!!!!!!!
         require_once './Sanitizers/PasswordResetSanitizer.php';
         $userData = PasswordResetSanitizer::sanitize($userData);
 
@@ -423,8 +434,7 @@ final class UserController extends BaseController
     public function forgotPassword(array $POST)
     {
         $userData = [
-            'emailAddress'  => $POST['emailAddress'] ?? '',
-            'dateTime'      => date('Y-m-d H:i:s')
+            'emailAddress'  => $POST['emailAddress'] ?? ''
         ];
 
         $userData = UserSanitizer::sanitize($userData);

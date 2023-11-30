@@ -113,25 +113,24 @@ class PassengerSanitizer
 
     public static function sanitize(array $data)
     {
-        $arraySanitized = [];
         //Si es "", o null, o no está definida no se ejecutará el saneamiento
-        if (!empty($data['documentationType'])) $arraySanitized["documentationType"] = self::sanitizeDocumentationType($data['documentationType']);
-        if (!empty($data['documentCode'])) $arraySanitized["documentCode"] = self::sanitizeDocumentCode($data['documentCode']);
-        if (!empty($data['expirationDate'])) $arraySanitized["expirationDate"] = self::sanitizeExpirationDate($data['expirationDate']);
-        if (!empty($data['title'])) $arraySanitized["title"] = self::sanitizeTitle($data['title']);
-        if (!empty($data['firstName'])) $arraySanitized["firstName"] = self::sanitizeFirstName($data['firstName']);
-        if (!empty($data['lastName'])) $arraySanitized["lastName"] = self::sanitizeLastName($data['lastName']);
-        if (!empty($data['ageCategory'])) $arraySanitized["ageCategory"] = self::sanitizeAgeCategory($data['ageCategory']);
-        if (!empty($data['nationality'])) $arraySanitized["nationality"] = self::sanitizeNationality($data['nationality']);
-        if (!empty($data['country'])) $arraySanitized["country"] = self::sanitizeCountry($data['country']);
-        if (!empty($data['dateBirth'])) $arraySanitized["dateBirth"] = self::sanitizeDateBirth($data['dateBirth']);
-        if (!empty($data['assistiveDevices'])) $arraySanitized["assistiveDevices"] = self::sanitizeAssistiveDevices($data['assistiveDevices']);
-        if (!empty($data['medicalEquipment'])) $arraySanitized["medicalEquipment"] = self::sanitizeMedicalEquipment($data['medicalEquipment']);
-        if (!empty($data['mobilityLimitations'])) $arraySanitized["mobilityLimitations"] = self::sanitizeMobilityLimitations($data['mobilityLimitations']);
-        if (!empty($data['communicationNeeds'])) $arraySanitized["communicationNeeds"] = self::sanitizeCommunicationNeeds($data['communicationNeeds']);
-        if (!empty($data['medicationRequirements'])) $arraySanitized["medicationRequirements"] = self::sanitizeMedicationRequirements($data['medicationRequirements']);
-        if (!empty($data['services'])) $arraySanitized["services"] = self::sanitizeIndividualServiceCodes($data['services']);
+        if (!empty($data['documentationType'])) $data["documentationType"] = self::sanitizeDocumentationType($data['documentationType']);
+        if (!empty($data['documentCode'])) $data["documentCode"] = self::sanitizeDocumentCode($data['documentCode']);
+        if (!empty($data['expirationDate'])) $data["expirationDate"] = self::sanitizeExpirationDate($data['expirationDate']);
+        if (!empty($data['title'])) $data["title"] = self::sanitizeTitle($data['title']);
+        if (!empty($data['firstName'])) $data["firstName"] = self::sanitizeFirstName($data['firstName']);
+        if (!empty($data['lastName'])) $data["lastName"] = self::sanitizeLastName($data['lastName']);
+        if (!empty($data['ageCategory'])) $data["ageCategory"] = self::sanitizeAgeCategory($data['ageCategory']);
+        if (!empty($data['nationality'])) $data["nationality"] = self::sanitizeNationality($data['nationality']);
+        if (!empty($data['country'])) $data["country"] = self::sanitizeCountry($data['country']);
+        if (!empty($data['dateBirth'])) $data["dateBirth"] = self::sanitizeDateBirth($data['dateBirth']);
+        if (!empty($data['assistiveDevices'])) $data["assistiveDevices"] = self::sanitizeAssistiveDevices($data['assistiveDevices']);
+        if (!empty($data['medicalEquipment'])) $data["medicalEquipment"] = self::sanitizeMedicalEquipment($data['medicalEquipment']);
+        if (!empty($data['mobilityLimitations'])) $data["mobilityLimitations"] = self::sanitizeMobilityLimitations($data['mobilityLimitations']);
+        if (!empty($data['communicationNeeds'])) $data["communicationNeeds"] = self::sanitizeCommunicationNeeds($data['communicationNeeds']);
+        if (!empty($data['medicationRequirements'])) $data["medicationRequirements"] = self::sanitizeMedicationRequirements($data['medicationRequirements']);
+        if (!empty($data['services'])) $data["services"] = self::sanitizeIndividualServiceCodes($data['services']);
 
-        return $arraySanitized;
+        return $data;
     }
 }

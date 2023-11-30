@@ -9,6 +9,11 @@ final class ServicesInvoicesModel extends BaseModel
         parent::__construct(self::table);
     }
 
+    public function readServicesInvoicesFromIdInvoice(int $idInvoice)
+    {
+        return parent::select('*', "id_INVOICES = $idInvoice");
+    }
+
     public function createMultipleServicesInvoices(array $data, bool $getId = false)
     {
         return parent::insertMultiple($data, $getId);

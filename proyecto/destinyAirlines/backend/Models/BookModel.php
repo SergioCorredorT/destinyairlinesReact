@@ -14,6 +14,11 @@ final class BookModel extends BaseModel
         return parent::insert($data, $getId);
     }
 
+    public function readBookFromIdBook($idBook)
+    {
+        return parent::select("*", "id_BOOKS = '$idBook'")[0];
+    }
+
     public function readBooks()
     {
         return parent::select("*");

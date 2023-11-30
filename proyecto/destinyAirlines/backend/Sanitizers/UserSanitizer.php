@@ -2,6 +2,25 @@
 require_once './Sanitizers/TokenSanitizer.php';
 class UserSanitizer
 {
+
+    public static function sanitizeDocumentationType($documentationType)
+    {
+        return htmlspecialchars(trim($documentationType));
+    }
+
+    public static function sanitizeDocumentCode($documentCode)
+    {
+        // Aquí va tu código de saneamiento para 'documentCode'
+        return htmlspecialchars(trim($documentCode));
+    }
+
+    public static function sanitizeExpirationDate($expirationDate)
+    {
+        // Elimina todos los caracteres que no sean números, guiones o barras
+        $sanitizedExpirationDate = preg_replace('/[^0-9\-\/]/', '', $expirationDate);
+        return $sanitizedExpirationDate;
+    }
+
     public static function sanitizeTitle($title)
     {
         return htmlspecialchars(trim($title));
@@ -66,27 +85,29 @@ class UserSanitizer
 
     public static function sanitize(array $data)
     {
-        $arraySanitized = [];
-//Si es "", o null, o no está definida no se ejecutará el saneamiento
-        if (!empty($data['title'])) $arraySanitized["title"] = self::sanitizeTitle($data['title']);
-        if (!empty($data['firstName'])) $arraySanitized["firstName"] = self::sanitizeFirstName($data['firstName']);
-        if (!empty($data['lastName'])) $arraySanitized["lastName"] = self::sanitizeLastName($data['lastName']);
-        if (!empty($data['townCity'])) $arraySanitized["townCity"] = self::sanitizeTownCity($data['townCity']);
-        if (!empty($data['streetAddress'])) $arraySanitized["streetAddress"] = self::sanitizeStreetAddress($data['streetAddress']);
-        if (!empty($data['zipCode'])) $arraySanitized["zipCode"] = self::sanitizeZipCode($data['zipCode']);
-        if (!empty($data['country'])) $arraySanitized["country"] = self::sanitizeCountry($data['country']);
-        if (!empty($data['password'])) $arraySanitized["password"] = self::sanitizePassword($data['password']);
-        if (!empty($data['phoneNumber1'])) $arraySanitized["phoneNumber1"] = self::sanitizePhoneNumber1($data['phoneNumber1']);
-        if (!empty($data['phoneNumber2'])) $arraySanitized["phoneNumber2"] = self::sanitizePhoneNumber2($data['phoneNumber2']);
-        if (!empty($data['phoneNumber3'])) $arraySanitized["phoneNumber3"] = self::sanitizePhoneNumber3($data['phoneNumber3']);
-        if (!empty($data['companyName'])) $arraySanitized["companyName"] = self::sanitizeCompanyName($data['companyName']);
-        if (!empty($data['companyTaxNumber'])) $arraySanitized["companyTaxNumber"] = self::sanitizeCompanyTaxNumber($data['companyTaxNumber']);
-        if (!empty($data['companyPhoneNumber'])) $arraySanitized["companyPhoneNumber"] = self::sanitizeCompanyPhoneNumber($data['companyPhoneNumber']);
-        if (!empty($data['emailAddress'])) $arraySanitized["emailAddress"] = self::sanitizeEmailAddress($data['emailAddress']);
-        if (!empty($data['emailAddressAuth'])) $arraySanitized["emailAddressAuth"] = self::sanitizeEmailAddress($data['emailAddressAuth']);
-        if (!empty($data['accessToken'])) $arraySanitized["accessToken"] = TokenSanitizer::sanitizeToken($data['accessToken']);
-        if (!empty($data['refreshToken'])) $arraySanitized["refreshToken"] = TokenSanitizer::sanitizeToken($data['refreshToken']);
-        
-        return $arraySanitized;        
+        //Si es "", o null, o no está definida no se ejecutará el saneamiento
+        if (!empty($data['documentationType'])) $data["documentationType"] = self::sanitizeDocumentationType($data['documentationType']);
+        if (!empty($data['documentCode'])) $data["documentCode"] = self::sanitizeDocumentCode($data['documentCode']);
+        if (!empty($data['expirationDate'])) $data["expirationDate"] = self::sanitizeExpirationDate($data['expirationDate']);
+        if (!empty($data['title'])) $data["title"] = self::sanitizeTitle($data['title']);
+        if (!empty($data['firstName'])) $data["firstName"] = self::sanitizeFirstName($data['firstName']);
+        if (!empty($data['lastName'])) $data["lastName"] = self::sanitizeLastName($data['lastName']);
+        if (!empty($data['townCity'])) $data["townCity"] = self::sanitizeTownCity($data['townCity']);
+        if (!empty($data['streetAddress'])) $data["streetAddress"] = self::sanitizeStreetAddress($data['streetAddress']);
+        if (!empty($data['zipCode'])) $data["zipCode"] = self::sanitizeZipCode($data['zipCode']);
+        if (!empty($data['country'])) $data["country"] = self::sanitizeCountry($data['country']);
+        if (!empty($data['password'])) $data["password"] = self::sanitizePassword($data['password']);
+        if (!empty($data['phoneNumber1'])) $data["phoneNumber1"] = self::sanitizePhoneNumber1($data['phoneNumber1']);
+        if (!empty($data['phoneNumber2'])) $data["phoneNumber2"] = self::sanitizePhoneNumber2($data['phoneNumber2']);
+        if (!empty($data['phoneNumber3'])) $data["phoneNumber3"] = self::sanitizePhoneNumber3($data['phoneNumber3']);
+        if (!empty($data['companyName'])) $data["companyName"] = self::sanitizeCompanyName($data['companyName']);
+        if (!empty($data['companyTaxNumber'])) $data["companyTaxNumber"] = self::sanitizeCompanyTaxNumber($data['companyTaxNumber']);
+        if (!empty($data['companyPhoneNumber'])) $data["companyPhoneNumber"] = self::sanitizeCompanyPhoneNumber($data['companyPhoneNumber']);
+        if (!empty($data['emailAddress'])) $data["emailAddress"] = self::sanitizeEmailAddress($data['emailAddress']);
+        if (!empty($data['emailAddressAuth'])) $data["emailAddressAuth"] = self::sanitizeEmailAddress($data['emailAddressAuth']);
+        if (!empty($data['accessToken'])) $data["accessToken"] = TokenSanitizer::sanitizeToken($data['accessToken']);
+        if (!empty($data['refreshToken'])) $data["refreshToken"] = TokenSanitizer::sanitizeToken($data['refreshToken']);
+
+        return $data;
     }
 }

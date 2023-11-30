@@ -107,6 +107,7 @@ abstract class BaseModel
         $columns = implode(', ', array_keys($data));
         $placeholders = ':' . implode(', :', array_keys($data));
         $query = "INSERT INTO $this->tableName ($columns) VALUES ($placeholders)";
+
         try {
             $stmt = $this->con->prepare($query);
         } catch (Exception $er) {
@@ -115,6 +116,7 @@ abstract class BaseModel
         }
         // Bind parameters
         foreach ($data as $key => $value) {
+            $value = $value === "" ? null : $value;//Si es "" se inserta un null en su lugar
             $stmt->bindValue(':' . $key, $value);
         }
 
@@ -269,11 +271,11 @@ abstract class BaseModel
             $cleanedData = [];
             foreach ($data as $key => $value) {
                 $cleanKey = $this->sanitizeString((string)$key);
-                $cleanedData[$cleanKey] = $this->sanitizeString($value);
+                $cleanedData[$cleanKey] = $value !== null ? $this->sanitizeString($value) : null;
             }
             return $cleanedData;
         } else {
-            return $this->sanitizeString($data);
+            return $data !== null ? $this->sanitizeString($data) : null;
         }
     }
 

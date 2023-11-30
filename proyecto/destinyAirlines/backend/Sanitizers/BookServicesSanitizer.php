@@ -12,10 +12,8 @@ class BookServicesSanitizer
 
     public static function sanitize(array $data)
     {
-        $arraySanitized = [];
+        if (!empty($data)) $data = self::sanitizeCollectiveServiceCodes($data);
 
-        if (!empty($data)) $arraySanitized = self::sanitizeCollectiveServiceCodes($data);
-
-        return $arraySanitized;
+        return $data;
     }
 }

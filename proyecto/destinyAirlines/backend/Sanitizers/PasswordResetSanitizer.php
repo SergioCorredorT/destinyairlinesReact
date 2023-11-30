@@ -13,11 +13,10 @@ class PasswordResetSanitizer
 
     public static function sanitize(array $data)
     {
-        $arraySanitized = [];
         //Si es "", o null, o no está definida no se ejecutará el saneamiento
-        if (!empty($data['type'])) $arraySanitized["type"] = self::sanitizeType($data['type']);
-        if (!empty($data['tempId'])) $arraySanitized["tempId"] = self::sanitizeTempId($data['tempId']);
+        if (!empty($data['type'])) $data["type"] = self::sanitizeType($data['type']);
+        if (!empty($data['tempId'])) $data["tempId"] = self::sanitizeTempId($data['tempId']);
 
-        return $arraySanitized;
+        return $data;
     }
 }
