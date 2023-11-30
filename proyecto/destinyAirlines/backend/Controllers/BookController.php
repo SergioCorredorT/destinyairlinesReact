@@ -209,12 +209,6 @@ final class BookController extends BaseController
             return false;
         }
 
-        //LO SIGUIENTE EN EL RETURNURL DE PAYPAL
-        //$departureInvoiceData = $BookingProcessTool->generateInvoiceData($departureWithPrices, $departureTotalPrice, 'departure'); //Generamos los datos de invoice
-        //$this->generateInvoiceHtml();//Generamos el html de invoice con los datos
-        //$this->generateInvoicePDF();//Generamos el PDF de invoice con html
-        //Aquí llamamos a sendEmail enviando el pdf adjuntado y con el template invoice
-
         $returnWithPrices;
         $returnTotalPrice = 0;
         $idInvoiceR = null;
@@ -228,17 +222,12 @@ final class BookController extends BaseController
             if (!$idInvoiceR) {
                 return false;
             }
-            //LO SIGUIENTE EN EL RETURNURL DE PAYPAL
-            //$returnInvoiceData = $BookingProcessTool->generateInvoiceData($returnWithPrices, $returnTotalPrice, 'return'); //Generamos los datos de invoice
-            //$this->generateInvoiceHtml();//Generamos el html de invoice con los datos
-            //$this->generateInvoicePDF();//Generamos el PDF de invoice con html
-            //Aquí llamamos a sendEmail enviando el pdf adjuntado y con el template invoice
         }
-        /*
+//En Construcción
         if (!$this->doPayment($totalPrice,  $idUser, $idInvoiceD, $idInvoiceR)) {
             return false;
         }
-*/
+
         return true;
     }
 

@@ -168,7 +168,6 @@ abstract class BaseModel
         return $miString;
     }
 
-    //Esta versión previene mejor el injection
     protected function update(array $data, string $where)
     {
         $updateData = '';
@@ -222,7 +221,7 @@ abstract class BaseModel
             }
         } catch (Exception $er) {
             // Manejo de excepciones en caso de error
-            // echo 'Se ha capturado una excepción: ',  $er->getMessage(), "\n";
+            error_log('Catched exception: '.$er->getMessage());
             return false;
         }
     }

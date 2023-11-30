@@ -320,7 +320,7 @@ final class UserController extends BaseController
                     //y comprobamos si aún no se ha resuelto el id temporal, ya que es posible que el usuario intente de nuevo cambiar el pass desde la página del link enviado al email
                     $readUserByTempIdResults = $UserTempIdsModel->readUserByTempId($tempId);
                     if ($dedodedPasswordResetToken['errorName'] === 'expired_token' &&  $readUserByTempIdResults) {
-                        [$user] = $UserModel->readUserById($readUserByTempIdResults[0]['id_USERS']);
+                        $user = $UserModel->readUserById($readUserByTempIdResults[0]['id_USERS']);
                         $userId = $user['id_USERS'];
 
                         //Eliminamos el registro que decía que había un email de desbloqueo pendiente para después renovarlos
@@ -407,7 +407,7 @@ final class UserController extends BaseController
                     $userId = $dedodedPasswordResetToken['response']->data->id;
                     //Incorporamos la nueva pass en bbdd
                     $UserModel = new UserModel();
-                    [$user] = $UserModel->readUserById($userId);
+                    $user = $UserModel->readUserById($userId);
                     $response = false;
 
                     //Comprobamos que la cuenta no esté bloqueada por exceder el máximo de intentos permitidos de login

@@ -42,15 +42,15 @@ Table AIRPLANES {
 Table USERS {
   id_USERS int [pk, increment]
   title varchar(3)
-  firstName varchar(50)
-  lastName varchar(50)
-  country varchar(25)
-  townCity varchar(50)
-  streetAddress varchar(50)
-  zipCode varchar(5)
+  firstName varchar(50) [not null]
+  lastName varchar(50) [not null]
+  country varchar(25) [not null]
+  townCity varchar(50) [not null]
+  streetAddress varchar(50) [not null]
+  zipCode varchar(5) [not null]
   emailAddress varchar(50) [not null, unique]
   passwordHash varchar(100) [not null]
-  phoneNumber1 varchar(20)
+  phoneNumber1 varchar(20) [not null]
   phoneNumber2 varchar(20)
   phoneNumber3 varchar(20)
   companyName varchar(50)
@@ -58,6 +58,9 @@ Table USERS {
   companyPhoneNumber varchar(20)
   currentLoginAttempts tinyint [default: 0, not null]
   lastAttempt datetime
+  documentationType documentationType [not null]
+  documentCode varchar(30) [not null]
+  expirationDate date [not null]
 }
 
 Table USER_TEMP_IDS {
@@ -111,6 +114,7 @@ Table INVOICES {
   invoiceCode varchar(50) [not null, unique]
   invoicedDate datetime [default: `CURRENT_TIMESTAMP`]
   price double [not null]
+  isPaid tinyint(1) [default: 0, not null]
 }
 
 Table SERVICES_INVOICES {

@@ -336,19 +336,19 @@ class PassengerValidator
         if (isset($data['mobilityLimitations']) && !self::validateMobilityLimitations($data['mobilityLimitations'])) {
             return false;
         }
-        
+
         if (isset($data['communicationNeeds']) && !self::validateCommunicationNeeds($data['communicationNeeds'])) {
             return false;
         }
-        
+
         if (isset($data['medicationRequirements']) && !self::validateMedicationRequirements($data['medicationRequirements'])) {
             return false;
         }
-        
+
         if (isset($data['services']) && !self::validateIndividualServiceCodes($data['services'])) {
             return false;
         }
-        
+
         return true;
     }
 }

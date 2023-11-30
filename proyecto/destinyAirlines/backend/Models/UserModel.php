@@ -22,7 +22,7 @@ final class UserModel extends BaseModel
     public function getEmailById(int $id_USERS)
     {
         $results = parent::select('emailAddress', "id_USERS = $id_USERS");
-        if(empty($results)) {
+        if (empty($results)) {
             return false;
         }
         return $results[0]['emailAddress'];
@@ -47,7 +47,8 @@ final class UserModel extends BaseModel
 
     public function readUserById(int $id_USERS)
     {
-        return parent::select('*', "id_USERS = $id_USERS ");
+        $results = parent::select('*', "id_USERS = $id_USERS ");
+        return $results ? $results[0] : false;
     }
 
     public function updateUsers(array $data, string $where)

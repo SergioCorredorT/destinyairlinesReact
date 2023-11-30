@@ -41,22 +41,25 @@ CREATE TABLE `AIRPLANES` (
 CREATE TABLE `USERS` (
   `id_USERS` int PRIMARY KEY AUTO_INCREMENT,
   `title` varchar(3),
-  `firstName` varchar(50),
-  `lastName` varchar(50),
-  `country` varchar(25),
-  `townCity` varchar(50),
-  `streetAddress` varchar(50),
-  `zipCode` varchar(5),
+  `firstName` varchar(50) NOT NULL,
+  `lastName` varchar(50) NOT NULL,
+  `country` varchar(25) NOT NULL,
+  `townCity` varchar(50) NOT NULL,
+  `streetAddress` varchar(50) NOT NULL,
+  `zipCode` varchar(5) NOT NULL,
   `emailAddress` varchar(50) UNIQUE NOT NULL,
   `passwordHash` varchar(100) NOT NULL,
-  `phoneNumber1` varchar(20),
+  `phoneNumber1` varchar(20) NOT NULL,
   `phoneNumber2` varchar(20),
   `phoneNumber3` varchar(20),
   `companyName` varchar(50),
   `companyTaxNumber` varchar(50),
   `companyPhoneNumber` varchar(20),
   `currentLoginAttempts` tinyint NOT NULL DEFAULT 0,
-  `lastAttempt` datetime
+  `lastAttempt` datetime,
+  `documentationType` ENUM ('DNI', 'Passport', 'Drivers_license', 'Residence_card_or_work_permit') NOT NULL,
+  `documentCode` varchar(30) NOT NULL,
+  `expirationDate` date NOT NULL
 );
 
 CREATE TABLE `USER_TEMP_IDS` (
@@ -104,7 +107,8 @@ CREATE TABLE `INVOICES` (
   `id_BOOKS` int NOT NULL,
   `invoiceCode` varchar(50) UNIQUE NOT NULL,
   `invoicedDate` datetime DEFAULT (CURRENT_TIMESTAMP),
-  `price` double NOT NULL
+  `price` double NOT NULL,
+  `isPaid` tinyint(1) NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `SERVICES_INVOICES` (

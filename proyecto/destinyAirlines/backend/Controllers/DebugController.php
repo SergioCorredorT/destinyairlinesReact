@@ -12,4 +12,12 @@ final class DebugController extends BaseController
     {
         return SessionTool::getAll();
     }
+
+    public function generarFactura()
+    {
+        require_once './Tools/InvoiceTool.php';
+        $invoiceTool= new InvoiceTool();
+        $invoiceTool->generateInvoiceData(138,25);
+    }
+    
 }

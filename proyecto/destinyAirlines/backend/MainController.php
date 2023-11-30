@@ -40,7 +40,8 @@ $controllers = [
         'paypalredirectok'                          => ['controller' => 'paymentController',    'method' => 'paypalRedirectOk'],
         'paypalredirectcancel'                      => ['controller' => 'paymentController',    'method' => 'paypalRedirectCancel'],
     //SOLO PARA DEBUG
-        'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',      'method' => 'obtenerVariablesDeSesionDebug']
+        'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',      'method' => 'obtenerVariablesDeSesionDebug'],
+        'generarfactura'                            => ['controller' => 'DebugController',      'method' => 'generarFactura']
 ];
 
 if (array_key_exists(strtolower($command), $controllers)) {

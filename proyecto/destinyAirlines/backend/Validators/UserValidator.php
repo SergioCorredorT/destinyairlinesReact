@@ -64,9 +64,10 @@ class UserValidator
         }
         return true;
     }
-
-    public static function validateExpirationDate($expirationDate)
+    /*
+    public static function validateExpirationDateOLD($expirationDate)
     {
+        //Preparada para input date
         // Comprueba si la fecha de expiración está en el formato correcto (MM/AA)
         if (!preg_match('/^(0[1-9]|1[0-2])\/[0-9]{2}$/', $expirationDate)) {
             return false;
@@ -82,6 +83,27 @@ class UserValidator
 
         return true;
     }
+*/
+
+    public static function validateExpirationDate($expirationDate)
+    {
+        //Preparada para input month
+        // Comprueba si la fecha de expiración está en el formato correcto (YYYY-MM)
+        if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])$/', $expirationDate)) {
+            return false;
+        }
+
+        // Comprueba si la fecha de expiración es una fecha futura
+        $currentDate = date('Y-m');
+        $exp = strtotime($expirationDate . '-01');
+        $current = strtotime($currentDate . '-01');
+        if ($current > $exp) {
+            return false;
+        }
+
+        return true;
+    }
+
 
     public static function validateTitle($title)
     {
@@ -207,6 +229,11 @@ class UserValidator
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
             return false;
         }
+        /*
+        if (isset($data['expirationDate']) && !self::validateExpirationDate($data['expirationDate'])) {
+            return false;
+        }
+        */
         if (isset($data['title']) && !self::validateTitle($data['title'])) {
             return false;
         }

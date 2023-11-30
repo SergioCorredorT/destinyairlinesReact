@@ -507,8 +507,18 @@
             value="2024-12-01"
           />
           <input type="text" name="firstName" value="A555" />
-          <input type="text" name="lastName" placeholder="lastName" value="Corredor" />
-          <input type="text" name="townCity" placeholder="townCity" value="Albacete" />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="lastName"
+            value="Corredor"
+          />
+          <input
+            type="text"
+            name="townCity"
+            placeholder="townCity"
+            value="Albacete"
+          />
           <input
             type="text"
             name="streetAddress"
@@ -516,7 +526,12 @@
             value="Calle falsa 123"
           />
           <input type="text" name="zipCode" value="25" />
-          <input type="text" name="country" placeholder="country" value="España" />
+          <input
+            type="text"
+            name="country"
+            placeholder="country"
+            value="España"
+          />
           <input
             type="text"
             name="emailAddress"
@@ -1242,6 +1257,19 @@
             type="text"
             name="command"
             value="obtenerVariablesDeSesionDebug"
+            readonly
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="generarfactura"
             readonly
           />
           <button type="submit">Enviar POST</button>

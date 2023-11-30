@@ -9,6 +9,25 @@ final class ServicesModel extends BaseModel
         parent::__construct(self::table);
     }
 
+    public function readSubTypeFromIdServices(array|int $idServices)
+    {
+        if (is_array($idServices)) {
+            $idServicesList = implode(',', $idServices);
+            $results = parent::select('id_SERVICES, subtype', "id_SERVICES IN ($idServicesList)");
+
+            $services = [];
+            foreach ($results as $result) {
+                $services[$result['id_SERVICES']] = $result['subtype'];
+            }
+
+            return $services;
+        } else {
+            return parent::select('subtype', "id_SERVICES = $idServices ")[0]['subtype'];
+        }
+    }
+
+
+
     public function readIndividualActiveServicePaidCodes()
     {
         return parent::select('serviceCode', 'serviceGroupingType = "individual" AND billingCategory = "PaidService" AND status = "active" ');
@@ -35,22 +54,23 @@ final class ServicesModel extends BaseModel
     public function readServicePrice(string $serviceCode)
     {
         $price = parent::select('priceOrDiscount AS price', "serviceCode = '$serviceCode'");
-    
+
         $servicePrice = 0;
         if (count($price) > 0) {
             $servicePrice = floatval($price[0]['price']);
         }
-    
+
         return $servicePrice;
     }
-    
+
 
     public function readServiceDiscount(string $serviceCode)
     {
         return parent::select('priceOrDiscount', "serviceCode = '$serviceCode'  AND status = 'active'  ")[0]['priceOrDiscount'];
     }
 
-    public function getServiceIdsFromCodes($serviceCodes) {
+    public function getServiceIdsFromCodes($serviceCodes)
+    {
         if (is_array($serviceCodes)) {
             $serviceCodes = "'" . implode("','", $serviceCodes) . "'";
             $results = parent::select('id_SERVICES, serviceCode', "serviceCode IN ($serviceCodes)");
@@ -63,7 +83,7 @@ final class ServicesModel extends BaseModel
             return parent::select('id_SERVICES', "serviceCode = '$serviceCodes' ")[0]['id_SERVICES'];
         }
     }
-    
+
 
 
     //----------------------------------------------------
