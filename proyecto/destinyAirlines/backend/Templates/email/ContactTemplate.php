@@ -1,9 +1,9 @@
 <?php
 require_once "./Tools/IniTool.php";
-require_once "./Templates/BaseTemplate.php";
+require_once "./Templates/email/BaseTemplate.php";
 class ContactTemplate extends BaseTemplate
 {
-  static function applyContactTemplate(array $data)
+  static function applyEmailContactTemplate(array $data)
   {
     $title = "Contact";
     $userName = $data["name"];

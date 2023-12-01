@@ -1,6 +1,6 @@
 <?php
 require_once "./Tools/IniTool.php";
-require_once "./Templates/BaseTemplate.php";
+require_once "./Templates/email/BaseTemplate.php";
 class InvoiceTemplate extends BaseTemplate
 {
   static function applyInvoiceTemplate(array $data)

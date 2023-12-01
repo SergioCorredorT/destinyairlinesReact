@@ -10,7 +10,7 @@ class EmailTool
         $subject = $data['subject'];
         $fromEmail = $data['fromEmail'];
         $fromPassword = $data['fromPassword'];
-        $message = TemplateTool::ApplyTemplate($data, $template);
+        $message = TemplateTool::ApplyEmailTemplate($data, $template);
         $phpmailer = new PHPMailer\PHPMailer\PHPMailer();
         $phpmailer->isSMTP();
         $phpmailer->SMTPSecure = 'ssl';

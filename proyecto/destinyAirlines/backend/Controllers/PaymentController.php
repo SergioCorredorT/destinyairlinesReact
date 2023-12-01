@@ -43,13 +43,15 @@ final class PaymentController extends BaseController
         $invoiceTool = new InvoiceTool();
         //Generamos las facturas con los id que contiene el token válido
         $invoiceDepartureData = $invoiceTool->generateInvoiceData($dedodedPaymentToken['response']->data->idUser, $dedodedPaymentToken['response']->data->idInvoiceD);
-        //generar html, pasarla a pdf y enviarla al email
+        $invoiceDepartureHtml = $invoiceTool->generateInvoiceHtml($invoiceDepartureData);
+        //pasarla a pdf y enviarla al email
 
         $invoiceReturnData;
-        if(isset($dedodedPaymentToken['response']->data->idInvoiceR)) {
+        if (isset($dedodedPaymentToken['response']->data->idInvoiceR)) {
             $invoiceModel->updateIsPaid($dedodedPaymentToken['response']->data->idInvoiceR);
             $invoiceReturnData = $invoiceTool->generateInvoiceData($dedodedPaymentToken['response']->data->idUser, $dedodedPaymentToken['response']->data->idInvoiceR);
-            //generar html, pasarla a pdf y enviarla al email
+            $invoiceReturnHtml = $invoiceTool->generateInvoiceHtml($invoiceReturnData);
+            //pasarla a pdf y enviarla al email
 
         }
         //si el token ha caducado se envía la info por GET para recogerla allí por js

@@ -1,9 +1,9 @@
 <?php
 require_once "./Tools/IniTool.php";
-require_once "./Templates/BaseTemplate.php";
+require_once "./Templates/email/BaseTemplate.php";
 class FailedAttemptsTemplate extends BaseTemplate
 {
-  static function applyFailedAttemptsTemplate(array $data)
+  static function applyEmailFailedAttemptsTemplate(array $data)
   {
     $iniTool = new IniTool('./Config/cfg.ini');
     $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
