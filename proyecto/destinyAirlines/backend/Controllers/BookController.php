@@ -72,7 +72,7 @@ final class BookController extends BaseController
 
             foreach ($keys_default as $key => $defaultValue) {
                 //$passengerDetails[$key] = (isset($passenger[$key]) && $passenger[$key] !== '') ? $passenger[$key] : $defaultValue;
-                $passengerDetails[$key] = $POST[$key] ?? $defaultValue;
+                $passengerDetails[$key] = $passenger[$key] ?? $defaultValue;
             }
 
             //Cada pasajero lo saneamos y validamos
@@ -178,6 +178,7 @@ final class BookController extends BaseController
         require_once './Tools/TokenTool.php';
         require_once './Tools/BookingPriceCalculatorTool.php';
         require_once './Tools/BookingDataEnricherTool.php';
+        require_once './Tools/IniTool.php';
 
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
         $BookingDataEnricherTool = new BookingDataEnricherTool();
@@ -223,7 +224,7 @@ final class BookController extends BaseController
                 return false;
             }
         }
-//En Construcción
+
         if (!$this->doPayment($totalPrice,  $idUser, $idInvoiceD, $idInvoiceR)) {
             return false;
         }
@@ -329,15 +330,22 @@ final class BookController extends BaseController
         $PaymentTool = new PaymentTool();
         $iniTool = new IniTool('./Config/cfg.ini');
         $paypalCfg = $iniTool->getKeysAndValues('paypal');
+        $projectSettings = $iniTool->getKeysAndValues('projectSettings');
 
         //CREAR TOKEN de 3 horas (caducidad de paypal en su web)
-        $data = ['id' => $idUser, 'idUser' => $idUser, 'idInvoiceD' => $idInvoiceD, 'type' => 'payment'];
+        $data = ['id' => $idUser, 'idUser' => $idUser, 'idInvoiceD' => $idInvoiceD, 'type' => 'paypalredirectok'];
         if ($idInvoiceR) {
             $data['idInvoiceR'] = $idInvoiceR;
         }
         $paymentToken = TokenTool::generateToken($data, intval($paypalCfg['secondsTimeLifePaymentReturnUrl']));
 
-        $PaymentTool->createPaymentPaypal($paypalCfg['clientId'], $paypalCfg['clientSecret'], $totalPrice, 'EUR', $paypalCfg['returnUrl'] . '?token=' . $paymentToken . '&command=paypalredirectok', $paypalCfg['cancelUrl'] . '&command=paypalredirectcancel');
+        //En el cfg.ini se puede configurar, si se desea, probar el proyecto sin el proceso de paypal
+        if ($projectSettings['doPaypalProccess'] === '0') {
+            header('Location: ' . $paypalCfg['returnUrl'] . '?token=' . $paymentToken . '&command=paypalredirectok');
+        } else {
+            $PaymentTool->createPaymentPaypal($paypalCfg['clientId'], $paypalCfg['clientSecret'], $totalPrice, 'EUR', $paypalCfg['returnUrl'] . '?token=' . $paymentToken . '&command=paypalredirectok', $paypalCfg['cancelUrl'] . '&command=paypalredirectcancel');
+        }
+
         //Aquí solo devolvemos true para que en el frontend ponga un modal con un botón para comprobar si se hizo la compra
         //si sí, avisa de ello, va al index.html y elimina las variables de session del viaje
         //si no, dará opción de volver a intentar compra (simplemente desaparece el modal, y se comprueba si siguen las variables de session y el login, (si no están pues al index y eliminar variables de session)), o de ir al index.html (entonces se eliminan las variables de session del viaje)

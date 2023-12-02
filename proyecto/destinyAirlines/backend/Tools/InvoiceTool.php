@@ -101,8 +101,7 @@ class InvoiceTool
     {
         require_once './Tools/TemplateTool.php';
         $templateTool = new TemplateTool();
-        $invoiceHtml = $templateTool::ApplyPageTemplate($invoiceData, 'invoiceTemplate');
-
+        return $templateTool::ApplyPageTemplate($invoiceData, 'invoiceTemplate');
     }
 
     public function generateInvoicePDF($invoiceHtml)

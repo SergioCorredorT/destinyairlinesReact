@@ -10,6 +10,19 @@ final class PaymentController extends BaseController
         parent::__construct();
     }
 
+    public function debugPaypalRedirectOk()
+    {
+        require_once './Tools/TokenTool.php';
+        require_once './Tools/IniTool.php';
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $tokenSettings = $iniTool->getKeysAndValues('tokenSettings');
+
+        //CREAR TOKEN de 3 horas (caducidad de paypal en su web)
+        $data = ['id' => 138, 'idUser' => 138, 'idInvoiceD' => 25, 'type' => 'paypalredirectok'];
+        $paymentToken = TokenTool::generateToken($data, intval($tokenSettings['secondsTimeLifePaymentReturnUrl']));
+        $this->paypalRedirectOk(['token' => $paymentToken]);
+    }
+
     public function paypalRedirectOk(array $GET)
     {
         require_once './Sanitizers/TokenSanitizer.php';
@@ -55,8 +68,8 @@ final class PaymentController extends BaseController
 
         }
         //si el token ha caducado se envía la info por GET para recogerla allí por js
-        header('Location: ./Views/successPaymentPage.html');
-        exit;
+        //header('Location: ./Views/successPaymentPage.html');
+        //exit;
     }
 
     public function paypalRedirectCancel()

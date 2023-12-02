@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang='es'>
   <head>
     <title>Invoice</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <style>
       :root {
         --div-bg-color: #e6e6e6;
@@ -51,10 +51,10 @@
         row-gap: 20px;
         column-gap: 10px;
         grid-template-areas:
-          "clientData     companyData"
-          "invoiceData    invoiceData"
-          "invoiceDetail  invoiceDetail"
-          ".              invoiceTotals";
+          'clientData     companyData'
+          'invoiceData    invoiceData'
+          'invoiceDetail  invoiceDetail'
+          '.              invoiceTotals';
       }
 
       section {
@@ -82,6 +82,11 @@
       .invoiceDetail {
         grid-area: invoiceDetail;
       }
+
+      .invoiceDetail-main-table {
+
+      }
+
       .invoiceTotals {
         grid-area: invoiceTotals;
       }
@@ -97,59 +102,79 @@
     </style>
   </head>
   <body>
-    <div class="container">
+    <div class='container'>
       <header>
-        <section class="title">
+        <section class='title'>
           <h1>Factura</h1>
         </section>
-        <div class="logo">
+        <div class='logo'>
           <img
-            alt="logo"
-            src="https://lh3.googleusercontent.com/pw/ADCreHcBgNwlq4KG-PxMPtJXEOCJZ7BD6pgXMgBvLWmA8qY0R1SkzjPMcASMurvjyp7pAcA4rngXW6yn0umyPjL72b9eO9RwavbVMHIArvmvutsjOodl8wnH4RH0XfOqY1COQAVV6qMyQOy1VqJ3Ur77PA=w200-h190-s-no?authuser=0"
+            alt='logo'
+            src='https://lh3.googleusercontent.com/pw/ADCreHcBgNwlq4KG-PxMPtJXEOCJZ7BD6pgXMgBvLWmA8qY0R1SkzjPMcASMurvjyp7pAcA4rngXW6yn0umyPjL72b9eO9RwavbVMHIArvmvutsjOodl8wnH4RH0XfOqY1COQAVV6qMyQOy1VqJ3Ur77PA=w200-h190-s-no?authuser=0'
           />
         </div>
       </header>
       <main>
-        <section class="clientData">
+        <section class='clientData'>
           <h2>clientData</h2>
-          <div class="clientData-main">
-            <div class="clientData-main-line">
+          <div class='clientData-main'>
+            <div class='clientData-main-line'>
               <span>DNI</span> <span>123456789</span>
             </div>
-            <div class="clientData-main-line">
+            <div class='clientData-main-line'>
               <span>First Name:</span> <span>Sergio</span>
             </div>
-            <div class="clientData-main-line">
+            <div class='clientData-main-line'>
               <span>Last Name:</span> <span>Corredor</span>
             </div>
-            <div class="clientData-main-line">
+            <div class='clientData-main-line'>
               <span>Zip code:</span> <span>01234</span>
             </div>
-            <div class="clientData-main-line">
+            <div class='clientData-main-line'>
               <span>Email:</span> <span>cliente@gmail.com</span>
             </div>
           </div>
         </section>
-        <section class="companyData">
+        <section class='companyData'>
           <h2>companyData</h2>
-          <div class="companyData-main">
-            <div class="companyData-main-line">
+          <div class='companyData-main'>
+            <div class='companyData-main-line'>
               <span>Name:</span> <span>Destiny Airlines</span>
             </div>
-            <div class="companyData-main-line">
+            <div class='companyData-main-line'>
               <span>Dirección:</span> <span>Albacete bla bla</span>
             </div>
-            <div class="companyData-main-line">
+            <div class='companyData-main-line'>
               <span>Teléfono:</span> <span>0123456789</span>
             </div>
-            <div class="companyData-main-line">
+            <div class='companyData-main-line'>
               <span>Email:</span> <span>company@gmail.com</span>
             </div>
           </div>
         </section>
-        <section class="invoiceData">InvoiceCode: 12332231, 12-1-23, bookCode: 2312231, departure</section>
-        <section class="invoiceDetail">invoiceDetail</section>
-        <section class="invoiceTotals">invoiceTotals</section>
+        <section class='invoiceData'>InvoiceCode: 12332231, 12-1-23, bookCode: 2312231, departure</section>
+        <section class='invoiceDetail'>
+          <h2>invoiceDetail</h2>
+          <div class="invoiceDetail-main">
+            <table class="invoiceDetail-main-table">
+              <tr>
+                <th>Item</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+              </tr>
+              <tr>
+                <td>
+                  <p><strong>Flight from Madrid to New York</strong></p>
+                </td>
+                <td>$100</td>
+                <td>1</td>
+                <td>$100</td>
+              </tr>
+            </table>
+          </div>
+        </section>
+        <section class='invoiceTotals'>invoiceTotals</section>
       </main>
       <footer>
         <p>Gracias por confiar en Destiny Airlines</p>
