@@ -1,7 +1,7 @@
 <?php
 require_once "./Tools/IniTool.php";
-require_once "./Templates/email/BaseTemplate.php";
-class FailedAttemptsTemplate extends BaseTemplate
+require_once "./Templates/email/EmailBaseTemplate.php";
+class FailedAttemptsTemplate extends EmailBaseTemplate
 {
   static function applyEmailFailedAttemptsTemplate(array $data)
   {

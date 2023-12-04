@@ -20,13 +20,11 @@ class TemplateTool
                     $emailBody = ForgotPasswordTemplate::applyEmailForgotPasswordTemplate($data);
                     return $emailBody;
                 }
-            /*
             case 'invoicetemplate': {
                     require_once './Templates/email/invoiceTemplate.php';
-                    $emailBody = ForgotPasswordTemplate::applyInvoiceTemplate($data);
+                    $emailBody = InvoiceTemplate::applyInvoiceTemplate($data);
                     return $emailBody;
                 }
-            */
             default: {
                     //CUANDO ES '' P.E.
                     return $data['message'];

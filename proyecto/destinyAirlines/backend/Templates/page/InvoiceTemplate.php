@@ -1,7 +1,7 @@
 <?php
 require_once './Tools/IniTool.php';
-require_once './Templates/page/BaseTemplate.php';
-class InvoicePageTemplate extends BaseTemplate
+require_once './Templates/page/PageBaseTemplate.php';
+class InvoicePageTemplate extends PageBaseTemplate
 {
   static function  applyInvoicePageTemplate(array $data)
   {
@@ -90,15 +90,15 @@ class InvoicePageTemplate extends BaseTemplate
           .clientData {
             grid-area: clientData;
           }
-          .clientData-main {
-    
+          .negrita {
+            font-weight: bold;
           }
     
-          .clientData-main-line, .companyData-main-line {
+          .clientData-main-line, .companyData-main-line, .invoiceTotals {
             display: flex;
             justify-content: space-between;
           }
-    
+
           .companyData {
             grid-area: companyData;
           }
@@ -159,19 +159,19 @@ class InvoicePageTemplate extends BaseTemplate
               <h2>Datos del cliente</h2>
               <div class="clientData-main">
                 <div class="clientData-main-line">
-                  <span>'.$data['userData']['documentationType'].'</span> <span>'.$data['userData']['documentCode'].'</span>
+                  <span class="negrita">'.$data['userData']['documentationType'].'</span> <span>'.$data['userData']['documentCode'].'</span>
                 </div>
                 <div class="clientData-main-line">
-                  <span>First Name:</span> <span>'.$data['userData']['firstName'].'</span>
+                  <span class="negrita">First Name:</span> <span>'.$data['userData']['firstName'].'</span>
                 </div>
                 <div class="clientData-main-line">
-                  <span>Last Name:</span> <span>'.$data['userData']['lastName'].'</span>
+                  <span class="negrita">Last Name:</span> <span>'.$data['userData']['lastName'].'</span>
                 </div>
                 <div class="clientData-main-line">
-                  <span>Zip code:</span> <span>'.$data['userData']['zipCode'].'</span>
+                  <span class="negrita">Zip code:</span> <span>'.$data['userData']['zipCode'].'</span>
                 </div>
                 <div class="clientData-main-line">
-                  <span>Email:</span> <span>'.$data['userData']['emailAddress'].'</span>
+                  <span class="negrita">Email:</span> <span>'.$data['userData']['emailAddress'].'</span>
                 </div>
               </div>
             </section>
@@ -192,7 +192,7 @@ class InvoicePageTemplate extends BaseTemplate
                 </div>
               </div>
             </section>
-            <section class="invoiceData">Factura: '.$data['invoiceData']['invoiceCode'].', '.$data['invoiceData']['invoicedDate'].'. Reserva: '.$data['bookData']['bookCode'].', '.$data['bookData']['direction'].'</section>
+            <section class="invoiceData"><span class="negrita">Factura:</span> '.$data['invoiceData']['invoiceCode'].', '.$data['invoiceData']['invoicedDate'].'. <span class="negrita">Reserva:</span> '.$data['bookData']['bookCode'].', '.$data['bookData']['direction'].'</section>
             <section class="invoiceDetail">
               <div class="invoiceDetail-main">
                 <h2>Detalles de pasajeros</h2>
@@ -267,9 +267,9 @@ class InvoicePageTemplate extends BaseTemplate
                     }
                     $html.=
                     '<tr>
-                      <td colspan="5">
+                      <th colspan="5">
                         Total:
-                      </td>
+                      </th>
                       <td>'.($adultsPrice+$childrenPrice+$infantsPrice).'</td>
                     </tr>';
                   }
@@ -287,22 +287,16 @@ class InvoicePageTemplate extends BaseTemplate
                   <tr>
                     <th>Concepto</th>
                     <th>Descuento</th>
-                    <th>Subtotal</th>
                   </tr>';
                   foreach ($data['discounts'] as $discount) {
                     $html.=
                     '<tr>
                       <td>'.$discount['name'].'</td>
                       <td>'.$discount['price'].'</td>
-                      <td>Aquí el precio aplicando %, o quizás hacer % de % y después hacer cuenta total</td>
                     </tr>';
                   }
               $html.=
-                    '<tr>
-                      <td colspan="2">Total con descuentos aplicados: </td>
-                      <td>1111111111</td>
-                    </tr>
-                  </table>
+                  '</table>
                 </div>
               </section>';
             }
@@ -334,7 +328,7 @@ class InvoicePageTemplate extends BaseTemplate
               }
               $html.=
                 '<tr>
-                  <td colspan="4">Total: </td>
+                  <th colspan="4">Total: </th>
                   <td>'.$totalServicesPrice.'</td>
                 </tr>
               </table>';
@@ -344,7 +338,7 @@ class InvoicePageTemplate extends BaseTemplate
               </div>
             </section>
 
-            <section class="invoiceTotals">invoiceTotals</section>
+            <section class="invoiceTotals"><span class="negrita">Precio total a deber:</span> <span>'.$data['invoiceData']['price'].'</span></section>
           </main>
           <footer>
             <p>Gracias por confiar en Destiny Airlines</p>

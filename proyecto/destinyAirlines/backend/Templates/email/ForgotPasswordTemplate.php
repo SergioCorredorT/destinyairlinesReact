@@ -1,7 +1,7 @@
 <?php
 require_once './Tools/IniTool.php';
-require_once './Templates/email/BaseTemplate.php';
-class ForgotPasswordTemplate extends BaseTemplate
+require_once './Templates/email/EmailBaseTemplate.php';
+class ForgotPasswordTemplate extends EmailBaseTemplate
 {
   static function applyEmailForgotPasswordTemplate(array $data)
   {

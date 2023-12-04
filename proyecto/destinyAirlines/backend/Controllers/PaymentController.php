@@ -29,6 +29,8 @@ final class PaymentController extends BaseController
         require_once './Validators/TokenValidator.php';
         require_once './Tools/TokenTool.php';
         require_once './Tools/InvoiceTool.php';
+        require_once './Tools/PdfTool.php';
+        require_once './Tools/EmailTool.php';
 
         $paymentDetails = [
             'token'           => $GET['token'] ?? ''
@@ -54,22 +56,67 @@ final class PaymentController extends BaseController
         SessionTool::remove('return');
 
         $invoiceTool = new InvoiceTool();
+        $pdfTool = new PdfTool();
+        $emailTool = new EmailTool();
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
+
         //Generamos las facturas con los id que contiene el token válido
         $invoiceDepartureData = $invoiceTool->generateInvoiceData($dedodedPaymentToken['response']->data->idUser, $dedodedPaymentToken['response']->data->idInvoiceD);
-error_log(print_r($invoiceDepartureData,true));
         $invoiceDepartureHtml = $invoiceTool->generateInvoiceHtml($invoiceDepartureData);
-error_log($invoiceDepartureHtml);
-        //pasarla a pdf y enviarla al email
+        $invoiceDeparturePdf = $pdfTool->generatePdfFromHtml($invoiceDepartureHtml);
+        $emailTool->sendEmail(
+            [
+                'toEmail' => $invoiceDepartureData['userData']['emailAddress'],
+                'fromEmail' => $cfgOriginEmailIni['email'],
+                'fromPassword' => $cfgOriginEmailIni['password'],
+                'subject' => 'Factura de su nuevo viaje',
+                'message' => '¡Gracias por elegir volar con Destiny Airlines! Confirmamos que hemos recibido su pago y su reserva está confirmada.
+
+                Adjuntamos a este correo electrónico la factura de su viaje. Le recomendamos que la guarde para sus registros.
+                
+                Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros.
+                
+                ¡Esperamos verle a bordo pronto!
+                
+                Saludos cordiales,
+                El equipo de Destiny Airlines'
+            ],
+            'invoiceTemplate',
+            $invoiceDeparturePdf,
+            'invoice'
+        );
 
         $invoiceReturnData;
         if (isset($dedodedPaymentToken['response']->data->idInvoiceR)) {
             $invoiceModel->updateIsPaid($dedodedPaymentToken['response']->data->idInvoiceR);
             $invoiceReturnData = $invoiceTool->generateInvoiceData($dedodedPaymentToken['response']->data->idUser, $dedodedPaymentToken['response']->data->idInvoiceR);
             $invoiceReturnHtml = $invoiceTool->generateInvoiceHtml($invoiceReturnData);
-            //pasarla a pdf y enviarla al email
+            $invoiceReturnPdf = $pdfTool->generatePdfFromHtml($invoiceReturnHtml);
+            $emailTool->sendEmail(
+                [
+                    'toEmail' => $invoiceReturnData['userData']['emailAddress'],
+                    'fromEmail' => $cfgOriginEmailIni['email'],
+                    'fromPassword' => $cfgOriginEmailIni['password'],
+                    'subject' => 'Factura de su nuevo viaje',
+                    'message' => '¡Gracias por elegir volar con Destiny Airlines! Confirmamos que hemos recibido su pago y su reserva está confirmada.
 
+                    Adjuntamos a este correo electrónico la factura de su viaje. Le recomendamos que la guarde para sus registros.
+                    
+                    Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros.
+                    
+                    ¡Esperamos verle a bordo pronto!
+                    
+                    Saludos cordiales,
+                    El equipo de Destiny Airlines'
+                ],
+                'invoiceTemplate',
+                $invoiceReturnPdf,
+                'invoice'
+            );
         }
         //si el token ha caducado se envía la info por GET para recogerla allí por js
+        return true;
         //header('Location: ./Views/successPaymentPage.html');
         //exit;
     }

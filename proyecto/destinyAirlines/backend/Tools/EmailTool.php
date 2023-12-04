@@ -4,7 +4,7 @@ require_once './Tools/IniTool.php';
 require_once './Tools/TemplateTool.php';
 class EmailTool
 {
-    public static function sendEmail(array $data, string $template = '')
+    public static function sendEmail(array $data, string $template = '', $pdf = null, $pdfName = '')
     {
         $toEmail = $data['toEmail'];
         $subject = $data['subject'];
@@ -22,6 +22,10 @@ class EmailTool
 
         $phpmailer->setFrom($fromEmail, 'Destiny Airlines');
         $phpmailer->addAddress($toEmail);
+        if ($pdf !== null) {
+            $pdfName = $pdfName ?? 'file';
+            $phpmailer->addStringAttachment($pdf, $pdfName.'.pdf');
+        }
         $phpmailer->Subject = $subject;
         $phpmailer->isHTML(true);
         $phpmailer->CharSet = 'UTF-8';
