@@ -11,7 +11,7 @@ final class InvoiceModel extends BaseModel
 
     public function getInvoiceFromIdInvoice(int $idInvoice)
     {
-        return parent::select('*', "id_INVOICES = '$idInvoice'")[0];
+        return parent::select('*', "id_INVOICES = $idInvoice")[0];
     }
 
     public function updateIsPaid(int $idInvoice)

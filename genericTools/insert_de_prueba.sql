@@ -40,12 +40,12 @@ INSERT INTO `airports` (`id_AIRPORTS`, `id_CURRENCIES`, `IATA`, `name`) VALUES
 
 -- Volcando datos para la tabla destiny_airlines.books: ~5 rows (aproximadamente)
 DELETE FROM `books`;
-INSERT INTO `books` (`id_BOOKS`, `id_FLIGHTS`, `id_USERS`, `id_PRIMARY_CONTACT_INFORMATIONS`, `bookCode`, `checkinDate`, `direction`, `invoiced`, `adultsNumber`, `childsNumber`, `infantsNumber`) VALUES
-	(25, 1, 1, 1, 'BK123', '2023-10-19', 'departure', '2023-10-20 00:00:00', 1, 0, 0),
-	(26, 2, 2, 1, 'BK456', '2023-10-20', 'departure', '2023-10-21 00:00:00', 1, 0, 0),
-	(27, 3, 3, 1, 'BK789', '2023-10-21', 'departure', '2023-10-22 00:00:00', 1, 0, 0),
-	(28, 4, 4, 1, 'BK012', '2023-10-22', 'departure', '2023-10-23 00:00:00', 1, 0, 0),
-	(29, 1, 138, 1, 'd5336a6d-5', NULL, 'departure', '2023-11-20 19:12:53', 2, 0, 0);
+INSERT INTO `books` (`id_BOOKS`, `id_FLIGHTS`, `id_USERS`, `id_PRIMARY_CONTACT_INFORMATIONS`, `bookCode`, `checkinDate`, `direction`, `adultsNumber`, `childsNumber`, `infantsNumber`) VALUES
+	(25, 1, 1, 1, 'BK123', '2023-10-19', 'departure', 1, 0, 0),
+	(26, 2, 2, 1, 'BK456', '2023-10-20', 'departure', 1, 0, 0),
+	(27, 3, 3, 1, 'BK789', '2023-10-21', 'departure', 1, 0, 0),
+	(28, 4, 4, 1, 'BK012', '2023-10-22', 'departure', 1, 0, 0),
+	(29, 1, 138, 1, 'd5336a6d-5', NULL, 'departure', 2, 0, 0);
 
 -- Volcando datos para la tabla destiny_airlines.books_services: ~5 rows (aproximadamente)
 DELETE FROM `books_services`;

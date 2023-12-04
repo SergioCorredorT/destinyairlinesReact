@@ -292,7 +292,6 @@ class PassengerValidator
 
     public static function validate(array $data)
     {
-        
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
             return false;
         }
@@ -324,7 +323,7 @@ class PassengerValidator
         if (isset($data['dateBirth']) && !self::validateDateBirth($data['dateBirth'])) {
             return false;
         }
-        
+
         if (isset($data['assistiveDevices']) && !self::validateAssistiveDevices($data['assistiveDevices'])) {
             return false;
         }
@@ -332,7 +331,7 @@ class PassengerValidator
         if (isset($data['medicalEquipment']) && !self::validateMedicalEquipment($data['medicalEquipment'])) {
             return false;
         }
-        
+
         if (isset($data['mobilityLimitations']) && !self::validateMobilityLimitations($data['mobilityLimitations'])) {
             return false;
         }

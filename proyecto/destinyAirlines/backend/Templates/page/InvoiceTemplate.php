@@ -3,13 +3,25 @@ require_once './Tools/IniTool.php';
 require_once './Templates/page/BaseTemplate.php';
 class InvoicePageTemplate extends BaseTemplate
 {
-  static function applyInvoicePageTemplate(array $data)
+  static function  applyInvoicePageTemplate(array $data)
   {
     require_once './Tools/IniTool.php';
     $iniTool = new IniTool('./Config/cfg.ini');
     $imageLinks = $iniTool->getKeysAndValues('imageLinks');
     $companyInfo = $iniTool->getKeysAndValues('companyInfo');
-    return '
+    $priceSettings = $iniTool->getKeysAndValues('priceSettings');
+    $adultsNumber = intval($data['bookData']['adultsNumber']);
+    $childsNumber = intval($data['bookData']['childsNumber']);
+    $infantsNumber = intval($data['bookData']['infantsNumber']);
+    $firstCategory = true;
+    $totalCategories = ($adultsNumber > 0) + ($childsNumber > 0) + ($infantsNumber > 0);
+    $adultDiscountPercentage = intval($priceSettings['adultDiscountPercentage']);
+    $childDiscountPercentage = intval($priceSettings['childDiscountPercentage']);
+    $infantDiscountPercentage = intval($priceSettings['infantDiscountPercentage']);
+    $totalServicesPrice = 0;
+    $discounts = $data['discounts'];
+
+    $html = '
     <!DOCTYPE html>
     <html lang="es">
       <head>
@@ -63,10 +75,12 @@ class InvoicePageTemplate extends BaseTemplate
             row-gap: 20px;
             column-gap: 10px;
             grid-template-areas:
-              "clientData     companyData"
-              "invoiceData    invoiceData"
-              "invoiceDetail  invoiceDetail"
-              ".              invoiceTotals";
+              "clientData                       companyData"
+              "invoiceData                      invoiceData"
+              "invoiceDetail                    invoiceDetail"
+              "invoiceEspecialDiscountsDetail   invoiceEspecialDiscountsDetail"
+              "invoiceServicesDetail            invoiceServicesDetail"
+              ".                                invoiceTotals";
           }
     
           section {
@@ -88,17 +102,31 @@ class InvoicePageTemplate extends BaseTemplate
           .companyData {
             grid-area: companyData;
           }
+
           .invoiceData {
             grid-area: invoiceData;
           }
+
           .invoiceDetail {
             grid-area: invoiceDetail;
           }
     
           .invoiceDetail-main-table {
-    
+            width: 100%;
+          }
+
+          .invoiceDetail-main-table td {
+            text-align: center;
           }
     
+          .invoiceEspecialDiscountsDetail {
+            grid-area: invoiceEspecialDiscountsDetail;
+          }
+
+          .invoiceServicesDetail {
+            grid-area: invoiceServicesDetail;
+          }
+
           .invoiceTotals {
             grid-area: invoiceTotals;
           }
@@ -166,26 +194,156 @@ class InvoicePageTemplate extends BaseTemplate
             </section>
             <section class="invoiceData">Factura: '.$data['invoiceData']['invoiceCode'].', '.$data['invoiceData']['invoicedDate'].'. Reserva: '.$data['bookData']['bookCode'].', '.$data['bookData']['direction'].'</section>
             <section class="invoiceDetail">
-              <h2>invoiceDetail</h2>
               <div class="invoiceDetail-main">
+                <h2>Detalles de pasajeros</h2>
                 <table class="invoiceDetail-main-table">
                   <tr>
-                    <th>Item</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total Price</th>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p><strong>Flight from Madrid to New York</strong></p>
-                    </td>
-                    <td>$100</td>
-                    <td>1</td>
-                    <td>$100</td>
-                  </tr>
+                    <th>Viaje</th>
+                    <th>Concepto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Descuento</th>
+                    <th>Subtotal</th>
+                  </tr>';
+                  if($totalCategories > 0) {
+                    $adultsPrice = (floatval($data['flightData']['price'])*$adultsNumber) * (1 - $adultDiscountPercentage/100);
+                    $childrenPrice = (floatval($data['flightData']['price'])*$childsNumber) * (1 - $childDiscountPercentage/100);
+                    $infantsPrice = (floatval($data['flightData']['price'])*$infantsNumber) * (1 - $infantDiscountPercentage/100);
+                    $flightTd=
+                    '<td rowspan=\''.$totalCategories.'\'>
+                      <p>Vuelo '.$data['airportOriginData']['name'].' ('.$data['airportOriginData']['IATA'].') a <br> '.$data['airportDestinyData']['name'].' ('.$data['airportDestinyData']['IATA'].')</p>
+                    </td>';
+
+                    if($adultsNumber>0) {
+                      $html.=
+                      '<tr>';
+                        if($firstCategory) {
+                          $html.=$flightTd;
+                          $firstCategory=false;
+                        }
+                        $html.=
+                        '<td>
+                          Adultos
+                        </td>
+                        <td>'.$data['flightData']['price'].'</td>
+                        <td>'.$adultsNumber.'</td>
+                        <td>'.$adultDiscountPercentage.'</td>
+                        <td>'.$adultsPrice.'</td>
+                      </tr>';
+                    }
+                    if($childsNumber>0) {
+                      $html.=
+                      '<tr>';
+                        if($firstCategory) {
+                          $html.=$flightTd;
+                          $firstCategory=false;
+                        }
+                        $html.=
+                        '<td>
+                          Niños
+                        </td>
+                        <td>'.$data['flightData']['price'].'</td>
+                        <td>'.$childsNumber.'</td>
+                        <td>'.$childDiscountPercentage.'</td>
+                        <td>'.$childrenPrice.'</td>
+                      </tr>';
+                    }
+                    if($infantsNumber>0) {
+                      $html.=
+                      '<tr>';
+                        if($firstCategory) {
+                          $html.=$flightTd;
+                          $firstCategory=false;
+                        }
+                        $html.=
+                        '<td>
+                          Bebés
+                        </td>
+                        <td>'.$data['flightData']['price'].'</td>
+                        <td>'.$infantsNumber.'</td>
+                        <td>'.$infantDiscountPercentage.'</td>
+                        <td>'.$infantsPrice.'</td>
+                      </tr>';
+                    }
+                    $html.=
+                    '<tr>
+                      <td colspan="5">
+                        Total:
+                      </td>
+                      <td>'.($adultsPrice+$childrenPrice+$infantsPrice).'</td>
+                    </tr>';
+                  }
+                  $html.='
                 </table>
               </div>
+            </section>';
+
+            if(!empty($discounts)) {
+              $html.=
+              '<section class="invoiceEspecialDiscountsDetail">
+              <div class="invoiceDetail-main">
+                <h2>Detalles de descuentos</h2>
+                <table class="invoiceDetail-main-table">
+                  <tr>
+                    <th>Concepto</th>
+                    <th>Descuento</th>
+                    <th>Subtotal</th>
+                  </tr>';
+                  foreach ($data['discounts'] as $discount) {
+                    $html.=
+                    '<tr>
+                      <td>'.$discount['name'].'</td>
+                      <td>'.$discount['price'].'</td>
+                      <td>Aquí el precio aplicando %, o quizás hacer % de % y después hacer cuenta total</td>
+                    </tr>';
+                  }
+              $html.=
+                    '<tr>
+                      <td colspan="2">Total con descuentos aplicados: </td>
+                      <td>1111111111</td>
+                    </tr>
+                  </table>
+                </div>
+              </section>';
+            }
+
+            
+            if(!empty($data['services'])) {
+              $html.=
+              '<section class="invoiceServicesDetail">
+              <div class="invoiceDetail-main">
+                <h2>Detalles de servicios</h2>
+                <table class="invoiceDetail-main-table">
+                  <tr>
+                    <th>Concepto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Acción</th>
+                    <th>Subtotal</th>
+                  </tr>';
+              foreach ($data['services'] as $service) {
+                $totalServicesPrice += floatval($service['price']) * floatval($service['count']);
+                $html.=
+                '<tr>
+                  <td>'.$service['name'].'</td>
+                  <td>'.$service['price'].'</td>
+                  <td>'.$service['count'].'</td>
+                  <td>'.$service['addRemove'].'</td>
+                  <td>'.(floatval($service['price']) * floatval($service['count'])).'</td>
+                </tr>';
+              }
+              $html.=
+                '<tr>
+                  <td colspan="4">Total: </td>
+                  <td>'.$totalServicesPrice.'</td>
+                </tr>
+              </table>';
+            }
+
+            $html.='
+              </div>
             </section>
+
             <section class="invoiceTotals">invoiceTotals</section>
           </main>
           <footer>
@@ -195,5 +353,6 @@ class InvoicePageTemplate extends BaseTemplate
       </body>
     </html> 
     ';
+    return $html;
   }
 }

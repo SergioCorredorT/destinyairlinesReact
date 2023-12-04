@@ -18,7 +18,7 @@ final class PaymentController extends BaseController
         $tokenSettings = $iniTool->getKeysAndValues('tokenSettings');
 
         //CREAR TOKEN de 3 horas (caducidad de paypal en su web)
-        $data = ['id' => 138, 'idUser' => 138, 'idInvoiceD' => 25, 'type' => 'paypalredirectok'];
+        $data = ['id' => 138, 'idUser' => 138, 'idInvoiceD' => 26, 'type' => 'paypalredirectok'];
         $paymentToken = TokenTool::generateToken($data, intval($tokenSettings['secondsTimeLifePaymentReturnUrl']));
         $this->paypalRedirectOk(['token' => $paymentToken]);
     }
@@ -56,7 +56,9 @@ final class PaymentController extends BaseController
         $invoiceTool = new InvoiceTool();
         //Generamos las facturas con los id que contiene el token válido
         $invoiceDepartureData = $invoiceTool->generateInvoiceData($dedodedPaymentToken['response']->data->idUser, $dedodedPaymentToken['response']->data->idInvoiceD);
+error_log(print_r($invoiceDepartureData,true));
         $invoiceDepartureHtml = $invoiceTool->generateInvoiceHtml($invoiceDepartureData);
+error_log($invoiceDepartureHtml);
         //pasarla a pdf y enviarla al email
 
         $invoiceReturnData;

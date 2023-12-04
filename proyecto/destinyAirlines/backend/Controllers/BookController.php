@@ -72,11 +72,11 @@ final class BookController extends BaseController
 
             foreach ($keys_default as $key => $defaultValue) {
                 //$passengerDetails[$key] = (isset($passenger[$key]) && $passenger[$key] !== '') ? $passenger[$key] : $defaultValue;
-                $passengerDetails[$key] = $passenger[$key] ?? $defaultValue;
+                $passengerDetails[$key] = $passenger[$key] === null || $passenger[$key] === "" ? $defaultValue : $passenger[$key];
             }
-
             //Cada pasajero lo saneamos y validamos
             $passengerDetails = PassengerSanitizer::sanitize($passengerDetails);
+
             if (!PassengerValidator::validate($passengerDetails)) {
                 return false;
             }

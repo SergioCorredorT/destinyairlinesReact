@@ -9,15 +9,15 @@ final class ServicesModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function readSubTypeFromIdServices(array|int $idServices)
+    public function readSubTypeAndBillingCategoryFromIdServices(array|int $idServices)
     {
         if (is_array($idServices)) {
             $idServicesList = implode(',', $idServices);
-            $results = parent::select('id_SERVICES, subtype', "id_SERVICES IN ($idServicesList)");
+            $results = parent::select('id_SERVICES, subtype, billingCategory', "id_SERVICES IN ($idServicesList)");
 
             $services = [];
             foreach ($results as $result) {
-                $services[$result['id_SERVICES']] = $result['subtype'];
+                $services[$result['id_SERVICES']] = ['subtype'=>$result['subtype'], 'billingCategory'=>$result['billingCategory']];
             }
 
             return $services;
@@ -25,8 +25,6 @@ final class ServicesModel extends BaseModel
             return parent::select('subtype', "id_SERVICES = $idServices ")[0]['subtype'];
         }
     }
-
-
 
     public function readIndividualActiveServicePaidCodes()
     {

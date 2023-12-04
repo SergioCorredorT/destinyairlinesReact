@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <title>Invoice</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      :root {
+        --div-bg-color: #e6e6e6;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      .container {
+        display: grid;
+        row-gap: 20px;
+        padding: 50px;
+        min-height: 100dvh;
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        display: grid;
+      }
+
+      .title {
+        text-align: center;
+      }
+
+      .title h1 {
+        margin: 0;
+      }
+
+      .logo {
+        display: flex;
+      }
+      .logo img {
+        height: 150px;
+        margin-left: auto;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        row-gap: 20px;
+        column-gap: 10px;
+        grid-template-areas:
+          "clientData                       companyData"
+          "invoiceData                      invoiceData"
+          "invoiceDetail                    invoiceDetail"
+          "invoiceEspecialDiscountsDetail   invoiceEspecialDiscountsDetail"
+          "invoiceServicesDetail            invoiceServicesDetail"
+          ".                                invoiceTotals";
+      }
+
+      section {
+        padding: 20px;
+      }
+
+      .clientData {
+        grid-area: clientData;
+      }
+      .clientData-main {
+
+      }
+
+      .clientData-main-line, .companyData-main-line {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .companyData {
+        grid-area: companyData;
+      }
+
+      .invoiceData {
+        grid-area: invoiceData;
+      }
+
+      .invoiceDetail {
+        grid-area: invoiceDetail;
+      }
+
+      .invoiceDetail-main-table {
+        width: 100%;
+      }
+
+      .invoiceDetail-main-table td {
+        text-align: center;
+      }
+
+      .invoiceEspecialDiscountsDetail {
+        grid-area: invoiceEspecialDiscountsDetail;
+      }
+
+      .invoiceServicesDetail {
+        grid-area: invoiceServicesDetail;
+      }
+
+      .invoiceTotals {
+        grid-area: invoiceTotals;
+      }
+      footer {
+        text-align: center;
+        padding: 10px;
+      }
+
+      main section,
+      footer {
+        background-color: var(--div-bg-color);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <section class="title">
+          <h1>Factura</h1>
+        </section>
+        <div class="logo">
+          <img
+            alt="logo"
+            src="https://lh3.googleusercontent.com/pw/ADCreHcBgNwlq4KG-PxMPtJXEOCJZ7BD6pgXMgBvLWmA8qY0R1SkzjPMcASMurvjyp7pAcA4rngXW6yn0umyPjL72b9eO9RwavbVMHIArvmvutsjOodl8wnH4RH0XfOqY1COQAVV6qMyQOy1VqJ3Ur77PA=w200-h190-s-no?authuser=0"
+          />
+        </div>
+      </header>
+      <main>
+        <section class="clientData">
+          <h2>Datos del cliente</h2>
+          <div class="clientData-main">
+            <div class="clientData-main-line">
+              <span>DNI</span> <span></span>
+            </div>
+            <div class="clientData-main-line">
+              <span>First Name:</span> <span>Serg</span>
+            </div>
+            <div class="clientData-main-line">
+              <span>Last Name:</span> <span></span>
+            </div>
+            <div class="clientData-main-line">
+              <span>Zip code:</span> <span>25</span>
+            </div>
+            <div class="clientData-main-line">
+              <span>Email:</span> <span>sergiodesarrolladorweb@gmail.com</span>
+            </div>
+          </div>
+        </section>
+        <section class="companyData">
+          <h2>Datos de la empresa</h2>
+          <div class="companyData-main">
+            <div class="companyData-main-line">
+              <span>Name:</span> <span>Destiny Airlines</span>
+            </div>
+            <div class="companyData-main-line">
+              <span>Dirección:</span> <span>123 Aeropuerto St, Albacete, España</span>
+            </div>
+            <div class="companyData-main-line">
+              <span>Teléfono:</span> <span>34111222333</span>
+            </div>
+            <div class="companyData-main-line">
+              <span>Email:</span> <span>34111222333</span>
+            </div>
+          </div>
+        </section>
+        <section class="invoiceData">Factura: a78722f6-9698-452a-93b3-326093d6368f, 2023-12-04 14:12:09. Reserva: 30d0251f-e, departure</section>
+        <section class="invoiceDetail">
+          <div class="invoiceDetail-main">
+            <h2>Detalles de pasajeros</h2>
+            <table class="invoiceDetail-main-table">
+              <tr>
+                <th>Viaje</th>
+                <th>Concepto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Descuento</th>
+                <th>Subtotal</th>
+              </tr><tr><td rowspan='1'>
+                  <p>Vuelo John F. Kennedy International Airport (JFK) a <br> Heathrow Airport (LHR)</p>
+                </td><td>
+                      Adultos
+                    </td>
+                    <td>350</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>700</td>
+                  </tr><tr>
+                  <td colspan="5">
+                    Total:
+                  </td>
+                  <td>700</td>
+                </tr>
+            </table>
+          </div>
+        </section><section class="invoiceEspecialDiscountsDetail">
+          <div class="invoiceDetail-main">
+            <h2>Detalles de descuentos</h2>
+            <table class="invoiceDetail-main-table">
+              <tr>
+                <th>Concepto</th>
+                <th>Precio/Porcentaje</th>
+                <th>Subtotal</th>
+              </tr><tr>
+                  <td>Reserva en Equipo</td>
+                  <td>10</td>
+                  <td>Aquí el precio aplicando %, o quizás hacer % de % y después hacer cuenta total</td>
+                </tr><tr>
+                  <td colspan="2">Total con descuentos aplicados: </td>
+                  <td>1111111111</td>
+                </tr>
+              </table>
+            </div>
+          </section><section class="invoiceServicesDetail">
+          <div class="invoiceDetail-main">
+            <h2>Detalles de servicios</h2>
+            <table class="invoiceDetail-main-table">
+              <tr>
+                <th>Concepto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Acción</th>
+                <th>Subtotal</th>
+              </tr><tr>
+              <td>Tu Asistente de Viaje</td>
+              <td>100</td>
+              <td>1</td>
+              <td>add</td>
+              <td>100</td>
+            </tr><tr>
+              <td>Paquetes de Ensueño</td>
+              <td>25</td>
+              <td>1</td>
+              <td>add</td>
+              <td>25</td>
+            </tr><tr>
+              <td>Elige tu Trono</td>
+              <td>15</td>
+              <td>1</td>
+              <td>add</td>
+              <td>15</td>
+            </tr><tr>
+              <td>Más Espacio, Más Aventuras</td>
+              <td>20</td>
+              <td>2</td>
+              <td>add</td>
+              <td>40</td>
+            </tr><tr>
+              <td>Check-in Exprés</td>
+              <td>10</td>
+              <td>1</td>
+              <td>add</td>
+              <td>10</td>
+            </tr><tr>
+              <td>Embarque Real</td>
+              <td>10</td>
+              <td>1</td>
+              <td>add</td>
+              <td>10</td>
+            </tr><tr>
+              <td colspan="4">Total: </td>
+              <td>200</td>
+            </tr>
+          </table>
+          </div>
+        </section>
+
+        <section class="invoiceTotals">invoiceTotals</section>
+      </main>
+      <footer>
+        <p>Gracias por confiar en Destiny Airlines</p>
+      </footer>
+    </div>
+  </body>
+</html> 
+

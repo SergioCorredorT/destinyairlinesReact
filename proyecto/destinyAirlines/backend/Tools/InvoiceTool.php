@@ -35,25 +35,43 @@ class InvoiceTool
         $airportOriginData = $airportModel->readAirportFromIdAirport($itineraryData['origin']);
         $airportDestinyData = $airportModel->readAirportFromIdAirport($itineraryData['destiny']);
 
-        //Recogemos un resumen de los servicios en $services
+        //Recogemos un resumen de los servicios en $services y de los descuentos en discounts desde $servicesInvoicesData
         $services = [];
+        $discounts = [];
         if (!empty($servicesInvoicesData)) {
-            $idServices = array_column($servicesInvoicesData, 'id_SERVICES');
-            $serviceNames = $servicesModel->readSubTypeFromIdServices($idServices);
+            $idsServices = array_column($servicesInvoicesData, 'id_SERVICES');
+            $serviceNamesAndType = $servicesModel->readSubTypeAndBillingCategoryFromIdServices($idsServices);
             foreach ($servicesInvoicesData as $serviceInvoice) {
                 $id_SERVICES = $serviceInvoice['id_SERVICES'];
                 $addRemove = $serviceInvoice['addRemove'];
                 $oldPrice = $serviceInvoice['oldPrice'];
+                $name = $serviceNamesAndType[$id_SERVICES]['subtype'];
+                $billingCategory = $serviceNamesAndType[$id_SERVICES]['billingCategory'];
 
-                if (!isset($services[$id_SERVICES])) {
-                    $services[$id_SERVICES] = [
-                        'name' => $serviceNames[$id_SERVICES],
+                if($billingCategory === 'PaidService') {
+
+                    if (!isset($services[$id_SERVICES])) {
+                        $services[$id_SERVICES] = [
+                        'name' => $name,
                         'addRemove' => $addRemove,
                         'price' => $oldPrice,
                         'count' => 1
                     ];
-                } else {
-                    $services[$id_SERVICES]['count']++;
+                    } else {
+                        $services[$id_SERVICES]['count']++;
+                    }
+                }
+                else {
+                    if (!isset($discounts[$id_SERVICES])) {
+                        $discounts[$id_SERVICES] = [
+                        'name' => $name,
+                        'addRemove' => $addRemove,
+                        'price' => $oldPrice,
+                        'count' => 1
+                    ];
+                    } else {
+                        $discounts[$id_SERVICES]['count']++;
+                    }
                 }
             }
         }
@@ -93,7 +111,8 @@ class InvoiceTool
                 'IATA' => $airportDestinyData['IATA'],
                 'name' => $airportDestinyData['name']
             ],
-            'services' => $services
+            'services' => $services,
+            'discounts' => $discounts
         ];
     }
 
