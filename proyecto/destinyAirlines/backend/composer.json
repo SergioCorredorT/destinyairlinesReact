@@ -4,7 +4,6 @@
         "firebase/php-jwt": "^6.9",
         "ramsey/uuid": "^4.7",
         "paypal/rest-api-sdk-php": "^1.14",
-        "dompdf/dompdf": "^2.0",
-        "mpdf/mpdf": "^8.2"
+        "dompdf/dompdf": "^2.0"
     }
 }
