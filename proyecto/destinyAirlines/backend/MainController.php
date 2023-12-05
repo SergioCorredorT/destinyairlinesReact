@@ -36,12 +36,12 @@ $controllers = [
         'storebookservicesdetails'                  => ['controller' => 'BookController',       'method' => 'storeBookServicesDetails'],
         'storeprimarycontactinformationdetails'     => ['controller' => 'BookController',       'method' => 'storePrimaryContactInformationDetails'],
         'paymentdetails'                            => ['controller' => 'BookController',       'method' => 'paymentDetails'],
+        'checkin'                                   => ['controller' => 'BookController',       'method' => 'checkin'],
     //GET
         'paypalredirectok'                          => ['controller' => 'paymentController',    'method' => 'paypalRedirectOk'],
         'paypalredirectcancel'                      => ['controller' => 'paymentController',    'method' => 'paypalRedirectCancel'],
     //SOLO PARA DEBUG
         'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',      'method' => 'obtenerVariablesDeSesionDebug'],
-        'generarfactura'                            => ['controller' => 'DebugController',      'method' => 'generarFactura'],
         'debugpaypalredirectok'                     => ['controller' => 'paymentController',    'method' => 'debugPaypalRedirectOk']
 ];
 

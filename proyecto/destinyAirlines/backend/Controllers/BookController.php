@@ -353,8 +353,30 @@ final class BookController extends BaseController
     }
 
     //Para obtener la tarjeta de embarque, solo se puede hacer desde 24 a 48 hrs antes del vuelo
-    public function confirmCheckin(array $POST)
+    public function checkin(array $POST)
     {
+        require_once './Sanitizers/CheckinSanitizer.php';
+        require_once './Validators/CheckinValidator.php';
+        require_once './Sanitizers/TokenSanitizer.php';
+        require_once './Validators/TokenValidator.php';
+
+        $checkinDetails = [
+            'accessToken'       => $POST['accessToken'] ?? '',
+            'bookCode'          => $POST['bookCode'] ?? ''
+        ];
+
+        $accessToken = $POST['accessToken'];
+        $accessToken = TokenSanitizer::sanitizeToken($accessToken);
+        if (!TokenValidator::validateToken($accessToken)) {
+            return false;
+        }
+
+        $checkinDetails = CheckinSanitizer::sanitize($checkinDetails);
+        if (!CheckinValidator::validate($checkinDetails)) {
+            return false;
+        }
+
+        
         //Checkin
         //solo se puede hacer desde 24 a 48 horas antes del vuelo
         //se confirma asistencia o se cancela

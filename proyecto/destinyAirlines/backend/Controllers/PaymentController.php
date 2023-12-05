@@ -20,7 +20,7 @@ final class PaymentController extends BaseController
         //CREAR TOKEN de 3 horas (caducidad de paypal en su web)
         $data = ['id' => 138, 'idUser' => 138, 'idInvoiceD' => 26, 'type' => 'paypalredirectok'];
         $paymentToken = TokenTool::generateToken($data, intval($tokenSettings['secondsTimeLifePaymentReturnUrl']));
-        $this->paypalRedirectOk(['token' => $paymentToken]);
+        return $this->paypalRedirectOk(['token' => $paymentToken]);
     }
 
     public function paypalRedirectOk(array $GET)
@@ -60,6 +60,17 @@ final class PaymentController extends BaseController
         $emailTool = new EmailTool();
         $iniTool = new IniTool('./Config/cfg.ini');
         $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
+        $subject = 'Factura de su nuevo viaje';
+        $message = '¡Gracias por elegir volar con Destiny Airlines! Confirmamos que hemos recibido su pago y su reserva está confirmada.
+
+        Adjuntamos a este correo electrónico la factura de su viaje. Le recomendamos que la guarde para sus registros.
+        
+        Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros.
+        
+        ¡Esperamos verle a bordo pronto!
+        
+        Saludos cordiales,
+        El equipo de Destiny Airlines';
 
         //Generamos las facturas con los id que contiene el token válido
         $invoiceDepartureData = $invoiceTool->generateInvoiceData($dedodedPaymentToken['response']->data->idUser, $dedodedPaymentToken['response']->data->idInvoiceD);
@@ -70,17 +81,8 @@ final class PaymentController extends BaseController
                 'toEmail' => $invoiceDepartureData['userData']['emailAddress'],
                 'fromEmail' => $cfgOriginEmailIni['email'],
                 'fromPassword' => $cfgOriginEmailIni['password'],
-                'subject' => 'Factura de su nuevo viaje',
-                'message' => '¡Gracias por elegir volar con Destiny Airlines! Confirmamos que hemos recibido su pago y su reserva está confirmada.
-
-                Adjuntamos a este correo electrónico la factura de su viaje. Le recomendamos que la guarde para sus registros.
-                
-                Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros.
-                
-                ¡Esperamos verle a bordo pronto!
-                
-                Saludos cordiales,
-                El equipo de Destiny Airlines'
+                'subject' => $subject,
+                'message' => $message
             ],
             'invoiceTemplate',
             $invoiceDeparturePdf,
@@ -98,17 +100,8 @@ final class PaymentController extends BaseController
                     'toEmail' => $invoiceReturnData['userData']['emailAddress'],
                     'fromEmail' => $cfgOriginEmailIni['email'],
                     'fromPassword' => $cfgOriginEmailIni['password'],
-                    'subject' => 'Factura de su nuevo viaje',
-                    'message' => '¡Gracias por elegir volar con Destiny Airlines! Confirmamos que hemos recibido su pago y su reserva está confirmada.
-
-                    Adjuntamos a este correo electrónico la factura de su viaje. Le recomendamos que la guarde para sus registros.
-                    
-                    Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros.
-                    
-                    ¡Esperamos verle a bordo pronto!
-                    
-                    Saludos cordiales,
-                    El equipo de Destiny Airlines'
+                    'subject' => $subject,
+                    'message' => $message
                 ],
                 'invoiceTemplate',
                 $invoiceReturnPdf,

@@ -301,7 +301,6 @@ class InvoicePageTemplate extends PageBaseTemplate
               </section>';
             }
 
-            
             if(!empty($data['services'])) {
               $html.=
               '<section class="invoiceServicesDetail">
@@ -337,7 +336,6 @@ class InvoicePageTemplate extends PageBaseTemplate
             $html.='
               </div>
             </section>
-
             <section class="invoiceTotals"><span class="negrita">Precio total a deber:</span> <span>'.$data['invoiceData']['price'].'</span></section>
           </main>
           <footer>

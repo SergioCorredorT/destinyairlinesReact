@@ -61,7 +61,7 @@ class InvoiceTool
                         $services[$id_SERVICES]['count']++;
                     }
                 }
-                else {
+                else { //$billingCategory === 'PercentageDiscount'
                     if (!isset($discounts[$id_SERVICES])) {
                         $discounts[$id_SERVICES] = [
                         'name' => $name,
