@@ -359,6 +359,8 @@ final class BookController extends BaseController
         require_once './Validators/CheckinValidator.php';
         require_once './Sanitizers/TokenSanitizer.php';
         require_once './Validators/TokenValidator.php';
+        require_once './Tools/CheckinProcessTool.php';
+        require_once './Tools/TokenTool.php';
 
         $checkinDetails = [
             'accessToken'       => $POST['accessToken'] ?? '',
@@ -376,23 +378,57 @@ final class BookController extends BaseController
             return false;
         }
 
-        
-        //Checkin
-        //solo se puede hacer desde 24 a 48 horas antes del vuelo
-        //se confirma asistencia o se cancela
-        //se obtiene tarjeta de embarque (que no es lo mismo que la factura)
-        //si el cliente tiene una reserva, se le notifica por mail y sms (sms se considera servicio con precio)
-        //se podrá seleccionar asiento si se pagó ese servicio
+        $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
+
+        if (!$decodedToken['response']) {
+            return false;
+        }
+        $bookCode = $checkinDetails['bookCode'];
+        $idUser = $decodedToken['response']->data->id;
+
+        //Obtener el flightId en tabla book con el bookCode, el idUser, con checkin a null
+        $bookModel = new BookModel();
+        $idFlight = $bookModel->readFlightId($bookCode, $idUser);
+        if (!$idFlight) {
+            return false;
+        }
+
+        //en la tabla flights, con el flightId obtener la fecha y hora del vuelo
+        $flightModel = new FlightModel();
+        $dateHour = $flightModel->getFlightDateHourFromIdFlight($idFlight);
+        $flightDate = $dateHour['date'];
+        $flightHour = $dateHour['hour'];
+
+        $checkinProcessTool = new CheckinProcessTool();
+        $isPastDateTime = $checkinProcessTool->isPastDateTime($flightDate, $flightHour);
+        $hoursDifference = $checkinProcessTool->getHoursDifference($flightDate, $flightHour);
+
+        //Comprobar si faltan menos de 48 hrs para el vuelo
+        if (!$isPastDateTime || $hoursDifference > 48) {
+            return false;
+        }
+
+        //poner la fecha actual
+        if(!$bookModel->updateChecking($bookCode)) {
+            return false;
+        }
+
+        //generar tarjetas de embarque y enviarlas al email
+        return true;
+
+        //Avisos automáticos del checkin desde backend
+        //si el cliente tiene una reserva y entra en las 48 hrs de antelación al vuelo, se le notifica por mail y sms
+        //EXTRA: se podrá seleccionar asiento si se pagó ese servicio
     }
 
-    //Recibe id del usuario y devuelve un array o un JSON de los books
     public function getBooks(array $POST)
     {
+        //Recibe id del usuario y accessToken, y devuelve un array o un JSON de los books
     }
 
-    //Recibirá un array de entidades y se aplicarán
     public function editBook()
     {
+        //Recibirá un array de datos, un accessToken y se aplicarán
     }
 
     private function validateDirection($direction)
