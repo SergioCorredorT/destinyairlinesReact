@@ -150,6 +150,7 @@ class BookingProcessTool
     
         foreach ($passengers as $passenger) {
             [$idPassenger] = $passengerModel->createPassengers([
+                'id_BOOKS' => $idBook,
                 'passengerCode' => $this->generateUUID(),
                 'documentationType' => $passenger['documentationType'] ?? '',
                 'documentCode' => $passenger['documentCode'] ?? '',

@@ -361,6 +361,9 @@ final class BookController extends BaseController
         require_once './Validators/TokenValidator.php';
         require_once './Tools/CheckinProcessTool.php';
         require_once './Tools/TokenTool.php';
+        require_once './Tools/EmailTool.php';
+        require_once './Tools/CheckinTool.php';
+        require_once './Tools/PdfTool.php';
 
         $checkinDetails = [
             'accessToken'       => $POST['accessToken'] ?? '',
@@ -395,25 +398,65 @@ final class BookController extends BaseController
 
         //en la tabla flights, con el flightId obtener la fecha y hora del vuelo
         $flightModel = new FlightModel();
-        $dateHour = $flightModel->getFlightDateHourFromIdFlight($idFlight);
-        $flightDate = $dateHour['date'];
-        $flightHour = $dateHour['hour'];
+        $flightData = $flightModel->getFlightDateHourIdItineraryFromIdFlight($idFlight);
+        $flightDate = $flightData['date'];
+        $flightHour = $flightData['hour'];
+        $idItinerary = $flightData['id_ITINERARIES'];
 
+        //Comprobar si faltan menos de 48 hrs para el vuelo
         $checkinProcessTool = new CheckinProcessTool();
         $isPastDateTime = $checkinProcessTool->isPastDateTime($flightDate, $flightHour);
         $hoursDifference = $checkinProcessTool->getHoursDifference($flightDate, $flightHour);
-
-        //Comprobar si faltan menos de 48 hrs para el vuelo
         if (!$isPastDateTime || $hoursDifference > 48) {
             return false;
         }
 
-        //poner la fecha actual
-        if(!$bookModel->updateChecking($bookCode)) {
+
+        //generar tarjetas de embarque y enviarlas al email
+        $checkinTool = new CheckinTool();
+        $pdfTool = new PdfTool();
+        $emailTool = new EmailTool();
+
+        $checkinData = $checkinTool->generateCheckinData(['bookCode' => $bookCode, 'flightDate' => $flightDate, 'flightHour' => $flightHour, 'idItinerary' => $idItinerary]);
+        if (!$checkinData) {
             return false;
         }
 
-        //generar tarjetas de embarque y enviarlas al email
+        $boardingPassHtml = $checkinTool->generateBoardingPassHtml($checkinData);
+        $boardingPassPdf = $pdfTool->generatePdfFromHtml($boardingPassHtml);
+
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
+        $subject = 'Tarjetas de embarque para su viaje';
+        $message = '¡Gracias por elegir volar con Destiny Airlines!.
+
+        Adjuntamos a este correo electrónico las tarjetas de embarque de su viaje. Le recomendamos que la guarde para sus registros.
+        
+        Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros.
+        
+        ¡Esperamos verle a bordo pronto!
+        
+        Saludos cordiales,
+        El equipo de Destiny Airlines';
+        $emailTool->sendEmail(
+            [
+                'toEmail' => $invoiceDepartureData['userData']['emailAddress'],
+                'fromEmail' => $cfgOriginEmailIni['email'],
+                'fromPassword' => $cfgOriginEmailIni['password'],
+                'subject' => $subject,
+                'message' => $message
+            ],
+            'boardingPassTemplate',
+            $boardingPassPdf,
+            'boardingCard'
+        );
+
+        //poner la fecha actual
+        if (!$bookModel->updateChecking($bookCode)) {
+            return false;
+        }
+
+
         return true;
 
         //Avisos automáticos del checkin desde backend

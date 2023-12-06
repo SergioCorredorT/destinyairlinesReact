@@ -40,6 +40,11 @@ class TemplateTool
                     $page = InvoicePageTemplate::applyInvoicePageTemplate($data);
                     return $page;
                 }
+            case 'boardingpasstemplate': {
+                    require_once './Templates/page/BoardingPassTemplate.php';
+                    $page = BoardingPassPageTemplate::applyBoardingPassPageTemplate($data);
+                    return $page;
+                }
             default: {
                     //CUANDO ES '' P.E.
                     return $data['message'];
@@ -47,4 +52,3 @@ class TemplateTool
         }
     }
 }
-

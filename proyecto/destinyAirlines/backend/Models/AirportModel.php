@@ -14,6 +14,11 @@ final class AirportModel extends BaseModel
         return parent::select('*', "id_AIRPORTS = $idAirport")[0];
     }
 
+    public function readAirportNameFromIdAirport($idAirport)
+    {
+        return parent::select('name', "id_AIRPORTS = $idAirport")[0]['name'];
+    }
+
     public function createAirport(array $data, bool $getId = false)
     {
         return parent::insert($data, $getId);

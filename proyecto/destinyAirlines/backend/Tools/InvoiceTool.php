@@ -122,8 +122,4 @@ class InvoiceTool
         $templateTool = new TemplateTool();
         return $templateTool::ApplyPageTemplate($invoiceData, 'invoiceTemplate');
     }
-
-    public function generateInvoicePDF($invoiceHtml)
-    {
-    }
 }

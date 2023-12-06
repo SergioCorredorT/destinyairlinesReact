@@ -31,7 +31,12 @@ final class BookModel extends BaseModel
 
     public function readBookFromIdBook($idBook)
     {
-        return parent::select('*', "id_BOOKS = '$idBook'")[0];
+        return parent::select('*', "id_BOOKS = $idBook")[0];
+    }
+
+    public function readIdBookFromBookCode($bookCode)
+    {
+        return parent::select('id_BOOKS', "bookCode = '$bookCode'")[0]['id_BOOKS'];
     }
 
     public function readBooks()

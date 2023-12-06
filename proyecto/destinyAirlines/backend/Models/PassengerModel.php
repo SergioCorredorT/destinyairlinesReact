@@ -24,6 +24,11 @@ final class PassengerModel extends BaseModel
         return false;
     }
 
+    public function readFirstNameLastNamePassengerCode($idBook)
+    {
+        return parent::select('firstName, lastName, passengerCode'," id_BOOKS = $idBook ");
+    }
+
     //------------------------------------------------------------
     public function createPassengers(array $data, bool $getId = false)
     {

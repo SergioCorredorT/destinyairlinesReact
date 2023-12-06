@@ -9,6 +9,11 @@ final class ItineraryModel extends BaseModel
         parent::__construct(self::table);
     }
 
+    public function readOriginDestiny($idItinerary)
+    {
+        return parent::select('origin, destiny', "id_ITINERARIES = $idItinerary")[0];
+    }
+
     public function readItineraryFromIdItinerary($idItinerary)
     {
         return parent::select('*', "id_ITINERARIES = $idItinerary")[0];
