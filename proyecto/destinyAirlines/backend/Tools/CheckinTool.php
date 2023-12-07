@@ -17,7 +17,7 @@ class CheckinTool
 
     public function generateCheckinData(array $checkinData)
     {
-        if (!isset($checkinData['bookCode'], $checkinData['flightDate'], $checkinData['flightHour'], $checkinData['idItinerary'])) {
+        if (!isset($checkinData['bookCode'], $checkinData['flightDate'], $checkinData['flightHour'], $checkinData['idItinerary'], $checkinData['flightCode'])) {
             return false;
         }
 
@@ -29,6 +29,7 @@ class CheckinTool
         $bookCode = $checkinData['bookCode'];
         $flightDate = $checkinData['flightDate'];
         $flightHour = $checkinData['flightHour'];
+        $flightCode = $checkinData['flightCode'];
         $originDestiny = $itineraryModel->readOriginDestiny($checkinData['idItinerary']);
         $originAirportName = $airportModel->readAirportNameFromIdAirport($originDestiny['origin']);
         $destinyAirportName = $airportModel->readAirportNameFromIdAirport($originDestiny['destiny']);
@@ -37,7 +38,7 @@ class CheckinTool
         $passengersData = $passengerModel->readFirstNameLastNamePassengerCode($idBook);
 
         return [
-            'bookCode' => $bookCode,
+            'flightCode' => $flightCode,
             'flightDate' => $flightDate,
             'flightHour' => $flightHour,
             'origin' => $originAirportName,

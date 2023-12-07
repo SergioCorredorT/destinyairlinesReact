@@ -398,10 +398,11 @@ final class BookController extends BaseController
 
         //en la tabla flights, con el flightId obtener la fecha y hora del vuelo
         $flightModel = new FlightModel();
-        $flightData = $flightModel->getFlightDateHourIdItineraryFromIdFlight($idFlight);
+        $flightData = $flightModel->getFlightDateHourIdItineraryFlightCodeFromIdFlight($idFlight);
         $flightDate = $flightData['date'];
         $flightHour = $flightData['hour'];
         $idItinerary = $flightData['id_ITINERARIES'];
+        $flightCode = $flightData['flightCode'];
 
         //Comprobar si faltan menos de 48 hrs para el vuelo
         $checkinProcessTool = new CheckinProcessTool();
@@ -417,12 +418,13 @@ final class BookController extends BaseController
         $pdfTool = new PdfTool();
         $emailTool = new EmailTool();
 
-        $checkinData = $checkinTool->generateCheckinData(['bookCode' => $bookCode, 'flightDate' => $flightDate, 'flightHour' => $flightHour, 'idItinerary' => $idItinerary]);
+        $checkinData = $checkinTool->generateCheckinData(['bookCode' => $bookCode, 'flightDate' => $flightDate, 'flightHour' => $flightHour, 'idItinerary' => $idItinerary, 'flightCode' => $flightCode]);
         if (!$checkinData) {
             return false;
         }
 
         $boardingPassHtml = $checkinTool->generateBoardingPassHtml($checkinData);
+        error_log($boardingPassHtml);
         $boardingPassPdf = $pdfTool->generatePdfFromHtml($boardingPassHtml);
 
         $iniTool = new IniTool('./Config/cfg.ini');

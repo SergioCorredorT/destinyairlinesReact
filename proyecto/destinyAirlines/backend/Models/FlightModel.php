@@ -14,9 +14,9 @@ final class FlightModel extends BaseModel
         return parent::select('flightCode', "freeSeats > 0 AND CONCAT(date, ' ', hour) > NOW() AND flightCode = '$flightCode'");
     }
 
-    public function getFlightDateHourIdItineraryFromIdFlight(int $idFlight)
+    public function getFlightDateHourIdItineraryFlightCodeFromIdFlight(int $idFlight)
     { 
-        return parent::select('date, hour, id_ITINERARIES', "id_FLIGHTS = $idFlight")[0];
+        return parent::select('date, hour, id_ITINERARIES, flightCode', "id_FLIGHTS = $idFlight")[0];
     }
 
     public function getFlightFromIdFlight(int $idFlight)

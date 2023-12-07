@@ -10,18 +10,13 @@ class BoardingPassPageTemplate extends PageBaseTemplate
     require_once './Tools/IniTool.php';
     $iniTool = new IniTool('./Config/cfg.ini');
     $imageLinks = $iniTool->getKeysAndValues('imageLinks');
-    $companyInfo = $iniTool->getKeysAndValues('companyInfo');
 
-    $bookCode = $data['bookCode'];
+    $flightCode = $data['flightCode'];
     $flightDate = $data['flightDate'];
     $flightHour = $data['flightHour'];
-    $origin = $data['originAirportName'];
-    $destiny = $data['destinyAirportName'];
-    $passengersData = $data['passengersData'];
-
-
-    
-
+    $origin = $data['origin'];
+    $destiny = $data['destiny'];
+    $passengersData = $data['passengersData'];//firstName, lastName, passengerCode
 
     $html = '
     <!DOCTYPE html>
@@ -32,16 +27,18 @@ class BoardingPassPageTemplate extends PageBaseTemplate
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <style>
           :root {
-            --div-bg-color: #e6e6e6;
+            --div-bg-color: #ffff;
           }
-    
+
           * {
             box-sizing: border-box;
           }
+
           body {
             padding: 0;
             margin: 0;
           }
+
           .container {
             display: grid;
             row-gap: 20px;
@@ -49,97 +46,206 @@ class BoardingPassPageTemplate extends PageBaseTemplate
             min-height: 100dvh;
             grid-template-columns: 1fr;
           }
-    
+
           header {
             display: grid;
           }
-    
-          .title {
-            text-align: center;
-          }
-    
-          .title h1 {
-            margin: 0;
-          }
-    
-          .logo {
-            display: flex;
-          }
-          .logo img {
-            height: 150px;
-            margin-left: auto;
-          }
-    
+
           main {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto;
+            grid-template-columns: 1fr;
+            row-gap: 20px;
+          }
+
+          .waterMark {
+            background: linear-gradient(
+                rgba(255, 255, 255, 0.5),
+                rgba(255, 255, 255, 0.5)
+              ),
+              url("'.$imageLinks['isotipo'].'");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+          }
+
+          .boardingPass {
+            aspect-ratio: 16 / 9;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            grid-template-rows: 1fr;
+            column-gap: 2px;
+            grid-template-areas:
+              "boardingPassHeader                               boardingPassHeader"
+              "boardingPassClient                               boardingPassCompany"
+              "boardingPassFooter                               boardingPassFooter";
+          }
+
+          article.boardingPass p {
+            margin: 3px 0;
+          }
+
+          .boardingPassClient-main, .boardingPassCompany-main {
+            align-items: center;
+          }
+
+          .boardingPassHeader {
+            grid-area: boardingPassHeader;
+          }
+
+          .boardingPassClient {
+            outline: 1px solid #000;
+            border-radius: 30px;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 50px 1fr 20px;
             row-gap: 20px;
             column-gap: 10px;
             grid-template-areas:
-              "clientData                       companyData"
-              "invoiceData                      invoiceData"
-              "invoiceDetail                    invoiceDetail"
-              "invoiceEspecialDiscountsDetail   invoiceEspecialDiscountsDetail"
-              "invoiceServicesDetail            invoiceServicesDetail"
-              ".                                invoiceTotals";
-          }
-    
-          section {
-            padding: 20px;
-          }
-    
-          .clientData {
-            grid-area: clientData;
-          }
-          .negrita {
-            font-weight: bold;
-          }
-    
-          .clientData-main-line, .companyData-main-line, .invoiceTotals {
-            display: flex;
-            justify-content: space-between;
+              "boardingPassClient-header"
+              "boardingPassClient-main"
+              "boardingPassClient-footer";
           }
 
-          .companyData {
-            grid-area: companyData;
+          .boardingPassClient-header h2, .boardingPassCompany-header h2 {
+            margin: 0;
+            font-size: 20px;
           }
 
-          .invoiceData {
-            grid-area: invoiceData;
+          .boardingPassClient-main {
+            padding: 10px 50px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            row-gap: 20px;
+            column-gap: 10px;
+            grid-template-areas:
+              "boardingPassClient-name                             boardingPassClient-dateHour"
+              "boardingPassClient-origin                           boardingPassClient-flightCode"
+              "boardingPassClient-destiny                          boardingPassClient-qr"
+              "boardingPassClient-passengerCode                    boardingPassClient-qr";
           }
 
-          .invoiceDetail {
-            grid-area: invoiceDetail;
-          }
-    
-          .invoiceDetail-main-table {
-            width: 100%;
-          }
-
-          .invoiceDetail-main-table td {
+          .boardingPassClient-header {
+            grid-area: boardingPassClient-header;
+            background: linear-gradient(to right, #ffffff 0%, #e0e0e0 100%);
             text-align: center;
-          }
-    
-          .invoiceEspecialDiscountsDetail {
-            grid-area: invoiceEspecialDiscountsDetail;
-          }
-
-          .invoiceServicesDetail {
-            grid-area: invoiceServicesDetail;
+            display: grid;
+            place-content: center;
+            border-radius: 30px 30px 0 0;
           }
 
-          .invoiceTotals {
-            grid-area: invoiceTotals;
+          .boardingPassClient-qr {
+            grid-area: boardingPassClient-qr;
           }
+
+          .boardingPassClient-name {
+            grid-area: boardingPassClient-name;
+          }
+
+          .boardingPassClient-dateHour {
+            grid-area: boardingPassClient-dateHour;
+          }
+
+          .boardingPassClient-origin {
+            grid-area: boardingPassClient-origin;
+          }
+
+          .boardingPassClient-destiny {
+            grid-area: boardingPassClient-destiny;
+          }
+
+          .boardingPassClient-flightCode {
+            grid-area: boardingPassClient-flightCode;
+          }
+
+          .boardingPassClient-passengerCode {
+            grid-area: boardingPassClient-passengerCode;
+          }
+
+          .boardingPassClient-footer {
+            grid-area: boardingPassClient-footer;
+            background: linear-gradient(to right, #ffffff 0%, #e0e0e0 100%);
+            border-radius: 0 0 30px 30px;
+          }
+
+          .boardingPassCompany {
+            outline: 1px solid #000;
+            border-radius: 30px;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 50px 1fr 20px;
+            row-gap: 20px;
+            column-gap: 10px;
+            grid-template-areas:
+              "boardingPassCompany-header"
+              "boardingPassCompany-main"
+              "boardingPassCompany-footer";
+          }
+
+          .boardingPassCompany-main {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            row-gap: 20px;
+            grid-template-areas:
+              "boardingPassCompany-name"
+              "boardingPassCompany-origin"
+              "boardingPassCompany-destiny"
+              "boardingPassCompany-dateHour"
+              "boardingPassCompany-flightCode"
+              "boardingPassCompany-passengerCode";
+          }
+
+          .boardingPassCompany-header {
+            grid-area: boardingPassCompany-header;
+            background: linear-gradient(to right, #ffffff 0%, #e0e0e0 100%);
+            text-align: center;
+            display: grid;
+            place-content: center;
+            border-radius: 30px 30px 0 0;
+          }
+
+          .boardingPassCompany-name {
+            grid-area: boardingPassCompany-name;
+          }
+
+          .boardingPassCompany-dateHour {
+            grid-area: boardingPassCompany-dateHour;
+          }
+
+          .boardingPassCompany-origin {
+            grid-area: boardingPassCompany-origin;
+          }
+
+          .boardingPassCompany-destiny {
+            grid-area: boardingPassCompany-destiny;
+          }
+
+          .boardingPassCompany-flightCode {
+            grid-area: boardingPassCompany-flightCode;
+          }
+
+          .boardingPassCompany-passengerCode {
+            grid-area: boardingPassCompany-passengerCode;
+          }
+
+          .boardingPassCompany-footer {
+            grid-area: boardingPassCompany-footer;
+            background: linear-gradient(to right, #ffffff 0%, #e0e0e0 100%);
+            border-radius: 0 0 30px 30px;
+          }
+
           footer {
             text-align: center;
             padding: 10px;
           }
-    
+
           main section,
           footer {
             background-color: var(--div-bg-color);
+          }
+
+          .negrita {
+            font-weight: bold;
           }
         </style>
       </head>
@@ -149,22 +255,49 @@ class BoardingPassPageTemplate extends PageBaseTemplate
             <section class="title">
               <h1>Tarjetas de embarque</h1>
             </section>
-            <div class="logo">
-              <img
-                alt="logo"
-                src="'.$imageLinks['isotipo'].'"
-              />
-            </div>
           </header>
-          <main>
+          <main>';
+            foreach($passengersData as $passengerData) {
+              $firstName = $passengerData['firstName'];
+              $lastName = $passengerData['lastName'];
+              $passengerCode = $passengerData['passengerCode'];
 
-          </main>
+              $html .=
+                '<article class="boardingPass">
+                <div class="boardingPassClient">
+                  <div class="boardingPassClient-header"><h2>Tarjeta de embarque - Destiny Airlines</h2></div>
+                  <div class="boardingPassClient-main waterMark">
+                  <div class="boardingPassClient-qr">qr</div>
+                    <div class="boardingPassClient-name"><p class="negrita">Nombre:</p><p>'.$firstName.' '.$lastName.'</p></div>
+                    <div class="boardingPassClient-dateHour"><p class="negrita">Fecha/hora</p><p>'.$flightDate.', '.$flightHour.'</p></div>
+                    <div class="boardingPassClient-origin"><p class="negrita">Desde: </p><p>'.$origin.'</p></div>
+                    <div class="boardingPassClient-destiny"><p class="negrita">Hasta: </p><p>'.$destiny.'</p></div>
+                    <div class="boardingPassClient-flightCode"><p class="negrita">Vuelo: </p><p>'.$flightCode.'</p></div>
+                    <div class="boardingPassClient-passengerCode">'.$passengerCode.'</div>
+                  </div>
+                  <div class="boardingPassClient-footer"></div>
+                </div>
+                <div class="boardingPassCompany">
+                <div class="boardingPassCompany-header"><h2>Tarjeta de embarque - Destiny Airlines</h2></div>
+                  <div class="boardingPassCompany-main">
+                    <div class="boardingPassCompany-name"><p class="negrita">Nombre: </p>'.$firstName.' '.$lastName.'</p></div>
+                    <div class="boardingPassCompany-origin"><p class="negrita">Desde: </p><p>'.$origin.'</p></div>
+                    <div class="boardingPassCompany-destiny"><p class="negrita">Hasta: </p><p>'.$destiny.'</p></div>
+                    <div class="boardingPassCompany-dateHour"><p class="negrita">Fecha/hora: </p><p>'.$flightDate.', '.$flightHour.'</p></div>
+                    <div class="boardingPassCompany-flightCode"><p class="negrita">Vuelo: </p><p>'.$flightCode.'</p></div>
+                    <div class="boardingPassCompany-passengerCode">'.$passengerCode.'</div>
+                  </div>
+                  <div class="boardingPassCompany-footer"></div>
+                  </div>
+              </article>';
+            }
+            $html .='</main>
           <footer>
             <p>Gracias por confiar en Destiny Airlines</p>
           </footer>
         </div>
       </body>
-    </html> 
+    </html>
     ';
     return $html;
   }
