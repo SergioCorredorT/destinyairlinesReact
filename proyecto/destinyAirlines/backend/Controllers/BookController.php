@@ -403,12 +403,15 @@ final class BookController extends BaseController
         $flightHour = $flightData['hour'];
         $idItinerary = $flightData['id_ITINERARIES'];
         $flightCode = $flightData['flightCode'];
+
+
+        $iniTool = new IniTool('./Config/cfg.ini');
 /*
-        //Comprobar si faltan menos de 48 hrs para el vuelo
+        $checkinSettings = $iniTool->getKeysAndValues('checkinSettings');
         $checkinProcessTool = new CheckinProcessTool();
         $isPastDateTime = $checkinProcessTool->isPastDateTime($flightDate, $flightHour);
         $hoursDifference = $checkinProcessTool->getHoursDifference($flightDate, $flightHour);
-        if (!$isPastDateTime || $hoursDifference > 48) {
+        if (!$isPastDateTime || $hoursDifference > intval($checkinSettings['MaximumAdvanceHoursForCheckIn'])) {
             return false;
         }
 */
@@ -427,7 +430,6 @@ final class BookController extends BaseController
 
         $boardingPassPdf = $pdfTool->generatePdfFromHtml($boardingPassHtml);
 
-        $iniTool = new IniTool('./Config/cfg.ini');
         $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
         $subject = 'Tarjetas de embarque para su viaje';
         $message = '¡Gracias por elegir volar con Destiny Airlines!.
