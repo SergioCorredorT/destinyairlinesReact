@@ -403,7 +403,7 @@ final class BookController extends BaseController
         $flightHour = $flightData['hour'];
         $idItinerary = $flightData['id_ITINERARIES'];
         $flightCode = $flightData['flightCode'];
-
+/*
         //Comprobar si faltan menos de 48 hrs para el vuelo
         $checkinProcessTool = new CheckinProcessTool();
         $isPastDateTime = $checkinProcessTool->isPastDateTime($flightDate, $flightHour);
@@ -411,12 +411,12 @@ final class BookController extends BaseController
         if (!$isPastDateTime || $hoursDifference > 48) {
             return false;
         }
-
-
+*/
         //generar tarjetas de embarque y enviarlas al email
         $checkinTool = new CheckinTool();
         $pdfTool = new PdfTool();
         $emailTool = new EmailTool();
+        $userModel = new UserModel();
 
         $checkinData = $checkinTool->generateCheckinData(['bookCode' => $bookCode, 'flightDate' => $flightDate, 'flightHour' => $flightHour, 'idItinerary' => $idItinerary, 'flightCode' => $flightCode]);
         if (!$checkinData) {
@@ -424,7 +424,7 @@ final class BookController extends BaseController
         }
 
         $boardingPassHtml = $checkinTool->generateBoardingPassHtml($checkinData);
-        error_log($boardingPassHtml);
+
         $boardingPassPdf = $pdfTool->generatePdfFromHtml($boardingPassHtml);
 
         $iniTool = new IniTool('./Config/cfg.ini');
@@ -440,9 +440,11 @@ final class BookController extends BaseController
         
         Saludos cordiales,
         El equipo de Destiny Airlines';
+
+        $emailUser = $userModel->getEmailById($idUser);
         $emailTool->sendEmail(
             [
-                'toEmail' => $invoiceDepartureData['userData']['emailAddress'],
+                'toEmail' => $emailUser,
                 'fromEmail' => $cfgOriginEmailIni['email'],
                 'fromPassword' => $cfgOriginEmailIni['password'],
                 'subject' => $subject,
@@ -457,7 +459,6 @@ final class BookController extends BaseController
         if (!$bookModel->updateChecking($bookCode)) {
             return false;
         }
-
 
         return true;
 

@@ -2,12 +2,13 @@
 //Recuerda crear qr
 
 require_once './Tools/IniTool.php';
+require_once './Tools/QrTool.php';
 require_once './Templates/page/PageBaseTemplate.php';
 class BoardingPassPageTemplate extends PageBaseTemplate
 {
   static function  applyBoardingPassPageTemplate(array $data)
   {
-    require_once './Tools/IniTool.php';
+    $qrTool = new QrTool();
     $iniTool = new IniTool('./Config/cfg.ini');
     $imageLinks = $iniTool->getKeysAndValues('imageLinks');
 
@@ -17,7 +18,7 @@ class BoardingPassPageTemplate extends PageBaseTemplate
     $origin = $data['origin'];
     $destiny = $data['destiny'];
     $passengersData = $data['passengersData'];//firstName, lastName, passengerCode
-
+  
     $html = '
     <!DOCTYPE html>
     <html lang="es">
@@ -261,13 +262,13 @@ class BoardingPassPageTemplate extends PageBaseTemplate
               $firstName = $passengerData['firstName'];
               $lastName = $passengerData['lastName'];
               $passengerCode = $passengerData['passengerCode'];
-
+              $qrBase64AndDataUri = $qrTool->generarQR($passengerCode);
               $html .=
                 '<article class="boardingPass">
                 <div class="boardingPassClient">
                   <div class="boardingPassClient-header"><h2>Tarjeta de embarque - Destiny Airlines</h2></div>
                   <div class="boardingPassClient-main waterMark">
-                  <div class="boardingPassClient-qr">qr</div>
+                  <div class="boardingPassClient-qr"><img class="qr" src="'.$qrBase64AndDataUri.'"></div>
                     <div class="boardingPassClient-name"><p class="negrita">Nombre:</p><p>'.$firstName.' '.$lastName.'</p></div>
                     <div class="boardingPassClient-dateHour"><p class="negrita">Fecha/hora</p><p>'.$flightDate.', '.$flightHour.'</p></div>
                     <div class="boardingPassClient-origin"><p class="negrita">Desde: </p><p>'.$origin.'</p></div>
