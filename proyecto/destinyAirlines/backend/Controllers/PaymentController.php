@@ -18,7 +18,7 @@ final class PaymentController extends BaseController
         $tokenSettings = $iniTool->getKeysAndValues('tokenSettings');
 
         //CREAR TOKEN de 3 horas (caducidad de paypal en su web)
-        $data = ['id' => 138, 'idUser' => 138, 'idInvoiceD' => 26, 'type' => 'paypalredirectok'];
+        $data = ['id' => 138, 'idUser' => 138, 'idInvoiceD' => 27, 'type' => 'paypalredirectok'];
         $paymentToken = TokenTool::generateToken($data, intval($tokenSettings['secondsTimeLifePaymentReturnUrl']));
         return $this->paypalRedirectOk(['token' => $paymentToken]);
     }

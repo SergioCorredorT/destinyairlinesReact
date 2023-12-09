@@ -1,4 +1,5 @@
 <?php
+//Esta versión está hecha con css3, por lo que no es compatible con domPDF
 require_once './Tools/IniTool.php';
 require_once './Templates/page/PageBaseTemplate.php';
 class InvoicePageTemplate extends PageBaseTemplate
@@ -65,7 +66,6 @@ class InvoicePageTemplate extends PageBaseTemplate
     
           .logo {
             display: flex;
-            float: right;
           }
           .logo img {
             height: 150px;
@@ -115,10 +115,6 @@ class InvoicePageTemplate extends PageBaseTemplate
             grid-area: invoiceDetail;
           }
     
-          .invoiceDetail-main {
-            page-break-inside: avoid;
-          }
-
           .invoiceDetail-main-table {
             width: 100%;
           }

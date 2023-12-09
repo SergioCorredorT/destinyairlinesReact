@@ -404,9 +404,8 @@ final class BookController extends BaseController
         $idItinerary = $flightData['id_ITINERARIES'];
         $flightCode = $flightData['flightCode'];
 
-
         $iniTool = new IniTool('./Config/cfg.ini');
-/*
+
         $checkinSettings = $iniTool->getKeysAndValues('checkinSettings');
         $checkinProcessTool = new CheckinProcessTool();
         $isPastDateTime = $checkinProcessTool->isPastDateTime($flightDate, $flightHour);
@@ -414,7 +413,7 @@ final class BookController extends BaseController
         if (!$isPastDateTime || $hoursDifference > intval($checkinSettings['MaximumAdvanceHoursForCheckIn'])) {
             return false;
         }
-*/
+
         //generar tarjetas de embarque y enviarlas al email
         $checkinTool = new CheckinTool();
         $pdfTool = new PdfTool();
@@ -428,7 +427,7 @@ final class BookController extends BaseController
 
         $boardingPassHtml = $checkinTool->generateBoardingPassHtml($checkinData);
 
-        $boardingPassPdf = $pdfTool->generatePdfFromHtml($boardingPassHtml);
+        $boardingPassPdf = $pdfTool->generatePdfFromHtml($boardingPassHtml, false);
 
         $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
         $subject = 'Tarjetas de embarque para su viaje';
@@ -463,15 +462,51 @@ final class BookController extends BaseController
         }
 
         return true;
-
-        //Avisos automáticos del checkin desde backend
-        //si el cliente tiene una reserva y entra en las 48 hrs de antelación al vuelo, se le notifica por mail y sms
-        //EXTRA: se podrá seleccionar asiento si se pagó ese servicio
     }
 
-    public function getBooks(array $POST)
+    public function getSummaryBooks(array $POST)
     {
         //Recibe id del usuario y accessToken, y devuelve un array o un JSON de los books
+        require_once './Sanitizers/TokenSanitizer.php';
+        require_once './Validators/TokenValidator.php';
+        require_once './Tools/TokenTool.php';
+
+        $accessToken = $POST['accessToken'];
+        $accessToken = TokenSanitizer::sanitizeToken($accessToken);
+        if (!TokenValidator::validateToken($accessToken)) {
+            return false;
+        }
+
+        $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
+
+        if (!$decodedToken['response']) {
+            return false;
+        }
+
+        $idUser = $decodedToken['response']->data->id;
+        /*
+            Número de reserva: Un identificador único para la reserva.
+            Fecha del vuelo: La fecha de salida del vuelo.
+            Destino: El lugar al que se dirige el vuelo.
+            Estado de la reserva: Si la reserva está confirmada, pendiente o cancelada.
+            Clase de servicio: Económica, ejecutiva, primera clase, etc.
+        */
+
+
+
+        return;
+    }
+
+    public function getBookInfo(array $POST) {
+        /*
+            Información de la reserva: Esto incluye el número de reserva, la fecha de la reserva y el estado de la reserva (por ejemplo, confirmada, pendiente, cancelada).
+
+            Detalles del vuelo: Esto incluye el número de vuelo, la aerolínea, las fechas y horas de salida y llegada, los aeropuertos de salida y llegada, y cualquier detalle de las escalas si las hay.
+
+            Información de pasajeros: Esto incluye el nombre del pasajero, el número de asiento y la clase de servicio (por ejemplo, económica, ejecutiva, primera clase).
+
+            Detalles del pago: Esto incluye el precio del billete, los impuestos y tasas, el método de pago utilizado y el estado del pago.
+        */
     }
 
     public function editBook()
@@ -479,7 +514,7 @@ final class BookController extends BaseController
         //Recibirá un array de datos, un accessToken y se aplicarán
     }
 
-    private function validateDirection($direction)
+    private function validateDirection(string $direction)
     {
         $direction = htmlspecialchars(trim($direction));
         if ($direction !== 'departure' && $direction !== 'return') {

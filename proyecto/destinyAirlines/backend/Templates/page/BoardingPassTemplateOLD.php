@@ -1,6 +1,5 @@
 <?php
-//Recuerda crear qr
-
+//Esta versión está hecha con css3, por lo que no es compatible con domPDF
 require_once './Tools/IniTool.php';
 require_once './Tools/QrTool.php';
 require_once './Tools/Html2ImgTool.php';

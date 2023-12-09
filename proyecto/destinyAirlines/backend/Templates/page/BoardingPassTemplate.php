@@ -66,6 +66,7 @@ class BoardingPassPageTemplate extends PageBaseTemplate
           display: block;
           width: 18cm;
           height: 10cm;
+          page-break-after: always;
         }
   
         .boardingPass p {
@@ -224,7 +225,7 @@ class BoardingPassPageTemplate extends PageBaseTemplate
               $passengerCode = $passengerData['passengerCode'];
               $qrBase64AndDataUri = $qrTool->generarQR($passengerCode);
               $html .=
-                '<div class="article boardingPass">
+              '<div class="article boardingPass">
                 <div class="boardingPassClient">
                   <div class="boardingPassClient-header"><h2>Tarjeta de embarque - Destiny Airlines</h2></div>
                   <div class="boardingPassClient-main waterMark">
@@ -250,9 +251,11 @@ class BoardingPassPageTemplate extends PageBaseTemplate
                   </div>
                   <div class="boardingPassCompany-footer"></div>
                   </div>
-              </div>';
+              </div>
+              ';
             }
-            $html .='</div>
+            $html .=
+          '</div>
           <div class="footer">
             <p>Gracias por confiar en Destiny Airlines</p>
           </div>

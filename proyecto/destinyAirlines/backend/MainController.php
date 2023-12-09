@@ -37,6 +37,7 @@ $controllers = [
         'storeprimarycontactinformationdetails'     => ['controller' => 'BookController',       'method' => 'storePrimaryContactInformationDetails'],
         'paymentdetails'                            => ['controller' => 'BookController',       'method' => 'paymentDetails'],
         'checkin'                                   => ['controller' => 'BookController',       'method' => 'checkin'],
+        'getsummarybooks'                           => ['controller' => 'BookController',       'method' => 'getSummaryBooks'],
     //GET
         'paypalredirectok'                          => ['controller' => 'paymentController',    'method' => 'paypalRedirectOk'],
         'paypalredirectcancel'                      => ['controller' => 'paymentController',    'method' => 'paypalRedirectCancel'],
