@@ -9,6 +9,16 @@ final class BookModel extends BaseModel
         parent::__construct(self::table);
     }
 
+    public function checkBookCodeWithIdUser($bookCode, $idUser)
+    {
+        $rsp = parent::select('bookCode', "id_USERS = $idUser AND bookCode = '$bookCode' ");
+        if (isset($rsp[0]['bookCode'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function readFlightId($bookCode, $idUser)
     {
         $rsp = parent::select('id_FLIGHTS', "id_USERS = $idUser AND bookCode = '$bookCode' AND checkinDate IS NULL");
@@ -21,7 +31,7 @@ final class BookModel extends BaseModel
 
     public function updateChecking(string $bookCode)
     {
-        return parent::update(['checkinDate' => '"'.date('Y-m-d').'"'], "bookCode = '$bookCode'");
+        return parent::update(['checkinDate' => '"' . date('Y-m-d') . '"'], "bookCode = '$bookCode'");
     }
 
     public function createBooks(array $data, bool $getId = false)

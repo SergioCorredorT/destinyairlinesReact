@@ -484,34 +484,59 @@ final class BookController extends BaseController
         }
 
         $idUser = $decodedToken['response']->data->id;
-        /*
-            Número de reserva: Un identificador único para la reserva.
-            Fecha del vuelo: La fecha de salida del vuelo.
-            Destino: El lugar al que se dirige el vuelo.
-            Estado de la reserva: Si la reserva está confirmada, pendiente o cancelada.
-            Clase de servicio: Económica, ejecutiva, primera clase, etc.
-        */
 
+        $multiModel = new MultiModel();
 
-
-        return;
+        return $multiModel->getSummaryBooks($idUser);
     }
 
     public function getBookInfo(array $POST) {
-        /*
-            Información de la reserva: Esto incluye el número de reserva, la fecha de la reserva y el estado de la reserva (por ejemplo, confirmada, pendiente, cancelada).
+        //Recibe id del usuario y accessToken, y devuelve un array o un JSON de los books
+        require_once './Sanitizers/TokenSanitizer.php';
+        require_once './Validators/TokenValidator.php';
+        require_once './Sanitizers/BookInfoSanitizer.php';
+        require_once './Validators/BookInfoValidator.php';
+        require_once './Tools/TokenTool.php';
 
-            Detalles del vuelo: Esto incluye el número de vuelo, la aerolínea, las fechas y horas de salida y llegada, los aeropuertos de salida y llegada, y cualquier detalle de las escalas si las hay.
+        $bookInfo = [
+            'accessToken'       => $POST['accessToken'] ?? '',
+            'bookCode'          => $POST['bookCode'] ?? ''
+        ];
 
-            Información de pasajeros: Esto incluye el nombre del pasajero, el número de asiento y la clase de servicio (por ejemplo, económica, ejecutiva, primera clase).
+        $accessToken = $bookInfo['accessToken'];
+        $bookInfo['accessToken'] = TokenSanitizer::sanitizeToken($bookInfo['accessToken']);
+        if (!TokenValidator::validateToken($accessToken)) {
+            return false;
+        }
 
-            Detalles del pago: Esto incluye el precio del billete, los impuestos y tasas, el método de pago utilizado y el estado del pago.
-        */
+        $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
+
+        if (!$decodedToken['response']) {
+            return false;
+        }
+
+        $bookInfo = BookInfoSanitizer::sanitize($bookInfo);
+        if (!BookInfoValidator::validate($bookInfo)) {
+            return false;
+        }
+
+        $idUser = $decodedToken['response']->data->id;
+        $bookCode = $bookInfo['bookCode'];
+
+        $multiModel = new MultiModel();
+
+        return $multiModel->getBookInfo($bookCode, $idUser);
+    }
+
+    public function deleteBook()
+    {
+        //Recibirá un código de reserva y un accessToken
+        //Si el vuelo no ha tenido lugar, se suman los asientos disponibles
     }
 
     public function editBook()
     {
-        //Recibirá un array de datos, un accessToken y se aplicarán
+        //Recibirá un array de datos, un accessToken y se aplicarán (solo se editan los servicios y que no sean descuentos)
     }
 
     private function validateDirection(string $direction)

@@ -1215,24 +1215,44 @@
           <button type="submit">Enviar POST</button>
         </form>
         <form
-        onsubmit="return handleFormSubmit(event)"
-        action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
-        method="post"
-      >
-        <input type="text" name="command" value="checkin" readonly />
-        <input type="text" name="accessToken" placeholder="accessToken" />
-        <input type="text" name="bookCode" placeholder="bookCode" value="0a3719cc-5" />
-        <button type="submit">Enviar POST</button>
-      </form>
-      <form
           onsubmit="return handleFormSubmit(event)"
           action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
           method="post"
         >
-        <input type="text" name="command" value="getSummaryBooks" readonly />
-        <input type="text" name="accessToken" placeholder="accessToken" />
-        <button type="submit">Enviar POST</button>
-      </form>
+          <input type="text" name="command" value="checkin" readonly />
+          <input type="text" name="accessToken" placeholder="accessToken" />
+          <input
+            type="text"
+            name="bookCode"
+            placeholder="bookCode"
+            value="0a3719cc-5"
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" name="command" value="getSummaryBooks" readonly />
+          <input type="text" name="accessToken" placeholder="accessToken" />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" name="command" value="getBookInfo" readonly />
+          <input
+            type="text"
+            name="bookCode"
+            placeholder="bookCode"
+            value="0a3719cc-5"
+          />
+          <input type="text" name="accessToken" placeholder="accessToken" />
+          <button type="submit">Enviar POST</button>
+        </form>
       </section>
       <section class="TOKEN">
         <h1>tokenController</h1>
@@ -1285,7 +1305,12 @@
           action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
           method="post"
         >
-          <input type="text" name="command" value="debugPaypalRedirectOk" readonly />
+          <input
+            type="text"
+            name="command"
+            value="debugPaypalRedirectOk"
+            readonly
+          />
           <button type="submit">Enviar POST</button>
         </form>
       </section>

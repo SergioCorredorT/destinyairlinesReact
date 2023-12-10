@@ -14,6 +14,11 @@ final class PrimaryContactInformationModel extends BaseModel
         return parent::insert($data, $getId);
     }
 
+    public function readPrimaryContactInformationFromId($idPrimaryContactInfo)
+    {
+        return parent::select('*', 'id_PRIMARY_CONTACT_INFORMATIONS = '. $idPrimaryContactInfo);
+    }
+
     public function readPrimaryContactInformation()
     {
         return parent::select('*');

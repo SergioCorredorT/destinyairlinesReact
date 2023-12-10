@@ -9,9 +9,9 @@ final class InvoiceModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function getInvoiceFromIdInvoice(int $idInvoice)
+    public function getInvoicesForGetBookInfoFromIdBook(int $idBook)
     {
-        return parent::select('*', "id_INVOICES = $idInvoice")[0];
+        return parent::select('invoiceCode, invoicedDate, price, isPaid', "id_BOOKS = $idBook ");
     }
 
     public function updateIsPaid(int $idInvoice)
