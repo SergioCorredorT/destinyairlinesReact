@@ -169,6 +169,7 @@ Table PASSENGERS_BOOKS_SERVICES {
 
 Table PASSENGERS {
   id_PASSENGERS int [pk, increment]
+  id_BOOKS int [not null, ref: > BOOKS.id_BOOKS]
   passengerCode varchar(50) [not null, unique]
   documentationType documentationType [not null]
   documentCode varchar(30) [not null]
