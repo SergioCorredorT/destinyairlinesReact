@@ -261,19 +261,18 @@ CREATE TABLE `passengers` (
   `firstName` varchar(50) DEFAULT NULL,
   `lastName` varchar(50) DEFAULT NULL,
   `title` varchar(50) DEFAULT NULL,
-  `ageCategory` enum('infant','child','adult') NOT NULL DEFAULT 'adult',
-  `billed` date DEFAULT NULL
+  `ageCategory` enum('infant','child','adult') NOT NULL DEFAULT 'adult'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `passengers`
 --
 
-INSERT INTO `passengers` (`id_PASSENGERS`, `passengerCode`, `documentationType`, `documentCode`, `expirationDate`, `nationality`, `country`, `firstName`, `lastName`, `title`, `ageCategory`, `billed`) VALUES
-(1, 'P001', 'DNI', '12345678A', '2023-10-16', '', '', 'David', 'García', 'Mr', 'adult', '2023-10-16'),
-(2, 'P002', 'Passport', 'AB123456', '2023-10-16', '', '', 'Laura', 'López', 'Ms', 'adult', '2023-10-16'),
-(3, 'P003', 'DNI', '87654321B', '2023-10-16', '', '', 'Carlos', 'Martín', 'Mr', 'child', '2023-10-16'),
-(4, 'P004', 'Passport', 'CD789012', '2023-10-16', '', '', 'Elena', 'Sánchez', 'Ms', 'adult', '2023-10-16');
+INSERT INTO `passengers` (`id_PASSENGERS`, `passengerCode`, `documentationType`, `documentCode`, `expirationDate`, `nationality`, `country`, `firstName`, `lastName`, `title`, `ageCategory`) VALUES
+(1, 'P001', 'DNI', '12345678A', '2023-10-16', '', '', 'David', 'García', 'Mr', 'adult'),
+(2, 'P002', 'Passport', 'AB123456', '2023-10-16', '', '', 'Laura', 'López', 'Ms', 'adult'),
+(3, 'P003', 'DNI', '87654321B', '2023-10-16', '', '', 'Carlos', 'Martín', 'Mr', 'child'),
+(4, 'P004', 'Passport', 'CD789012', '2023-10-16', '', '', 'Elena', 'Sánchez', 'Ms', 'adult');
 
 -- --------------------------------------------------------
 

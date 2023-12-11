@@ -19,9 +19,19 @@ final class BookModel extends BaseModel
         }
     }
 
-    public function readFlightId($bookCode, $idUser)
+    public function readFlightIdWithCheckinNull($bookCode, $idUser)
     {
         $rsp = parent::select('id_FLIGHTS', "id_USERS = $idUser AND bookCode = '$bookCode' AND checkinDate IS NULL");
+        if (isset($rsp[0]['id_FLIGHTS'])) {
+            return $rsp[0]['id_FLIGHTS'];
+        } else {
+            return false;
+        }
+    }
+
+    public function readFlightId($bookCode, $idUser)
+    {
+        $rsp = parent::select('id_FLIGHTS', "id_USERS = $idUser AND bookCode = '$bookCode' ");
         if (isset($rsp[0]['id_FLIGHTS'])) {
             return $rsp[0]['id_FLIGHTS'];
         } else {

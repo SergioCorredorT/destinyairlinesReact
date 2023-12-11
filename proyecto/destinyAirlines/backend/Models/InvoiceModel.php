@@ -11,7 +11,7 @@ final class InvoiceModel extends BaseModel
 
     public function getInvoicesForGetBookInfoFromIdBook(int $idBook)
     {
-        return parent::select('invoiceCode, invoicedDate, price, isPaid', "id_BOOKS = $idBook ");
+        return parent::select('id_INVOICES, invoiceCode, invoicedDate, price, isPaid', "id_BOOKS = $idBook ");
     }
 
     public function updateIsPaid(int $idInvoice)

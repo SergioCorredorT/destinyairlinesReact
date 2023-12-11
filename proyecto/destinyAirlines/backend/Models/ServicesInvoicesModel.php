@@ -9,9 +9,24 @@ final class ServicesInvoicesModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function readServicesInvoicesFromIdInvoice(int $idInvoice)
+    public function readServicesInvoicesFromIdInvoice(int|array $idInvoice)
     {
-        return parent::select('*', "id_INVOICES = $idInvoice");
+        if (is_array($idInvoice)) {
+            $idList = implode(',', $idInvoice);
+            return parent::select('*', "id_INVOICES IN ($idList)");
+        } else {
+            return parent::select('*', "id_INVOICES = $idInvoice");
+        }
+    }
+
+    public function readIdPassengerIdServicesAddRemoveOldPriceFromIdInvoice(int|array $idInvoice)
+    {
+        if (is_array($idInvoice)) {
+            $idList = implode(',', $idInvoice);
+            return parent::select('id_PASSENGERS, id_SERVICES, addRemove, oldPrice', "id_INVOICES IN ($idList)");
+        } else {
+            return parent::select('id_PASSENGERS, id_SERVICES, addRemove, oldPrice', "id_INVOICES = $idInvoice");
+        }
     }
 
     public function createMultipleServicesInvoices(array $data, bool $getId = false)

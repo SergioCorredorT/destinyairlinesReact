@@ -38,7 +38,8 @@ $controllers = [
         'paymentdetails'                            => ['controller' => 'BookController',       'method' => 'paymentDetails'],
         'checkin'                                   => ['controller' => 'BookController',       'method' => 'checkin'],
         'getsummarybooks'                           => ['controller' => 'BookController',       'method' => 'getSummaryBooks'],
-        'getbookinfo'                           => ['controller' => 'BookController',       'method' => 'getBookInfo'],
+        'getbookinfo'                               => ['controller' => 'BookController',       'method' => 'getBookInfo'],
+        'cancelbook'                                => ['controller' => 'BookController',       'method' => 'cancelBook'],
     //GET
         'paypalredirectok'                          => ['controller' => 'paymentController',    'method' => 'paypalRedirectOk'],
         'paypalredirectcancel'                      => ['controller' => 'paymentController',    'method' => 'paypalRedirectCancel'],

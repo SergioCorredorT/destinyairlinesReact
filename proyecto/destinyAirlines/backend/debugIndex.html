@@ -1253,6 +1253,21 @@
           <input type="text" name="accessToken" placeholder="accessToken" />
           <button type="submit">Enviar POST</button>
         </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input type="text" name="command" value="cancelBook" readonly />
+          <input
+            type="text"
+            name="bookCode"
+            placeholder="bookCode"
+            value="0a3719cc-5"
+          />
+          <input type="text" name="accessToken" placeholder="accessToken" />
+          <button type="submit">Enviar POST</button>
+        </form>
       </section>
       <section class="TOKEN">
         <h1>tokenController</h1>

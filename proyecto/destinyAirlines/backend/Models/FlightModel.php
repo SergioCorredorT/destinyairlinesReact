@@ -19,6 +19,11 @@ final class FlightModel extends BaseModel
         return parent::select('date, hour, id_ITINERARIES, flightCode', "id_FLIGHTS = $idFlight")[0];
     }
 
+    public function getFlightDateHourFromIdFlight(int $idFlight)
+    { 
+        return parent::select('date, hour', "id_FLIGHTS = $idFlight")[0];
+    }
+
     public function getFlightFromIdFlight(int $idFlight)
     {
         return parent::select('*', "id_FLIGHTS = $idFlight")[0];

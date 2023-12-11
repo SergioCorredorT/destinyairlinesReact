@@ -1,6 +1,5 @@
 <?php
-
-class CheckinProcessTool
+class TimeTool
 {
     public static function getHoursDifference($date, $hour)
     {

@@ -88,11 +88,11 @@ INSERT INTO `itineraries` (`id_ITINERARIES`, `origin`, `destiny`, `routeCode`) V
 
 -- Volcando datos para la tabla destiny_airlines.passengers: ~4 rows (aproximadamente)
 DELETE FROM `passengers`;
-INSERT INTO `passengers` (`id_PASSENGERS`, `id_BOOKS`, `passengerCode`, `documentationType`, `documentCode`, `expirationDate`, `nationality`, `country`, `firstName`, `lastName`, `title`, `ageCategory`, `billed`) VALUES
-	(1, 25,'P001', 'DNI', '12345678A', '2023-10-16', '', '', 'David', 'García', 'Mr', 'adult', '2023-10-16'),
-	(2, 25,'P002', 'Passport', 'AB123456', '2023-10-16', '', '', 'Laura', 'López', 'Ms', 'adult', '2023-10-16'),
-	(3, 25,'P003', 'DNI', '87654321B', '2023-10-16', '', '', 'Carlos', 'Martín', 'Mr', 'child', '2023-10-16'),
-	(4, 25,'P004', 'Passport', 'CD789012', '2023-10-16', '', '', 'Elena', 'Sánchez', 'Ms', 'adult', '2023-10-16');
+INSERT INTO `passengers` (`id_PASSENGERS`, `id_BOOKS`, `passengerCode`, `documentationType`, `documentCode`, `expirationDate`, `nationality`, `country`, `firstName`, `lastName`, `title`, `ageCategory`) VALUES
+	(1, 25,'P001', 'DNI', '12345678A', '2023-10-16', '', '', 'David', 'García', 'Mr', 'adult'),
+	(2, 25,'P002', 'Passport', 'AB123456', '2023-10-16', '', '', 'Laura', 'López', 'Ms', 'adult'),
+	(3, 25,'P003', 'DNI', '87654321B', '2023-10-16', '', '', 'Carlos', 'Martín', 'Mr', 'child'),
+	(4, 25,'P004', 'Passport', 'CD789012', '2023-10-16', '', '', 'Elena', 'Sánchez', 'Ms', 'adult');
 
 -- Volcando datos para la tabla destiny_airlines.passengers_books_services: ~4 rows (aproximadamente)
 DELETE FROM `passengers_books_services`;

@@ -179,7 +179,6 @@ Table PASSENGERS {
   ageCategory ageCategory [not null, default: "adult"]
   nationality varchar(50) [not null]
   country varchar(50) [not null]
-  billed date
 }
 
 enum documentationType {

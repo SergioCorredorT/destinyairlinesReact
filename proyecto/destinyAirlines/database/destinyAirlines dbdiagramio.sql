@@ -156,8 +156,7 @@ CREATE TABLE `PASSENGERS` (
   `lastName` varchar(50) NOT NULL,
   `ageCategory` ENUM ('infant', 'child', 'adult') NOT NULL DEFAULT "adult",
   `nationality` varchar(50) NOT NULL,
-  `country` varchar(50) NOT NULL,
-  `billed` date
+  `country` varchar(50) NOT NULL
 );
 
 CREATE TABLE `ADDITIONAL_INFORMATIONS` (

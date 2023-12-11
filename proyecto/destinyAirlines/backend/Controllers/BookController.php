@@ -359,11 +359,12 @@ final class BookController extends BaseController
         require_once './Validators/CheckinValidator.php';
         require_once './Sanitizers/TokenSanitizer.php';
         require_once './Validators/TokenValidator.php';
-        require_once './Tools/CheckinProcessTool.php';
+        require_once './Tools/TimeTool.php';
         require_once './Tools/TokenTool.php';
         require_once './Tools/EmailTool.php';
         require_once './Tools/CheckinTool.php';
         require_once './Tools/PdfTool.php';
+        require_once './Tools/IniTool.php';
 
         $checkinDetails = [
             'accessToken'       => $POST['accessToken'] ?? '',
@@ -391,7 +392,7 @@ final class BookController extends BaseController
 
         //Obtener el flightId en tabla book con el bookCode, el idUser, con checkin a null
         $bookModel = new BookModel();
-        $idFlight = $bookModel->readFlightId($bookCode, $idUser);
+        $idFlight = $bookModel->readFlightIdWithCheckinNull($bookCode, $idUser);
         if (!$idFlight) {
             return false;
         }
@@ -407,10 +408,10 @@ final class BookController extends BaseController
         $iniTool = new IniTool('./Config/cfg.ini');
 
         $checkinSettings = $iniTool->getKeysAndValues('checkinSettings');
-        $checkinProcessTool = new CheckinProcessTool();
-        $isPastDateTime = $checkinProcessTool->isPastDateTime($flightDate, $flightHour);
-        $hoursDifference = $checkinProcessTool->getHoursDifference($flightDate, $flightHour);
-        if (!$isPastDateTime || $hoursDifference > intval($checkinSettings['MaximumAdvanceHoursForCheckIn'])) {
+        $timeTool = new TimeTool();
+        $isPastDateTime = $timeTool->isPastDateTime($flightDate, $flightHour);
+        $hoursDifference = $timeTool->getHoursDifference($flightDate, $flightHour);
+        if (!$isPastDateTime || $hoursDifference > intval($checkinSettings['maximumAdvanceHoursForCheckIn'])) {
             return false;
         }
 
@@ -528,9 +529,69 @@ final class BookController extends BaseController
         return $multiModel->getBookInfo($bookCode, $idUser);
     }
 
-    public function deleteBook()
+    public function cancelBook(array $POST)
     {
-        //Recibirá un código de reserva y un accessToken
+        require_once './Sanitizers/TokenSanitizer.php';
+        require_once './Validators/TokenValidator.php';
+        require_once './Sanitizers/BookInfoSanitizer.php';
+        require_once './Validators/BookInfoValidator.php';
+        require_once './Tools/TokenTool.php';
+
+        $bookInfo = [
+            'accessToken'       => $POST['accessToken'] ?? '',
+            'bookCode'          => $POST['bookCode'] ?? ''
+        ];
+
+        $accessToken = $bookInfo['accessToken'];
+        $bookInfo['accessToken'] = TokenSanitizer::sanitizeToken($bookInfo['accessToken']);
+        if (!TokenValidator::validateToken($accessToken)) {
+            return false;
+        }
+
+        $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
+
+        if (!$decodedToken['response']) {
+            return false;
+        }
+
+        $bookInfo = BookInfoSanitizer::sanitize($bookInfo);
+        if (!BookInfoValidator::validate($bookInfo)) {
+            return false;
+        }
+
+        $idUser = $decodedToken['response']->data->id;
+        $bookCode = $bookInfo['bookCode'];
+
+        $bookModel = new BookModel();
+        $flightModel = new FlightModel();
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $timeTool = new TimeTool();
+
+        if (!$bookModel->checkBookCodeWithIdUser($bookCode, $idUser)) {
+            return false;
+        }
+
+        //Obtener el flightId en tabla book con el bookCode, el idUser
+        $idFlight = $bookModel->readFlightId($bookCode, $idUser);
+        if (!$idFlight) {
+            return false;
+        }
+
+        //en la tabla flights, con el flightId obtener la fecha y hora del vuelo
+        $flightData = $flightModel->getFlightDateHourFromIdFlight($idFlight);
+        $flightDate = $flightData['date'];
+        $flightHour = $flightData['hour'];
+
+        $bookSettings = $iniTool->getKeysAndValues('bookSettings');
+        $isPastDateTime = $timeTool->isPastDateTime($flightDate, $flightHour);
+        $hoursDifference = $timeTool->getHoursDifference($flightDate, $flightHour);
+        if ($isPastDateTime || $hoursDifference < intval($bookSettings['maxAdvantaceHoursForCancelBook'])) {
+            return false;
+        }
+//A partir de aquí eliminar
+       // $multiModel = new MultiModel();
+
+        //return $multiModel->removeBook($bookCode, $idUser);
         //Si el vuelo no ha tenido lugar, se suman los asientos disponibles
     }
 

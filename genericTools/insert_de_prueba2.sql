@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `additional_informations` (
   PRIMARY KEY (`id_ADDITIONAL_INFORMATIONS`),
   KEY `id_PASSENGERS` (`id_PASSENGERS`),
   CONSTRAINT `additional_informations_ibfk_1` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla destiny_airlines.additional_informations: ~6 rows (aproximadamente)
 DELETE FROM `additional_informations`;
@@ -41,8 +41,8 @@ INSERT INTO `additional_informations` (`id_ADDITIONAL_INFORMATIONS`, `id_PASSENG
 	(2, 2, '1990-08-20', NULL, NULL, NULL, NULL, NULL),
 	(3, 3, '2010-03-02', NULL, NULL, NULL, NULL, NULL),
 	(4, 4, '1982-11-10', NULL, NULL, NULL, NULL, NULL),
-	(33, 35, '2013-11-01', 'cane', '', '', '', ''),
-	(34, 36, '2013-11-01', 'cane', '', '', '', '');
+	(37, 39, '2013-11-01', 'cane', '', '', '', ''),
+	(38, 40, '2013-11-01', 'cane', '', '', '', '');
 
 -- Volcando estructura para tabla destiny_airlines.airplanes
 CREATE TABLE IF NOT EXISTS `airplanes` (
@@ -92,7 +92,6 @@ CREATE TABLE IF NOT EXISTS `books` (
   `bookCode` varchar(10) NOT NULL,
   `checkinDate` date DEFAULT NULL,
   `direction` enum('departure','return') NOT NULL DEFAULT 'departure',
-  `invoiced` datetime DEFAULT current_timestamp(),
   `adultsNumber` tinyint(3) DEFAULT 1,
   `childsNumber` tinyint(3) DEFAULT 0,
   `infantsNumber` tinyint(3) DEFAULT 0,
@@ -104,17 +103,17 @@ CREATE TABLE IF NOT EXISTS `books` (
   CONSTRAINT `books_ibfk_1` FOREIGN KEY (`id_FLIGHTS`) REFERENCES `flights` (`id_FLIGHTS`),
   CONSTRAINT `books_ibfk_2` FOREIGN KEY (`id_USERS`) REFERENCES `users` (`id_USERS`),
   CONSTRAINT `books_ibfk_3` FOREIGN KEY (`id_PRIMARY_CONTACT_INFORMATIONS`) REFERENCES `primary_contact_informations` (`id_PRIMARY_CONTACT_INFORMATIONS`)
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla destiny_airlines.books: ~6 rows (aproximadamente)
+-- Volcando datos para la tabla destiny_airlines.books: ~5 rows (aproximadamente)
 DELETE FROM `books`;
-INSERT INTO `books` (`id_BOOKS`, `id_FLIGHTS`, `id_USERS`, `id_PRIMARY_CONTACT_INFORMATIONS`, `bookCode`, `checkinDate`, `direction`, `invoiced`, `adultsNumber`, `childsNumber`, `infantsNumber`) VALUES
-	(25, 1, 1, 1, 'BK123', '2023-10-19', 'departure', '2023-10-20 00:00:00', 1, 0, 0),
-	(26, 2, 2, 1, 'BK456', '2023-10-20', 'departure', '2023-10-21 00:00:00', 1, 0, 0),
-	(27, 3, 3, 1, 'BK789', '2023-10-21', 'departure', '2023-10-22 00:00:00', 1, 0, 0),
-	(28, 4, 4, 1, 'BK012', '2023-10-22', 'departure', '2023-10-23 00:00:00', 1, 0, 0),
-	(29, 1, 138, 1, 'd5336a6d-5', NULL, 'departure', '2023-11-20 19:12:53', 2, 0, 0),
-	(57, 1, 138, 34, 'ca29c669-e', NULL, 'departure', '2023-11-30 13:26:52', 2, 0, 0);
+INSERT INTO `books` (`id_BOOKS`, `id_FLIGHTS`, `id_USERS`, `id_PRIMARY_CONTACT_INFORMATIONS`, `bookCode`, `checkinDate`, `direction`, `adultsNumber`, `childsNumber`, `infantsNumber`) VALUES
+	(25, 1, 1, 1, 'BK123', '2023-10-19', 'departure', 1, 0, 0),
+	(26, 2, 2, 1, 'BK456', '2023-10-20', 'departure', 1, 0, 0),
+	(27, 3, 3, 1, 'BK789', '2023-10-21', 'departure', 1, 0, 0),
+	(28, 4, 4, 1, 'BK012', '2023-10-22', 'departure', 1, 0, 0),
+	(29, 1, 138, 1, 'd5336a6d-5', NULL, 'departure', 2, 0, 0),
+	(59, 1, 138, 36, '0a3719cc-5', NULL, 'departure', 2, 0, 0);
 
 -- Volcando estructura para tabla destiny_airlines.books_services
 CREATE TABLE IF NOT EXISTS `books_services` (
@@ -126,9 +125,9 @@ CREATE TABLE IF NOT EXISTS `books_services` (
   KEY `id_SERVICES` (`id_SERVICES`),
   CONSTRAINT `books_services_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`),
   CONSTRAINT `books_services_ibfk_2` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla destiny_airlines.books_services: ~7 rows (aproximadamente)
+-- Volcando datos para la tabla destiny_airlines.books_services: ~5 rows (aproximadamente)
 DELETE FROM `books_services`;
 INSERT INTO `books_services` (`id_BOOKS_SERVICES`, `id_BOOKS`, `id_SERVICES`) VALUES
 	(11, 1, 3),
@@ -136,8 +135,7 @@ INSERT INTO `books_services` (`id_BOOKS_SERVICES`, `id_BOOKS`, `id_SERVICES`) VA
 	(13, 2, 4),
 	(14, 3, 3),
 	(15, 4, 4),
-	(54, 57, 4),
-	(55, 57, 3);
+	(59, 59, 4);
 
 -- Volcando estructura para tabla destiny_airlines.currencies
 CREATE TABLE IF NOT EXISTS `currencies` (
@@ -196,14 +194,14 @@ CREATE TABLE IF NOT EXISTS `invoices` (
   UNIQUE KEY `invoiceCode` (`invoiceCode`),
   KEY `id_BOOKS` (`id_BOOKS`),
   CONSTRAINT `invoices_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla destiny_airlines.invoices: ~3 rows (aproximadamente)
+-- Volcando datos para la tabla destiny_airlines.invoices: ~2 rows (aproximadamente)
 DELETE FROM `invoices`;
 INSERT INTO `invoices` (`id_INVOICES`, `id_BOOKS`, `invoiceCode`, `invoicedDate`, `price`, `isPaid`) VALUES
 	(1, 28, 'weaewwea23231', '2023-11-05 23:03:14', 30, 0),
 	(2, 28, 'ewqewqq2312', '2023-11-05 23:03:14', 40, 0),
-	(25, 57, 'd40e2fdb-0295-43fd-9e8f-59071e335f11', '2023-11-30 13:26:52', 810, 0);
+	(27, 59, 'de672819-ca38-4930-83e2-d7d69b5cacf5', '2023-12-06 19:48:33', 790, 1);
 
 -- Volcando estructura para tabla destiny_airlines.itineraries
 CREATE TABLE IF NOT EXISTS `itineraries` (
@@ -230,6 +228,7 @@ INSERT INTO `itineraries` (`id_ITINERARIES`, `origin`, `destiny`, `routeCode`) V
 -- Volcando estructura para tabla destiny_airlines.passengers
 CREATE TABLE IF NOT EXISTS `passengers` (
   `id_PASSENGERS` int(11) NOT NULL AUTO_INCREMENT,
+  `id_BOOKS` int(11) NOT NULL,
   `passengerCode` varchar(50) NOT NULL,
   `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
   `documentCode` varchar(30) NOT NULL,
@@ -241,18 +240,20 @@ CREATE TABLE IF NOT EXISTS `passengers` (
   `title` varchar(50) DEFAULT NULL,
   `ageCategory` enum('infant','child','adult') NOT NULL DEFAULT 'adult',
   PRIMARY KEY (`id_PASSENGERS`),
-  UNIQUE KEY `passengerCode` (`passengerCode`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  UNIQUE KEY `passengerCode` (`passengerCode`),
+  KEY `id_BOOKS` (`id_BOOKS`),
+  CONSTRAINT `passengers_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla destiny_airlines.passengers: ~6 rows (aproximadamente)
 DELETE FROM `passengers`;
-INSERT INTO `passengers` (`id_PASSENGERS`, `passengerCode`, `documentationType`, `documentCode`, `expirationDate`, `nationality`, `country`, `firstName`, `lastName`, `title`, `ageCategory`) VALUES
-	(1, 'P001', 'DNI', '12345678A', '2023-10-16', '', '', 'David', 'García', 'Mr', 'adult'),
-	(2, 'P002', 'Passport', 'AB123456', '2023-10-16', '', '', 'Laura', 'López', 'Ms', 'adult'),
-	(3, 'P003', 'DNI', '87654321B', '2023-10-16', '', '', 'Carlos', 'Martín', 'Mr', 'child'),
-	(4, 'P004', 'Passport', 'CD789012', '2023-10-16', '', '', 'Elena', 'Sánchez', 'Ms', 'adult'),
-	(35, 'a6d6cd47-ebb3-4166-8525-b3e3546443ab', 'DNI', '12345678A', '2024-12-01', 'Española', 'España', 'Sergio', 'Corredor', 'Mr', 'adult'),
-	(36, '245a83ed-0a14-40cb-b45e-f7c5faaeb03b', 'DNI', '12345677A', '2024-12-01', 'Española', 'España', 'Sergio', 'Corredor', 'Mr', 'adult');
+INSERT INTO `passengers` (`id_PASSENGERS`, `id_BOOKS`, `passengerCode`, `documentationType`, `documentCode`, `expirationDate`, `nationality`, `country`, `firstName`, `lastName`, `title`, `ageCategory`) VALUES
+	(1, 25, 'P001', 'DNI', '12345678A', '2023-10-16', '', '', 'David', 'García', 'Mr', 'adult'),
+	(2, 25, 'P002', 'Passport', 'AB123456', '2023-10-16', '', '', 'Laura', 'López', 'Ms', 'adult'),
+	(3, 25, 'P003', 'DNI', '87654321B', '2023-10-16', '', '', 'Carlos', 'Martín', 'Mr', 'child'),
+	(4, 25, 'P004', 'Passport', 'CD789012', '2023-10-16', '', '', 'Elena', 'Sánchez', 'Ms', 'adult'),
+	(39, 59, 'd2e9c674-e3b5-4395-9e8d-179cb88f428c', 'DNI', '12345678A', '2024-12-01', 'Española', 'España', 'Sergio', 'Corredor', 'Mr', 'adult'),
+	(40, 59, '1738ebec-1ff9-48f5-9812-e14901ee637a', 'DNI', '12345677A', '2024-12-01', 'Española', 'España', 'Sergio', 'Corredor', 'Mr', 'adult');
 
 -- Volcando estructura para tabla destiny_airlines.passengers_books_services
 CREATE TABLE IF NOT EXISTS `passengers_books_services` (
@@ -267,7 +268,7 @@ CREATE TABLE IF NOT EXISTS `passengers_books_services` (
   CONSTRAINT `passengers_books_services_ibfk_1` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`),
   CONSTRAINT `passengers_books_services_ibfk_2` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`),
   CONSTRAINT `passengers_books_services_ibfk_3` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`)
-) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla destiny_airlines.passengers_books_services: ~8 rows (aproximadamente)
 DELETE FROM `passengers_books_services`;
@@ -276,10 +277,10 @@ INSERT INTO `passengers_books_services` (`id_PASSENGERS_SERVICES`, `id_PASSENGER
 	(8, 2, 25, NULL),
 	(9, 3, 26, 11),
 	(10, 4, 27, NULL),
-	(63, 35, 57, 1),
-	(64, 35, 57, 5),
-	(65, 36, 57, 6),
-	(66, 36, 57, 7);
+	(72, 39, 59, 1),
+	(73, 39, 59, 5),
+	(74, 40, 59, 5),
+	(75, 40, 59, 6);
 
 -- Volcando estructura para tabla destiny_airlines.primary_contact_informations
 CREATE TABLE IF NOT EXISTS `primary_contact_informations` (
@@ -302,13 +303,13 @@ CREATE TABLE IF NOT EXISTS `primary_contact_informations` (
   `companyPhoneNumber` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id_PRIMARY_CONTACT_INFORMATIONS`),
   UNIQUE KEY `emailAddress` (`emailAddress`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla destiny_airlines.primary_contact_informations: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla destiny_airlines.primary_contact_informations: ~1 rows (aproximadamente)
 DELETE FROM `primary_contact_informations`;
 INSERT INTO `primary_contact_informations` (`id_PRIMARY_CONTACT_INFORMATIONS`, `documentationType`, `documentCode`, `expirationDate`, `title`, `firstName`, `lastName`, `emailAddress`, `phoneNumber1`, `phoneNumber2`, `country`, `townCity`, `streetAddress`, `zipCode`, `companyName`, `companyTaxNumber`, `companyPhoneNumber`) VALUES
 	(1, 'DNI', '232332', '2026-11-20', NULL, 'Sergi', 'waa', 'aaa@gmail.com', '11111111', NULL, 'España', 'Albacete', 'Calle falsa 123', '0909', NULL, NULL, NULL),
-	(34, 'DNI', '12345678A', '2024-12-01', 'Mr', 'Sergio', 'Corredor', 'sergiodesarrolladorweb@gmail.com', '123456789', '123456788', 'España', 'Albacete', 'calle falsa 123', '3127', 'Compañía turbia', NULL, NULL);
+	(36, 'DNI', '12345678A', '2024-12-01', 'Mr', 'Sergio', 'Corredor', 'sergiodesarrolladorweb@gmail.com', '123456789', '123456788', 'España', 'Albacete', 'calle falsa 123', '3127', 'Compañía turbia', NULL, NULL);
 
 -- Volcando estructura para tabla destiny_airlines.services
 CREATE TABLE IF NOT EXISTS `services` (
@@ -362,17 +363,16 @@ CREATE TABLE IF NOT EXISTS `services_invoices` (
   CONSTRAINT `services_invoices_ibfk_1` FOREIGN KEY (`id_INVOICES`) REFERENCES `invoices` (`id_INVOICES`),
   CONSTRAINT `services_invoices_ibfk_2` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`),
   CONSTRAINT `services_invoices_ibfk_3` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`)
-) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla destiny_airlines.services_invoices: ~6 rows (aproximadamente)
+-- Volcando datos para la tabla destiny_airlines.services_invoices: ~5 rows (aproximadamente)
 DELETE FROM `services_invoices`;
 INSERT INTO `services_invoices` (`id_SERVICES_INVOICES`, `id_INVOICES`, `id_SERVICES`, `id_PASSENGERS`, `addRemove`, `oldPrice`) VALUES
-	(84, 25, 4, NULL, 'add', 25),
-	(85, 25, 3, NULL, 'add', 30),
-	(86, 25, 1, 35, 'add', 15),
-	(87, 25, 5, 35, 'add', 20),
-	(88, 25, 6, 36, 'add', 10),
-	(89, 25, 7, 36, 'add', 10);
+	(98, 27, 4, NULL, 'add', 25),
+	(99, 27, 1, 39, 'add', 15),
+	(100, 27, 5, 39, 'add', 20),
+	(101, 27, 5, 40, 'add', 20),
+	(102, 27, 6, 40, 'add', 10);
 
 -- Volcando estructura para tabla destiny_airlines.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -409,7 +409,7 @@ INSERT INTO `users` (`id_USERS`, `title`, `firstName`, `lastName`, `townCity`, `
 	(2, 'Ms', 'Alice', 'Smith', 'London', '456 Elm St', 'SW1A ', 'UK', 'alice.smith@example.com', '', '111222333', '', '', 'XYZ Company', '12345678', '999888777', 0, NULL, NULL, 'DNI', '', '0000-00-00'),
 	(96, 'Dr', 'Michael', 'Anderson', 'Sydney', '456 George St', '2000', 'Australia', 'michael.anderson@example.com', '', '987654321', '987123654', '789456123', 'Tech Corp', 'AUS098765432', '+61 987 654 321', 0, NULL, NULL, 'DNI', '', '0000-00-00'),
 	(131, NULL, 'A555', '', '', '', '25', '', 'aaaa5@example.com', '$2y$10$.EG9ubn2GmCllCHzXNdCau/4Tc9HQC8dugE8TjilPfmcHsuPx0yT2', '', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 'DNI', '', '0000-00-00'),
-	(138, NULL, 'Serg', '', '', '', '25', '', 'sergiodesarrolladorweb@gmail.com', '$2y$10$uiwtsHD/9wWlP0H5m1Y14eRtGJ8BaTAWiLcR96vgkzFd8kaORR8ra', '', NULL, NULL, NULL, NULL, NULL, 0, '2023-11-20 18:10:44', NULL, 'DNI', '', '0000-00-00');
+	(138, NULL, 'Serg', '', '', '', '25', '', 'sergiodesarrolladorweb@gmail.com', '$2y$10$uiwtsHD/9wWlP0H5m1Y14eRtGJ8BaTAWiLcR96vgkzFd8kaORR8ra', '', NULL, NULL, NULL, NULL, NULL, 0, '2023-12-11 16:00:13', NULL, 'DNI', '', '0000-00-00');
 
 -- Volcando estructura para tabla destiny_airlines.user_temp_ids
 CREATE TABLE IF NOT EXISTS `user_temp_ids` (

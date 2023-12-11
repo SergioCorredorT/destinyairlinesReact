@@ -21,34 +21,9 @@ abstract class BaseMultiModel
         }
     }
 
-    private function executeSqlOLD($sql)
-    {
-        // Preparar la sentencia SQL
-        try {
-            $stmt = $this->con->prepare($sql);
-        } catch (Exception $er) {
-            error_log('Catched exception: ' .  $er->getMessage() . "\n");
-            return false;
-        }
-        // Ejecutar la sentencia
-        $stmt->execute();
-
-        // Comprobar si la sentencia es un SELECT
-        if (stripos(trim($sql), 'SELECT') === 0) {
-            // Si es un SELECT, devolver los resultados
-            if (intval($stmt->errorCode()) === 0) {
-                return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            } else {
-                return false;
-            }
-        } else {
-            // Si no es un SELECT, devolver true si la sentencia se ejecutó correctamente
-            return intval($stmt->errorCode()) === 0;
-        }
-    }
-
     protected function executeSql($sql, $params = [])
     {
+        //Params contendrá un array asociativo con los nombres de los parámetros contenidos en el sql y su valor
         try {
             // Preparar la sentencia SQL
             $stmt = $this->con->prepare($sql);
