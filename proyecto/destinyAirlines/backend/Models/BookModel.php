@@ -44,6 +44,18 @@ final class BookModel extends BaseModel
         return parent::update(['checkinDate' => '"' . date('Y-m-d') . '"'], "bookCode = '$bookCode'");
     }
 
+    public function deleteBookFromBookCode($bookCode)
+    {
+        parent::beginTransaction();
+        $where = ' bookCode = ' . $bookCode;
+        if(!parent::delete($where)) {
+            parent::rollBack();
+            return false;
+        }
+        parent::commit();
+        return true;
+    }
+
     public function createBooks(array $data, bool $getId = false)
     {
         return parent::insert($data, $getId);

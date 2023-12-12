@@ -65,16 +65,18 @@ Table USERS {
 
 Table USER_TEMP_IDS {
   id_USER_TEMP_IDS int [pk, increment]
-  id_USERS int [not null, ref: > USERS.id_USERS]
+  id_USERS int [not null]
   tempId varchar(40) [UNIQUE, not null]
   unlockEmailPending datetime [default: `CURRENT_TIMESTAMP`]
 }
 
+Ref: USER_TEMP_IDS.id_USERS > USERS.id_USERS [delete: cascade]
+
 Table BOOKS {
   id_BOOKS int [pk, increment]
-  id_FLIGHTS int [not null, ref: > FLIGHTS.id_FLIGHTS]
-  id_USERS int [not null, ref: > USERS.id_USERS]
-  id_PRIMARY_CONTACT_INFORMATIONS int [not null, ref: > PRIMARY_CONTACT_INFORMATIONS.id_PRIMARY_CONTACT_INFORMATIONS]
+  id_FLIGHTS int
+  id_USERS int
+  id_PRIMARY_CONTACT_INFORMATIONS int [not null]
   bookCode varchar(10) [not null, unique]
   direction direction [not null, default: "departure"]
   checkinDate date
@@ -82,6 +84,10 @@ Table BOOKS {
   childsNumber tinyint [default: 0]
   infantsNumber tinyint [default: 0]
 }
+
+Ref: BOOKS.id_FLIGHTS > FLIGHTS.id_FLIGHTS [delete: set null]
+Ref: BOOKS.id_USERS > USERS.id_USERS [delete: set null]
+Ref: BOOKS.id_PRIMARY_CONTACT_INFORMATIONS > PRIMARY_CONTACT_INFORMATIONS.id_PRIMARY_CONTACT_INFORMATIONS
 
 enum direction {
   departure
@@ -110,21 +116,28 @@ Table PRIMARY_CONTACT_INFORMATIONS {
 
 Table INVOICES {
   id_INVOICES int [pk, increment]
-  id_BOOKS int [not null, ref: > BOOKS.id_BOOKS]
+  id_BOOKS int
   invoiceCode varchar(50) [not null, unique]
   invoicedDate datetime [default: `CURRENT_TIMESTAMP`]
   price double [not null]
   isPaid tinyint(1) [default: 0, not null]
 }
 
+Ref: INVOICES.id_BOOKS > BOOKS.id_BOOKS [delete: set null]
+
 Table SERVICES_INVOICES {
   id_SERVICES_INVOICES int [pk, increment]
-  id_INVOICES int [ref: > INVOICES.id_INVOICES, not null]
-  id_SERVICES int [ref: > SERVICES.id_SERVICES, not null]
-  id_PASSENGERS int [ref: > PASSENGERS.id_PASSENGERS]
+  id_INVOICES int [not null]
+  id_SERVICES int
+  id_PASSENGERS int
   addRemove addRemove [not null, default: 'add']
   oldPrice double [not null]
 }
+
+Ref: SERVICES_INVOICES.id_INVOICES > INVOICES.id_INVOICES [delete: cascade]
+Ref: SERVICES_INVOICES.id_SERVICES > SERVICES.id_SERVICES [delete: set null]
+Ref: SERVICES_INVOICES.id_PASSENGERS > PASSENGERS.id_PASSENGERS [delete: set null]
+
 
 enum addRemove {
   add
@@ -156,20 +169,27 @@ enum serviceGroupingType {
 
 Table BOOKS_SERVICES {
   id_BOOKS_SERVICES int [pk, increment]
-  id_BOOKS int [not null, ref: > BOOKS.id_BOOKS]
-  id_SERVICES int [not null, ref: > SERVICES.id_SERVICES]
+  id_BOOKS int [not null]
+  id_SERVICES int [not null]
 }
+
+Ref: BOOKS_SERVICES.id_BOOKS > BOOKS.id_BOOKS [delete: cascade]
+Ref: BOOKS_SERVICES.id_SERVICES > SERVICES.id_SERVICES [delete: cascade]
 
 Table PASSENGERS_BOOKS_SERVICES {
   id_PASSENGERS_BOOKS_SERVICES int [pk, increment]
-  id_PASSENGERS int [not null, ref: > PASSENGERS.id_PASSENGERS]
-  id_BOOKS int [not null, ref: > BOOKS.id_BOOKS]
-  id_SERVICES int [ref: > SERVICES.id_SERVICES]
+  id_PASSENGERS int [not null]
+  id_BOOKS int [not null]
+  id_SERVICES int [not null]
 }
+
+Ref: PASSENGERS_BOOKS_SERVICES.id_PASSENGERS > PASSENGERS.id_PASSENGERS [delete: cascade]
+Ref: PASSENGERS_BOOKS_SERVICES.id_BOOKS > BOOKS.id_BOOKS [delete: cascade]
+Ref: PASSENGERS_BOOKS_SERVICES.id_SERVICES > SERVICES.id_SERVICES [delete: cascade]
 
 Table PASSENGERS {
   id_PASSENGERS int [pk, increment]
-  id_BOOKS int [not null, ref: > BOOKS.id_BOOKS]
+  id_BOOKS int [not null]
   passengerCode varchar(50) [not null, unique]
   documentationType documentationType [not null]
   documentCode varchar(30) [not null]
@@ -181,6 +201,8 @@ Table PASSENGERS {
   nationality varchar(50) [not null]
   country varchar(50) [not null]
 }
+
+Ref: PASSENGERS.id_BOOKS > BOOKS.id_BOOKS [delete: cascade]
 
 enum documentationType {
   DNI
@@ -197,7 +219,7 @@ enum ageCategory {
 
 Table ADDITIONAL_INFORMATIONS {
   id_ADDITIONAL_INFORMATIONS int [pk, increment]
-  id_PASSENGERS int [unique, not null, ref: > PASSENGERS.id_PASSENGERS]
+  id_PASSENGERS int [unique, not null]
   dateBirth date
   assistiveDevices assistiveDevicesEnum
   medicalEquipment medicalEquipmentEnum
@@ -205,6 +227,8 @@ Table ADDITIONAL_INFORMATIONS {
   communicationNeeds communicationNeedsEnum
   medicationRequirements medicationRequirementsEnum
 }
+
+Ref: ADDITIONAL_INFORMATIONS.id_PASSENGERS > PASSENGERS.id_PASSENGERS [delete: cascade]
 
 Enum assistiveDevicesEnum {
   wheelchair
@@ -236,3 +260,4 @@ Enum medicationRequirementsEnum {
   insulin
   other
 }
+

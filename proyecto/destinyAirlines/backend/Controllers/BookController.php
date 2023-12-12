@@ -588,11 +588,10 @@ final class BookController extends BaseController
         if ($isPastDateTime || $hoursDifference < intval($bookSettings['maxAdvantaceHoursForCancelBook'])) {
             return false;
         }
-//A partir de aquí eliminar
-       // $multiModel = new MultiModel();
 
-        //return $multiModel->removeBook($bookCode, $idUser);
-        //Si el vuelo no ha tenido lugar, se suman los asientos disponibles
+        $bookModel = new BookModel();
+        //Si el vuelo no ha tenido lugar, se suman los asientos disponibles gracias al trigger sql
+        $bookModel->deleteBookFromBookCode($bookCode);
     }
 
     public function editBook()
