@@ -1,65 +1,13 @@
 <?php
 class PassengerValidator
 {
-    public static function validateDocumentation($documentationType, $documentCode)
+    public static function validateDocumentation($docType, $docCode)
     {
-        if (!self::validateDocumentationType($documentationType)) {
+        require_once './Validators/DocumentTypeValidator.php';
+        if(!DocumentTypeValidator::validateDocumentType($docType, $docCode)) {
             return false;
         }
 
-        if (!self::validateDocumentCode($documentCode, $documentationType)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public static function validateDocumentationType($documentationType)
-    {
-        if (empty($documentationType)) {
-            return false;
-        }
-
-        require_once './Models/PassengerModel.php';
-        $passengerModel = new PassengerModel();
-        if (!$passengerModel->isAllowedValue($documentationType, 'documentationType')) {
-            return false;
-        }
-        return true;
-    }
-
-    public static function validateDocumentCode($documentCode, $documentationType)
-    {
-        switch (strtolower($documentationType)) {
-            case 'dni': {
-                    // DNI: 8 dígitos seguidos de una letra mayúscula
-                    if (!preg_match('/^[0-9]{8}[A-Z]$/', $documentCode)) {
-                        return false;
-                    }
-                    break;
-                }
-            case 'passport': {
-                    // Pasaporte: 2 letras mayúsculas seguidas de 6 dígitos
-                    if (!preg_match('/^[A-Z]{2}[0-9]{6}$/', $documentCode)) {
-                        return false;
-                    }
-                    break;
-                }
-            case 'drivers_license': {
-                    // Licencia de conducir: 1 letra mayúscula seguida de 7 dígitos
-                    if (!preg_match('/^[A-Z]{1}[0-9]{7}$/', $documentCode)) {
-                        return false;
-                    }
-                    break;
-                }
-            case 'residence_card_or_work_permit': {
-                    // Tarjeta de residencia o permiso de trabajo: 3 letras mayúsculas seguidas de 9 dígitos
-                    if (!preg_match('/^[A-Z]{3}[0-9]{9}$/', $documentCode)) {
-                        return false;
-                    }
-                    break;
-                }
-        }
         return true;
     }
 

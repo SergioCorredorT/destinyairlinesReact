@@ -14,7 +14,9 @@
         min-height: 100vh;
         margin: 0;
         display: grid;
+        row-gap: 10px;
         grid-template-rows: max-content;
+        padding: 0 10px;
       }
 
       main {
@@ -157,11 +159,7 @@
   </head>
   <body>
     <div id="brillo"></div>
-    <a
-      href="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/debugIndex.html"
-      >Index en server</a
-    >
-    <main>
+    <a href="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/debugIndex.html">Index en server</a>
       <section class="CONTACT">
         <h1>contactController</h1>
         <form
@@ -1297,6 +1295,87 @@
             readonly
           />
           <input type="text" name="refreshToken" placeholder="refreshToken" />
+          <button type="submit">Enviar POST</button>
+        </form>
+      </section>
+      <section>
+        <h1>OptionsController</h1>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="getAssistiveDevices"
+            readonly
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="getMedicalEquipments"
+            readonly
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="getMobilityLimitations"
+            readonly
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="getCommunicationNeeds"
+            readonly
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="getMedicationRequirements"
+            readonly
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="getDocTypes"
+            readonly
+          />
           <button type="submit">Enviar POST</button>
         </form>
       </section>

@@ -1,5 +1,5 @@
 <?php
-//Ver vuelos/reservas hechos y pendientes, crear reserva, editar los servicios contratados, crear nuevo vuelo
+//Ver vuelos/reservas hechas y pendientes, crear reserva, crear nuevo vuelo
 
 require_once './Controllers/BaseController.php';
 require_once './Tools/SessionTool.php';
@@ -147,7 +147,7 @@ final class BookController extends BaseController
             'zipCode' => '',
             'companyName' => null,
             'companyTaxNumber' => null,
-            'companyPhoneNumber' => null,
+            'companyPhoneNumber' => null
         ];
 
         foreach ($primaryContactDetails as $key => $defaultValue) {
@@ -592,11 +592,6 @@ final class BookController extends BaseController
         $bookModel = new BookModel();
         //Si el vuelo no ha tenido lugar, se suman los asientos disponibles gracias al trigger sql
         $bookModel->deleteBookFromBookCode($bookCode);
-    }
-
-    public function editBook()
-    {
-        //Recibirá un array de datos, un accessToken y se aplicarán (solo se editan los servicios y que no sean descuentos)
     }
 
     private function validateDirection(string $direction)

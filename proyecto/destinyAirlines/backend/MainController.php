@@ -40,6 +40,12 @@ $controllers = [
         'getsummarybooks'                           => ['controller' => 'BookController',       'method' => 'getSummaryBooks'],
         'getbookinfo'                               => ['controller' => 'BookController',       'method' => 'getBookInfo'],
         'cancelbook'                                => ['controller' => 'BookController',       'method' => 'cancelBook'],
+        'getassistivedevices'                       => ['controller' => 'OptionsController',    'method' => 'getAssistiveDevices'],
+        'getmedicalequipments'                      => ['controller' => 'OptionsController',    'method' => 'getMedicalEquipments'],
+        'getmobilitylimitations'                    => ['controller' => 'OptionsController',    'method' => 'getMobilityLimitations'],
+        'getcommunicationneeds'                     => ['controller' => 'OptionsController',    'method' => 'getCommunicationNeeds'],
+        'getmedicationrequirements'                 => ['controller' => 'OptionsController',    'method' => 'getMedicationRequirements'],
+        'getdoctypes'                               => ['controller' => 'OptionsController',    'method' => 'getDocTypes'],
     //GET
         'paypalredirectok'                          => ['controller' => 'paymentController',    'method' => 'paypalRedirectOk'],
         'paypalredirectcancel'                      => ['controller' => 'paymentController',    'method' => 'paypalRedirectCancel'],
