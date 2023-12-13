@@ -57,7 +57,7 @@ CREATE TABLE `USERS` (
   `companyPhoneNumber` varchar(20),
   `currentLoginAttempts` tinyint NOT NULL DEFAULT 0,
   `lastAttempt` datetime,
-  `documentationType` ENUM ('DNI', 'Passport', 'Drivers_license', 'Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL
 );
@@ -84,7 +84,7 @@ CREATE TABLE `BOOKS` (
 
 CREATE TABLE `PRIMARY_CONTACT_INFORMATIONS` (
   `id_PRIMARY_CONTACT_INFORMATIONS` int PRIMARY KEY AUTO_INCREMENT,
-  `documentationType` ENUM ('DNI', 'Passport', 'Drivers_license', 'Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
   `title` varchar(50),
@@ -149,7 +149,7 @@ CREATE TABLE `PASSENGERS` (
   `id_PASSENGERS` int PRIMARY KEY AUTO_INCREMENT,
   `id_BOOKS` int NOT NULL,
   `passengerCode` varchar(50) UNIQUE NOT NULL,
-  `documentationType` ENUM ('DNI', 'Passport', 'Drivers_license', 'Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
   `title` varchar(50),

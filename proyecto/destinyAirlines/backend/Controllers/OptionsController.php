@@ -17,38 +17,37 @@ final class OptionsController extends BaseController
     
     public function getAgeCategories()
     {
-        
-        //adult, child, infant
-        return ;
+        $passengerModel = new PassengerModel();
+        return $passengerModel->selectAllowedValues('ageCategory');
     }
     public function getAssistiveDevices()
     {
-        $AdditionalInformationModel = new AdditionalInformationModel();
-        return $AdditionalInformationModel->selectAllowedValues('assistiveDevices');
+        $additionalInformationModel = new AdditionalInformationModel();
+        return $additionalInformationModel->selectAllowedValues('assistiveDevices');
     }
 
     public function getMedicalEquipments()
     {
-        $AdditionalInformationModel = new AdditionalInformationModel();
-        return $AdditionalInformationModel->selectAllowedValues('medicalEquipment');
+        $additionalInformationModel = new AdditionalInformationModel();
+        return $additionalInformationModel->selectAllowedValues('medicalEquipment');
     }
 
     public function getMobilityLimitations()
     {
-        $AdditionalInformationModel = new AdditionalInformationModel();
-        return $AdditionalInformationModel->selectAllowedValues('mobilityLimitations');
+        $additionalInformationModel = new AdditionalInformationModel();
+        return $additionalInformationModel->selectAllowedValues('mobilityLimitations');
     }
 
     public function getCommunicationNeeds()
     {
-        $AdditionalInformationModel = new AdditionalInformationModel();
-        return $AdditionalInformationModel->selectAllowedValues('communicationNeeds');
+        $additionalInformationModel = new AdditionalInformationModel();
+        return $additionalInformationModel->selectAllowedValues('communicationNeeds');
     }
 
     public function getMedicationRequirements()
     {
-        $AdditionalInformationModel = new AdditionalInformationModel();
-        return $AdditionalInformationModel->selectAllowedValues('medicationRequirements');
+        $additionalInformationModel = new AdditionalInformationModel();
+        return $additionalInformationModel->selectAllowedValues('medicationRequirements');
     }
 
     

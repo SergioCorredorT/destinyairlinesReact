@@ -1378,6 +1378,19 @@
           />
           <button type="submit">Enviar POST</button>
         </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
+          <input
+            type="text"
+            name="command"
+            value="getAgeCategories"
+            readonly
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
       </section>
       <section>
         <h1>debugController</h1>

@@ -58,7 +58,7 @@ Table USERS {
   companyPhoneNumber varchar(20)
   currentLoginAttempts tinyint [default: 0, not null]
   lastAttempt datetime
-  documentationType documentationType [not null]
+  documentationType varchar(50) [not null]
   documentCode varchar(30) [not null]
   expirationDate date [not null]
 }
@@ -96,7 +96,7 @@ enum direction {
 
 Table PRIMARY_CONTACT_INFORMATIONS {
   id_PRIMARY_CONTACT_INFORMATIONS int [pk, increment]
-  documentationType documentationType [not null]
+  documentationType varchar(50) [not null]
   documentCode varchar(30) [not null]
   expirationDate date [not null]
   title varchar(50)
@@ -191,7 +191,7 @@ Table PASSENGERS {
   id_PASSENGERS int [pk, increment]
   id_BOOKS int [not null]
   passengerCode varchar(50) [not null, unique]
-  documentationType documentationType [not null]
+  documentationType varchar(50) [not null]
   documentCode varchar(30) [not null]
   expirationDate date [not null]
   title varchar(50)
@@ -203,13 +203,6 @@ Table PASSENGERS {
 }
 
 Ref: PASSENGERS.id_BOOKS > BOOKS.id_BOOKS [delete: cascade]
-
-enum documentationType {
-  DNI
-  Passport
-  Drivers_license
-  Residence_card_or_work_permit
-}
 
 enum ageCategory {
   infant

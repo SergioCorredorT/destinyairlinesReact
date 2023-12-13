@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `passengers` (
   `id_PASSENGERS` int(11) NOT NULL AUTO_INCREMENT,
   `id_BOOKS` int(11) NOT NULL,
   `passengerCode` varchar(50) NOT NULL,
-  `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date DEFAULT NULL,
   `nationality` varchar(50) NOT NULL,
@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `passengers_books_services` (
 -- Volcando estructura para tabla destiny_airlines.primary_contact_informations
 CREATE TABLE IF NOT EXISTS `primary_contact_informations` (
   `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT,
-  `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
   `title` varchar(50) DEFAULT NULL,
@@ -287,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `currentLoginAttempts` tinyint(2) NOT NULL DEFAULT 0,
   `lastAttempt` datetime DEFAULT NULL,
   `lastForgotPasswordEmail` datetime DEFAULT NULL,
-  `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
   PRIMARY KEY (`id_USERS`),

@@ -46,6 +46,7 @@ $controllers = [
         'getcommunicationneeds'                     => ['controller' => 'OptionsController',    'method' => 'getCommunicationNeeds'],
         'getmedicationrequirements'                 => ['controller' => 'OptionsController',    'method' => 'getMedicationRequirements'],
         'getdoctypes'                               => ['controller' => 'OptionsController',    'method' => 'getDocTypes'],
+        'getagecategories'                          => ['controller' => 'OptionsController',    'method' => 'getAgeCategories'],
     //GET
         'paypalredirectok'                          => ['controller' => 'paymentController',    'method' => 'paypalRedirectOk'],
         'paypalredirectcancel'                      => ['controller' => 'paymentController',    'method' => 'paypalRedirectCancel'],

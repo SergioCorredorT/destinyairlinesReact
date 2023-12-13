@@ -275,7 +275,7 @@ CREATE TABLE `passengers` (
   `id_PASSENGERS` int(11) NOT NULL,
   `id_BOOKS` int(11) NOT NULL,
   `passengerCode` varchar(50) NOT NULL,
-  `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date DEFAULT NULL,
   `nationality` varchar(50) NOT NULL,
@@ -333,7 +333,7 @@ INSERT INTO `passengers_books_services` (`id_PASSENGERS_SERVICES`, `id_PASSENGER
 
 CREATE TABLE `primary_contact_informations` (
   `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL,
-  `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
   `title` varchar(50) DEFAULT NULL,
@@ -453,7 +453,7 @@ CREATE TABLE `users` (
   `currentLoginAttempts` tinyint(2) NOT NULL DEFAULT 0,
   `lastAttempt` datetime DEFAULT NULL,
   `lastForgotPasswordEmail` datetime DEFAULT NULL,
-  `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
