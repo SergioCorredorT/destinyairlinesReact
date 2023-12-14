@@ -1,7 +1,7 @@
 <?php
 
 class BookingProcessTool
-{    
+{
     public static function generateUUID()
     {
         $uuid4 = Ramsey\Uuid\Uuid::uuid4();
@@ -19,7 +19,8 @@ class BookingProcessTool
         return $countsAgeCategories;
     }
 
-    public function validateSeatAvailability($passengers, $flightCode){
+    public function validateSeatAvailability($passengers, $flightCode)
+    {
         require_once './Models/FlightModel.php';
         require_once './Models/AirplaneModel.php';
 
@@ -53,7 +54,8 @@ class BookingProcessTool
         return $count;
     }
 
-    public function savePrimaryContactInfo($primaryContactDetails) {
+    public function savePrimaryContactInfo($primaryContactDetails)
+    {
         require_once './Models/PrimaryContactInformationModel.php';
         $PrimaryContactInformationModel = new PrimaryContactInformationModel();
         [$idPrimaryContactInfo] = $PrimaryContactInformationModel->createPrimaryContactInformation($primaryContactDetails, true);
@@ -63,7 +65,8 @@ class BookingProcessTool
         return $idPrimaryContactInfo;
     }
 
-    public function saveBook($passengers, $flightCode, $direction, $idPrimaryContactInfo, $idUser) {
+    public function saveBook($passengers, $flightCode, $direction, $idPrimaryContactInfo, $idUser)
+    {
         require_once './Tools/BookingProcessTool.php';
         require_once './Models/BookModel.php';
         require_once './Models/FlightModel.php';
@@ -87,7 +90,8 @@ class BookingProcessTool
         return $idBook;
     }
 
-    public function saveInvoice($idBook, $totalPrice) {
+    public function saveInvoice($idBook, $totalPrice)
+    {
         require_once './Models/InvoiceModel.php';
         $invoiceModel = new InvoiceModel();
 
@@ -103,7 +107,8 @@ class BookingProcessTool
         return $idInvoice;
     }
 
-    public function saveBookServicesAndServicesInvoices($idBook, $bookServicesAndPrice, $idInvoice) {
+    public function saveBookServicesAndServicesInvoices($idBook, $bookServicesAndPrice, $idInvoice)
+    {
         require_once './Models/ServicesModel.php';
         require_once './Models/BookServiceModel.php';
         require_once './Models/ServicesInvoicesModel.php';
@@ -137,7 +142,8 @@ class BookingProcessTool
         }
     }
 
-    public function savePassengersAndGetAddiInfoAndPassServAndServInvo($passengers, $idBook, $idInvoice) {
+    public function savePassengersAndGetAddiInfoAndPassServAndServInvo($passengers, $idBook, $idInvoice)
+    {
         require_once './Models/PassengerModel.php';
         require_once './Models/ServicesModel.php';
 
@@ -147,7 +153,7 @@ class BookingProcessTool
         $passengerServiceData = [];
         $servicesInvoicesData = [];
         $additionalInformationData = [];
-    
+
         foreach ($passengers as $passenger) {
             [$idPassenger] = $passengerModel->createPassengers([
                 'id_BOOKS' => $idBook,
@@ -160,7 +166,8 @@ class BookingProcessTool
                 'lastName' => $passenger['lastName'] ?? '',
                 'ageCategory' => $passenger['ageCategory'] ?? '',
                 'nationality' => $passenger['nationality'] ?? '',
-                'country' => $passenger['country'] ?? ''
+                'country' => $passenger['country'] ?? '',
+                'dateBirth' => $passenger['dateBirth'] ?? ''
             ], true);
             if (!$idPassenger) {
                 throw new Exception('Catched exception creating passengers');
@@ -168,7 +175,6 @@ class BookingProcessTool
 
             $additionalInformationData[] = [
                 'id_PASSENGERS' => $idPassenger,
-                'dateBirth' => $passenger['dateBirth'] ?? '',
                 'assistiveDevices' => $passenger['assistiveDevices'] ?? 'NULL',
                 'medicalEquipment' => $passenger['medicalEquipment'] ?? 'NULL',
                 'mobilityLimitations' => $passenger['mobilityLimitations'] ?? 'NULL',
@@ -177,29 +183,34 @@ class BookingProcessTool
             ];
 
             // insertar passengers_books_services
-            $idsServices = $servicesModel->getServiceIdsFromCodes(array_keys($passenger['services']));
-            foreach ($passenger['services'] as $serviceCode => $price) {
-                $passengerServiceData[] = [
-                    'id_PASSENGERS' => $idPassenger,
-                    'id_BOOKS' => $idBook,
-                    'id_SERVICES' => $idsServices[$serviceCode]
-                ];
+            $passengerServiceData = [];
+            $servicesInvoicesData = [];
+            if (isset($passenger['services'])) {
+                $idsServices = $servicesModel->getServiceIdsFromCodes(array_keys($passenger['services']));
+                foreach ($passenger['services'] as $serviceCode => $price) {
+                    $passengerServiceData[] = [
+                        'id_PASSENGERS' => $idPassenger,
+                        'id_BOOKS' => $idBook,
+                        'id_SERVICES' => $idsServices[$serviceCode]
+                    ];
 
-                // insertar individual services_invoice
-                $servicesInvoicesData[] = [
-                    'id_INVOICES' => $idInvoice,
-                    'id_SERVICES' => $idsServices[$serviceCode],
-                    'id_PASSENGERS' => $idPassenger,
-                    'addRemove' => 'add',
-                    'oldPrice' => $price,
-                ];
+                    // insertar individual services_invoice
+                    $servicesInvoicesData[] = [
+                        'id_INVOICES' => $idInvoice,
+                        'id_SERVICES' => $idsServices[$serviceCode],
+                        'id_PASSENGERS' => $idPassenger,
+                        'addRemove' => 'add',
+                        'oldPrice' => $price,
+                    ];
+                }
             }
         }
 
         return [$additionalInformationData, $passengerServiceData, $servicesInvoicesData];
     }
 
-    public function createAdditionalInformation($additionalInformationData) {
+    public function createAdditionalInformation($additionalInformationData)
+    {
         require_once './Models/AdditionalInformationModel.php';
         $additionalInformationModel = new AdditionalInformationModel();
         $additionalInformationRsp = $additionalInformationModel->createMultipleAdditionalInformations($additionalInformationData);
@@ -207,8 +218,9 @@ class BookingProcessTool
             throw new Exception('Catched exception additional Information');
         }
     }
-    
-    public function createPassengerBookService($passengerServiceData) {
+
+    public function createPassengerBookService($passengerServiceData)
+    {
         require_once './Models/PassengerBookServiceModel.php';
         $passengerBookServiceModel = new PassengerBookServiceModel();
         $passengerBookServiceRsp = $passengerBookServiceModel->createMultiplePassengerService($passengerServiceData);
@@ -216,8 +228,9 @@ class BookingProcessTool
             throw new Exception('Catched exception creating passenger book services');
         }
     }
-    
-    public function createServicesInvoices($servicesInvoicesData) {
+
+    public function createServicesInvoices($servicesInvoicesData)
+    {
         require_once './Models/ServicesInvoicesModel.php';
         $servicesInvoicesModel = new ServicesInvoicesModel();
         $servicesInvoicesRsp = $servicesInvoicesModel->createMultipleServicesInvoices($servicesInvoicesData);
@@ -226,18 +239,18 @@ class BookingProcessTool
         }
     }
 
-    public function decreaseAvailableSeats($passengers, $flightCode) {
+    public function decreaseAvailableSeats($passengers, $flightCode)
+    {
         $flightModel = new FlightModel();
         //Primero comprobamos si el número de asientos necesarios es menor que los disponibles
         $seatsNeeded = $this->getSeatsNeeded($passengers);
         $freeSeats = $flightModel->getFreeSeats($flightCode);
 
         if ($seatsNeeded <= $freeSeats) {
-            $decreaseAvailableSeatsRsp= $flightModel->decreaseAvailableSeats($seatsNeeded, $flightCode);
-            if(!$decreaseAvailableSeatsRsp){
+            $decreaseAvailableSeatsRsp = $flightModel->decreaseAvailableSeats($seatsNeeded, $flightCode);
+            if (!$decreaseAvailableSeatsRsp) {
                 throw new Exception('Catched exception decreasing available seats');
-            }
-            else{
+            } else {
                 return $decreaseAvailableSeatsRsp;
             }
         }
@@ -245,7 +258,8 @@ class BookingProcessTool
         return false;
     }
 
-    public function generateInvoiceData($bookDataInOneDirection, $totalPrice, $direction) {
+    public function generateInvoiceData($bookDataInOneDirection, $totalPrice, $direction)
+    {
         require_once './Tools/BookingPriceCalculatorTool.php';
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
         $servicesModel = new ServicesModel();

@@ -102,7 +102,8 @@ final class MultiModel extends BaseMultiModel
                 'zipCode' => $primaryContactInfoResults[0]['zipCode'],
                 'companyName' => $primaryContactInfoResults[0]['companyName'],
                 'companyTaxNumber' => $primaryContactInfoResults[0]['companyTaxNumber'],
-                'companyPhoneNumber' => $primaryContactInfoResults[0]['companyPhoneNumber']
+                'companyPhoneNumber' => $primaryContactInfoResults[0]['companyPhoneNumber'],
+                'dateBirth' => $primaryContactInfoResults[0]['dateBirth']
             ],
             'invoice' => array_map(function ($invoice) {
                 return [

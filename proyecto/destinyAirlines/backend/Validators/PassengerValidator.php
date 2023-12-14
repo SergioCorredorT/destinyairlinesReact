@@ -138,6 +138,11 @@ class PassengerValidator
             return false;
         }
 
+        $currentDate = date('Y-m-d');
+        if ($dateBirth > $currentDate) {
+            return false;
+        }
+
         return true;
     }
 

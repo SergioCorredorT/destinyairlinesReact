@@ -89,6 +89,13 @@ class PrimaryContactInformationSanitizer
         return htmlspecialchars(trim($companyPhoneNumber));
     }
 
+    public static function sanitizeDateBirth($dateBirth)
+    {
+        // Elimina todos los caracteres que no sean números, guiones o barras
+        $sanitizedDateBirth = preg_replace('/[^0-9\-\/]/', '', $dateBirth);
+        return $sanitizedDateBirth;
+    }
+
     public static function sanitize(array $data)
     {
         //Si es "", o null, o no está definida no se ejecutará el saneamiento
@@ -108,6 +115,7 @@ class PrimaryContactInformationSanitizer
         if (!empty($data['companyName'])) $data["companyName"] = self::sanitizeCompanyName($data['companyName']);
         if (!empty($data['companyTaxNumber'])) $data["companyTaxNumber"] = self::sanitizeCompanyTaxNumber($data['companyTaxNumber']);
         if (!empty($data['companyPhoneNumber'])) $data["companyPhoneNumber"] = self::sanitizeCompanyPhoneNumber($data['companyPhoneNumber']);
+        if (!empty($data['dateBirth'])) $data["dateBirth"] = self::sanitizeDateBirth($data['dateBirth']);
 
         return $data;
     }

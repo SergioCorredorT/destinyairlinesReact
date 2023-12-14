@@ -162,6 +162,31 @@ class PrimaryContactInformationValidator
         return true;
     }
 
+    public static function validateDateBirth($dateBirth)
+    {
+        // Comprueba si la fecha de nacimiento está vacía
+        if (empty($dateBirth)) {
+            return false;
+        }
+        // Comprueba si la fecha de nacimiento tiene el formato correcto (DD-MM-YYYY)
+        if (!preg_match('/^([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/', $dateBirth)) {
+            return false;
+        }
+
+        // Comprueba si la fecha de nacimiento es una fecha válida
+        list($year, $month, $day) = explode('-', $dateBirth);
+        if (!checkdate($month, $day, $year)) {
+            return false;
+        }
+
+        $currentDate = date('Y-m-d');
+        if ($dateBirth > $currentDate) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static function validate($data)
     {
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
@@ -212,6 +237,10 @@ class PrimaryContactInformationValidator
             return false;
         }
         if (isset($data['companyPhoneNumber']) && !self::validateCompanyPhoneNumber($data['companyPhoneNumber'])) {
+            return false;
+        }
+
+        if (isset($data['dateBirth']) && !self::validateDateBirth($data['dateBirth'])) {
             return false;
         }
 

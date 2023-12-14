@@ -14,12 +14,15 @@ final class OptionsController extends BaseController
         $documentTypes = $iniTool->getKeysAndValues('documentTypes');
         return ['response' => $documentTypes];
     }
-    
+
     public function getAgeCategories()
     {
-        $passengerModel = new PassengerModel();
-        return $passengerModel->selectAllowedValues('ageCategory');
+        require_once './Tools/IniTool.php';
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $ageCategories = $iniTool->getKeysAndValues('ageCategories');
+        return ['response' => $ageCategories];
     }
+
     public function getAssistiveDevices()
     {
         $additionalInformationModel = new AdditionalInformationModel();
@@ -49,6 +52,4 @@ final class OptionsController extends BaseController
         $additionalInformationModel = new AdditionalInformationModel();
         return $additionalInformationModel->selectAllowedValues('medicationRequirements');
     }
-
-    
 }

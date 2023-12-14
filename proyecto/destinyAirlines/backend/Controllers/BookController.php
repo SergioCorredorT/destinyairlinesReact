@@ -61,7 +61,7 @@ final class BookController extends BaseController
                 'ageCategory' => '',
                 'nationality' => '',
                 'country' => '',
-                'dateBirth' => null,
+                'dateBirth' => '',
                 'assistiveDevices' => null,
                 'medicalEquipment' => null,
                 'mobilityLimitations' => null,
@@ -72,7 +72,7 @@ final class BookController extends BaseController
 
             foreach ($keys_default as $key => $defaultValue) {
                 //$passengerDetails[$key] = (isset($passenger[$key]) && $passenger[$key] !== '') ? $passenger[$key] : $defaultValue;
-                $passengerDetails[$key] = $passenger[$key] === null || $passenger[$key] === "" ? $defaultValue : $passenger[$key];
+                $passengerDetails[$key] = !isset($passenger[$key]) || $passenger[$key] === "" ? $defaultValue : $passenger[$key];
             }
             //Cada pasajero lo saneamos y validamos
             $passengerDetails = PassengerSanitizer::sanitize($passengerDetails);
@@ -147,7 +147,8 @@ final class BookController extends BaseController
             'zipCode' => '',
             'companyName' => null,
             'companyTaxNumber' => null,
-            'companyPhoneNumber' => null
+            'companyPhoneNumber' => null,
+            'dateBirth' => ''
         ];
 
         foreach ($primaryContactDetails as $key => $defaultValue) {
@@ -224,11 +225,11 @@ final class BookController extends BaseController
                 return false;
             }
         }
-
+/*
         if (!$this->doPayment($totalPrice,  $idUser, $idInvoiceD, $idInvoiceR)) {
             return false;
         }
-
+*/
         return true;
     }
 
@@ -283,8 +284,14 @@ final class BookController extends BaseController
             //insertar pasajeros + aditional_information
             [$additionalInformationData, $passengerServiceData, $servicesInvoicesData] = $BookingProcessTool->savePassengersAndGetAddiInfoAndPassServAndServInvo($bookData['passengersDetails'], $idBook, $idInvoice);
             $BookingProcessTool->createAdditionalInformation($additionalInformationData);
-            $BookingProcessTool->createPassengerBookService($passengerServiceData);
-            $BookingProcessTool->createServicesInvoices($servicesInvoicesData);
+            if(!empty($passengerServiceData))
+            {
+                $BookingProcessTool->createPassengerBookService($passengerServiceData);
+            }
+            if(!empty($servicesInvoicesData))
+            {
+                $BookingProcessTool->createServicesInvoices($servicesInvoicesData);
+            }
 
             //Discounts
             //Almacenar descuento de más de x pasajeros
