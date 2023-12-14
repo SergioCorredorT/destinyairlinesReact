@@ -35,7 +35,8 @@ final class UserController extends BaseController
             'phoneNumber3' => null,
             'companyName' => null,
             'companyTaxNumber' => null,
-            'companyPhoneNumber' => null
+            'companyPhoneNumber' => null,
+            'dateBirth' => ''
         ];
 
         foreach ($keys_default as $key => $defaultValue) {
@@ -77,7 +78,8 @@ final class UserController extends BaseController
             'companyPhoneNumber' => null,
             'documentationType' => '',
             'documentCode' => '',
-            'expirationDate' => ''
+            'expirationDate' => '',
+            'dateBirth' => ''
         ];
 
         $fixed_keys_default = [
@@ -91,11 +93,10 @@ final class UserController extends BaseController
                 $userData[$key] = !empty($POST[$key]) ? $POST[$key] : $defaultValue; //Antes que poner un '' ponemos un null
             }
         }
-
         foreach ($fixed_keys_default as $key => $defaultValue) {
             $userData[$key] = $POST[$key] ?? $defaultValue;
         }
-
+        
         //SANEAR y VALIDAR
         $userData = UserSanitizer::sanitize($userData);
         if (!UserValidator::validate($userData)) {

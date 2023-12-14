@@ -459,6 +459,20 @@
           </div>
           <div class="filaForm">
             <input
+              type="date"
+              name="dateBirth"
+              data-name="dateBirth"
+              class="dateBirth"
+              placeholder="dateBirth"
+            />
+            <input
+              type="checkbox"
+              class="checkNullify"
+              onchange="nullifyInput(this, `#updateForm [data-name='dateBirth']`)"
+            />
+          </div>
+          <div class="filaForm">
+            <input
               type="text"
               name="emailAddressAuth"
               data-name="emailAddressAuth"
@@ -569,6 +583,12 @@
             type="text"
             name="companyPhoneNumber"
             placeholder="Company Phone Number"
+          />
+          <input
+            type="date"
+            name="dateBirth"
+            placeholder="dateBirth"
+            value="2003-11-01"
           />
           <button type="submit">Enviar POST</button>
         </form>

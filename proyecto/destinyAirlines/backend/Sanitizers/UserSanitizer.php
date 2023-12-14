@@ -83,6 +83,13 @@ class UserSanitizer
         return htmlspecialchars(trim($companyPhoneNumber));
     }
 
+    public static function sanitizeDateBirth($dateBirth)
+    {
+        // Elimina todos los caracteres que no sean números, guiones o barras
+        $sanitizedDateBirth = preg_replace('/[^0-9\-\/]/', '', $dateBirth);
+        return $sanitizedDateBirth;
+    }
+
     public static function sanitize(array $data)
     {
         //Si es "", o null, o no está definida no se ejecutará el saneamiento
@@ -105,6 +112,7 @@ class UserSanitizer
         if (!empty($data['companyPhoneNumber'])) $data["companyPhoneNumber"] = self::sanitizeCompanyPhoneNumber($data['companyPhoneNumber']);
         if (!empty($data['emailAddress'])) $data["emailAddress"] = self::sanitizeEmailAddress($data['emailAddress']);
         if (!empty($data['emailAddressAuth'])) $data["emailAddressAuth"] = self::sanitizeEmailAddress($data['emailAddressAuth']);
+        if (!empty($data['dateBirth'])) $data["dateBirth"] = self::sanitizeDateBirth($data['dateBirth']);
         if (!empty($data['accessToken'])) $data["accessToken"] = TokenSanitizer::sanitizeToken($data['accessToken']);
         if (!empty($data['refreshToken'])) $data["refreshToken"] = TokenSanitizer::sanitizeToken($data['refreshToken']);
 

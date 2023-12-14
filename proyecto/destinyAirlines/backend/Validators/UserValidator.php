@@ -15,23 +15,21 @@ class UserValidator
 
     public static function validateExpirationDate($expirationDate)
     {
-        //Preparada para input month
-        // Comprueba si la fecha de expiración está en el formato correcto (YYYY-MM)
-        if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])$/', $expirationDate)) {
+        // Comprueba si la fecha de expiración está en el formato correcto (YYYY-MM-DD)
+        if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/', $expirationDate)) {
             return false;
         }
-
+    
         // Comprueba si la fecha de expiración es una fecha futura
-        $currentDate = date('Y-m');
-        $exp = strtotime($expirationDate . '-01');
-        $current = strtotime($currentDate . '-01');
+        $currentDate = date('Y-m-d');
+        $exp = strtotime($expirationDate);
+        $current = strtotime($currentDate);
         if ($current > $exp) {
             return false;
         }
-
+    
         return true;
     }
-
 
     public static function validateTitle($title)
     {
@@ -144,6 +142,31 @@ class UserValidator
         return true;
     }
 
+    public static function validateDateBirth($dateBirth)
+    {
+        // Comprueba si la fecha de nacimiento está vacía
+        if (empty($dateBirth)) {
+            return false;
+        }
+        // Comprueba si la fecha de nacimiento tiene el formato correcto (DD-MM-YYYY)
+        if (!preg_match('/^([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/', $dateBirth)) {
+            return false;
+        }
+
+        // Comprueba si la fecha de nacimiento es una fecha válida
+        list($year, $month, $day) = explode('-', $dateBirth);
+        if (!checkdate($month, $day, $year)) {
+            return false;
+        }
+
+        $currentDate = date('Y-m-d');
+        if ($dateBirth > $currentDate) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static function validateCompanyPhoneNumber($companyPhoneNumber)
     {
         if ($companyPhoneNumber != "" && !preg_match("/^(\+?[0-9]{9,})$/", $companyPhoneNumber)) {
@@ -157,11 +180,11 @@ class UserValidator
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
             return false;
         }
-        /*
+
         if (isset($data['expirationDate']) && !self::validateExpirationDate($data['expirationDate'])) {
             return false;
         }
-        */
+
         if (isset($data['title']) && !self::validateTitle($data['title'])) {
             return false;
         }
@@ -205,6 +228,9 @@ class UserValidator
             return false;
         }
         if (isset($data['companyPhoneNumber']) && !self::validateCompanyPhoneNumber($data['companyPhoneNumber'])) {
+            return false;
+        }
+        if (isset($data['dateBirth']) && !self::validateDateBirth($data['dateBirth'])) {
             return false;
         }
         if (isset($data['accessToken']) && !TokenValidator::validateToken($data['accessToken'])) {

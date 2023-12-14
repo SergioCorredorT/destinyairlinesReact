@@ -116,7 +116,7 @@ abstract class BaseModel
         }
         // Bind parameters
         foreach ($data as $key => $value) {
-            $value = $value === "" ? null : $value;//Si es "" se inserta un null en su lugar
+            $value = $value === "" ? null : $value; //Si es "" se inserta un null en su lugar
             $stmt->bindValue(':' . $key, $value);
         }
 
@@ -168,13 +168,59 @@ abstract class BaseModel
         return $miString;
     }
 
+    protected function updateNEW(array $data, string $where)
+    {
+        $updateData = '';
+        $bindValues = [];
+        $i = 1;
+        foreach ($data as $key => $value) {
+            if (!($value instanceof DateTime) && preg_match('/[\\+\\-\\*\\/]/', $value)) {
+                // Handle mathematical expressions specially
+                $updateData .= "$key = $value, ";
+            } else {
+                // Convert DateTime objects to string
+                if ($value instanceof DateTime) {
+                    $value = $value->format('Y-m-d');
+                }
+                $updateData .= "$key = :value$i, ";
+                $bindValues[":value$i"] = $value;
+                $i++;
+            }
+        }
+        $updateData = rtrim($updateData, ', ');
+        $query = "UPDATE $this->tableName SET $updateData WHERE $where";
+
+        // Prepare the query
+        try {
+            $stmt = $this->con->prepare($query);
+            foreach ($bindValues as $param => $value) {
+                $stmt->bindValue($param, $value);
+            }
+        } catch (Exception $er) {
+            error_log('Catched exception: ' . $er->getMessage() . "\n");
+            return false;
+        }
+
+        $stmt->execute();
+        if (intval($stmt->errorCode()) === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     protected function update(array $data, string $where)
     {
         $updateData = '';
         $bindValues = [];
         $i = 1;
         foreach ($data as $key => $value) {
-            if (preg_match('/[\\+\\-\\*\\/]/', $value)) {
+            // Check if the value is a date
+            if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $value)) {
+                $updateData .= "$key = :value$i, ";
+                $bindValues[":value$i"] = $value;
+                $i++;
+            } elseif (preg_match('/[\\+\\-\\*\\/]/', $value)) {
                 // Handle mathematical expressions specially
                 $updateData .= "$key = $value, ";
             } else {
@@ -221,7 +267,7 @@ abstract class BaseModel
             }
         } catch (Exception $er) {
             // Manejo de excepciones en caso de error
-            error_log('Catched exception: '.$er->getMessage());
+            error_log('Catched exception: ' . $er->getMessage());
             return false;
         }
     }

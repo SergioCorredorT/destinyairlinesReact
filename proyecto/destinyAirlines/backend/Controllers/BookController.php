@@ -225,11 +225,11 @@ final class BookController extends BaseController
                 return false;
             }
         }
-/*
+
         if (!$this->doPayment($totalPrice,  $idUser, $idInvoiceD, $idInvoiceR)) {
             return false;
         }
-*/
+
         return true;
     }
 

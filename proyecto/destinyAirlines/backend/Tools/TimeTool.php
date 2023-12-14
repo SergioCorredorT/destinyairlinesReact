@@ -21,4 +21,12 @@ class TimeTool
         }
         return false;
     }
+
+    function calculateAge($birthDate)
+    {
+        $birthDate = new DateTime($birthDate);
+        $currentDate = new DateTime();
+        $age = $currentDate->diff($birthDate);
+        return $age->y;
+    }
 }
