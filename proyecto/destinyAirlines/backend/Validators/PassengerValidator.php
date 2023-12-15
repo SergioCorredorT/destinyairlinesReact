@@ -75,22 +75,6 @@ class PassengerValidator
         return true;
     }
 
-    public static function validateAgeCategory($ageCategory)
-    {
-        if (empty($ageCategory)) {
-            return false;
-        }
-
-        require_once './Models/PassengerModel.php';
-        $passengerModel = new PassengerModel();
-
-        if (!$passengerModel->isAllowedValue($ageCategory, 'ageCategory')) {
-            return false;
-        }
-
-        return true;
-    }
-
     public static function validateNationality($nationality)
     {
         // Comprueba si la nacionalidad está vacía
@@ -258,10 +242,6 @@ class PassengerValidator
         }
         
         if (isset($data['lastName']) && !self::validateLastName($data['lastName'])) {
-            return false;
-        }
-        
-        if (isset($data['ageCategory']) && !self::validateAgeCategory($data['ageCategory'])) {
             return false;
         }
         

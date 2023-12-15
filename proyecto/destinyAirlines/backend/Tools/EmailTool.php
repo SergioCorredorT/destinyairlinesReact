@@ -1,6 +1,5 @@
 <?php
 require_once './vendor/autoload.php';
-require_once './Tools/IniTool.php';
 require_once './Tools/TemplateTool.php';
 class EmailTool
 {

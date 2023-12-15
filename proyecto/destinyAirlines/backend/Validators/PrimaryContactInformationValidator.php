@@ -184,6 +184,15 @@ class PrimaryContactInformationValidator
             return false;
         }
 
+        require_once './Tools/TimeTool.php';
+        require_once './Tools/IniTool.php';
+        $iniTool = new IniTool('./Config/cfg.ini');
+        $timeTool = new TimeTool();
+        $primaryContactInformationSettings = $iniTool->getKeysAndValues('primaryContactInformationSettings');
+        if($timeTool->getAge($dateBirth) < intval($primaryContactInformationSettings['minAge'])){
+            return false;
+        }
+
         return true;
     }
 

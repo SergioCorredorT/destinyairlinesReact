@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-12-2023 a las 15:15:54
+-- Tiempo de generación: 15-12-2023 a las 13:29:04
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -30,7 +30,6 @@ SET time_zone = "+00:00";
 CREATE TABLE `additional_informations` (
   `id_ADDITIONAL_INFORMATIONS` int(11) NOT NULL,
   `id_PASSENGERS` int(11) NOT NULL,
-  `dateBirth` date DEFAULT NULL,
   `assistiveDevices` enum('wheelchair','serviceAnimal','crutches','cane','other') DEFAULT NULL,
   `medicalEquipment` enum('oxygenTank','CPAPMachine','other') DEFAULT NULL,
   `mobilityLimitations` enum('difficultyWalking','difficultyClimbingStairs','other') DEFAULT NULL,
@@ -42,13 +41,15 @@ CREATE TABLE `additional_informations` (
 -- Volcado de datos para la tabla `additional_informations`
 --
 
-INSERT INTO `additional_informations` (`id_ADDITIONAL_INFORMATIONS`, `id_PASSENGERS`, `dateBirth`, `assistiveDevices`, `medicalEquipment`, `mobilityLimitations`, `communicationNeeds`, `medicationRequirements`) VALUES
-(1, 1, '1985-05-15', NULL, NULL, NULL, NULL, NULL),
-(2, 2, '1990-08-20', NULL, NULL, NULL, NULL, NULL),
-(3, 3, '2010-03-02', NULL, NULL, NULL, NULL, NULL),
-(4, 4, '1982-11-10', NULL, NULL, NULL, NULL, NULL),
-(37, 39, '2013-11-01', 'cane', '', '', '', ''),
-(38, 40, '2013-11-01', 'cane', '', '', '', '');
+INSERT INTO `additional_informations` (`id_ADDITIONAL_INFORMATIONS`, `id_PASSENGERS`, `assistiveDevices`, `medicalEquipment`, `mobilityLimitations`, `communicationNeeds`, `medicationRequirements`) VALUES
+(1, 1, NULL, NULL, NULL, NULL, NULL),
+(2, 2, NULL, NULL, NULL, NULL, NULL),
+(3, 3, NULL, NULL, NULL, NULL, NULL),
+(4, 4, NULL, NULL, NULL, NULL, NULL),
+(41, 43, 'cane', '', '', '', ''),
+(42, 44, 'cane', '', '', '', ''),
+(43, 45, 'cane', '', '', '', ''),
+(44, 46, 'cane', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -123,9 +124,10 @@ INSERT INTO `books` (`id_BOOKS`, `id_FLIGHTS`, `id_USERS`, `id_PRIMARY_CONTACT_I
 (25, 1, 1, 1, 'BK123', '2023-10-19', 'departure', 1, 0, 0),
 (26, 2, 2, 1, 'BK456', '2023-10-20', 'departure', 1, 0, 0),
 (27, 3, 1, 1, 'BK789', '2023-10-21', 'departure', 1, 0, 0),
-(28, 4, 2, 1, 'BK012', '2023-10-22', 'departure', 1, 2, 1),
+(28, 4, 2, 2, 'BK012', '2023-10-22', 'departure', 1, 2, 1),
 (29, 1, 138, 1, 'd5336a6d-5', NULL, 'departure', 2, 0, 0),
-(59, 1, 138, 36, '0a3719cc-5', NULL, 'departure', 2, 0, 0);
+(61, 1, 138, 39, '7e95bb6b-0', NULL, 'departure', 2, 0, 0),
+(62, 1, 138, 40, '333f86a2-0', NULL, 'departure', 2, 0, 0);
 
 --
 -- Disparadores `books`
@@ -164,8 +166,7 @@ INSERT INTO `books_services` (`id_BOOKS_SERVICES`, `id_BOOKS`, `id_SERVICES`) VA
 (12, 26, 3),
 (13, 25, 4),
 (14, 26, 3),
-(15, 27, 4),
-(59, 59, 4);
+(15, 27, 4);
 
 -- --------------------------------------------------------
 
@@ -213,7 +214,7 @@ CREATE TABLE `flights` (
 --
 
 INSERT INTO `flights` (`id_FLIGHTS`, `id_AIRPLANES`, `id_ITINERARIES`, `flightCode`, `date`, `hour`, `price`, `freeSeats`, `arrivalHour`) VALUES
-(1, 1, 1, '1231', '2024-10-20', '08:00:00', 350, 148, '10:30:00'),
+(1, 1, 1, '1231', '2024-10-20', '08:00:00', 350, 142, '10:30:00'),
 (2, 2, 1, '345345', '2023-10-21', '15:30:00', 420, 200, '18:00:00'),
 (3, 3, 2, '324', '2023-10-22', '10:45:00', 280, 100, '13:15:00'),
 (4, 4, 3, '3545', '2023-12-23', '19:20:00', 500, 100, '22:00:00');
@@ -240,7 +241,9 @@ CREATE TABLE `invoices` (
 INSERT INTO `invoices` (`id_INVOICES`, `id_BOOKS`, `invoiceCode`, `invoicedDate`, `price`, `isPaid`) VALUES
 (1, 28, 'weaewwea23231', '2023-11-05 23:03:14', 30, 0),
 (2, 28, 'ewqewqq2312', '2023-11-05 23:03:14', 40, 0),
-(27, 59, 'de672819-ca38-4930-83e2-d7d69b5cacf5', '2023-12-06 19:48:33', 790, 1);
+(27, NULL, 'de672819-ca38-4930-83e2-d7d69b5cacf5', '2023-12-06 19:48:33', 790, 1),
+(29, 61, '64be8e6b-a76f-40ba-9cda-b3dea4e21ab3', '2023-12-13 22:17:59', 700, 0),
+(30, 62, '93333094-e0ea-4f50-a414-c60854683c86', '2023-12-14 14:57:25', 700, 0);
 
 -- --------------------------------------------------------
 
@@ -275,7 +278,7 @@ CREATE TABLE `passengers` (
   `id_PASSENGERS` int(11) NOT NULL,
   `id_BOOKS` int(11) NOT NULL,
   `passengerCode` varchar(50) NOT NULL,
-  `documentationType` varchar(50) NOT NULL,
+  `documentationType` varchar(50) NOT NULL DEFAULT '',
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date DEFAULT NULL,
   `nationality` varchar(50) NOT NULL,
@@ -283,20 +286,23 @@ CREATE TABLE `passengers` (
   `firstName` varchar(50) DEFAULT NULL,
   `lastName` varchar(50) DEFAULT NULL,
   `title` varchar(50) DEFAULT NULL,
-  `ageCategory` enum('infant','child','adult') NOT NULL DEFAULT 'adult'
+  `ageCategory` enum('infant','child','adult') NOT NULL DEFAULT 'adult',
+  `dateBirth` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `passengers`
 --
 
-INSERT INTO `passengers` (`id_PASSENGERS`, `id_BOOKS`, `passengerCode`, `documentationType`, `documentCode`, `expirationDate`, `nationality`, `country`, `firstName`, `lastName`, `title`, `ageCategory`) VALUES
-(1, 25, 'P001', 'DNI', '12345678A', '2023-10-16', '', '', 'David', 'García', 'Mr', 'adult'),
-(2, 25, 'P002', 'Passport', 'AB123456', '2023-10-16', '', '', 'Laura', 'López', 'Ms', 'adult'),
-(3, 25, 'P003', 'DNI', '87654321B', '2023-10-16', '', '', 'Carlos', 'Martín', 'Mr', 'child'),
-(4, 25, 'P004', 'Passport', 'CD789012', '2023-10-16', '', '', 'Elena', 'Sánchez', 'Ms', 'adult'),
-(39, 59, 'd2e9c674-e3b5-4395-9e8d-179cb88f428c', 'DNI', '12345678A', '2024-12-01', 'Española', 'España', 'Sergio', 'Corredor', 'Mr', 'adult'),
-(40, 59, '1738ebec-1ff9-48f5-9812-e14901ee637a', 'DNI', '12345677A', '2024-12-01', 'Española', 'España', 'Sergio', 'Corredor', 'Mr', 'adult');
+INSERT INTO `passengers` (`id_PASSENGERS`, `id_BOOKS`, `passengerCode`, `documentationType`, `documentCode`, `expirationDate`, `nationality`, `country`, `firstName`, `lastName`, `title`, `ageCategory`, `dateBirth`) VALUES
+(1, 25, 'P001', 'DNI', '12345678A', '2023-10-16', '', '', 'David', 'García', 'Mr', 'adult', '2002-12-13'),
+(2, 25, 'P002', 'Passport', 'AB123456', '2023-10-16', '', '', 'Laura', 'López', 'Ms', 'adult', '2003-12-13'),
+(3, 25, 'P003', 'DNI', '87654321B', '2023-10-16', '', '', 'Carlos', 'Martín', 'Mr', 'child', '2013-12-13'),
+(4, 25, 'P004', 'Passport', 'CD789012', '2023-10-16', '', '', 'Elena', 'Sánchez', 'Ms', 'adult', '2003-12-13'),
+(43, 61, 'bd64ed7e-0607-4aaa-a0d1-b879249f3745', 'DNI', '12345678A', '2024-12-01', 'Española', 'España', 'Sergio', 'Corredor', 'Mr', 'adult', '2013-11-01'),
+(44, 61, '34aa2034-fcd4-4cd5-b76e-9e2794b11316', 'DNI', '12345677A', '2024-12-01', 'Española', 'España', 'Sergio', 'Corredor', 'Mr', 'adult', '2013-11-01'),
+(45, 62, '30520be8-5837-4fd7-9050-ce7e0f44f445', 'DNI', '12345678A', '2024-12-01', 'Española', 'España', 'Sergio', 'Corredor', 'Mr', 'adult', '2013-11-01'),
+(46, 62, '89fb13b2-46c1-4dd8-8a4d-5e71874313c1', 'DNI', '12345677A', '2024-12-01', 'Española', 'España', 'Sergio', 'Corredor', 'Mr', 'adult', '2013-11-01');
 
 -- --------------------------------------------------------
 
@@ -319,11 +325,7 @@ INSERT INTO `passengers_books_services` (`id_PASSENGERS_SERVICES`, `id_PASSENGER
 (6, 1, 28, 1),
 (8, 2, 25, NULL),
 (9, 3, 26, 11),
-(10, 4, 27, NULL),
-(72, 39, 59, 1),
-(73, 39, 59, 5),
-(74, 40, 59, 5),
-(75, 40, 59, 6);
+(10, 4, 27, NULL);
 
 -- --------------------------------------------------------
 
@@ -333,7 +335,7 @@ INSERT INTO `passengers_books_services` (`id_PASSENGERS_SERVICES`, `id_PASSENGER
 
 CREATE TABLE `primary_contact_informations` (
   `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL,
-  `documentationType` varchar(50) NOT NULL,
+  `documentationType` varchar(50) NOT NULL DEFAULT '',
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
   `title` varchar(50) DEFAULT NULL,
@@ -348,16 +350,20 @@ CREATE TABLE `primary_contact_informations` (
   `zipCode` varchar(5) NOT NULL,
   `companyName` varchar(50) DEFAULT NULL,
   `companyTaxNumber` varchar(50) DEFAULT NULL,
-  `companyPhoneNumber` varchar(20) DEFAULT NULL
+  `companyPhoneNumber` varchar(20) DEFAULT NULL,
+  `dateBirth` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `primary_contact_informations`
 --
 
-INSERT INTO `primary_contact_informations` (`id_PRIMARY_CONTACT_INFORMATIONS`, `documentationType`, `documentCode`, `expirationDate`, `title`, `firstName`, `lastName`, `emailAddress`, `phoneNumber1`, `phoneNumber2`, `country`, `townCity`, `streetAddress`, `zipCode`, `companyName`, `companyTaxNumber`, `companyPhoneNumber`) VALUES
-(1, 'DNI', '232332', '2026-11-20', NULL, 'Sergi', 'waa', 'aaa@gmail.com', '11111111', NULL, 'España', 'Albacete', 'Calle falsa 123', '0909', NULL, NULL, NULL),
-(36, 'DNI', '12345678A', '2024-12-01', 'Mr', 'Sergio', 'Corredor', 'sergiodesarrolladorweb@gmail.com', '123456789', '123456788', 'España', 'Albacete', 'calle falsa 123', '3127', 'Compañía turbia', NULL, NULL);
+INSERT INTO `primary_contact_informations` (`id_PRIMARY_CONTACT_INFORMATIONS`, `documentationType`, `documentCode`, `expirationDate`, `title`, `firstName`, `lastName`, `emailAddress`, `phoneNumber1`, `phoneNumber2`, `country`, `townCity`, `streetAddress`, `zipCode`, `companyName`, `companyTaxNumber`, `companyPhoneNumber`, `dateBirth`) VALUES
+(1, 'DNI', '232332', '2026-11-20', NULL, 'Sergi', 'waa', 'aaa@gmail.com', '11111111', NULL, 'España', 'Albacete', 'Calle falsa 123', '0909', NULL, NULL, NULL, '2005-12-13'),
+(2, 'DNI', '232332', '2026-11-20', NULL, 'Sergi', 'waa', 'aaa2@gmail.com', '11111111', NULL, 'España', 'Albacete', 'Calle falsa 123', '0909', NULL, NULL, NULL, '2006-09-13'),
+(36, 'DNI', '12345678A', '2024-12-01', 'Mr', 'Sergio', 'Corredor', 'sergiodesarrolladorweb@gmail.com', '123456789', '123456788', 'España', 'Albacete', 'calle falsa 123', '3127', 'Compañía turbia', NULL, NULL, '2006-12-10'),
+(39, 'DNI', '12345678A', '2024-12-01', 'Mr', 'Sergio', 'Corredor', 'sergiodesarrolladorweb@gmail.com', '123456789', '123456788', 'España', 'Albacete', 'calle falsa 123', '3127', 'Compañía turbia', NULL, NULL, '2006-03-16'),
+(40, 'DNI', '12345678A', '2024-12-01', 'Mr', 'Sergio', 'Corredor', 'sergiodesarrolladorweb@gmail.com', '123456789', '123456788', 'España', 'Albacete', 'calle falsa 123', '3127', 'Compañía turbia', NULL, NULL, '2003-11-01');
 
 -- --------------------------------------------------------
 
@@ -422,10 +428,10 @@ CREATE TABLE `services_invoices` (
 
 INSERT INTO `services_invoices` (`id_SERVICES_INVOICES`, `id_INVOICES`, `id_SERVICES`, `id_PASSENGERS`, `addRemove`, `oldPrice`) VALUES
 (98, 27, 4, NULL, 'add', 25),
-(99, 27, 1, 39, 'add', 15),
-(100, 27, 5, 39, 'add', 20),
-(101, 27, 5, 40, 'add', 20),
-(102, 27, 6, 40, 'add', 10);
+(99, 27, 1, NULL, 'add', 15),
+(100, 27, 5, NULL, 'add', 20),
+(101, 27, 5, NULL, 'add', 20),
+(102, 27, 6, NULL, 'add', 10);
 
 -- --------------------------------------------------------
 
@@ -453,21 +459,23 @@ CREATE TABLE `users` (
   `currentLoginAttempts` tinyint(2) NOT NULL DEFAULT 0,
   `lastAttempt` datetime DEFAULT NULL,
   `lastForgotPasswordEmail` datetime DEFAULT NULL,
-  `documentationType` varchar(50) NOT NULL,
+  `documentationType` varchar(50) NOT NULL DEFAULT '',
   `documentCode` varchar(30) NOT NULL,
-  `expirationDate` date NOT NULL
+  `expirationDate` date NOT NULL,
+  `dateBirth` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `users`
 --
 
-INSERT INTO `users` (`id_USERS`, `title`, `firstName`, `lastName`, `townCity`, `streetAddress`, `zipCode`, `country`, `emailAddress`, `passwordHash`, `phoneNumber1`, `phoneNumber2`, `phoneNumber3`, `companyName`, `companyTaxNumber`, `companyPhoneNumber`, `currentLoginAttempts`, `lastAttempt`, `lastForgotPasswordEmail`, `documentationType`, `documentCode`, `expirationDate`) VALUES
-(1, 'Mr', 'John', 'Doe', 'New York', '123 Main St', '11113', 'USA', 'john.doe@example.com', '', '123456789', '987654321', '123456', '', '', '', 0, NULL, NULL, 'DNI', '', '0000-00-00'),
-(2, 'Ms', 'Alice', 'Smith', 'London', '456 Elm St', 'SW1A ', 'UK', 'alice.smith@example.com', '', '111222333', '', '', 'XYZ Company', '12345678', '999888777', 0, NULL, NULL, 'DNI', '', '0000-00-00'),
-(96, 'Dr', 'Michael', 'Anderson', 'Sydney', '456 George St', '2000', 'Australia', 'michael.anderson@example.com', '', '987654321', '987123654', '789456123', 'Tech Corp', 'AUS098765432', '+61 987 654 321', 0, NULL, NULL, 'DNI', '', '0000-00-00'),
-(131, NULL, 'A555', '', '', '', '25', '', 'aaaa5@example.com', '$2y$10$.EG9ubn2GmCllCHzXNdCau/4Tc9HQC8dugE8TjilPfmcHsuPx0yT2', '', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 'DNI', '', '0000-00-00'),
-(138, NULL, 'Serg', '', '', '', '25', '', 'sergiodesarrolladorweb@gmail.com', '$2y$10$uiwtsHD/9wWlP0H5m1Y14eRtGJ8BaTAWiLcR96vgkzFd8kaORR8ra', '', NULL, NULL, NULL, NULL, NULL, 0, '2023-12-11 16:00:13', NULL, 'DNI', '', '0000-00-00');
+INSERT INTO `users` (`id_USERS`, `title`, `firstName`, `lastName`, `townCity`, `streetAddress`, `zipCode`, `country`, `emailAddress`, `passwordHash`, `phoneNumber1`, `phoneNumber2`, `phoneNumber3`, `companyName`, `companyTaxNumber`, `companyPhoneNumber`, `currentLoginAttempts`, `lastAttempt`, `lastForgotPasswordEmail`, `documentationType`, `documentCode`, `expirationDate`, `dateBirth`) VALUES
+(1, 'Mr', 'John', 'Doe', 'New York', '123 Main St', '11113', 'USA', 'john.doe@example.com', '', '123456789', '987654321', '123456', '', '', '', 0, NULL, NULL, 'DNI', '', '2049-12-14', '2008-12-14'),
+(2, 'Ms', 'Alice', 'Smith', 'London', '456 Elm St', 'SW1A ', 'UK', 'alice.smith@example.com', '', '111222333', '', '', 'XYZ Company', '12345678', '999888777', 0, NULL, NULL, 'DNI', '', '2038-11-17', '2009-11-17'),
+(96, 'Dr', 'Michael', 'Anderson', 'Sydney', '456 George St', '2000', 'Australia', 'michael.anderson@example.com', '', '987654321', '987123654', '789456123', 'Tech Corp', 'AUS098765432', '+61 987 654 321', 0, NULL, NULL, 'DNI', '', '2025-08-17', '1997-08-17'),
+(131, NULL, 'A555', '', '', '', '25', '', 'aaaa5@example.com', '$2y$10$.EG9ubn2GmCllCHzXNdCau/4Tc9HQC8dugE8TjilPfmcHsuPx0yT2', '', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 'DNI', '', '2028-08-05', '2002-08-05'),
+(138, NULL, 'Serg', '', '', '', '25', '', 'sergiodesarrolladorweb@gmail.com', '$2y$10$uiwtsHD/9wWlP0H5m1Y14eRtGJ8BaTAWiLcR96vgkzFd8kaORR8ra', '', NULL, NULL, NULL, NULL, NULL, 0, '2023-12-14 17:46:05', NULL, 'DNI', '', '2057-01-16', '1987-01-16'),
+(147, NULL, 'UsuarioNuevísimo', 'Corredor', 'Albacete', 'Calle falsa 123', '44', 'Españolas', 'sergiodesarrolladorwebb@gmail.com', '$2y$10$0DDkevwZKNoiuUARui27meAd6lQoRjD5mChYZ2Su2M.vNhkM9NQbC', '111223344', NULL, NULL, NULL, NULL, NULL, 0, '2023-12-14 19:48:52', NULL, 'DNI', '12345678A', '2024-11-30', '1906-01-14');
 
 -- --------------------------------------------------------
 
@@ -581,8 +589,7 @@ ALTER TABLE `passengers_books_services`
 -- Indices de la tabla `primary_contact_informations`
 --
 ALTER TABLE `primary_contact_informations`
-  ADD PRIMARY KEY (`id_PRIMARY_CONTACT_INFORMATIONS`),
-  ADD UNIQUE KEY `emailAddress` (`emailAddress`);
+  ADD PRIMARY KEY (`id_PRIMARY_CONTACT_INFORMATIONS`);
 
 --
 -- Indices de la tabla `services`
@@ -623,7 +630,7 @@ ALTER TABLE `user_temp_ids`
 -- AUTO_INCREMENT de la tabla `additional_informations`
 --
 ALTER TABLE `additional_informations`
-  MODIFY `id_ADDITIONAL_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id_ADDITIONAL_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT de la tabla `airplanes`
@@ -641,7 +648,7 @@ ALTER TABLE `airports`
 -- AUTO_INCREMENT de la tabla `books`
 --
 ALTER TABLE `books`
-  MODIFY `id_BOOKS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id_BOOKS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT de la tabla `books_services`
@@ -665,7 +672,7 @@ ALTER TABLE `flights`
 -- AUTO_INCREMENT de la tabla `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id_INVOICES` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id_INVOICES` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `itineraries`
@@ -677,19 +684,19 @@ ALTER TABLE `itineraries`
 -- AUTO_INCREMENT de la tabla `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `id_PASSENGERS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id_PASSENGERS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT de la tabla `passengers_books_services`
 --
 ALTER TABLE `passengers_books_services`
-  MODIFY `id_PASSENGERS_SERVICES` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `id_PASSENGERS_SERVICES` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT de la tabla `primary_contact_informations`
 --
 ALTER TABLE `primary_contact_informations`
-  MODIFY `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT de la tabla `services`
@@ -707,7 +714,7 @@ ALTER TABLE `services_invoices`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_USERS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=147;
+  MODIFY `id_USERS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
 
 --
 -- AUTO_INCREMENT de la tabla `user_temp_ids`

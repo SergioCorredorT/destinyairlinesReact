@@ -40,13 +40,6 @@ class PassengerSanitizer
         return htmlspecialchars(trim($sanitizedLastName));
     }
 
-    public static function sanitizeAgeCategory($ageCategory)
-    {
-        // Elimina todos los números
-        $sanitizedAgeCategory = preg_replace('/[0-9]/', '', $ageCategory);
-        return htmlspecialchars(trim($sanitizedAgeCategory));
-    }
-
     public static function sanitizeNationality($nationality)
     {
         // Elimina todos los números
@@ -120,7 +113,6 @@ class PassengerSanitizer
         if (!empty($data['title'])) $data["title"] = self::sanitizeTitle($data['title']);
         if (!empty($data['firstName'])) $data["firstName"] = self::sanitizeFirstName($data['firstName']);
         if (!empty($data['lastName'])) $data["lastName"] = self::sanitizeLastName($data['lastName']);
-        if (!empty($data['ageCategory'])) $data["ageCategory"] = self::sanitizeAgeCategory($data['ageCategory']);
         if (!empty($data['nationality'])) $data["nationality"] = self::sanitizeNationality($data['nationality']);
         if (!empty($data['country'])) $data["country"] = self::sanitizeCountry($data['country']);
         if (!empty($data['dateBirth'])) $data["dateBirth"] = self::sanitizeDateBirth($data['dateBirth']);

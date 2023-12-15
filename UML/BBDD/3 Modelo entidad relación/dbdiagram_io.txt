@@ -61,6 +61,7 @@ Table USERS {
   documentationType varchar(50) [not null]
   documentCode varchar(30) [not null]
   expirationDate date [not null]
+  dateBirth date [not null]
 }
 
 Table USER_TEMP_IDS {
@@ -102,7 +103,7 @@ Table PRIMARY_CONTACT_INFORMATIONS {
   title varchar(50)
   firstName varchar(50) [not null]
   lastName varchar(50) [not null]
-  emailAddress varchar(50) [not null, unique]
+  emailAddress varchar(50) [not null]
   phoneNumber1 varchar(20) [not null]
   phoneNumber2 varchar(20)
   country varchar(25) [not null]
@@ -112,6 +113,7 @@ Table PRIMARY_CONTACT_INFORMATIONS {
   companyName varchar(50)
   companyTaxNumber varchar(50)
   companyPhoneNumber varchar(20)
+  dateBirth date [not null]
 }
 
 Table INVOICES {
@@ -200,6 +202,7 @@ Table PASSENGERS {
   ageCategory ageCategory [not null, default: "adult"]
   nationality varchar(50) [not null]
   country varchar(50) [not null]
+  dateBirth date [not null]
 }
 
 Ref: PASSENGERS.id_BOOKS > BOOKS.id_BOOKS [delete: cascade]
@@ -213,7 +216,6 @@ enum ageCategory {
 Table ADDITIONAL_INFORMATIONS {
   id_ADDITIONAL_INFORMATIONS int [pk, increment]
   id_PASSENGERS int [unique, not null]
-  dateBirth date
   assistiveDevices assistiveDevicesEnum
   medicalEquipment medicalEquipmentEnum
   mobilityLimitations mobilityLimitationsEnum
@@ -253,4 +255,3 @@ Enum medicationRequirementsEnum {
   insulin
   other
 }
-

@@ -39,7 +39,7 @@ class FlightValidator
 
     public static function validateChildsNumber($childsNumber)
     {
-        if ($childsNumber > 999) {
+        if ($childsNumber > 999 || $childsNumber < 0) {
             return false;
         }
         return true;
@@ -47,7 +47,7 @@ class FlightValidator
 
     public static function validateInfantsNumber($infantsNumber)
     {
-        if ($infantsNumber > 999) {
+        if ($infantsNumber > 999  || $infantsNumber < 0) {
             return false;
         }
         return true;

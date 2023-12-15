@@ -23,7 +23,6 @@ USE `destiny_airlines`;
 CREATE TABLE IF NOT EXISTS `additional_informations` (
   `id_ADDITIONAL_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT,
   `id_PASSENGERS` int(11) NOT NULL,
-  `dateBirth` date DEFAULT NULL,
   `assistiveDevices` enum('wheelchair','serviceAnimal','crutches','cane','other') DEFAULT NULL,
   `medicalEquipment` enum('oxygenTank','CPAPMachine','other') DEFAULT NULL,
   `mobilityLimitations` enum('difficultyWalking','difficultyClimbingStairs','other') DEFAULT NULL,
@@ -32,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `additional_informations` (
   PRIMARY KEY (`id_ADDITIONAL_INFORMATIONS`),
   KEY `additional_informations_ibfk_1` (`id_PASSENGERS`),
   CONSTRAINT `additional_informations_ibfk_1` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -83,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `books` (
   CONSTRAINT `books_ibfk_1` FOREIGN KEY (`id_FLIGHTS`) REFERENCES `flights` (`id_FLIGHTS`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `books_ibfk_2` FOREIGN KEY (`id_USERS`) REFERENCES `users` (`id_USERS`) ON DELETE SET NULL,
   CONSTRAINT `books_ibfk_3` FOREIGN KEY (`id_PRIMARY_CONTACT_INFORMATIONS`) REFERENCES `primary_contact_informations` (`id_PRIMARY_CONTACT_INFORMATIONS`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -146,7 +145,7 @@ CREATE TABLE IF NOT EXISTS `invoices` (
   UNIQUE KEY `invoiceCode` (`invoiceCode`),
   KEY `invoices_ibfk_1` (`id_BOOKS`),
   CONSTRAINT `invoices_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -171,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `passengers` (
   `id_PASSENGERS` int(11) NOT NULL AUTO_INCREMENT,
   `id_BOOKS` int(11) NOT NULL,
   `passengerCode` varchar(50) NOT NULL,
-  `documentationType` varchar(50) NOT NULL,
+  `documentationType` varchar(50) NOT NULL DEFAULT '',
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date DEFAULT NULL,
   `nationality` varchar(50) NOT NULL,
@@ -180,11 +179,12 @@ CREATE TABLE IF NOT EXISTS `passengers` (
   `lastName` varchar(50) DEFAULT NULL,
   `title` varchar(50) DEFAULT NULL,
   `ageCategory` enum('infant','child','adult') NOT NULL DEFAULT 'adult',
+  `dateBirth` date NOT NULL,
   PRIMARY KEY (`id_PASSENGERS`),
   UNIQUE KEY `passengerCode` (`passengerCode`),
   KEY `passengers_ibfk_1` (`id_BOOKS`),
   CONSTRAINT `passengers_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -201,14 +201,14 @@ CREATE TABLE IF NOT EXISTS `passengers_books_services` (
   CONSTRAINT `passengers_books_services_ibfk_1` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`) ON DELETE CASCADE,
   CONSTRAINT `passengers_books_services_ibfk_2` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`) ON DELETE CASCADE,
   CONSTRAINT `passengers_books_services_ibfk_3` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
 -- Volcando estructura para tabla destiny_airlines.primary_contact_informations
 CREATE TABLE IF NOT EXISTS `primary_contact_informations` (
   `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT,
-  `documentationType` varchar(50) NOT NULL,
+  `documentationType` varchar(50) NOT NULL DEFAULT '',
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
   `title` varchar(50) DEFAULT NULL,
@@ -224,9 +224,9 @@ CREATE TABLE IF NOT EXISTS `primary_contact_informations` (
   `companyName` varchar(50) DEFAULT NULL,
   `companyTaxNumber` varchar(50) DEFAULT NULL,
   `companyPhoneNumber` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`id_PRIMARY_CONTACT_INFORMATIONS`),
-  UNIQUE KEY `emailAddress` (`emailAddress`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `dateBirth` date NOT NULL,
+  PRIMARY KEY (`id_PRIMARY_CONTACT_INFORMATIONS`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -287,12 +287,13 @@ CREATE TABLE IF NOT EXISTS `users` (
   `currentLoginAttempts` tinyint(2) NOT NULL DEFAULT 0,
   `lastAttempt` datetime DEFAULT NULL,
   `lastForgotPasswordEmail` datetime DEFAULT NULL,
-  `documentationType` varchar(50) NOT NULL,
+  `documentationType` varchar(50) NOT NULL DEFAULT '',
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
+  `dateBirth` date NOT NULL,
   PRIMARY KEY (`id_USERS`),
   UNIQUE KEY `emailAddress` (`emailAddress`)
-) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -313,9 +314,7 @@ CREATE TABLE IF NOT EXISTS `user_temp_ids` (
 -- Volcando estructura para disparador destiny_airlines.update_seats
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
-CREATE TRIGGER update_seats BEFORE DELETE ON books
-FOR EACH ROW
-BEGIN
+CREATE TRIGGER `update_seats` BEFORE DELETE ON `books` FOR EACH ROW BEGIN
   DECLARE total INT;
   DECLARE flight_date DATE;
   SET total = OLD.adultsNumber + OLD.childsNumber;

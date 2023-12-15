@@ -59,7 +59,8 @@ CREATE TABLE `USERS` (
   `lastAttempt` datetime,
   `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
-  `expirationDate` date NOT NULL
+  `expirationDate` date NOT NULL,
+  `dateBirth` date NOT NULL
 );
 
 CREATE TABLE `USER_TEMP_IDS` (
@@ -90,7 +91,7 @@ CREATE TABLE `PRIMARY_CONTACT_INFORMATIONS` (
   `title` varchar(50),
   `firstName` varchar(50) NOT NULL,
   `lastName` varchar(50) NOT NULL,
-  `emailAddress` varchar(50) UNIQUE NOT NULL,
+  `emailAddress` varchar(50) NOT NULL,
   `phoneNumber1` varchar(20) NOT NULL,
   `phoneNumber2` varchar(20),
   `country` varchar(25) NOT NULL,
@@ -99,7 +100,8 @@ CREATE TABLE `PRIMARY_CONTACT_INFORMATIONS` (
   `zipCode` varchar(5) NOT NULL,
   `companyName` varchar(50),
   `companyTaxNumber` varchar(50),
-  `companyPhoneNumber` varchar(20)
+  `companyPhoneNumber` varchar(20),
+  `dateBirth` date NOT NULL
 );
 
 CREATE TABLE `INVOICES` (
@@ -157,13 +159,13 @@ CREATE TABLE `PASSENGERS` (
   `lastName` varchar(50) NOT NULL,
   `ageCategory` ENUM ('infant', 'child', 'adult') NOT NULL DEFAULT "adult",
   `nationality` varchar(50) NOT NULL,
-  `country` varchar(50) NOT NULL
+  `country` varchar(50) NOT NULL,
+  `dateBirth` date NOT NULL
 );
 
 CREATE TABLE `ADDITIONAL_INFORMATIONS` (
   `id_ADDITIONAL_INFORMATIONS` int PRIMARY KEY AUTO_INCREMENT,
   `id_PASSENGERS` int UNIQUE NOT NULL,
-  `dateBirth` date,
   `assistiveDevices` ENUM ('wheelchair', 'serviceAnimal', 'crutches', 'cane', 'other'),
   `medicalEquipment` ENUM ('oxygenTank', 'CPAPMachine', 'other'),
   `mobilityLimitations` ENUM ('difficultyWalking', 'difficultyClimbingStairs', 'other'),

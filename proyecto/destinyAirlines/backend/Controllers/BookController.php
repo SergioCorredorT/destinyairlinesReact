@@ -43,6 +43,7 @@ final class BookController extends BaseController
         require_once './Sanitizers/PassengerSanitizer.php';
         require_once './Validators/PassengerValidator.php';
         require_once './Validators/PassengersValidator.php';
+        require_once './Tools/TimeTool.php';
 
         $passengers = $POST['passengers'];
         $passengersDetails = [];
@@ -58,7 +59,6 @@ final class BookController extends BaseController
                 'title' => null,
                 'firstName' => '',
                 'lastName' => '',
-                'ageCategory' => '',
                 'nationality' => '',
                 'country' => '',
                 'dateBirth' => '',
@@ -80,6 +80,9 @@ final class BookController extends BaseController
             if (!PassengerValidator::validate($passengerDetails)) {
                 return false;
             }
+
+            $timeTool = new TimeTool();
+            $passengerDetails['ageCategory'] = $timeTool->getAgeCategory($passengerDetails['dateBirth']);
 
             array_push($passengersDetails, $passengerDetails);
         }
@@ -179,7 +182,6 @@ final class BookController extends BaseController
         require_once './Tools/TokenTool.php';
         require_once './Tools/BookingPriceCalculatorTool.php';
         require_once './Tools/BookingDataEnricherTool.php';
-        require_once './Tools/IniTool.php';
 
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
         $BookingDataEnricherTool = new BookingDataEnricherTool();
