@@ -3,7 +3,7 @@ class PassengerValidator
 {
     public static function validateDocumentation($docType, $docCode)
     {
-        require_once './Validators/DocumentTypeValidator.php';
+        require_once ROOT_PATH . '/Validators/DocumentTypeValidator.php';
         if(!DocumentTypeValidator::validateDocumentType($docType, $docCode)) {
             return false;
         }
@@ -13,19 +13,19 @@ class PassengerValidator
 
     public static function validateExpirationDate($expirationDate)
     {
-        // Comprueba si la fecha de expiración está en el formato correcto (MM/AA)
-        if (!preg_match('/^(0[1-9]|1[0-2])\/[0-9]{2}$/', $expirationDate)) {
+        // Comprueba si la fecha de expiración está en el formato correcto (YYYY-MM-DD)
+        if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/', $expirationDate)) {
             return false;
         }
-
+    
         // Comprueba si la fecha de expiración es una fecha futura
-        $currentDate = date('m/y');
+        $currentDate = date('Y-m-d');
         $exp = strtotime($expirationDate);
         $current = strtotime($currentDate);
         if ($current > $exp) {
             return false;
         }
-
+    
         return true;
     }
 
@@ -136,7 +136,7 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/AdditionalInformationModel.php';
+        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
         $AdditionalInformationModel = new AdditionalInformationModel();
         if ($AdditionalInformationModel->isAllowedValue($assistiveDevices, 'assistiveDevices')) {
             return true;
@@ -150,7 +150,7 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/AdditionalInformationModel.php';
+        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
         $AdditionalInformationModel = new AdditionalInformationModel();
         if ($AdditionalInformationModel->isAllowedValue($medicalEquipment, 'medicalEquipment')) {
             return true;
@@ -164,7 +164,7 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/AdditionalInformationModel.php';
+        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
         $AdditionalInformationModel = new AdditionalInformationModel();
         if ($AdditionalInformationModel->isAllowedValue($mobilityLimitations, 'mobilityLimitations')) {
             return true;
@@ -178,7 +178,7 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/AdditionalInformationModel.php';
+        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
         $AdditionalInformationModel = new AdditionalInformationModel();
         if ($AdditionalInformationModel->isAllowedValue($communicationNeeds, 'communicationNeeds')) {
             return true;
@@ -192,7 +192,7 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/AdditionalInformationModel.php';
+        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
         $AdditionalInformationModel = new AdditionalInformationModel();
         if ($AdditionalInformationModel->isAllowedValue($medicationRequirements, 'medicationRequirements')) {
             return true;
@@ -206,7 +206,7 @@ class PassengerValidator
             return false;
         }
 
-        require_once './Models/ServicesModel.php';
+        require_once ROOT_PATH . '/Models/ServicesModel.php';
         $servicesModel = new ServicesModel();
         //Obtener serviceCode s donde sean individuales y paidService
         $individualServicePaidCodes = $servicesModel->readIndividualActiveServicePaidCodes();
@@ -278,6 +278,10 @@ class PassengerValidator
         }
 
         if (isset($data['services']) && !self::validateIndividualServiceCodes($data['services'])) {
+            return false;
+        }
+
+        if (isset($data['expirationDate']) && !self::validateExpirationDate($data['expirationDate'])) {
             return false;
         }
 

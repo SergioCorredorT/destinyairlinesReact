@@ -29,8 +29,8 @@ class PassengersValidator
 
     public static function validateMaxNumberOfPassengersPerAgeCategory($data)
     {
-        require_once './Tools/IniTool.php';
-        $iniTool = new IniTool('./Config/cfg.ini');
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $bookSettings = $iniTool->getKeysAndValues('bookSettings');
         $maxNumberOfPassengersPerAgeCategory = intval($bookSettings['maxNumberOfPassengersPerAgeCategory']);
         $countsAgeCategories = ['adult' => 0, 'child' => 0, 'infant' => 0];

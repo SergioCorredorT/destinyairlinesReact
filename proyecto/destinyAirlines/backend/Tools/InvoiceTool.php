@@ -6,7 +6,7 @@ class InvoiceTool
     {
         spl_autoload_register(function (string $class_name) {
 
-            $file = './models/' . $class_name . '.php';
+            $file = ROOT_PATH . '/models/' . $class_name . '.php';
 
             if (file_exists($file)) {
 
@@ -118,7 +118,7 @@ class InvoiceTool
 
     public function generateInvoiceHtml($invoiceData)
     {
-        require_once './Tools/TemplateTool.php';
+        require_once ROOT_PATH . '/Tools/TemplateTool.php';
         $templateTool = new TemplateTool();
         return $templateTool::ApplyPageTemplate($invoiceData, 'invoiceTemplate');
     }

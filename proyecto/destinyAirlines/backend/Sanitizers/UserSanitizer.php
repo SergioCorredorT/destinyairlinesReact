@@ -1,5 +1,5 @@
 <?php
-require_once './Sanitizers/TokenSanitizer.php';
+require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
 class UserSanitizer
 {
 

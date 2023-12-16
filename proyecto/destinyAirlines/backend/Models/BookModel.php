@@ -63,26 +63,11 @@ final class BookModel extends BaseModel
 
     public function readBookFromIdBook($idBook)
     {
-        return parent::select('*', "id_BOOKS = $idBook")[0];
+        return parent::select('*', "id_BOOKS = $idBook ")[0];
     }
 
     public function readIdBookFromBookCode($bookCode)
     {
         return parent::select('id_BOOKS', "bookCode = '$bookCode'")[0]['id_BOOKS'];
-    }
-
-    public function readBooks()
-    {
-        return parent::select("*");
-    }
-
-    public function updateBooks(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deleteBooks(string $where = "")
-    {
-        return parent::delete($where);
     }
 }

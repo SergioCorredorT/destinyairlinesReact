@@ -1,15 +1,15 @@
 <?php
 //Recuerda crear qr
 
-require_once './Tools/IniTool.php';
-require_once './Tools/QrTool.php';
-require_once './Templates/page/PageBaseTemplate.php';
+require_once ROOT_PATH . '/Tools/IniTool.php';
+require_once ROOT_PATH . '/Tools/QrTool.php';
+require_once ROOT_PATH . '/Templates/page/PageBaseTemplate.php';
 class BoardingPassPageTemplate extends PageBaseTemplate
 {
   static function  applyBoardingPassPageTemplate(array $data)
   {
     $qrTool = new QrTool();
-    $iniTool = new IniTool('./Config/cfg.ini');
+    $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
     $imageLinks = $iniTool->getKeysAndValues('imageLinks');
     $isotipo = $imageLinks['isotipoLocal'];
     $contenidoBinario = file_get_contents($isotipo);

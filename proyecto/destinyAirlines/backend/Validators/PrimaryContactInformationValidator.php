@@ -3,7 +3,7 @@ class PrimaryContactInformationValidator
 {
     public static function validateDocumentation($docType, $docCode)
     {
-        require_once './Validators/DocumentTypeValidator.php';
+        require_once ROOT_PATH . '/Validators/DocumentTypeValidator.php';
         if(!DocumentTypeValidator::validateDocumentType($docType, $docCode)) {
             return false;
         }
@@ -13,19 +13,19 @@ class PrimaryContactInformationValidator
 
     public static function validateExpirationDate($expirationDate)
     {
-        // Comprueba si la fecha de expiración está en el formato correcto (MM/AA)
-        if (!preg_match('/^(0[1-9]|1[0-2])\/[0-9]{2}$/', $expirationDate)) {
+        // Comprueba si la fecha de expiración está en el formato correcto (YYYY-MM-DD)
+        if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/', $expirationDate)) {
             return false;
         }
-
+    
         // Comprueba si la fecha de expiración es una fecha futura
-        $currentDate = date('m/y');
+        $currentDate = date('Y-m-d');
         $exp = strtotime($expirationDate);
         $current = strtotime($currentDate);
         if ($current > $exp) {
             return false;
         }
-
+    
         return true;
     }
 
@@ -184,9 +184,9 @@ class PrimaryContactInformationValidator
             return false;
         }
 
-        require_once './Tools/TimeTool.php';
-        require_once './Tools/IniTool.php';
-        $iniTool = new IniTool('./Config/cfg.ini');
+        require_once ROOT_PATH . '/Tools/TimeTool.php';
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $timeTool = new TimeTool();
         $primaryContactInformationSettings = $iniTool->getKeysAndValues('primaryContactInformationSettings');
         if($timeTool->getAge($dateBirth) < intval($primaryContactInformationSettings['minAge'])){
@@ -250,6 +250,10 @@ class PrimaryContactInformationValidator
         }
 
         if (isset($data['dateBirth']) && !self::validateDateBirth($data['dateBirth'])) {
+            return false;
+        }
+
+        if (isset($data['expirationDate']) && !self::validateExpirationDate($data['expirationDate'])) {
             return false;
         }
 

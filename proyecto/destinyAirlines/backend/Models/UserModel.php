@@ -14,11 +14,6 @@ final class UserModel extends BaseModel
         return parent::insert($data, $getId);
     }
 
-    public function readUsers()
-    {
-        return parent::select('*');
-    }
-
     public function getEmailById(int $id_USERS)
     {
         $results = parent::select('emailAddress', "id_USERS = $id_USERS");
@@ -51,11 +46,6 @@ final class UserModel extends BaseModel
         return $results ? $results[0] : false;
     }
 
-    public function updateUsers(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
     public function updatePasswordHashById(string $passwordHash, int $id_USERS)
     {
         return parent::update(['passwordHash' => "'" . $passwordHash . "'"], " id_USERS = $id_USERS");
@@ -79,11 +69,6 @@ final class UserModel extends BaseModel
     public function updateLastForgotPasswordEmailById(int $id_USERS)
     {
         return parent::update(['lastForgotPasswordEmail' => "'" . date('Y-m-d H:i:s') . "'"], " id_USERS = $id_USERS");
-    }
-
-    public function deleteUsers(string $where)
-    {
-        return parent::delete($where);
     }
 
     public function deleteUserByEmailAndPassword(string $email, string $password)

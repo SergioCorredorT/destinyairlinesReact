@@ -1,5 +1,5 @@
 <?php
-require_once './Controllers/BaseController.php';
+require_once ROOT_PATH . '/Controllers/BaseController.php';
 final class OptionsController extends BaseController
 {
     public function __construct()
@@ -9,16 +9,16 @@ final class OptionsController extends BaseController
 
     public function getDocTypes()
     {
-        require_once './Tools/IniTool.php';
-        $iniTool = new IniTool('./Config/cfg.ini');
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $documentTypes = $iniTool->getKeysAndValues('documentTypes');
         return ['response' => $documentTypes];
     }
 
     public function getAgeCategories()
     {
-        require_once './Tools/IniTool.php';
-        $iniTool = new IniTool('./Config/cfg.ini');
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $ageCategories = $iniTool->getKeysAndValues('ageCategories');
         return ['response' => $ageCategories];
     }

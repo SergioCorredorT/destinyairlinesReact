@@ -18,24 +18,4 @@ final class AirportModel extends BaseModel
     {
         return parent::select('name', "id_AIRPORTS = $idAirport")[0]['name'];
     }
-
-    public function createAirport(array $data, bool $getId = false)
-    {
-        return parent::insert($data, $getId);
-    }
-
-    public function readAirport()
-    {
-        return parent::select('*');
-    }
-
-    public function updateAirport(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deleteAirport(string $where = "")
-    {
-        return parent::delete($where);
-    }
 }

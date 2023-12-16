@@ -1,6 +1,6 @@
 <?php
-require_once './Database/Database.php';
-require_once './Tools/IniTool.php';
+require_once ROOT_PATH . '/Database/Database.php';
+require_once ROOT_PATH . '/Tools/IniTool.php';
 
 abstract class BaseMultiModel
 {
@@ -8,7 +8,7 @@ abstract class BaseMultiModel
     private $iniTool;
     public function __construct()
     {
-        $this->iniTool = new IniTool('./Config/cfg.ini');
+        $this->iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $cfgDatabase = $this->iniTool->getKeysAndValues("database");
 
         $this->con = Database::getInstance($cfgDatabase)->getConnection();

@@ -7,7 +7,7 @@ class FlightValidator
             return false;
         }
 
-        require_once './Models/FlightModel.php';
+        require_once ROOT_PATH . '/Models/FlightModel.php';
         $FlightModel = new FlightModel();
         if($FlightModel->isValidFlight($flightCode)) {
             return true;

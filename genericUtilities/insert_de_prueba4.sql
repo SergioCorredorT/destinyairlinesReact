@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Versión del servidor:         10.4.28-MariaDB - mariadb.org binary distribution
 -- SO del servidor:              Win64
--- HeidiSQL Versión:             12.6.0.6765
+-- HeidiSQL Versión:             12.6.0.6781
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -23,16 +23,15 @@ USE `destiny_airlines`;
 CREATE TABLE IF NOT EXISTS `additional_informations` (
   `id_ADDITIONAL_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT,
   `id_PASSENGERS` int(11) NOT NULL,
-  `dateBirth` date DEFAULT NULL,
   `assistiveDevices` enum('wheelchair','serviceAnimal','crutches','cane','other') DEFAULT NULL,
   `medicalEquipment` enum('oxygenTank','CPAPMachine','other') DEFAULT NULL,
   `mobilityLimitations` enum('difficultyWalking','difficultyClimbingStairs','other') DEFAULT NULL,
   `communicationNeeds` enum('signLanguageInterpreter','hearingAid','other') DEFAULT NULL,
   `medicationRequirements` enum('insulin','other') DEFAULT NULL,
   PRIMARY KEY (`id_ADDITIONAL_INFORMATIONS`),
-  KEY `id_PASSENGERS` (`id_PASSENGERS`),
-  CONSTRAINT `additional_informations_ibfk_1` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `additional_informations_ibfk_1` (`id_PASSENGERS`),
+  CONSTRAINT `additional_informations_ibfk_1` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -66,8 +65,8 @@ CREATE TABLE IF NOT EXISTS `airports` (
 -- Volcando estructura para tabla destiny_airlines.books
 CREATE TABLE IF NOT EXISTS `books` (
   `id_BOOKS` int(11) NOT NULL AUTO_INCREMENT,
-  `id_FLIGHTS` int(11) NOT NULL,
-  `id_USERS` int(11) NOT NULL,
+  `id_FLIGHTS` int(11) DEFAULT NULL,
+  `id_USERS` int(11) DEFAULT NULL,
   `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL,
   `bookCode` varchar(10) NOT NULL,
   `checkinDate` date DEFAULT NULL,
@@ -77,13 +76,13 @@ CREATE TABLE IF NOT EXISTS `books` (
   `infantsNumber` tinyint(3) DEFAULT 0,
   PRIMARY KEY (`id_BOOKS`),
   UNIQUE KEY `bookCode` (`bookCode`),
-  KEY `id_FLIGHTS` (`id_FLIGHTS`),
-  KEY `id_USERS` (`id_USERS`),
   KEY `id_PRIMARY_CONTACT_INFORMATIONS` (`id_PRIMARY_CONTACT_INFORMATIONS`),
-  CONSTRAINT `books_ibfk_1` FOREIGN KEY (`id_FLIGHTS`) REFERENCES `flights` (`id_FLIGHTS`),
-  CONSTRAINT `books_ibfk_2` FOREIGN KEY (`id_USERS`) REFERENCES `users` (`id_USERS`),
+  KEY `books_ibfk_2` (`id_USERS`),
+  KEY `books_ibfk_1` (`id_FLIGHTS`),
+  CONSTRAINT `books_ibfk_1` FOREIGN KEY (`id_FLIGHTS`) REFERENCES `flights` (`id_FLIGHTS`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `books_ibfk_2` FOREIGN KEY (`id_USERS`) REFERENCES `users` (`id_USERS`) ON DELETE SET NULL,
   CONSTRAINT `books_ibfk_3` FOREIGN KEY (`id_PRIMARY_CONTACT_INFORMATIONS`) REFERENCES `primary_contact_informations` (`id_PRIMARY_CONTACT_INFORMATIONS`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -93,10 +92,10 @@ CREATE TABLE IF NOT EXISTS `books_services` (
   `id_BOOKS` int(11) NOT NULL,
   `id_SERVICES` int(11) NOT NULL,
   PRIMARY KEY (`id_BOOKS_SERVICES`),
-  KEY `id_BOOKS` (`id_BOOKS`),
-  KEY `id_SERVICES` (`id_SERVICES`),
-  CONSTRAINT `books_services_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`),
-  CONSTRAINT `books_services_ibfk_2` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`)
+  KEY `books_services_ibfk_1` (`id_BOOKS`),
+  KEY `books_services_ibfk_2` (`id_SERVICES`),
+  CONSTRAINT `books_services_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`) ON DELETE CASCADE,
+  CONSTRAINT `books_services_ibfk_2` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
@@ -137,16 +136,16 @@ CREATE TABLE IF NOT EXISTS `flights` (
 -- Volcando estructura para tabla destiny_airlines.invoices
 CREATE TABLE IF NOT EXISTS `invoices` (
   `id_INVOICES` int(11) NOT NULL AUTO_INCREMENT,
-  `id_BOOKS` int(11) NOT NULL,
+  `id_BOOKS` int(11) DEFAULT NULL,
   `invoiceCode` varchar(50) NOT NULL,
   `invoicedDate` datetime DEFAULT current_timestamp(),
   `price` double NOT NULL,
   `isPaid` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_INVOICES`),
   UNIQUE KEY `invoiceCode` (`invoiceCode`),
-  KEY `id_BOOKS` (`id_BOOKS`),
-  CONSTRAINT `invoices_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `invoices_ibfk_1` (`id_BOOKS`),
+  CONSTRAINT `invoices_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -171,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `passengers` (
   `id_PASSENGERS` int(11) NOT NULL AUTO_INCREMENT,
   `id_BOOKS` int(11) NOT NULL,
   `passengerCode` varchar(50) NOT NULL,
-  `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL DEFAULT '',
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date DEFAULT NULL,
   `nationality` varchar(50) NOT NULL,
@@ -180,11 +179,12 @@ CREATE TABLE IF NOT EXISTS `passengers` (
   `lastName` varchar(50) DEFAULT NULL,
   `title` varchar(50) DEFAULT NULL,
   `ageCategory` enum('infant','child','adult') NOT NULL DEFAULT 'adult',
+  `dateBirth` date NOT NULL,
   PRIMARY KEY (`id_PASSENGERS`),
   UNIQUE KEY `passengerCode` (`passengerCode`),
-  KEY `id_BOOKS` (`id_BOOKS`),
-  CONSTRAINT `passengers_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `passengers_ibfk_1` (`id_BOOKS`),
+  CONSTRAINT `passengers_ibfk_1` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -195,20 +195,20 @@ CREATE TABLE IF NOT EXISTS `passengers_books_services` (
   `id_BOOKS` int(11) NOT NULL,
   `id_SERVICES` int(11) DEFAULT NULL,
   PRIMARY KEY (`id_PASSENGERS_SERVICES`),
-  KEY `id_PASSENGERS` (`id_PASSENGERS`),
-  KEY `id_BOOKS` (`id_BOOKS`),
-  KEY `id_SERVICES` (`id_SERVICES`),
-  CONSTRAINT `passengers_books_services_ibfk_1` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`),
-  CONSTRAINT `passengers_books_services_ibfk_2` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`),
-  CONSTRAINT `passengers_books_services_ibfk_3` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `passengers_books_services_ibfk_1` (`id_PASSENGERS`),
+  KEY `passengers_books_services_ibfk_2` (`id_BOOKS`),
+  KEY `passengers_books_services_ibfk_3` (`id_SERVICES`),
+  CONSTRAINT `passengers_books_services_ibfk_1` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`) ON DELETE CASCADE,
+  CONSTRAINT `passengers_books_services_ibfk_2` FOREIGN KEY (`id_BOOKS`) REFERENCES `books` (`id_BOOKS`) ON DELETE CASCADE,
+  CONSTRAINT `passengers_books_services_ibfk_3` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
 -- Volcando estructura para tabla destiny_airlines.primary_contact_informations
 CREATE TABLE IF NOT EXISTS `primary_contact_informations` (
   `id_PRIMARY_CONTACT_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT,
-  `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL DEFAULT '',
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
   `title` varchar(50) DEFAULT NULL,
@@ -224,9 +224,9 @@ CREATE TABLE IF NOT EXISTS `primary_contact_informations` (
   `companyName` varchar(50) DEFAULT NULL,
   `companyTaxNumber` varchar(50) DEFAULT NULL,
   `companyPhoneNumber` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`id_PRIMARY_CONTACT_INFORMATIONS`),
-  UNIQUE KEY `emailAddress` (`emailAddress`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `dateBirth` date NOT NULL,
+  PRIMARY KEY (`id_PRIMARY_CONTACT_INFORMATIONS`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -251,17 +251,17 @@ CREATE TABLE IF NOT EXISTS `services` (
 CREATE TABLE IF NOT EXISTS `services_invoices` (
   `id_SERVICES_INVOICES` int(11) NOT NULL AUTO_INCREMENT,
   `id_INVOICES` int(11) NOT NULL,
-  `id_SERVICES` int(11) NOT NULL,
+  `id_SERVICES` int(11) DEFAULT NULL,
   `id_PASSENGERS` int(11) DEFAULT NULL,
   `addRemove` enum('add','remove') NOT NULL DEFAULT 'add',
   `oldPrice` double NOT NULL,
   PRIMARY KEY (`id_SERVICES_INVOICES`),
-  KEY `id_INVOICES` (`id_INVOICES`),
-  KEY `id_SERVICES` (`id_SERVICES`),
-  KEY `id_PASSENGERS` (`id_PASSENGERS`),
-  CONSTRAINT `services_invoices_ibfk_1` FOREIGN KEY (`id_INVOICES`) REFERENCES `invoices` (`id_INVOICES`),
-  CONSTRAINT `services_invoices_ibfk_2` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`),
-  CONSTRAINT `services_invoices_ibfk_3` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`)
+  KEY `services_invoices_ibfk_1` (`id_INVOICES`),
+  KEY `services_invoices_ibfk_2` (`id_SERVICES`),
+  KEY `services_invoices_ibfk_3` (`id_PASSENGERS`),
+  CONSTRAINT `services_invoices_ibfk_1` FOREIGN KEY (`id_INVOICES`) REFERENCES `invoices` (`id_INVOICES`) ON DELETE CASCADE,
+  CONSTRAINT `services_invoices_ibfk_2` FOREIGN KEY (`id_SERVICES`) REFERENCES `services` (`id_SERVICES`) ON DELETE SET NULL,
+  CONSTRAINT `services_invoices_ibfk_3` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
@@ -287,12 +287,13 @@ CREATE TABLE IF NOT EXISTS `users` (
   `currentLoginAttempts` tinyint(2) NOT NULL DEFAULT 0,
   `lastAttempt` datetime DEFAULT NULL,
   `lastForgotPasswordEmail` datetime DEFAULT NULL,
-  `documentationType` enum('DNI','Passport','Drivers_license','Residence_card_or_work_permit') NOT NULL,
+  `documentationType` varchar(50) NOT NULL DEFAULT '',
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
+  `dateBirth` date NOT NULL,
   PRIMARY KEY (`id_USERS`),
   UNIQUE KEY `emailAddress` (`emailAddress`)
-) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -305,10 +306,25 @@ CREATE TABLE IF NOT EXISTS `user_temp_ids` (
   PRIMARY KEY (`id_USER_TEMP_IDS`),
   UNIQUE KEY `id_USERS` (`id_USERS`),
   UNIQUE KEY `tempId` (`tempId`),
-  CONSTRAINT `user_temp_ids_ibfk_1` FOREIGN KEY (`id_USERS`) REFERENCES `users` (`id_USERS`)
+  CONSTRAINT `user_temp_ids_ibfk_1` FOREIGN KEY (`id_USERS`) REFERENCES `users` (`id_USERS`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=123 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- La exportación de datos fue deseleccionada.
+
+-- Volcando estructura para disparador destiny_airlines.update_seats
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `update_seats` BEFORE DELETE ON `books` FOR EACH ROW BEGIN
+  DECLARE total INT;
+  DECLARE flight_date DATE;
+  SET total = OLD.adultsNumber + OLD.childsNumber;
+  SELECT date INTO flight_date FROM flights WHERE id_FLIGHTS = OLD.id_FLIGHTS;
+  IF flight_date > CURDATE() THEN
+    UPDATE flights SET freeSeats = freeSeats + total WHERE id_FLIGHTS = OLD.id_FLIGHTS;
+  END IF;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

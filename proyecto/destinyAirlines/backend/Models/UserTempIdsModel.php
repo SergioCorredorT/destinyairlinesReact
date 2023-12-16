@@ -37,25 +37,4 @@ final class UserTempIdsModel extends BaseModel
             return false;
         }
     }
-    //----------------------------------------------------------
-
-    public function createUserTempIds($data)
-    {
-        return parent::insert($data);
-    }
-
-    public function readUserTempIds()
-    {
-        return parent::select("*");
-    }
-
-    public function updateUserTempIds($data, $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deleteUserTempIds($where = "")
-    {
-        return parent::delete($where);
-    }
 }

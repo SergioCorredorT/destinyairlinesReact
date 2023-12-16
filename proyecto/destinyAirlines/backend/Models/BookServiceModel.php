@@ -13,24 +13,4 @@ final class BookServiceModel extends BaseModel
     {
         return parent::insertMultiple($data, $getId);
     }
-
-    public function createBookServices(array $data, bool $getId = false)
-    {
-        return parent::insert($data, $getId);
-    }
-
-    public function readBookServices()
-    {
-        return parent::select("*");
-    }
-
-    public function updateBookServices(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deleteBookServices(string $where = "")
-    {
-        return parent::delete($where);
-    }
 }

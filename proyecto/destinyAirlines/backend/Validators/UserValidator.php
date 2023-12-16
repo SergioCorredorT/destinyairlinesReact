@@ -1,11 +1,11 @@
 <?php
-require_once './Sanitizers/TokenSanitizer.php';
-require_once './Validators/TokenValidator.php';
+require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
+require_once ROOT_PATH . '/Validators/TokenValidator.php';
 class UserValidator
 {
     public static function validateDocumentation($docType, $docCode)
     {
-        require_once './Validators/DocumentTypeValidator.php';
+        require_once ROOT_PATH . '/Validators/DocumentTypeValidator.php';
         if(!DocumentTypeValidator::validateDocumentType($docType, $docCode)) {
             return false;
         }

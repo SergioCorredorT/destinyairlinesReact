@@ -1,8 +1,8 @@
 <?php
-require_once './Tools/SessionTool.php';
-require_once './Tools/IniTool.php';
-require_once './Models/FlightModel.php';
-require_once './Models/ServicesModel.php';
+require_once ROOT_PATH . '/Tools/SessionTool.php';
+require_once ROOT_PATH . '/Tools/IniTool.php';
+require_once ROOT_PATH . '/Models/FlightModel.php';
+require_once ROOT_PATH . '/Models/ServicesModel.php';
 
 class BookingDataEnricherTool
 {

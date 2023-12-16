@@ -21,8 +21,8 @@ class BookingProcessTool
 
     public function validateSeatAvailability($passengers, $flightCode)
     {
-        require_once './Models/FlightModel.php';
-        require_once './Models/AirplaneModel.php';
+        require_once ROOT_PATH . '/Models/FlightModel.php';
+        require_once ROOT_PATH . '/Models/AirplaneModel.php';
 
         $flightModel = new FlightModel();
         //$airplaneModel = new AirplaneModel();
@@ -56,7 +56,7 @@ class BookingProcessTool
 
     public function savePrimaryContactInfo($primaryContactDetails)
     {
-        require_once './Models/PrimaryContactInformationModel.php';
+        require_once ROOT_PATH . '/Models/PrimaryContactInformationModel.php';
         $PrimaryContactInformationModel = new PrimaryContactInformationModel();
         [$idPrimaryContactInfo] = $PrimaryContactInformationModel->createPrimaryContactInformation($primaryContactDetails, true);
         if (!$idPrimaryContactInfo) {
@@ -67,9 +67,9 @@ class BookingProcessTool
 
     public function saveBook($passengers, $flightCode, $direction, $idPrimaryContactInfo, $idUser)
     {
-        require_once './Tools/BookingProcessTool.php';
-        require_once './Models/BookModel.php';
-        require_once './Models/FlightModel.php';
+        require_once ROOT_PATH . '/Tools/BookingProcessTool.php';
+        require_once ROOT_PATH . '/Models/BookModel.php';
+        require_once ROOT_PATH . '/Models/FlightModel.php';
         $BookingProcessTool = new BookingProcessTool();
         $flightModel = new FlightModel();
         $BookModel = new BookModel();
@@ -92,7 +92,7 @@ class BookingProcessTool
 
     public function saveInvoice($idBook, $totalPrice)
     {
-        require_once './Models/InvoiceModel.php';
+        require_once ROOT_PATH . '/Models/InvoiceModel.php';
         $invoiceModel = new InvoiceModel();
 
         [$idInvoice] = $invoiceModel->createInvoices([
@@ -109,9 +109,9 @@ class BookingProcessTool
 
     public function saveBookServicesAndServicesInvoices($idBook, $bookServicesAndPrice, $idInvoice)
     {
-        require_once './Models/ServicesModel.php';
-        require_once './Models/BookServiceModel.php';
-        require_once './Models/ServicesInvoicesModel.php';
+        require_once ROOT_PATH . '/Models/ServicesModel.php';
+        require_once ROOT_PATH . '/Models/BookServiceModel.php';
+        require_once ROOT_PATH . '/Models/ServicesInvoicesModel.php';
         $servicesModel = new ServicesModel();
         $bookServiceModel = new BookServiceModel();
         $servicesInvoicesModel = new ServicesInvoicesModel();
@@ -144,8 +144,8 @@ class BookingProcessTool
 
     public function savePassengersAndGetAddiInfoAndPassServAndServInvo($passengers, $idBook, $idInvoice)
     {
-        require_once './Models/PassengerModel.php';
-        require_once './Models/ServicesModel.php';
+        require_once ROOT_PATH . '/Models/PassengerModel.php';
+        require_once ROOT_PATH . '/Models/ServicesModel.php';
 
         $passengerModel = new PassengerModel();
         $servicesModel = new ServicesModel();
@@ -211,7 +211,7 @@ class BookingProcessTool
 
     public function createAdditionalInformation($additionalInformationData)
     {
-        require_once './Models/AdditionalInformationModel.php';
+        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
         $additionalInformationModel = new AdditionalInformationModel();
         $additionalInformationRsp = $additionalInformationModel->createMultipleAdditionalInformations($additionalInformationData);
         if (!$additionalInformationRsp) {
@@ -221,7 +221,7 @@ class BookingProcessTool
 
     public function createPassengerBookService($passengerServiceData)
     {
-        require_once './Models/PassengerBookServiceModel.php';
+        require_once ROOT_PATH . '/Models/PassengerBookServiceModel.php';
         $passengerBookServiceModel = new PassengerBookServiceModel();
         $passengerBookServiceRsp = $passengerBookServiceModel->createMultiplePassengerService($passengerServiceData);
         if (!$passengerBookServiceRsp) {
@@ -231,7 +231,7 @@ class BookingProcessTool
 
     public function createServicesInvoices($servicesInvoicesData)
     {
-        require_once './Models/ServicesInvoicesModel.php';
+        require_once ROOT_PATH . '/Models/ServicesInvoicesModel.php';
         $servicesInvoicesModel = new ServicesInvoicesModel();
         $servicesInvoicesRsp = $servicesInvoicesModel->createMultipleServicesInvoices($servicesInvoicesData);
         if (!$servicesInvoicesRsp) {
@@ -260,10 +260,10 @@ class BookingProcessTool
 
     public function generateInvoiceData($bookDataInOneDirection, $totalPrice, $direction)
     {
-        require_once './Tools/BookingPriceCalculatorTool.php';
+        require_once ROOT_PATH . '/Tools/BookingPriceCalculatorTool.php';
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
         $servicesModel = new ServicesModel();
-        $iniTool = new IniTool('./Config/cfg.ini');
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $databaseFieldMappings = $iniTool->getKeysAndValues("databaseFieldMappings");
         $priceSettings = $iniTool->getKeysAndValues("priceSettings");
 

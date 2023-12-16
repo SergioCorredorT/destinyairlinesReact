@@ -33,24 +33,4 @@ final class ServicesInvoicesModel extends BaseModel
     {
         return parent::insertMultiple($data, $getId);
     }
-
-    public function createServicesInvoices(array $data, bool $getId = false)
-    {
-        return parent::insert($data, $getId);
-    }
-
-    public function readServicesInvoices()
-    {
-        return parent::select("*");
-    }
-
-    public function updateServicesInvoices(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deleteServicesInvoices(string $where = "")
-    {
-        return parent::delete($where);
-    }
 }

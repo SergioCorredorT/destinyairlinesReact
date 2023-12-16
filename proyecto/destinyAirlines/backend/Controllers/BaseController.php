@@ -5,7 +5,7 @@ abstract class BaseController
     {
         spl_autoload_register(function (string $class_name) {
 
-            $file = './models/' . $class_name . '.php';
+            $file = ROOT_PATH . '/models/' . $class_name . '.php';
 
             if (file_exists($file)) {
 

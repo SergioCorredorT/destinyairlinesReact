@@ -4,7 +4,7 @@ abstract class  EmailBaseTemplate
 {
   static function getFooterContent()
   {
-    $iniTool = new IniTool('./Config/cfg.ini');
+    $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
     $companyInfo = $iniTool->getKeysAndValues("companyInfo");
     $companyPhoneNumber = $companyInfo['phoneNumber'];
     $companyLegalInfo = $companyInfo['legalInfo'];
@@ -15,7 +15,7 @@ abstract class  EmailBaseTemplate
 
   static function getHeaderLogo()
   {
-    $iniTool = new IniTool('./Config/cfg.ini');
+    $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
     $imageLinks = $iniTool->getKeysAndValues("imageLinks");
     $isotipo_link = $imageLinks["isotipo"];
     return "<div class='header-logo'>

@@ -98,27 +98,4 @@ final class ServicesModel extends BaseModel
             return parent::select('id_SERVICES', "serviceCode = '$serviceCodes' ")[0]['id_SERVICES'];
         }
     }
-
-
-
-    //----------------------------------------------------
-    public function createServices(array $data, bool $getId = false)
-    {
-        return parent::insert($data, $getId);
-    }
-
-    public function readServices()
-    {
-        return parent::select("*");
-    }
-
-    public function updateServices(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deleteServices(string $where = "")
-    {
-        return parent::delete($where);
-    }
 }

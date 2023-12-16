@@ -1,7 +1,7 @@
 <?php
-require_once './Database/Database.php';
-require_once './Tools/IniTool.php';
-require_once './Models/BaseMultiModel.php';
+require_once ROOT_PATH . '/Database/Database.php';
+require_once ROOT_PATH . '/Tools/IniTool.php';
+require_once ROOT_PATH . '/Models/BaseMultiModel.php';
 final class MultiModel extends BaseMultiModel
 {
     public function __construct()
@@ -9,7 +9,7 @@ final class MultiModel extends BaseMultiModel
         parent::__construct();
         spl_autoload_register(function (string $class_name) {
 
-            $file = './models/' . $class_name . '.php';
+            $file = ROOT_PATH . '/models/' . $class_name . '.php';
 
             if (file_exists($file)) {
 
@@ -33,8 +33,8 @@ final class MultiModel extends BaseMultiModel
 
     public function getBookInfo($bookCode, $idUser)
     {
-        require_once './Models/BookModel.php';
-        require_once './Tools/ArrayTool.php';
+        require_once ROOT_PATH . '/Models/BookModel.php';
+        require_once ROOT_PATH . '/Tools/ArrayTool.php';
         $arrayTool = new ArrayTool();
         $bookModel = new BookModel();
         if (!$bookModel->checkBookCodeWithIdUser($bookCode, $idUser)) {
@@ -162,11 +162,6 @@ final class MultiModel extends BaseMultiModel
             JOIN airports a2 ON i.destiny = a2.id_AIRPORTS
             WHERE b.bookCode = :bookCode';
         return parent::executeSql($sqlMultiTable, ['bookCode' => $bookCode]);
-    }
-
-    public function removeBook($bookCode, $idUser) {
-        
-        //eliminando
     }
 
     private function getActualServicesInvoices($servicesInvoicesData)

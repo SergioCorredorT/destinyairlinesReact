@@ -1,6 +1,6 @@
 <?php
-require_once './vendor/autoload.php';
-require_once './Tools/TemplateTool.php';
+require_once ROOT_PATH . '/vendor/autoload.php';
+require_once ROOT_PATH . '/Tools/TemplateTool.php';
 class EmailTool
 {
     public static function sendEmail(array $data, string $template = '', $pdf = null, $pdfName = '')

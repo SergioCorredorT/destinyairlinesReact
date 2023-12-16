@@ -4,10 +4,10 @@ tras logueo y envío de token al frontend
  en el frontend entonces se creará un localstorage con ese token para enviarlo al server cuando sea necesario.
 	Entonces cuando el usuario haga una acción en la que sea necesaria una comprobación de servidor, el frontend enviará al php el token, el cual comprobará con secretPass
 */
-require_once './Controllers/BaseController.php';
-require_once './Sanitizers/UserSanitizer.php';
-require_once './Validators/UserValidator.php';
-require_once './Tools/IniTool.php';
+require_once ROOT_PATH . '/Controllers/BaseController.php';
+require_once ROOT_PATH . '/Sanitizers/UserSanitizer.php';
+require_once ROOT_PATH . '/Validators/UserValidator.php';
+require_once ROOT_PATH . '/Tools/IniTool.php';
 final class UserController extends BaseController
 {
     public function __construct()
@@ -59,7 +59,7 @@ final class UserController extends BaseController
 
     public function updateUser(array $POST)
     {
-        require_once './Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
         //En $POST solo se deben recibir los campos que se desea usar, ya sea para enviar a BBDD o hacer algo, al final, justo antes del update, se extraerán los campos no usados para el update
         $optional_keys_default = [
             'title' => null,
@@ -137,7 +137,7 @@ final class UserController extends BaseController
     public function deleteUser(array $POST)
     {
         //eliminar tokens en el frontend
-        require_once './Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
         $keys_default = [
             'emailAddress' => '',
             'password' => '',
@@ -164,7 +164,7 @@ final class UserController extends BaseController
         if ($email !== $POST['emailAddress']) {
             return false;
         }
-        require_once './Tools/SessionTool.php';
+        require_once ROOT_PATH . '/Tools/SessionTool.php';
         SessionTool::destroy();
         if ($UserModel->deleteUserByEmailAndPassword($userData['emailAddress'], $userData['password'])) {
             return true;
@@ -174,7 +174,7 @@ final class UserController extends BaseController
 
     public function loginUser(array $POST)
     {
-        require_once './Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
         $keys_default = [
             'emailAddress' => '',
             'password' => ''
@@ -194,7 +194,7 @@ final class UserController extends BaseController
             if ($user) {
                 //Recogemos datos que necesitaremos
                 [$user] = $user;
-                $iniTool = new IniTool('./Config/cfg.ini');
+                $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
                 $cfgAboutLogin = $iniTool->getKeysAndValues('aboutLogin');
                 $maxLoginAttemps = intval($cfgAboutLogin['maxLoginAttemps']);
                 $cfgTokenSettings = $iniTool->getKeysAndValues('tokenSettings');
@@ -241,9 +241,15 @@ final class UserController extends BaseController
                         $tempId = TokenTool::generateUUID();
 
                         //Generamos link que se enviará por email
-                        $userRestartData['passwordResetLink'] = $this->generateLinkPasswordReset($cfgAboutLogin['endpointResetPasswordLink'], ['passwordResetToken' => $failedAttemptsToken, 'tempId' => $tempId, 'type' => 'failedAttempts']);
-
-                        require_once './Tools/EmailTool.php';
+                        $userRestartData['passwordResetLink'] = $this->generateLinkPasswordReset(
+                            $cfgAboutLogin['mainControllerLink'], 
+                            [
+                                'passwordResetToken' => $failedAttemptsToken, 
+                                'tempId' => $tempId, 
+                                'type' => 'failedAttempts', 
+                                'command' => 'goToPasswordReset'
+                            ]);
+                        require_once ROOT_PATH . '/Tools/EmailTool.php';
                         $isEmailSent = EmailTool::sendEmail($userRestartData, 'failedAttemptsTemplate');
                         if ($isEmailSent) {
                             //Si el email se ha enviado creamos registro como que hay un email de reactivación pendiente
@@ -261,7 +267,7 @@ final class UserController extends BaseController
 
     public function logoutUser(array $POST)
     {
-        require_once './Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
 
         $userData = [
             'refreshToken'  => $POST['refreshToken'] ?? ''
@@ -277,12 +283,40 @@ final class UserController extends BaseController
             //Recuerda que debemos eliminar tokens en el frontend
             //Un método más seguro es hacer en server una lista blanca o negra para dejar pasar solo a los refresh tokens adecuados,
             //  pero requeriría carga en el server, y se desaprovecha la ventaja de rendimiento frente a un logueo basado en session
-            require_once './Tools/SessionTool.php';
+            require_once ROOT_PATH . '/Tools/SessionTool.php';
             if (SessionTool::destroy()) {
                 return true;
             }
         }
         return false;
+    }
+
+    public function passwordReset(array $POST)
+    {
+        $keys_default = [
+            'type' => '',
+            'new_password' => '',
+            'confirm_password' => '',
+            'passwordResetToken' => '',
+            'tempId' => ''
+        ];
+        foreach ($keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+
+        require_once ROOT_PATH . '/Sanitizers/PasswordResetSanitizer.php';
+        $userData = PasswordResetSanitizer::sanitize($userData);
+
+        if ($POST['type']) {
+            switch ($POST['type']) {
+                case "failedAttempts": {
+                        return $this->passwordResetFailedAttempts($userData);
+                    }
+                case "forgotPassword": {
+                        return $this->passwordResetForgotPassword($userData);
+                    }
+            }
+        }
     }
 
     public function passwordResetFailedAttempts(array $POST)
@@ -294,8 +328,8 @@ final class UserController extends BaseController
 
         if ($new_password == $confirm_password) {
             try {
-                require_once './Tools/TokenTool.php';
-                require_once './Tools/EmailTool.php';
+                require_once ROOT_PATH . '/Tools/TokenTool.php';
+                require_once ROOT_PATH . '/Tools/EmailTool.php';
                 $dedodedPasswordResetToken = TokenTool::decodeAndCheckToken($passwordResetToken, 'failedAttempts');
                 $UserModel = new UserModel();
                 $UserTempIdsModel = new UserTempIdsModel();
@@ -317,7 +351,6 @@ final class UserController extends BaseController
                         return ['response' => false, 'message' => '<span class="warning">Contraseña ya fue cambiada en una anterior ocasión.</span>'];
                     }
                 } else {
-                    //El código de error 1 corresponde a token caducado
                     //y comprobamos si aún no se ha resuelto el id temporal, ya que es posible que el usuario intente de nuevo cambiar el pass desde la página del link enviado al email
                     $readUserByTempIdResults = $UserTempIdsModel->readUserByTempId($tempId);
                     if ($dedodedPasswordResetToken['errorName'] === 'expired_token' &&  $readUserByTempIdResults) {
@@ -328,7 +361,7 @@ final class UserController extends BaseController
                         $UserTempIdsModel->deleteTempIdByUserId($userId);
 
                         //Recopilamos cfg
-                        $iniTool = new IniTool('./Config/cfg.ini');
+                        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
                         $cfgOriginEmailIni = $iniTool->getKeysAndValues('originEmail');
                         $cfgTokenSettings = $iniTool->getKeysAndValues('tokenSettings');
                         $cfgAboutLogin = $iniTool->getKeysAndValues('aboutLogin');
@@ -341,10 +374,11 @@ final class UserController extends BaseController
                             'toEmail' => $user['emailAddress'],
                             'lastAttempt' => $user['lastAttempt'],
                             'subject' => 'Cambio de contraseña',
-                            'passwordResetLink' => $this->generateLinkPasswordReset($cfgAboutLogin['endpointResetPasswordLink'], [
+                            'passwordResetLink' => $this->generateLinkPasswordReset($cfgAboutLogin['mainControllerLink'], [
                                 'passwordResetToken' => TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'failedAttempts'], intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken'])),
                                 'tempId' => $tempId,
-                                'type' => 'failedAttempts'
+                                'type' => 'failedAttempts',
+                                'command' => 'goToPasswordReset'
                             ])
                         ];
 
@@ -366,34 +400,6 @@ final class UserController extends BaseController
         return ['response' => false];
     }
 
-    public function passwordReset(array $POST)
-    {
-        $keys_default = [
-            'type' => '',
-            'new_password' => '',
-            'confirm_password' => '',
-            'passwordResetToken' => '',
-            'tempId' => ''
-        ];
-        foreach ($keys_default as $key => $defaultValue) {
-            $userData[$key] = $POST[$key] ?? $defaultValue;
-        }
-
-        require_once './Sanitizers/PasswordResetSanitizer.php';
-        $userData = PasswordResetSanitizer::sanitize($userData);
-
-        if ($POST['type']) {
-            switch ($POST['type']) {
-                case "failedAttempts": {
-                        return $this->passwordResetFailedAttempts($userData);
-                    }
-                case "forgotPassword": {
-                        return $this->passwordResetForgotPassword($userData);
-                    }
-            }
-        }
-    }
-
     public function passwordResetForgotPassword(array $POST)
     {
         $new_password = $POST['new_password'];
@@ -402,7 +408,7 @@ final class UserController extends BaseController
 
         if ($new_password == $confirm_password) {
             try {
-                require_once './Tools/TokenTool.php';
+                require_once ROOT_PATH . '/Tools/TokenTool.php';
                 $dedodedPasswordResetToken = TokenTool::decodeAndCheckToken($passwordResetToken, 'forgotPassword');
                 if ($dedodedPasswordResetToken['response']) {
                     $userId = $dedodedPasswordResetToken['response']->data->id;
@@ -445,7 +451,7 @@ final class UserController extends BaseController
         }
 
         //Recopilamos cfg
-        $iniTool = new IniTool('./Config/cfg.ini');
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $cfgOriginEmailIni = $iniTool->getKeysAndValues('originEmail');
         $cfgTokenSettings = $iniTool->getKeysAndValues('tokenSettings');
         $cfgAboutLogin = $iniTool->getKeysAndValues('aboutLogin');
@@ -475,22 +481,23 @@ final class UserController extends BaseController
             }
         }
 
-        require_once './Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
         $userRestartData = [
             'fromEmail' => $cfgOriginEmailIni['email'],
             'fromPassword' => $cfgOriginEmailIni['password'],
             'toEmail' => $user['emailAddress'],
             'subject' => 'Cambio de contraseña por olvido de contraseña original',
             'forgotPasswordLink' => $this->generateLinkPasswordReset(
-                $cfgAboutLogin['endpointResetPasswordLink'],
+                $cfgAboutLogin['mainControllerLink'],
                 [
                     'passwordResetToken' => TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'forgotPassword'], intval($cfgTokenSettings['secondsMinTimeLifeForgotPasswordToken'])),
-                    'type' => 'forgotPassword'
+                    'type' => 'forgotPassword',
+                    'command' => 'goToPasswordReset'
                 ]
             )
         ];
 
-        require_once './Tools/EmailTool.php';
+        require_once ROOT_PATH . '/Tools/EmailTool.php';
 
         $isSent = EmailTool::sendEmail($userRestartData, 'forgotPasswordTemplate');
         if ($isSent) {

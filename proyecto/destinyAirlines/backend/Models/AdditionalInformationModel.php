@@ -19,29 +19,8 @@ final class AdditionalInformationModel extends BaseModel
         return false;
     }
 
-//-------------------------------------------------------
-    public function createAdditionalInformations(array $data)
-    {
-        return parent::insert($data);
-    }
-
     public function createMultipleAdditionalInformations(array $data)
     {
         return parent::insertMultiple($data);
-    }
-
-    public function readAdditionalInformations()
-    {
-        return parent::select("*");
-    }
-
-    public function updateAdditionalInformations(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deleteAdditionalInformations(string $where = "")
-    {
-        return parent::delete($where);
     }
 }

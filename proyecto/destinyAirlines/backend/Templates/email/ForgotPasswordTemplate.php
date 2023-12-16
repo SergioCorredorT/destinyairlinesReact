@@ -1,6 +1,6 @@
 <?php
-require_once './Tools/IniTool.php';
-require_once './Templates/email/EmailBaseTemplate.php';
+require_once ROOT_PATH . '/Tools/IniTool.php';
+require_once ROOT_PATH . '/Templates/email/EmailBaseTemplate.php';
 class ForgotPasswordTemplate extends EmailBaseTemplate
 {
   static function applyEmailForgotPasswordTemplate(array $data)

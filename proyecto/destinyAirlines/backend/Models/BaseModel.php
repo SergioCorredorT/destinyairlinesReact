@@ -1,6 +1,6 @@
 <?php
-require_once './Database/Database.php';
-require_once './Tools/IniTool.php';
+require_once ROOT_PATH . '/Database/Database.php';
+require_once ROOT_PATH . '/Tools/IniTool.php';
 
 abstract class BaseModel
 {
@@ -10,7 +10,7 @@ abstract class BaseModel
 
     protected function __construct(string $tableName)
     {
-        $this->iniTool = new IniTool('./Config/cfg.ini');
+        $this->iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $cfgDatabase = $this->iniTool->getKeysAndValues("database");
 
         $this->con = Database::getInstance($cfgDatabase)->getConnection();
@@ -166,47 +166,6 @@ abstract class BaseModel
         }
 
         return $miString;
-    }
-
-    protected function updateNEW(array $data, string $where)
-    {
-        $updateData = '';
-        $bindValues = [];
-        $i = 1;
-        foreach ($data as $key => $value) {
-            if (!($value instanceof DateTime) && preg_match('/[\\+\\-\\*\\/]/', $value)) {
-                // Handle mathematical expressions specially
-                $updateData .= "$key = $value, ";
-            } else {
-                // Convert DateTime objects to string
-                if ($value instanceof DateTime) {
-                    $value = $value->format('Y-m-d');
-                }
-                $updateData .= "$key = :value$i, ";
-                $bindValues[":value$i"] = $value;
-                $i++;
-            }
-        }
-        $updateData = rtrim($updateData, ', ');
-        $query = "UPDATE $this->tableName SET $updateData WHERE $where";
-
-        // Prepare the query
-        try {
-            $stmt = $this->con->prepare($query);
-            foreach ($bindValues as $param => $value) {
-                $stmt->bindValue($param, $value);
-            }
-        } catch (Exception $er) {
-            error_log('Catched exception: ' . $er->getMessage() . "\n");
-            return false;
-        }
-
-        $stmt->execute();
-        if (intval($stmt->errorCode()) === 0) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     protected function update(array $data, string $where)

@@ -1,3 +1,0 @@
-correo contacto tanto al server como en respuesta del server
-factura
-tarjeta de embarque tras checkin

@@ -34,17 +34,15 @@ class TimeTool
     {
         $birthDate = new DateTime($birthDate);
         if (!$this->isPastDateTime($birthDate->format('Y-m-d'), $birthDate->format('H:i:s'))) {
-            // If the birth date is in the future, return an error message or handle this case as you see fit
             return false;
         }
-        // Use the getYearsDifference function to calculate the age
         return $this->getYearsDifference($birthDate->format('Y-m-d'));
     }
 
     public function getAgeCategory(string $birthDate)
     {
-        require_once './Tools/IniTool.php';
-        $iniTool = new IniTool('./Config/cfg.ini');
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $ageCategories = $iniTool->getKeysAndValues('ageCategories');
         $age = $this->getAge($birthDate);
         if (!$age) {

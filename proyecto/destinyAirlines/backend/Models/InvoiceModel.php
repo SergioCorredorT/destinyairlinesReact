@@ -11,7 +11,7 @@ final class InvoiceModel extends BaseModel
 
     public function getInvoiceFromIdInvoice(int $idInvoice)
     {
-        return parent::select('*', "id_INVOICES = $idInvoice ");
+        return parent::select('*', "id_INVOICES = $idInvoice ")[0];
     }
 
     public function getInvoicesForGetBookInfoFromIdBook(int $idBook)
@@ -27,20 +27,5 @@ final class InvoiceModel extends BaseModel
     public function createInvoices(array $data, bool $getId = false)
     {
         return parent::insert($data, $getId);
-    }
-
-    public function readInvoices()
-    {
-        return parent::select("*");
-    }
-
-    public function updateInvoices(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deleteInvoices(string $where = "")
-    {
-        return parent::delete($where);
     }
 }

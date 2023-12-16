@@ -1,5 +1,5 @@
 <?php
-require_once './Models/BaseModel.php';
+require_once ROOT_PATH . '/Models/BaseModel.php';
 final class PassengerModel extends BaseModel
 {
     private const TABLE = "PASSENGERS";
@@ -29,24 +29,8 @@ final class PassengerModel extends BaseModel
         return parent::select('firstName, lastName, passengerCode'," id_BOOKS = $idBook ");
     }
 
-    //------------------------------------------------------------
     public function createPassengers(array $data, bool $getId = false)
     {
         return parent::insert($data, $getId);
-    }
-
-    public function readPassengers()
-    {
-        return parent::select('*');
-    }
-
-    public function updatePassengers(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deletePassengers(string $where = '')
-    {
-        return parent::delete($where);
     }
 }

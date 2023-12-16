@@ -1,8 +1,8 @@
 <?php
 //Ver vuelos/reservas hechas y pendientes, crear reserva, crear nuevo vuelo
 
-require_once './Controllers/BaseController.php';
-require_once './Tools/SessionTool.php';
+require_once ROOT_PATH . '/Controllers/BaseController.php';
+require_once ROOT_PATH . '/Tools/SessionTool.php';
 final class BookController extends BaseController
 {
     public function __construct()
@@ -12,8 +12,8 @@ final class BookController extends BaseController
 
     public function storeFlightDetails(array $POST)
     {
-        require_once './Sanitizers/FlightSanitizer.php';
-        require_once './Validators/FlightValidator.php';
+        require_once ROOT_PATH . '/Sanitizers/FlightSanitizer.php';
+        require_once ROOT_PATH . '/Validators/FlightValidator.php';
 
         $flightDetails = [
             'flightCode'      => $POST['flightCode'] ?? '',
@@ -40,10 +40,10 @@ final class BookController extends BaseController
 
     public function storePassengerDetails(array $POST)
     {
-        require_once './Sanitizers/PassengerSanitizer.php';
-        require_once './Validators/PassengerValidator.php';
-        require_once './Validators/PassengersValidator.php';
-        require_once './Tools/TimeTool.php';
+        require_once ROOT_PATH . '/Sanitizers/PassengerSanitizer.php';
+        require_once ROOT_PATH . '/Validators/PassengerValidator.php';
+        require_once ROOT_PATH . '/Validators/PassengersValidator.php';
+        require_once ROOT_PATH . '/Tools/TimeTool.php';
 
         $passengers = $POST['passengers'];
         $passengersDetails = [];
@@ -106,8 +106,8 @@ final class BookController extends BaseController
     public function storeBookServicesDetails(array $POST)
     {
         //$POST será un array que contendrá códigos de servicios que solicita el cliente
-        require_once './Sanitizers/BookServicesSanitizer.php';
-        require_once './Validators/BookServicesValidator.php';
+        require_once ROOT_PATH . '/Sanitizers/BookServicesSanitizer.php';
+        require_once ROOT_PATH . '/Validators/BookServicesValidator.php';
 
         //No ponemos aquí las variables admitidas porque todas son opcionales (valor por defecto null), y
         // porque en el validate ya se hace una solicitud a BBDD para comprobar las key y value que se envíen,
@@ -160,8 +160,8 @@ final class BookController extends BaseController
         }
         $direction = $POST['direction'] ?? '';
 
-        require_once './Sanitizers/PrimaryContactInformationSanitizer.php';
-        require_once './Validators/PrimaryContactInformationValidator.php';
+        require_once ROOT_PATH . '/Sanitizers/PrimaryContactInformationSanitizer.php';
+        require_once ROOT_PATH . '/Validators/PrimaryContactInformationValidator.php';
         $primaryContactDetails = PrimaryContactInformationSanitizer::sanitize($primaryContactDetails);
         if (!PrimaryContactInformationValidator::validate($primaryContactDetails)) {
             return false;
@@ -177,11 +177,11 @@ final class BookController extends BaseController
 
     public function paymentDetails(array $POST)
     {
-        require_once './Sanitizers/TokenSanitizer.php';
-        require_once './Validators/TokenValidator.php';
-        require_once './Tools/TokenTool.php';
-        require_once './Tools/BookingPriceCalculatorTool.php';
-        require_once './Tools/BookingDataEnricherTool.php';
+        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
+        require_once ROOT_PATH . '/Validators/TokenValidator.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Tools/BookingPriceCalculatorTool.php';
+        require_once ROOT_PATH . '/Tools/BookingDataEnricherTool.php';
 
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
         $BookingDataEnricherTool = new BookingDataEnricherTool();
@@ -254,11 +254,11 @@ final class BookController extends BaseController
 
     private function saveBooking(array $bookData, $idUser, $direction = 'departure', $totalPrice)
     {
-        require_once './Tools/IniTool.php';
-        require_once './Tools/BookingProcessTool.php';
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        require_once ROOT_PATH . '/Tools/BookingProcessTool.php';
         $BookingProcessTool = new BookingProcessTool();
         $flightModel = new FlightModel();
-        $iniTool = new IniTool('./Config/cfg.ini');
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $priceSettings = $iniTool->getKeysAndValues('priceSettings');
 
         if (!$BookingProcessTool->validateSeatAvailability($bookData['passengersDetails'], $bookData['flightDetails']['flightCode'])) {
@@ -333,11 +333,11 @@ final class BookController extends BaseController
 
     private function doPayment($totalPrice, $idUser, $idInvoiceD, $idInvoiceR = null)
     {
-        require_once './Tools/PaymentTool.php';
-        require_once './Tools/TokenTool.php';
-        require_once './Tools/IniTool.php';
+        require_once ROOT_PATH . '/Tools/PaymentTool.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Tools/IniTool.php';
         $PaymentTool = new PaymentTool();
-        $iniTool = new IniTool('./Config/cfg.ini');
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $paypalCfg = $iniTool->getKeysAndValues('paypal');
         $projectSettings = $iniTool->getKeysAndValues('projectSettings');
 
@@ -364,16 +364,16 @@ final class BookController extends BaseController
     //Para obtener la tarjeta de embarque, solo se puede hacer desde 24 a 48 hrs antes del vuelo
     public function checkin(array $POST)
     {
-        require_once './Sanitizers/CheckinSanitizer.php';
-        require_once './Validators/CheckinValidator.php';
-        require_once './Sanitizers/TokenSanitizer.php';
-        require_once './Validators/TokenValidator.php';
-        require_once './Tools/TimeTool.php';
-        require_once './Tools/TokenTool.php';
-        require_once './Tools/EmailTool.php';
-        require_once './Tools/CheckinTool.php';
-        require_once './Tools/PdfTool.php';
-        require_once './Tools/IniTool.php';
+        require_once ROOT_PATH . '/Sanitizers/CheckinSanitizer.php';
+        require_once ROOT_PATH . '/Validators/CheckinValidator.php';
+        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
+        require_once ROOT_PATH . '/Validators/TokenValidator.php';
+        require_once ROOT_PATH . '/Tools/TimeTool.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Tools/EmailTool.php';
+        require_once ROOT_PATH . '/Tools/CheckinTool.php';
+        require_once ROOT_PATH . '/Tools/PdfTool.php';
+        require_once ROOT_PATH . '/Tools/IniTool.php';
 
         $checkinDetails = [
             'accessToken'       => $POST['accessToken'] ?? '',
@@ -414,7 +414,7 @@ final class BookController extends BaseController
         $idItinerary = $flightData['id_ITINERARIES'];
         $flightCode = $flightData['flightCode'];
 
-        $iniTool = new IniTool('./Config/cfg.ini');
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
 
         $checkinSettings = $iniTool->getKeysAndValues('checkinSettings');
         $timeTool = new TimeTool();
@@ -477,9 +477,9 @@ final class BookController extends BaseController
     public function getSummaryBooks(array $POST)
     {
         //Recibe id del usuario y accessToken, y devuelve un array o un JSON de los books
-        require_once './Sanitizers/TokenSanitizer.php';
-        require_once './Validators/TokenValidator.php';
-        require_once './Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
+        require_once ROOT_PATH . '/Validators/TokenValidator.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
 
         $accessToken = $POST['accessToken'];
         $accessToken = TokenSanitizer::sanitizeToken($accessToken);
@@ -502,11 +502,11 @@ final class BookController extends BaseController
 
     public function getBookInfo(array $POST) {
         //Recibe id del usuario y accessToken, y devuelve un array o un JSON de los books
-        require_once './Sanitizers/TokenSanitizer.php';
-        require_once './Validators/TokenValidator.php';
-        require_once './Sanitizers/BookInfoSanitizer.php';
-        require_once './Validators/BookInfoValidator.php';
-        require_once './Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
+        require_once ROOT_PATH . '/Validators/TokenValidator.php';
+        require_once ROOT_PATH . '/Sanitizers/BookInfoSanitizer.php';
+        require_once ROOT_PATH . '/Validators/BookInfoValidator.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
 
         $bookInfo = [
             'accessToken'       => $POST['accessToken'] ?? '',
@@ -540,11 +540,11 @@ final class BookController extends BaseController
 
     public function cancelBook(array $POST)
     {
-        require_once './Sanitizers/TokenSanitizer.php';
-        require_once './Validators/TokenValidator.php';
-        require_once './Sanitizers/BookInfoSanitizer.php';
-        require_once './Validators/BookInfoValidator.php';
-        require_once './Tools/TokenTool.php';
+        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
+        require_once ROOT_PATH . '/Validators/TokenValidator.php';
+        require_once ROOT_PATH . '/Sanitizers/BookInfoSanitizer.php';
+        require_once ROOT_PATH . '/Validators/BookInfoValidator.php';
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
 
         $bookInfo = [
             'accessToken'       => $POST['accessToken'] ?? '',
@@ -573,7 +573,7 @@ final class BookController extends BaseController
 
         $bookModel = new BookModel();
         $flightModel = new FlightModel();
-        $iniTool = new IniTool('./Config/cfg.ini');
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $timeTool = new TimeTool();
 
         if (!$bookModel->checkBookCodeWithIdUser($bookCode, $idUser)) {

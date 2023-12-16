@@ -1,11 +1,11 @@
 <?php
-require_once './Models/ServicesModel.php';
+require_once ROOT_PATH . '/Models/ServicesModel.php';
 class BookingPriceCalculatorTool
 {
     public function calculateTotalPriceFromBookWithPrices($bookData)
     {
         $totalPrice = 0;
-        $iniTool = new IniTool('./Config/cfg.ini');
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $databaseFieldMappings = $iniTool->getKeysAndValues("databaseFieldMappings");
         $priceSettings = $iniTool->getKeysAndValues("priceSettings");
         $numberPeopleForDiscountForMoreThanXPersons = intval($priceSettings['discountForMoreThanXPersons']) ?? 0;

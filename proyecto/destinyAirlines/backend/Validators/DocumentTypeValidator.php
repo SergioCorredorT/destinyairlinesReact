@@ -12,8 +12,8 @@ class DocumentTypeValidator
         }
 
         $docType = strtolower($docType);
-        require_once './Tools/IniTool.php';
-        $iniTool = new IniTool('./Config/cfg.ini');
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $documentTypes = $iniTool->getKeysAndValues('documentTypes');
         if (!isset($documentTypes[$docType])) {
             return false;

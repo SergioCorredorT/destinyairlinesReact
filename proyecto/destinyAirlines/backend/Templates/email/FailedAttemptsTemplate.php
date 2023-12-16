@@ -5,7 +5,7 @@ class FailedAttemptsTemplate extends EmailBaseTemplate
 {
   static function applyEmailFailedAttemptsTemplate(array $data)
   {
-    $iniTool = new IniTool('./Config/cfg.ini');
+    $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
     $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");
     $maxLoginAttemps = $aboutLogin['maxLoginAttemps'];
 

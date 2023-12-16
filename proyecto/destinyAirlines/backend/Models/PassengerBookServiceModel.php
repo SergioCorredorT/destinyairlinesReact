@@ -13,24 +13,4 @@ final class PassengerBookServiceModel extends BaseModel
     {
         return parent::insertMultiple($data, $getId);
     }
-
-    public function createPassengerService(array $data, bool $getId = false)
-    {
-        return parent::insert($data, $getId);
-    }
-
-    public function readPassengerService()
-    {
-        return parent::select("*");
-    }
-
-    public function updatePassengerService(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deletePassengerService(string $where = "")
-    {
-        return parent::delete($where);
-    }
 }

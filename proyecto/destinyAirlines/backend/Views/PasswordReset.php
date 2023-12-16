@@ -1,4 +1,7 @@
 <?php
+define('ROOT_PATH', dirname(__DIR__));
+define('RELATIVE_ROOT_PATH', '../');
+
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
     $tokenType = $_GET['type'];
     //failedAttempts o forgotPassword
@@ -137,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
                     formData.set('confirm_password', password);
                 }
 
-                fetch('MainController.php', {
+                fetch('<?php echo RELATIVE_ROOT_PATH; ?>MainController.php', {
                     method: form.method,
                     body: formData
                 }).then(response => {
@@ -161,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
 
             <?php
             try {
-                require_once './Tools/TokenTool.php';
+                require_once ROOT_PATH . '/Tools/TokenTool.php';
                 switch ($tokenType) {
                     case 'failedAttempts': {
                                 $dedodedPasswordResetToken = TokenTool::decodeAndCheckToken($passwordResetTokenGet, 'failedAttempts');

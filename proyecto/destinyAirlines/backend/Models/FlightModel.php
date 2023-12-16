@@ -53,25 +53,4 @@ final class FlightModel extends BaseModel
         
         return parent::update(['freeSeats' => "freeSeats - $seatsNumber "], "flightCode = '$flightCode' ");
     }
-
-    //-----------------------------------------------------------------
-    public function createFlights(array $data, bool $getId = false)
-    {
-        return parent::insert($data, $getId);
-    }
-
-    public function readFlights()
-    {
-        return parent::select('*');
-    }
-
-    public function updateFlights(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deleteFlights(string $where = "")
-    {
-        return parent::delete($where);
-    }
 }

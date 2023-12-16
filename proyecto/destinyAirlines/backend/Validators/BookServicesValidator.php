@@ -7,7 +7,7 @@ class BookServicesValidator
             return false;
         }
 
-        require_once './Models/ServicesModel.php';
+        require_once ROOT_PATH . '/Models/ServicesModel.php';
         $servicesModel = new ServicesModel();
         $collectiveServicePaidCodes = $servicesModel->readCollectiveActiveServicePaidCodes();
 

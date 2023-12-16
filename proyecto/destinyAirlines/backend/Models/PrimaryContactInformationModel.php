@@ -1,5 +1,5 @@
 <?php
-require_once './Models/BaseModel.php';
+require_once ROOT_PATH . '/Models/BaseModel.php';
 final class PrimaryContactInformationModel extends BaseModel
 {
     private const TABLE = "PRIMARY_CONTACT_INFORMATIONS";
@@ -17,20 +17,5 @@ final class PrimaryContactInformationModel extends BaseModel
     public function readPrimaryContactInformationFromId($idPrimaryContactInfo)
     {
         return parent::select('*', 'id_PRIMARY_CONTACT_INFORMATIONS = '. $idPrimaryContactInfo);
-    }
-
-    public function readPrimaryContactInformation()
-    {
-        return parent::select('*');
-    }
-
-    public function updatePrimaryContactInformation(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deletePrimaryContactInformation(string $where = '')
-    {
-        return parent::delete($where);
-    }
+    }    
 }

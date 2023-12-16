@@ -18,24 +18,4 @@ final class ItineraryModel extends BaseModel
     {
         return parent::select('*', "id_ITINERARIES = $idItinerary")[0];
     }
-
-    public function createItinerary(array $data, bool $getId = false)
-    {
-        return parent::insert($data, $getId);
-    }
-
-    public function readItinerary()
-    {
-        return parent::select('*');
-    }
-
-    public function updateItinerary(array $data, string $where)
-    {
-        return parent::update($data, $where);
-    }
-
-    public function deleteItinerary(string $where = "")
-    {
-        return parent::delete($where);
-    }
 }
