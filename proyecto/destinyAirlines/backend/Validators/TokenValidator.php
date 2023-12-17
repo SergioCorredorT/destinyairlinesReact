@@ -1,7 +1,7 @@
 <?php
 class TokenValidator
 {
-    public static function validateToken(string $token)
+    public static function validateToken(string $token): bool
     {
         // Si el token está vacío, devuelve false
         if (empty($token)) {

@@ -39,7 +39,7 @@ class TimeTool
         return $this->getYearsDifference($birthDate->format('Y-m-d'));
     }
 
-    public function getAgeCategory(string $birthDate)
+    public function getAgeCategory(string $birthDate): bool|string
     {
         require_once ROOT_PATH . '/Tools/IniTool.php';
         $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');

@@ -2,13 +2,13 @@
 
 class BookingProcessTool
 {
-    public static function generateUUID()
+    public static function generateUUID(): string
     {
         $uuid4 = Ramsey\Uuid\Uuid::uuid4();
         return $uuid4->toString(); // i.e. 25769c6c-d34d-4bfe-ba98-e0ee856f3e7a
     }
 
-    public static function getPassengersNumberByAgeCategory($passengers)
+    public static function getPassengersNumberByAgeCategory(array $passengers): array
     {
         $countsAgeCategories = ['adult' => 0, 'child' => 0, 'infant' => 0];
 
@@ -19,7 +19,7 @@ class BookingProcessTool
         return $countsAgeCategories;
     }
 
-    public function validateSeatAvailability($passengers, $flightCode)
+    public function validateSeatAvailability(array $passengers, string $flightCode)
     {
         require_once ROOT_PATH . '/Models/FlightModel.php';
         require_once ROOT_PATH . '/Models/AirplaneModel.php';
@@ -43,7 +43,7 @@ class BookingProcessTool
         return true;
     }
 
-    private function getSeatsNeeded(array $passengers)
+    private function getSeatsNeeded(array $passengers): int
     {
         $count = 0;
         foreach ($passengers as $passenger) {
@@ -54,7 +54,7 @@ class BookingProcessTool
         return $count;
     }
 
-    public function savePrimaryContactInfo($primaryContactDetails)
+    public function savePrimaryContactInfo(array $primaryContactDetails): string
     {
         require_once ROOT_PATH . '/Models/PrimaryContactInformationModel.php';
         $PrimaryContactInformationModel = new PrimaryContactInformationModel();
@@ -65,7 +65,7 @@ class BookingProcessTool
         return $idPrimaryContactInfo;
     }
 
-    public function saveBook($passengers, $flightCode, $direction, $idPrimaryContactInfo, $idUser)
+    public function saveBook(array $passengers, string $flightCode, string $direction, string|int $idPrimaryContactInfo, string|int $idUser): string
     {
         require_once ROOT_PATH . '/Tools/BookingProcessTool.php';
         require_once ROOT_PATH . '/Models/BookModel.php';
@@ -90,7 +90,7 @@ class BookingProcessTool
         return $idBook;
     }
 
-    public function saveInvoice($idBook, $totalPrice)
+    public function saveInvoice(string|int $idBook, float $totalPrice): string
     {
         require_once ROOT_PATH . '/Models/InvoiceModel.php';
         $invoiceModel = new InvoiceModel();
@@ -107,7 +107,7 @@ class BookingProcessTool
         return $idInvoice;
     }
 
-    public function saveBookServicesAndServicesInvoices($idBook, $bookServicesAndPrice, $idInvoice)
+    public function saveBookServicesAndServicesInvoices(string|bool $idBook, array $bookServicesAndPrice, string|bool $idInvoice): bool
     {
         require_once ROOT_PATH . '/Models/ServicesModel.php';
         require_once ROOT_PATH . '/Models/BookServiceModel.php';
@@ -140,9 +140,10 @@ class BookingProcessTool
         if (!$individualServicesInvoiceRsp) {
             throw new Exception('Catched exception creating service invoices');
         }
+        return true;
     }
 
-    public function savePassengersAndGetAddiInfoAndPassServAndServInvo($passengers, $idBook, $idInvoice)
+    public function savePassengersAndGetAddiInfoAndPassServAndServInvo(array $passengers, string|bool $idBook, string|bool $idInvoice): array
     {
         require_once ROOT_PATH . '/Models/PassengerModel.php';
         require_once ROOT_PATH . '/Models/ServicesModel.php';
@@ -209,7 +210,7 @@ class BookingProcessTool
         return [$additionalInformationData, $passengerServiceData, $servicesInvoicesData];
     }
 
-    public function createAdditionalInformation($additionalInformationData)
+    public function createAdditionalInformation(array $additionalInformationData): bool
     {
         require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
         $additionalInformationModel = new AdditionalInformationModel();
@@ -217,9 +218,10 @@ class BookingProcessTool
         if (!$additionalInformationRsp) {
             throw new Exception('Catched exception additional Information');
         }
+        return true;
     }
 
-    public function createPassengerBookService($passengerServiceData)
+    public function createPassengerBookService($passengerServiceData): bool
     {
         require_once ROOT_PATH . '/Models/PassengerBookServiceModel.php';
         $passengerBookServiceModel = new PassengerBookServiceModel();
@@ -227,9 +229,10 @@ class BookingProcessTool
         if (!$passengerBookServiceRsp) {
             throw new Exception('Catched exception creating passenger book services');
         }
+        return true;
     }
 
-    public function createServicesInvoices($servicesInvoicesData)
+    public function createServicesInvoices($servicesInvoicesData): bool
     {
         require_once ROOT_PATH . '/Models/ServicesInvoicesModel.php';
         $servicesInvoicesModel = new ServicesInvoicesModel();
@@ -237,9 +240,10 @@ class BookingProcessTool
         if (!$servicesInvoicesRsp) {
             throw new Exception('Catched exception creating service invoices');
         }
+        return true;
     }
 
-    public function decreaseAvailableSeats($passengers, $flightCode)
+    public function decreaseAvailableSeats(array $passengers, string $flightCode): bool
     {
         $flightModel = new FlightModel();
         //Primero comprobamos si el número de asientos necesarios es menor que los disponibles
@@ -258,7 +262,7 @@ class BookingProcessTool
         return false;
     }
 
-    public function generateInvoiceData($bookDataInOneDirection, $totalPrice, $direction)
+    public function generateInvoiceData(array $bookDataInOneDirection, float $totalPrice, string $direction): array
     {
         require_once ROOT_PATH . '/Tools/BookingPriceCalculatorTool.php';
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();

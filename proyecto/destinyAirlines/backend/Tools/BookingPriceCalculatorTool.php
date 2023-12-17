@@ -2,7 +2,7 @@
 require_once ROOT_PATH . '/Models/ServicesModel.php';
 class BookingPriceCalculatorTool
 {
-    public function calculateTotalPriceFromBookWithPrices($bookData)
+    public function calculateTotalPriceFromBookWithPrices(array $bookData): float
     {
         $totalPrice = 0;
         $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
@@ -26,7 +26,7 @@ class BookingPriceCalculatorTool
         return $totalPrice;
     }
 
-    private function calculatePassengerPrice($passenger, $bookData, $priceSettings, $discountPercentageForDiscountMoreThanXPersons, $numberPeopleForDiscountForMoreThanXPersons)
+    private function calculatePassengerPrice(array $passenger, array $bookData, array $priceSettings, int $discountPercentageForDiscountMoreThanXPersons, int $numberPeopleForDiscountForMoreThanXPersons): float
     {
         $flightPrice = $bookData['flightDetails']['flightPrice'];
         $ageCategoryDiscountPercentage = intval($priceSettings[$passenger['ageCategory'] . 'DiscountPercentage']) ?? 0;
@@ -42,7 +42,7 @@ class BookingPriceCalculatorTool
         return $passengerPrice;
     }
 
-    public function calculatePassengerServicesPrice($passenger)
+    public function calculatePassengerServicesPrice(array $passenger): float
     {
         $servicesPrice = 0;
         if (!empty($passenger['services'])) {
@@ -53,7 +53,7 @@ class BookingPriceCalculatorTool
         return $servicesPrice;
     }
 
-    public function calculateBookServicesPrice($bookServicesDetails)
+    public function calculateBookServicesPrice(array $bookServicesDetails): float
     {
         $servicesPrice = 0;
         if (!empty($bookServicesDetails)) {
@@ -64,7 +64,8 @@ class BookingPriceCalculatorTool
         return $servicesPrice;
     }
 
-    public function getPassengersServicesSummary($passengers) {
+    public function getPassengersServicesSummary(array $passengers): array
+    {
         $services = [];
         foreach($passengers as $passenger) {
             foreach($passenger['services'] as $serviceCode => $price) {

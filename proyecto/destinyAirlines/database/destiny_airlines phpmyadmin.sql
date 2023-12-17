@@ -30,11 +30,11 @@ SET time_zone = "+00:00";
 CREATE TABLE `additional_informations` (
   `id_ADDITIONAL_INFORMATIONS` int(11) NOT NULL,
   `id_PASSENGERS` int(11) NOT NULL,
-  `assistiveDevices` enum('wheelchair','serviceAnimal','crutches','cane','other') DEFAULT NULL,
-  `medicalEquipment` enum('oxygenTank','CPAPMachine','other') DEFAULT NULL,
-  `mobilityLimitations` enum('difficultyWalking','difficultyClimbingStairs','other') DEFAULT NULL,
-  `communicationNeeds` enum('signLanguageInterpreter','hearingAid','other') DEFAULT NULL,
-  `medicationRequirements` enum('insulin','other') DEFAULT NULL
+  `assistiveDevices` varchar(50) DEFAULT NULL,
+  `medicalEquipment` varchar(50) DEFAULT NULL,
+  `mobilityLimitations` varchar(50) DEFAULT NULL,
+  `communicationNeeds` varchar(50) DEFAULT NULL,
+  `medicationRequirements` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

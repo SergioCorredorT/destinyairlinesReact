@@ -7,7 +7,7 @@ final class OptionsController extends BaseController
         parent::__construct();
     }
 
-    public function getDocTypes()
+    public function getDocTypes(): array
     {
         require_once ROOT_PATH . '/Tools/IniTool.php';
         $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
@@ -15,7 +15,7 @@ final class OptionsController extends BaseController
         return ['response' => $documentTypes];
     }
 
-    public function getAgeCategories()
+    public function getAgeCategories(): array
     {
         require_once ROOT_PATH . '/Tools/IniTool.php';
         $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
@@ -23,33 +23,43 @@ final class OptionsController extends BaseController
         return ['response' => $ageCategories];
     }
 
-    public function getAssistiveDevices()
+    public function getAssistiveDevices(): array|bool
     {
-        $additionalInformationModel = new AdditionalInformationModel();
-        return $additionalInformationModel->selectAllowedValues('assistiveDevices');
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        return $additional_informations['assistiveDevices'];
     }
 
-    public function getMedicalEquipments()
+    public function getMedicalEquipments(): array|bool
     {
-        $additionalInformationModel = new AdditionalInformationModel();
-        return $additionalInformationModel->selectAllowedValues('medicalEquipment');
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        return $additional_informations['medicalEquipment'];
     }
 
-    public function getMobilityLimitations()
+    public function getMobilityLimitations(): array|bool
     {
-        $additionalInformationModel = new AdditionalInformationModel();
-        return $additionalInformationModel->selectAllowedValues('mobilityLimitations');
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        return $additional_informations['mobilityLimitations'];
     }
 
-    public function getCommunicationNeeds()
+    public function getCommunicationNeeds(): array|bool
     {
-        $additionalInformationModel = new AdditionalInformationModel();
-        return $additionalInformationModel->selectAllowedValues('communicationNeeds');
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        return $additional_informations['communicationNeeds'];
     }
 
-    public function getMedicationRequirements()
+    public function getMedicationRequirements(): array|bool
     {
-        $additionalInformationModel = new AdditionalInformationModel();
-        return $additionalInformationModel->selectAllowedValues('medicationRequirements');
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        return $additional_informations['medicationRequirements'];
     }
 }

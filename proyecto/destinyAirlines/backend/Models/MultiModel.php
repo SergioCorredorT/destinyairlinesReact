@@ -18,7 +18,7 @@ final class MultiModel extends BaseMultiModel
         });
     }
 
-    public function getSummaryBooks($idUser)
+    public function getSummaryBooks(string|int $idUser): bool|array
     {
         $sql =
             'SELECT b.bookCode, b.checkinDate, f.date, a.name AS destiny
@@ -31,7 +31,7 @@ final class MultiModel extends BaseMultiModel
         return parent::executeSql($sql, ['idUser' => $idUser]);
     }
 
-    public function getBookInfo($bookCode, $idUser)
+    public function getBookInfo(string $bookCode, string|int $idUser): bool|array
     {
         require_once ROOT_PATH . '/Models/BookModel.php';
         require_once ROOT_PATH . '/Tools/ArrayTool.php';
@@ -141,7 +141,7 @@ final class MultiModel extends BaseMultiModel
         ];
     }
 
-    public function getPassengerWithAdditionalInfoFromIdBook($idBook)
+    public function getPassengerWithAdditionalInfoFromIdBook(string|int $idBook): bool|array
     {
         $sqlMultiTable =
             'SELECT p.*, a.*
@@ -151,7 +151,7 @@ final class MultiModel extends BaseMultiModel
         return parent::executeSql($sqlMultiTable, ['idBook' => $idBook]);
     }
 
-    public function getBookAndFlightInfo($bookCode)
+    public function getBookAndFlightInfo(string $bookCode): bool|array
     {
         $sqlMultiTable =
             'SELECT b.id_BOOKS, b.bookCode, b.direction, b.checkinDate, f.date, f.hour, f.arrivalHour, a1.name AS origin, a2.name AS destiny, id_PRIMARY_CONTACT_INFORMATIONS
@@ -164,7 +164,7 @@ final class MultiModel extends BaseMultiModel
         return parent::executeSql($sqlMultiTable, ['bookCode' => $bookCode]);
     }
 
-    private function getActualServicesInvoices($servicesInvoicesData)
+    private function getActualServicesInvoices(array $servicesInvoicesData): array
     {
         $filteredData = [];
         $previousKeys = [];
@@ -190,7 +190,7 @@ final class MultiModel extends BaseMultiModel
         return $filteredData;
     }
 
-    private function replaceIdServiceFieldWithServiceName($actualServicesInvoice, $nameServices)
+    private function replaceIdServiceFieldWithServiceName(array $actualServicesInvoice, array $nameServices): array
     {
         foreach ($actualServicesInvoice as $key => $data) {
             $idService = $data['id_SERVICES'];

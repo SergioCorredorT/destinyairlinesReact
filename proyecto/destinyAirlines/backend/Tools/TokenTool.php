@@ -3,7 +3,7 @@ require_once ROOT_PATH . '/Tools/IniTool.php';
 require_once ROOT_PATH . '/vendor/autoload.php';
 class TokenTool
 {
-    public static function generateToken($data, int $timeLife = 60 * 60, string $role = 'user')
+    public static function generateToken(string|array|stdClass $data, int $timeLife = 60 * 60, string $role = 'user'): string
     {
         $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $secretTokenPassword = $iniTool->getKeysAndValues('secretTokenPassword');
@@ -29,7 +29,7 @@ class TokenTool
         return $jwt;
     }
 
-    public static function checkUpdateAccessToken(string $accessToken, int $minLifeTimeAccessToken, int $initialLifeTimeAccessToken)
+    public static function checkUpdateAccessToken(string $accessToken, int $minLifeTimeAccessToken, int $initialLifeTimeAccessToken): array
     {
         $payloadAccessToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
         $rsp = [];
@@ -47,7 +47,7 @@ class TokenTool
         return $rsp;
     }
 
-    public static function checkUpdateRefreshToken(string $refreshToken, int $minLifeTimeRefreshToken, int $initialLifeTimeAccessToken, int $initialLifeTimeRefreshToken)
+    public static function checkUpdateRefreshToken(string $refreshToken, int $minLifeTimeRefreshToken, int $initialLifeTimeAccessToken, int $initialLifeTimeRefreshToken): array
     {
         $payloadRefreshToken = TokenTool::decodeAndCheckToken($refreshToken, 'refresh');
         $rsp = [];
@@ -68,7 +68,7 @@ class TokenTool
         return $rsp;
     }
 
-    public static function getRemainingTokenTime(string $token)
+    public static function getRemainingTokenTime(string $token): int
     {
         try {
             $decodedToken = TokenTool::decodeAndCheckToken($token);
@@ -81,10 +81,11 @@ class TokenTool
             return 0;
         } catch (\Exception $e) {
             error_log($e->getMessage());
+            return 0;
         }
     }
 
-    public static function decodeAndCheckToken(string $token, string $type = '')
+    public static function decodeAndCheckToken(string $token, string $type = ''): array
     {
         $iniTool = new IniTool(ROOT_PATH . '/Config/cfg.ini');
         $secretTokenPassword = $iniTool->getKeysAndValues('secretTokenPassword');
@@ -112,7 +113,7 @@ class TokenTool
         }
     }
 
-    public static function generateUUID()
+    public static function generateUUID(): string
     {
         $uuid4 = Ramsey\Uuid\Uuid::uuid4();
         return $uuid4->toString(); // i.e. 25769c6c-d34d-4bfe-ba98-e0ee856f3e7a

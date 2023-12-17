@@ -9,7 +9,7 @@ final class BookModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function checkBookCodeWithIdUser($bookCode, $idUser)
+    public function checkBookCodeWithIdUser($bookCode, $idUser): bool
     {
         $rsp = parent::select('bookCode', "id_USERS = $idUser AND bookCode = '$bookCode' ");
         if (isset($rsp[0]['bookCode'])) {
@@ -19,7 +19,7 @@ final class BookModel extends BaseModel
         }
     }
 
-    public function readFlightIdWithCheckinNull($bookCode, $idUser)
+    public function readFlightIdWithCheckinNull($bookCode, $idUser): bool|string
     {
         $rsp = parent::select('id_FLIGHTS', "id_USERS = $idUser AND bookCode = '$bookCode' AND checkinDate IS NULL");
         if (isset($rsp[0]['id_FLIGHTS'])) {
@@ -29,7 +29,7 @@ final class BookModel extends BaseModel
         }
     }
 
-    public function readFlightId($bookCode, $idUser)
+    public function readFlightId($bookCode, $idUser): bool|string
     {
         $rsp = parent::select('id_FLIGHTS', "id_USERS = $idUser AND bookCode = '$bookCode' ");
         if (isset($rsp[0]['id_FLIGHTS'])) {
@@ -39,12 +39,12 @@ final class BookModel extends BaseModel
         }
     }
 
-    public function updateChecking(string $bookCode)
+    public function updateChecking(string $bookCode): bool
     {
         return parent::update(['checkinDate' => '"' . date('Y-m-d') . '"'], "bookCode = '$bookCode'");
     }
 
-    public function deleteBookFromBookCode($bookCode)
+    public function deleteBookFromBookCode(string $bookCode): bool
     {
         parent::beginTransaction();
         $where = ' bookCode = ' . $bookCode;
@@ -56,17 +56,17 @@ final class BookModel extends BaseModel
         return true;
     }
 
-    public function createBooks(array $data, bool $getId = false)
+    public function createBooks(array $data, bool $getId = false): bool|array
     {
         return parent::insert($data, $getId);
     }
 
-    public function readBookFromIdBook($idBook)
+    public function readBookFromIdBook(string|int $idBook): bool|array
     {
         return parent::select('*', "id_BOOKS = $idBook ")[0];
     }
 
-    public function readIdBookFromBookCode($bookCode)
+    public function readIdBookFromBookCode(string $bookCode): bool|array
     {
         return parent::select('id_BOOKS', "bookCode = '$bookCode'")[0]['id_BOOKS'];
     }

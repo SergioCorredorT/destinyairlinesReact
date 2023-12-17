@@ -9,7 +9,7 @@ final class ServicesInvoicesModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function readServicesInvoicesFromIdInvoice(int|array $idInvoice)
+    public function readServicesInvoicesFromIdInvoice(int|array $idInvoice): bool|array
     {
         if (is_array($idInvoice)) {
             $idList = implode(',', $idInvoice);
@@ -19,7 +19,7 @@ final class ServicesInvoicesModel extends BaseModel
         }
     }
 
-    public function readIdPassengerIdServicesAddRemoveOldPriceFromIdInvoice(int|array $idInvoice)
+    public function readIdPassengerIdServicesAddRemoveOldPriceFromIdInvoice(int|array $idInvoice): bool|array
     {
         if (is_array($idInvoice)) {
             $idList = implode(',', $idInvoice);
@@ -29,7 +29,7 @@ final class ServicesInvoicesModel extends BaseModel
         }
     }
 
-    public function createMultipleServicesInvoices(array $data, bool $getId = false)
+    public function createMultipleServicesInvoices(array $data, bool $getId = false): bool|string
     {
         return parent::insertMultiple($data, $getId);
     }

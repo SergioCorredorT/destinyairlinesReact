@@ -1,7 +1,7 @@
 <?php
 class PassengerValidator
 {
-    public static function validateDocumentation($docType, $docCode)
+    public static function validateDocumentation(string $docType, string $docCode): bool
     {
         require_once ROOT_PATH . '/Validators/DocumentTypeValidator.php';
         if(!DocumentTypeValidator::validateDocumentType($docType, $docCode)) {
@@ -11,7 +11,7 @@ class PassengerValidator
         return true;
     }
 
-    public static function validateExpirationDate($expirationDate)
+    public static function validateExpirationDate(string $expirationDate): bool
     {
         // Comprueba si la fecha de expiración está en el formato correcto (YYYY-MM-DD)
         if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/', $expirationDate)) {
@@ -29,7 +29,7 @@ class PassengerValidator
         return true;
     }
 
-    public static function validateTitle($title)
+    public static function validateTitle(string $title): bool
     {
         // Comprueba si el título está vacío
         if (empty($title)) {
@@ -45,7 +45,7 @@ class PassengerValidator
         return true;
     }
 
-    public static function validateFirstName($firstName)
+    public static function validateFirstName(string $firstName): bool
     {
         // Comprueba si el nombre está vacío
         if (empty($firstName)) {
@@ -60,7 +60,7 @@ class PassengerValidator
         return true;
     }
 
-    public static function validateLastName($lastName)
+    public static function validateLastName(string $lastName): bool
     {
         // Comprueba si el apellido está vacío
         if (empty($lastName)) {
@@ -75,7 +75,7 @@ class PassengerValidator
         return true;
     }
 
-    public static function validateNationality($nationality)
+    public static function validateNationality(string $nationality): bool
     {
         // Comprueba si la nacionalidad está vacía
         if (empty($nationality)) {
@@ -90,7 +90,7 @@ class PassengerValidator
         return true;
     }
 
-    public static function validateCountry($country)
+    public static function validateCountry(string $country): bool
     {
         // Comprueba si el país está vacío
         if (empty($country)) {
@@ -105,7 +105,7 @@ class PassengerValidator
         return true;
     }
 
-    public static function validateDateBirth($dateBirth)
+    public static function validateDateBirth(string $dateBirth): bool
     {
         // Comprueba si la fecha de nacimiento está vacía
         if (empty($dateBirth)) {
@@ -130,77 +130,99 @@ class PassengerValidator
         return true;
     }
 
-    public static function validateAssistiveDevices($assistiveDevices)
+    public static function validateAssistiveDevices(string $assistiveDevices): bool
     {
         if (empty($assistiveDevices)) {
             return false;
         }
 
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        $assistiveDevicesValues = $additional_informations['assistiveDevices'];
+
+        if (in_array($assistiveDevices, $assistiveDevicesValues)) {
+            return true;
+        }
+        return false;
+/*
         require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
         $AdditionalInformationModel = new AdditionalInformationModel();
         if ($AdditionalInformationModel->isAllowedValue($assistiveDevices, 'assistiveDevices')) {
             return true;
         }
-        return false;
+        return false;*/
     }
 
-    public static function validateMedicalEquipment($medicalEquipment)
+    public static function validateMedicalEquipment(string $medicalEquipment): bool
     {
         if (empty($medicalEquipment)) {
             return false;
         }
 
-        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
-        $AdditionalInformationModel = new AdditionalInformationModel();
-        if ($AdditionalInformationModel->isAllowedValue($medicalEquipment, 'medicalEquipment')) {
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        $medicalEquipmentValues = $additional_informations['medicalEquipment'];
+
+        if (in_array($medicalEquipment, $medicalEquipmentValues)) {
             return true;
         }
         return false;
     }
 
-    public static function validateMobilityLimitations($mobilityLimitations)
+    public static function validateMobilityLimitations(string $mobilityLimitations): bool
     {
         if (empty($mobilityLimitations)) {
             return false;
         }
 
-        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
-        $AdditionalInformationModel = new AdditionalInformationModel();
-        if ($AdditionalInformationModel->isAllowedValue($mobilityLimitations, 'mobilityLimitations')) {
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        $mobilityLimitationsValues = $additional_informations['mobilityLimitations'];
+
+        if (in_array($mobilityLimitations, $mobilityLimitationsValues)) {
             return true;
         }
         return false;
     }
 
-    public static function validateCommunicationNeeds($communicationNeeds)
+    public static function validateCommunicationNeeds(string $communicationNeeds): bool
     {
         if (empty($communicationNeeds)) {
             return false;
         }
 
-        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
-        $AdditionalInformationModel = new AdditionalInformationModel();
-        if ($AdditionalInformationModel->isAllowedValue($communicationNeeds, 'communicationNeeds')) {
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        $communicationNeedsValues = $additional_informations['communicationNeeds'];
+
+        if (in_array($communicationNeeds, $communicationNeedsValues)) {
             return true;
         }
         return false;
     }
 
-    public static function validateMedicationRequirements($medicationRequirements)
+    public static function validateMedicationRequirements(string $medicationRequirements): bool
     {
         if (empty($medicationRequirements)) {
             return false;
         }
 
-        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
-        $AdditionalInformationModel = new AdditionalInformationModel();
-        if ($AdditionalInformationModel->isAllowedValue($medicationRequirements, 'medicationRequirements')) {
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        $medicationRequirementsValues = $additional_informations['medicationRequirements'];
+
+        if (in_array($medicationRequirements, $medicationRequirementsValues)) {
             return true;
         }
         return false;
     }
 
-    public static function validateIndividualServiceCodes($individualServiceCodes)
+    public static function validateIndividualServiceCodes(string $individualServiceCodes): bool
     {
         if (!is_array($individualServiceCodes)) {
             return false;
@@ -227,7 +249,7 @@ class PassengerValidator
         return true;
     }
 
-    public static function validate(array $data)
+    public static function validate(array $data): bool
     {
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
             return false;

@@ -14,7 +14,7 @@ final class UserModel extends BaseModel
         return parent::insert($data, $getId);
     }
 
-    public function getEmailById(int $id_USERS)
+    public function getEmailById(int $id_USERS): bool|string
     {
         $results = parent::select('emailAddress', "id_USERS = $id_USERS");
         if (empty($results)) {
@@ -23,7 +23,7 @@ final class UserModel extends BaseModel
         return $results[0]['emailAddress'];
     }
 
-    public function readUserByEmailPassword(string $email, string $password)
+    public function readUserByEmailPassword(string $email, string $password): bool|array
     {
         $passwordHash = parent::select('passwordHash', "emailAddress = '$email'");
 
@@ -35,43 +35,43 @@ final class UserModel extends BaseModel
         return false;
     }
 
-    public function readUserByEmail(string $email)
+    public function readUserByEmail(string $email): bool|array
     {
         return parent::select('*', "emailAddress = '$email' ");
     }
 
-    public function readUserById(int $id_USERS)
+    public function readUserById(int $id_USERS): bool|array
     {
         $results = parent::select('*', "id_USERS = $id_USERS ");
         return $results ? $results[0] : false;
     }
 
-    public function updatePasswordHashById(string $passwordHash, int $id_USERS)
+    public function updatePasswordHashById(string $passwordHash, int $id_USERS): bool
     {
         return parent::update(['passwordHash' => "'" . $passwordHash . "'"], " id_USERS = $id_USERS");
     }
 
-    public function updateUsersByEmail(array $data, string $email)
+    public function updateUsersByEmail(array $data, string $email): bool
     {
         return parent::update($data, " emailAddress = '$email'");
     }
 
-    public function updateAddCurrentLoginAttempts(int $id_USERS)
+    public function updateAddCurrentLoginAttempts(int $id_USERS): bool
     {
         return parent::update(['currentLoginAttempts' => 'currentLoginAttempts + 1', 'lastAttempt' => "'" . date('Y-m-d H:i:s') . "'"], "id_USERS = $id_USERS");
     }
 
-    public function updateResetCurrentLoginAttempts(int $id_USERS)
+    public function updateResetCurrentLoginAttempts(int $id_USERS): bool
     {
         return parent::update(['currentLoginAttempts' => 0], " id_USERS = $id_USERS");
     }
 
-    public function updateLastForgotPasswordEmailById(int $id_USERS)
+    public function updateLastForgotPasswordEmailById(int $id_USERS): bool
     {
         return parent::update(['lastForgotPasswordEmail' => "'" . date('Y-m-d H:i:s') . "'"], " id_USERS = $id_USERS");
     }
 
-    public function deleteUserByEmailAndPassword(string $email, string $password)
+    public function deleteUserByEmailAndPassword(string $email, string $password): bool|array
     {
         [$passwordHash] = parent::select('passwordHash', " emailAddress = '$email'");
 

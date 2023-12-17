@@ -2,7 +2,7 @@
 $command = $_POST['command'] ?? $_GET['command'] ?? '';
 define('ROOT_PATH', __DIR__);
 
-function executeCommand(string $controllerName, string $methodName, array $params)
+function executeCommand(string $controllerName, string $methodName, array $params): array
 {
     try {
         $controller = new $controllerName();
@@ -10,13 +10,13 @@ function executeCommand(string $controllerName, string $methodName, array $param
 
         if (is_array($response) && array_keys($response) !== range(0, count($response) - 1)) {
             // Si $response es un array o array asociativo, fusionamos $response con el array que se pasa a json_encode
-            echo json_encode(array_merge(['status' => true], $response));
+            return array_merge(['status' => true], $response);
         } else {
-            echo json_encode(['status' => true, 'response' => $response]);
+            return ['status' => true, 'response' => $response];
         }
     } catch (Exception $e) {
-        echo json_encode(['status' => false, 'response' => false]);
         error_log('Catched error: ' . $e);
+        return ['status' => false, 'response' => false];
     }
 }
 
@@ -61,7 +61,7 @@ if (array_key_exists(strtolower($command), $controllers)) {
     $controllerInfo = $controllers[strtolower($command)];
     require_once "./Controllers/{$controllerInfo['controller']}.php";
     $params = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
-    executeCommand($controllerInfo['controller'], $controllerInfo['method'], $params);
+    echo json_encode(executeCommand($controllerInfo['controller'], $controllerInfo['method'], $params));
 } else {
     echo json_encode(['status' => true, 'response' => false]);
 }

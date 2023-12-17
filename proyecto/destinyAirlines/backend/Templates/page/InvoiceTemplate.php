@@ -3,7 +3,7 @@ require_once ROOT_PATH . '/Tools/IniTool.php';
 require_once ROOT_PATH . '/Templates/page/PageBaseTemplate.php';
 class InvoicePageTemplate extends PageBaseTemplate
 {
-  static function  applyInvoicePageTemplate(array $data)
+  static function  applyInvoicePageTemplate(array $data): string
   {
     require_once ROOT_PATH . '/Tools/IniTool.php';
     $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');

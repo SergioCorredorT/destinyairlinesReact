@@ -1,7 +1,7 @@
 <?php
 class PassengersValidator
 {
-    public static function validateUniqueDocTypeAndDocCode($data)
+    public static function validateUniqueDocTypeAndDocCode(array $data): bool
     {
         $uniqueCheck = array();
         foreach ($data as $passenger) {
@@ -17,7 +17,7 @@ class PassengersValidator
         return true;
     }
 
-    public static function validateAdultNumber($data)
+    public static function validateAdultNumber(array $data): bool
     {
         foreach ($data as $passenger) {
             if ($passenger['ageCategory'] === 'adult') {
@@ -27,7 +27,7 @@ class PassengersValidator
         return false;
     }
 
-    public static function validateMaxNumberOfPassengersPerAgeCategory($data)
+    public static function validateMaxNumberOfPassengersPerAgeCategory(array $data): bool
     {
         require_once ROOT_PATH . '/Tools/IniTool.php';
         $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
@@ -48,7 +48,7 @@ class PassengersValidator
         return true;
     }
 
-    public static function validate(array $data)
+    public static function validate(array $data): bool
     {
         if (count($data) < 1) {
             return false;

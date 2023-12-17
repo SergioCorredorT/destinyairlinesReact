@@ -1,7 +1,7 @@
 <?php
 class BookServicesValidator
 {
-    public static function validateCollectiveServiceCodes($collectiveServiceCodes)
+    public static function validateCollectiveServiceCodes(array $collectiveServiceCodes): bool
     {
         if (!is_array($collectiveServiceCodes)) {
             return false;
@@ -29,7 +29,7 @@ class BookServicesValidator
     }
 
 
-    public static function validate($data)
+    public static function validate(array $data): bool
     {
         if (isset($data) && !self::validateCollectiveServiceCodes($data)) {
             return false;

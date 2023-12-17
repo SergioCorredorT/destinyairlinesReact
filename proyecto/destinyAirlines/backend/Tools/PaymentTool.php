@@ -1,7 +1,7 @@
 <?php
 final class PaymentTool
 {
-    public function createPaymentPaypal($clientId, $clientSecret, $total, $currency, $returnUrl, $cancelUrl)
+    public function createPaymentPaypal(int|string $clientId, string $clientSecret, float $total, string $currency, string $returnUrl, string $cancelUrl): bool|string
     {
         $orderData = [
             "intent" => "CAPTURE",
@@ -28,7 +28,7 @@ final class PaymentTool
         }
     }
 
-    private function sendRequest($method, $url, $data, $clientId, $clientSecret)
+    private function sendRequest(string $method, string $url, array $data, string|int $clientId, string $clientSecret): string
     {
         $ch = curl_init();
 
@@ -54,7 +54,7 @@ final class PaymentTool
         return json_decode($result);
     }
 
-    private function getAccessToken($clientId, $clientSecret)
+    private function getAccessToken(string|int $clientId, string $clientSecret): string
     {
         $ch = curl_init();
 

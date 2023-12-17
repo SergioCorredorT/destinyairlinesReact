@@ -9,12 +9,12 @@ final class AirportModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function readAirportFromIdAirport($idAirport)
+    public function readAirportFromIdAirport(string|int $idAirport): bool|array
     {
         return parent::select('*', "id_AIRPORTS = $idAirport")[0];
     }
 
-    public function readAirportNameFromIdAirport($idAirport)
+    public function readAirportNameFromIdAirport(string|int $idAirport): bool|string
     {
         return parent::select('name', "id_AIRPORTS = $idAirport")[0]['name'];
     }

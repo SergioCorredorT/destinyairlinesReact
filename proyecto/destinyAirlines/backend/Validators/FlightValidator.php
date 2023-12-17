@@ -1,7 +1,7 @@
 <?php
 class FlightValidator
 {
-    public static function validateFlightCode($flightCode)
+    public static function validateFlightCode(string $flightCode): bool
     {
         if ($flightCode != "" && strlen($flightCode) < 3) {
             return false;
@@ -15,7 +15,7 @@ class FlightValidator
         return false;
     }
 
-    public static function validatePeopleNumber($adultsNumber, $childsNumber, $infantsNumber)
+    public static function validatePeopleNumber(int $adultsNumber, int $childsNumber, int $infantsNumber): bool
     {
         if (!self::validateAdultsNumber($adultsNumber)) {
             return false;
@@ -26,9 +26,10 @@ class FlightValidator
         if (!self::validateInfantsNumber($infantsNumber)) {
             return false;
         }
+        return true;
     }
 
-    public static function validateAdultsNumber($adultsNumber)
+    public static function validateAdultsNumber(int $adultsNumber): bool
     {
         //Mínimo un adulto
         if ($adultsNumber > 999 || $adultsNumber <= 0) {
@@ -37,7 +38,7 @@ class FlightValidator
         return true;
     }
 
-    public static function validateChildsNumber($childsNumber)
+    public static function validateChildsNumber(int $childsNumber): bool
     {
         if ($childsNumber > 999 || $childsNumber < 0) {
             return false;
@@ -45,7 +46,7 @@ class FlightValidator
         return true;
     }
 
-    public static function validateInfantsNumber($infantsNumber)
+    public static function validateInfantsNumber(int $infantsNumber): bool
     {
         if ($infantsNumber > 999  || $infantsNumber < 0) {
             return false;
@@ -53,7 +54,7 @@ class FlightValidator
         return true;
     }
 
-    public static function validateDirection($direction)
+    public static function validateDirection(string $direction): bool
     {
         if ($direction !== 'departure' && $direction !== 'return') {
             return false;
@@ -61,7 +62,7 @@ class FlightValidator
         return true;
     }
 
-    public static function validate($data)
+    public static function validate(array $data): bool
     {
         if (isset($data['flightCode']) && !self::validateFlightCode($data['flightCode'])) {
             return false;

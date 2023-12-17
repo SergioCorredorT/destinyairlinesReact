@@ -10,7 +10,7 @@ final class BookController extends BaseController
         parent::__construct();
     }
 
-    public function storeFlightDetails(array $POST)
+    public function storeFlightDetails(array $POST): bool
     {
         require_once ROOT_PATH . '/Sanitizers/FlightSanitizer.php';
         require_once ROOT_PATH . '/Validators/FlightValidator.php';
@@ -38,7 +38,7 @@ final class BookController extends BaseController
         return true;
     }
 
-    public function storePassengerDetails(array $POST)
+    public function storePassengerDetails(array $POST): bool
     {
         require_once ROOT_PATH . '/Sanitizers/PassengerSanitizer.php';
         require_once ROOT_PATH . '/Validators/PassengerValidator.php';
@@ -103,7 +103,7 @@ final class BookController extends BaseController
         return true;
     }
 
-    public function storeBookServicesDetails(array $POST)
+    public function storeBookServicesDetails(array $POST): bool
     {
         //$POST será un array que contendrá códigos de servicios que solicita el cliente
         require_once ROOT_PATH . '/Sanitizers/BookServicesSanitizer.php';
@@ -132,7 +132,7 @@ final class BookController extends BaseController
         return true;
     }
 
-    public function storePrimaryContactInformationDetails(array $POST)
+    public function storePrimaryContactInformationDetails(array $POST): bool
     {
         $primaryContactDetails = [
             'documentationType' => '',
@@ -175,7 +175,7 @@ final class BookController extends BaseController
         return true;
     }
 
-    public function paymentDetails(array $POST)
+    public function paymentDetails(array $POST): bool
     {
         require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
         require_once ROOT_PATH . '/Validators/TokenValidator.php';
@@ -235,7 +235,7 @@ final class BookController extends BaseController
         return true;
     }
 
-    private function checkDetails($direction)
+    private function checkDetails(string $direction): bool
     {
         if (is_null(SessionTool::get($direction))) {
             return false;
@@ -252,7 +252,7 @@ final class BookController extends BaseController
         return true;
     }
 
-    private function saveBooking(array $bookData, $idUser, $direction = 'departure', $totalPrice)
+    private function saveBooking(array $bookData, string|int $idUser, string $direction = 'departure', float $totalPrice): bool|string
     {
         require_once ROOT_PATH . '/Tools/IniTool.php';
         require_once ROOT_PATH . '/Tools/BookingProcessTool.php';
@@ -331,7 +331,7 @@ final class BookController extends BaseController
         return $idInvoice;
     }
 
-    private function doPayment($totalPrice, $idUser, $idInvoiceD, $idInvoiceR = null)
+    private function doPayment(float $totalPrice, string|int $idUser, string|int $idInvoiceD, string|int $idInvoiceR = null): bool
     {
         require_once ROOT_PATH . '/Tools/PaymentTool.php';
         require_once ROOT_PATH . '/Tools/TokenTool.php';
@@ -362,7 +362,7 @@ final class BookController extends BaseController
     }
 
     //Para obtener la tarjeta de embarque, solo se puede hacer desde 24 a 48 hrs antes del vuelo
-    public function checkin(array $POST)
+    public function checkin(array $POST): bool
     {
         require_once ROOT_PATH . '/Sanitizers/CheckinSanitizer.php';
         require_once ROOT_PATH . '/Validators/CheckinValidator.php';
@@ -474,7 +474,7 @@ final class BookController extends BaseController
         return true;
     }
 
-    public function getSummaryBooks(array $POST)
+    public function getSummaryBooks(array $POST): bool|array
     {
         //Recibe id del usuario y accessToken, y devuelve un array o un JSON de los books
         require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
@@ -500,7 +500,8 @@ final class BookController extends BaseController
         return $multiModel->getSummaryBooks($idUser);
     }
 
-    public function getBookInfo(array $POST) {
+    public function getBookInfo(array $POST): bool|array
+    {
         //Recibe id del usuario y accessToken, y devuelve un array o un JSON de los books
         require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
         require_once ROOT_PATH . '/Validators/TokenValidator.php';
@@ -538,7 +539,7 @@ final class BookController extends BaseController
         return $multiModel->getBookInfo($bookCode, $idUser);
     }
 
-    public function cancelBook(array $POST)
+    public function cancelBook(array $POST): bool
     {
         require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
         require_once ROOT_PATH . '/Validators/TokenValidator.php';
@@ -600,10 +601,10 @@ final class BookController extends BaseController
 
         $bookModel = new BookModel();
         //Si el vuelo no ha tenido lugar, se suman los asientos disponibles gracias al trigger sql
-        $bookModel->deleteBookFromBookCode($bookCode);
+        return $bookModel->deleteBookFromBookCode($bookCode);
     }
 
-    private function validateDirection(string $direction)
+    private function validateDirection(string $direction): bool
     {
         $direction = htmlspecialchars(trim($direction));
         if ($direction !== 'departure' && $direction !== 'return') {
@@ -612,7 +613,7 @@ final class BookController extends BaseController
         return true;
     }
 
-    public function cancelBooking()
+    public function cancelBooking(): bool
     {
         SessionTool::remove('departure');
         SessionTool::remove('return');

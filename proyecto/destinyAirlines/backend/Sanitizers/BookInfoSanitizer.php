@@ -1,7 +1,7 @@
 <?php
 class BookInfoSanitizer
 {
-    public static function sanitizeBookCode($bookCode)
+    public static function sanitizeBookCode($bookCode): string
     {
         // Elimina todos los caracteres que no sean números, guiones, letras mayúsculas o minúsculas, y letras españolas
         $sanitizedBookCode = preg_replace('/[^0-9a-zA-Z\-áéíóúÁÉÍÓÚñÑ]/u', '', $bookCode);
@@ -9,7 +9,7 @@ class BookInfoSanitizer
     }
     
 
-    public static function sanitize(array $data)
+    public static function sanitize(array $data): array
     {
         //Si es "", o null, o no está definida no se ejecutará el saneamiento
         if (!empty($data['bookCode'])) $data["bookCode"] = self::sanitizeBookCode($data['bookCode']);

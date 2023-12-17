@@ -25,7 +25,7 @@ abstract class BaseModel
     }
 
     //Hace insert un INSERT para todos los registros pudiendo devolver la id generada del último registro insertado
-    protected function insertMultiple(array $datas, bool $getId = false)
+    protected function insertMultiple(array $datas, bool $getId = false): bool|string
     {
         if (array_keys($datas) !== range(0, count($datas) - 1)) {
             $datas = [$datas];
@@ -55,7 +55,7 @@ abstract class BaseModel
     }
 
     //Hace insert un INSERT por cada registro pudiendo devolver un array con las id generadas
-    protected function insert(array $datas, bool $getId = false)
+    protected function insert(array $datas, bool $getId = false): bool|array
     {
         //Ejemplos:
         /*
@@ -101,7 +101,7 @@ abstract class BaseModel
         }
     }
 
-    private function insertOne(array $data, bool $getId = false)
+    private function insertOne(array $data, bool $getId = false): bool|string
     {
         $data = $this->sanitizeAll($data);
         $columns = implode(', ', array_keys($data));
@@ -128,7 +128,7 @@ abstract class BaseModel
         }
     }
 
-    protected function select(string $columns = '*', string $where = '')
+    protected function select(string $columns = '*', string $where = ''): bool|array
     {
         //Ejemplo:
         //print_r($usuario->select());
@@ -153,7 +153,7 @@ abstract class BaseModel
         }
     }
 
-    public function addQuotesIfNecessary($miString)
+    public function addQuotesIfNecessary(string $miString): string
     {
         if (is_string($miString)) {
             $miString = trim($miString);
@@ -168,7 +168,7 @@ abstract class BaseModel
         return $miString;
     }
 
-    protected function update(array $data, string $where)
+    protected function update(array $data, string $where): bool
     {
         $updateData = '';
         $bindValues = [];
@@ -210,7 +210,7 @@ abstract class BaseModel
         }
     }
 
-    protected function delete(string $where)
+    protected function delete(string $where): bool
     {
         // Ejecuta DELETE sin filtro WHERE
         $query = "DELETE FROM $this->tableName WHERE $where";
@@ -231,7 +231,7 @@ abstract class BaseModel
         }
     }
 
-    public function selectAllowedValues($columnName)
+    public function selectAllowedValues(string $columnName): bool|array
     {
         $query = "SELECT COLUMN_TYPE 
                   FROM INFORMATION_SCHEMA.COLUMNS 
@@ -254,22 +254,22 @@ abstract class BaseModel
         }
     }
 
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         return $this->con->beginTransaction();
     }
 
-    public function commit()
+    public function commit(): bool
     {
         return $this->con->commit();
     }
 
-    public function rollBack()
+    public function rollBack(): bool
     {
         return $this->con->rollBack();
     }
 
-    private function sanitizeAll(array|string $data)
+    private function sanitizeAll(array|string $data): array|string|null
     {
         if (is_array($data)) {
             $cleanedData = [];
@@ -283,7 +283,7 @@ abstract class BaseModel
         }
     }
 
-    private function sanitizeString(string $myString)
+    private function sanitizeString(string $myString): string
     {
         $restrictedWords = ["<script>", "</script>", "<script src", "<script type=", "SELECT * FROM", "SELECT ", " SELECT ", "DELETE FROM", "INSERT INTO", "DROP TABLE", "DROP DATABASE", "TRUNCATE TABLE", "SHOW TABLES", "SHOW DATABASES", "<?php", "?>", "--", "^", "<", ">", "==", "=", ";", "::"];
 

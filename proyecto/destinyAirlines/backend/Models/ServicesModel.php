@@ -9,7 +9,7 @@ final class ServicesModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function readSubTypeAndBillingCategoryFromIdServices(array|int $idServices)
+    public function readSubTypeAndBillingCategoryFromIdServices(array|int $idServices): bool|array|string
     {
         if (is_array($idServices)) {
             $idServicesList = implode(',', $idServices);
@@ -26,7 +26,7 @@ final class ServicesModel extends BaseModel
         }
     }
 
-    public function readSubTypeFromIdServices(array|int $idServices)
+    public function readSubTypeFromIdServices(array|int $idServices): bool|array|string
     {
         if (is_array($idServices)) {
             $idServicesList = implode(',', $idServices);
@@ -43,17 +43,17 @@ final class ServicesModel extends BaseModel
         }
     }
 
-    public function readIndividualActiveServicePaidCodes()
+    public function readIndividualActiveServicePaidCodes(): bool|array
     {
         return parent::select('serviceCode', 'serviceGroupingType = "individual" AND billingCategory = "PaidService" AND status = "active" ');
     }
 
-    public function readCollectiveActiveServicePaidCodes()
+    public function readCollectiveActiveServicePaidCodes(): bool|array
     {
         return parent::select('serviceCode', 'serviceGroupingType = "collective" AND billingCategory = "PaidService"  AND status = "active" ');
     }
 
-    public function readServicePrices(array $serviceCodes)
+    public function readServicePrices(array $serviceCodes): array
     {
         $serviceCodes = "'" . implode("','", $serviceCodes) . "'";
         $prices = parent::select('serviceCode, priceOrDiscount AS price', "serviceCode IN ($serviceCodes)");
@@ -66,7 +66,7 @@ final class ServicesModel extends BaseModel
         return $servicePrices;
     }
 
-    public function readServicePrice(string $serviceCode)
+    public function readServicePrice(string $serviceCode): float|int
     {
         $price = parent::select('priceOrDiscount AS price', "serviceCode = '$serviceCode'");
 
@@ -79,12 +79,12 @@ final class ServicesModel extends BaseModel
     }
 
 
-    public function readServiceDiscount(string $serviceCode)
+    public function readServiceDiscount(string $serviceCode): bool|array
     {
         return parent::select('priceOrDiscount', "serviceCode = '$serviceCode'  AND status = 'active'  ")[0]['priceOrDiscount'];
     }
 
-    public function getServiceIdsFromCodes($serviceCodes)
+    public function getServiceIdsFromCodes(string|array $serviceCodes): bool|string|array
     {
         if (is_array($serviceCodes)) {
             $serviceCodes = "'" . implode("','", $serviceCodes) . "'";

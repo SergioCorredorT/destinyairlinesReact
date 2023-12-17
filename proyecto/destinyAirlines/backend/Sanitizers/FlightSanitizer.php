@@ -1,11 +1,11 @@
 <?php
 class FlightSanitizer
 {
-    public static function sanitizeFlightCode($flightCode)
+    public static function sanitizeFlightCode(string $flightCode): string
     {
         return htmlspecialchars(trim($flightCode));
     }
-    public static function sanitizePeopleNumber($peopleNumber)
+    public static function sanitizePeopleNumber(string $peopleNumber): int
     {
         if (is_numeric($peopleNumber)) {
             return intval($peopleNumber);
@@ -14,12 +14,12 @@ class FlightSanitizer
         }
     }
 
-    public static function sanitizeDirection($direction)
+    public static function sanitizeDirection(string $direction): string
     {
         return htmlspecialchars(trim($direction));
     }
 
-    public static function sanitize(array $data)
+    public static function sanitize(array $data): array
     {
         //Si es "", o null, o no está definida no se ejecutará el saneamiento
         if (!empty($data['flightCode'])) $data["flightCode"] = self::sanitizeFlightCode($data['flightCode']);

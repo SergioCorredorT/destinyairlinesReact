@@ -216,42 +216,11 @@ enum ageCategory {
 Table ADDITIONAL_INFORMATIONS {
   id_ADDITIONAL_INFORMATIONS int [pk, increment]
   id_PASSENGERS int [unique, not null]
-  assistiveDevices assistiveDevicesEnum
-  medicalEquipment medicalEquipmentEnum
-  mobilityLimitations mobilityLimitationsEnum
-  communicationNeeds communicationNeedsEnum
-  medicationRequirements medicationRequirementsEnum
+  assistiveDevices varchar(50)
+  medicalEquipment varchar(50)
+  mobilityLimitations varchar(50)
+  communicationNeeds varchar(50)
+  medicationRequirements varchar(50)
 }
 
 Ref: ADDITIONAL_INFORMATIONS.id_PASSENGERS > PASSENGERS.id_PASSENGERS [delete: cascade]
-
-Enum assistiveDevicesEnum {
-  wheelchair
-  serviceAnimal
-  crutches
-  cane
-  other
-}
-
-Enum medicalEquipmentEnum {
-  oxygenTank
-  CPAPMachine
-  other
-}
-
-Enum mobilityLimitationsEnum {
-  difficultyWalking
-  difficultyClimbingStairs
-  other
-}
-
-Enum communicationNeedsEnum {
-  signLanguageInterpreter
-  hearingAid
-  other
-}
-
-Enum medicationRequirementsEnum {
-  insulin
-  other
-}

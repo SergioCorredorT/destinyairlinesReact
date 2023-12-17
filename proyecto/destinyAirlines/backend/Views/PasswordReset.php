@@ -131,7 +131,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
                 sendToBackend();
             }
 
-            function sendToBackend(password = '') {
+            function sendToBackend(password = '')
+            {
                 var form = document.getElementById('passwordResetForm');
                 var formData = new FormData(form);
 

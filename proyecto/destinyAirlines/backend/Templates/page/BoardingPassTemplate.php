@@ -6,7 +6,7 @@ require_once ROOT_PATH . '/Tools/QrTool.php';
 require_once ROOT_PATH . '/Templates/page/PageBaseTemplate.php';
 class BoardingPassPageTemplate extends PageBaseTemplate
 {
-  static function  applyBoardingPassPageTemplate(array $data)
+  static function  applyBoardingPassPageTemplate(array $data): string
   {
     $qrTool = new QrTool();
     $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');

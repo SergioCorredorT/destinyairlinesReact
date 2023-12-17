@@ -3,7 +3,7 @@ require_once "./Tools/IniTool.php";
 require_once "./Templates/email/EmailBaseTemplate.php";
 class FailedAttemptsTemplate extends EmailBaseTemplate
 {
-  static function applyEmailFailedAttemptsTemplate(array $data)
+  static function applyEmailFailedAttemptsTemplate(array $data): string
   {
     $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
     $aboutLogin = $iniTool->getKeysAndValues("aboutLogin");

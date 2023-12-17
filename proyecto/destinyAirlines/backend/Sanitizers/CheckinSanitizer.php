@@ -1,7 +1,7 @@
 <?php
 class CheckinSanitizer
 {
-    public static function sanitizeBookCode($bookCode)
+    public static function sanitizeBookCode(string $bookCode): string
     {
         // Elimina todos los caracteres que no sean números, guiones, letras mayúsculas o minúsculas, y letras españolas
         $sanitizedBookCode = preg_replace('/[^0-9a-zA-Z\-áéíóúÁÉÍÓÚñÑ]/u', '', $bookCode);

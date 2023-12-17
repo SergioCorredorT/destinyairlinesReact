@@ -3,7 +3,7 @@ require_once ROOT_PATH . '/vendor/autoload.php';
 require_once ROOT_PATH . '/Tools/TemplateTool.php';
 class EmailTool
 {
-    public static function sendEmail(array $data, string $template = '', $pdf = null, $pdfName = '')
+    public static function sendEmail(array $data, string $template = '', $pdf = null, $pdfName = ''): bool
     {
         $toEmail = $data['toEmail'];
         $subject = $data['subject'];

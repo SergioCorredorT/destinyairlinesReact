@@ -2,14 +2,14 @@
 require_once ROOT_PATH . '/vendor/autoload.php';
 class PdfTool
 {
-    public static function generatePdfFromHtml(string $html, $isVertical = true)
+    public static function generatePdfFromHtml(string $html, bool $isVertical = true): string|null
     {
         $pdf = self::generatePdfDomPDF($html, $isVertical);
 
         return $pdf;
     }
 
-    public static function generatePdfDomPDF(string $html, bool $isVertical = true)
+    public static function generatePdfDomPDF(string $html, bool $isVertical = true): string|null
     {
         //No entiende display grid, pero no hay mejor librería pdf
         $dompdf = new \Dompdf\Dompdf();

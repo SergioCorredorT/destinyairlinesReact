@@ -9,7 +9,7 @@ final class AdditionalInformationModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function isAllowedValue($value, $columnName)
+    public function isAllowedValue(string|int $value, string $columnName): bool
     {
         $allowedValues = parent::selectAllowedValues($columnName);
 
@@ -19,7 +19,7 @@ final class AdditionalInformationModel extends BaseModel
         return false;
     }
 
-    public function createMultipleAdditionalInformations(array $data)
+    public function createMultipleAdditionalInformations(array $data): bool|string
     {
         return parent::insertMultiple($data);
     }

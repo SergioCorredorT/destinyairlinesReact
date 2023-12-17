@@ -1,7 +1,7 @@
 <?php
 class BookInfoValidator
 {
-    public static function validateBookCode($bookCode)
+    public static function validateBookCode(string $bookCode): bool
     {
         if (strlen($bookCode) < 5) {
             return false;
@@ -9,7 +9,7 @@ class BookInfoValidator
         return true;
     }
 
-    public static function validate($data)
+    public static function validate(array $data): bool
     {
         if (isset($data['bookCode']) && !self::validateBookCode($data['bookCode'])) {
             return false;

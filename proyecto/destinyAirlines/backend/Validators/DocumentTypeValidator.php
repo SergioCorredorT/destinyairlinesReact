@@ -1,7 +1,7 @@
 <?php
 class DocumentTypeValidator
 {
-    public static function validateDocumentType(string $docType, string $docCode)
+    public static function validateDocumentType(string $docType, string $docCode): bool
     {
         if (empty($docType)) {
             return false;

@@ -1,7 +1,7 @@
 <?php
 class SessionTool
 {
-    public static function startSession(string $sessionName = 'MiSesion', int $sessionLifetime = 60 * 60 * 10)
+    public static function startSession(string $sessionName = 'MiSesion', int $sessionLifetime = 60 * 60 * 10): bool
     {
         if (session_status() == PHP_SESSION_NONE) {
             session_name($sessionName);
@@ -12,9 +12,10 @@ class SessionTool
             session_name($sessionName);
             session_start();
         }
+        return true;
     }
 
-    public static function set(string|array $key, $value, string $sessionName = 'MiSesion')
+    public static function set(string|array $key, $value, string $sessionName = 'MiSesion'): bool
     {
         self::startSession($sessionName);
         $value = is_array($value) ? $value : serialize($value);
@@ -30,9 +31,10 @@ class SessionTool
         } else {
             $_SESSION[$key] = $value;
         }
+        return true;
     }
 
-    public static function get(string|array $key, string $sessionName = 'MiSesion')
+    public static function get(string|array $key, string $sessionName = 'MiSesion'): null|array|string
     {
         self::startSession($sessionName);
         if (is_array($key)) {
@@ -49,7 +51,7 @@ class SessionTool
         }
     }
 
-    public static function getAll(string $sessionName = 'MiSesion')
+    public static function getAll(string $sessionName = 'MiSesion'): null|array
     {
         self::startSession($sessionName);
         $sessionArray = [];
@@ -59,27 +61,28 @@ class SessionTool
         return $sessionArray;
     }
 
-    public static function remove($key, string $sessionName = 'MiSesion')
+    public static function remove(string|array $key, string $sessionName = 'MiSesion'): bool
     {
         self::startSession($sessionName);
         if (is_array($key)) {
             $session = &$_SESSION;
             foreach ($key as $i => $k) {
                 if (!isset($session[$k])) {
-                    return;
+                    return false;
                 }
                 if ($i == count($key) - 2) {
                     unset($session[$k][$key[$i + 1]]);
-                    return;
+                    return true;
                 }
                 $session = &$session[$k];
             }
         } else {
             unset($_SESSION[$key]);
         }
+        return true;
     }
 
-    public static function destroy(string $sessionName = 'MiSesion')
+    public static function destroy(string $sessionName = 'MiSesion'): bool
     {
         self::startSession($sessionName);
         $_SESSION = array();

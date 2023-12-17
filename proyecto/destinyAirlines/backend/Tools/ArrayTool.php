@@ -1,7 +1,7 @@
 <?php
 class ArrayTool
 {
-    public function getUniqueValues(array $data, string $field)
+    public function getUniqueValues(array $data, string $field): array
     {
         $values = [];
         foreach ($data as $item) {
@@ -10,7 +10,7 @@ class ArrayTool
         return array_keys($values);
     }
 
-    public function groupByField(array $data, string $field)
+    public function groupByField(array $data, string $field): array
     {
         $groupedData = [];
         foreach ($data as $item) {

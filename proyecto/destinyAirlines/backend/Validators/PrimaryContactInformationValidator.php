@@ -1,7 +1,7 @@
 <?php
 class PrimaryContactInformationValidator
 {
-    public static function validateDocumentation($docType, $docCode)
+    public static function validateDocumentation(string $docType, string $docCode): bool
     {
         require_once ROOT_PATH . '/Validators/DocumentTypeValidator.php';
         if(!DocumentTypeValidator::validateDocumentType($docType, $docCode)) {
@@ -11,7 +11,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateExpirationDate($expirationDate)
+    public static function validateExpirationDate(string $expirationDate): bool
     {
         // Comprueba si la fecha de expiración está en el formato correcto (YYYY-MM-DD)
         if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/', $expirationDate)) {
@@ -29,7 +29,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateTitle($title)
+    public static function validateTitle(string $title): bool
     {
         // Comprueba si el título está vacío
         if (empty($title)) {
@@ -45,7 +45,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateFirstName($firstName)
+    public static function validateFirstName(string $firstName): bool
     {
         // Comprueba si el nombre está vacío
         if (empty($firstName)) {
@@ -60,7 +60,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateLastName($lastName)
+    public static function validateLastName(string $lastName): bool
     {
         // Comprueba si el apellido está vacío
         if (empty($lastName)) {
@@ -75,7 +75,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateEmailAddress($emailAddress)
+    public static function validateEmailAddress(string $emailAddress): bool
     {
         if (strlen($emailAddress) < 7 || !filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
             return false;
@@ -83,7 +83,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validatePhoneNumber1($phoneNumber1)
+    public static function validatePhoneNumber1(string $phoneNumber1): bool
     {
         if ($phoneNumber1 != "" && !preg_match("/^(\+?[0-9]{9,})$/", $phoneNumber1)) {
             return false;
@@ -91,7 +91,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validatePhoneNumber2($phoneNumber1)
+    public static function validatePhoneNumber2(string $phoneNumber1): bool
     {
         if ($phoneNumber1 != "" && !preg_match("/^(\+?[0-9]{9,})$/", $phoneNumber1)) {
             return false;
@@ -99,7 +99,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateCountry($country)
+    public static function validateCountry(string $country): bool
     {
         // Comprueba si el país está vacío
         if (empty($country)) {
@@ -114,7 +114,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateTownCity($townCity)
+    public static function validateTownCity(string $townCity): bool
     {
         if ($townCity != "" && strlen($townCity) < 2) {
             return false;
@@ -122,7 +122,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateStreetAddress($streetAddress)
+    public static function validateStreetAddress(string $streetAddress): bool
     {
         if ($streetAddress != "" && strlen($streetAddress) < 2) {
             return false;
@@ -130,7 +130,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateZipCode($zipCode)
+    public static function validateZipCode(string $zipCode): bool
     {
         if ($zipCode != "" && strlen($zipCode) < 2) {
             return false;
@@ -138,7 +138,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateCompanyName($companyName)
+    public static function validateCompanyName(string $companyName): bool
     {
         if ($companyName != "" && strlen($companyName) < 2) {
             return false;
@@ -146,7 +146,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateCompanyTaxNumber($companyTaxNumber)
+    public static function validateCompanyTaxNumber(string $companyTaxNumber): bool
     {
         if ($companyTaxNumber != "" && strlen($companyTaxNumber) < 2) {
             return false;
@@ -154,7 +154,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateCompanyPhoneNumber($companyPhoneNumber)
+    public static function validateCompanyPhoneNumber(string $companyPhoneNumber): bool
     {
         if ($companyPhoneNumber != "" && !preg_match("/^(\+?[0-9]{9,})$/", $companyPhoneNumber)) {
             return false;
@@ -162,7 +162,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validateDateBirth($dateBirth)
+    public static function validateDateBirth(string $dateBirth): bool
     {
         // Comprueba si la fecha de nacimiento está vacía
         if (empty($dateBirth)) {
@@ -196,7 +196,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validate($data)
+    public static function validate(array $data): bool
     {
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
             return false;

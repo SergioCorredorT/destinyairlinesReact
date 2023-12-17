@@ -9,7 +9,7 @@ final class passwordResetController extends BaseController
         parent::__construct();
     }
 
-    public function goToPasswordReset(array $GET)
+    public function goToPasswordReset(array $GET): bool
     {
         $keys_default = [
             'type' => '',

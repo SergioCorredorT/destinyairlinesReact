@@ -2,7 +2,7 @@
 
 class TemplateTool
 {
-    static function ApplyEmailTemplate(array $data, string $template)
+    static function ApplyEmailTemplate(array $data, string $template): string
     {
         switch (strtolower($template)) {
             case 'contacttemplate': {
@@ -32,7 +32,7 @@ class TemplateTool
         }
     }
 
-    static function ApplyPageTemplate(array $data, string $template)
+    static function ApplyPageTemplate(array $data, string $template): string
     {
         switch (strtolower($template)) {
             case 'invoicetemplate': {

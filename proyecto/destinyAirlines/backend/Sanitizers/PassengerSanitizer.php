@@ -1,25 +1,25 @@
 <?php
 class PassengerSanitizer
 {
-    public static function sanitizeDocumentationType($documentationType)
+    public static function sanitizeDocumentationType(string $documentationType): string
     {
         return htmlspecialchars(trim($documentationType));
     }
 
-    public static function sanitizeDocumentCode($documentCode)
+    public static function sanitizeDocumentCode(string $documentCode): string
     {
         // Aquí va tu código de saneamiento para 'documentCode'
         return htmlspecialchars(trim($documentCode));
     }
 
-    public static function sanitizeExpirationDate($expirationDate)
+    public static function sanitizeExpirationDate(string $expirationDate): string
     {
         // Elimina todos los caracteres que no sean números, guiones o barras
         $sanitizedExpirationDate = preg_replace('/[^0-9\-\/]/', '', $expirationDate);
         return $sanitizedExpirationDate;
     }
 
-    public static function sanitizeTitle($title)
+    public static function sanitizeTitle(string $title): string
     {
         // Elimina todos los números
         $sanitizedTitle = preg_replace('/[0-9]/', '', $title);
@@ -27,76 +27,76 @@ class PassengerSanitizer
     }
 
 
-    public static function sanitizeFirstName($firstName)
+    public static function sanitizeFirstName(string $firstName): string
     {
         $sanitizedTitle = preg_replace('/[0-9]/', '', $firstName);
         return htmlspecialchars(trim($sanitizedTitle));
     }
 
-    public static function sanitizeLastName($lastName)
+    public static function sanitizeLastName(string $lastName): string
     {
         // Elimina todos los números
         $sanitizedLastName = preg_replace('/[0-9]/', '', $lastName);
         return htmlspecialchars(trim($sanitizedLastName));
     }
 
-    public static function sanitizeNationality($nationality)
+    public static function sanitizeNationality(string $nationality): string
     {
         // Elimina todos los números
         $sanitizedNationality = preg_replace('/[0-9]/', '', $nationality);
         return htmlspecialchars(trim($sanitizedNationality));
     }
 
-    public static function sanitizeCountry($country)
+    public static function sanitizeCountry(string $country): string
     {
         // Elimina todos los números
         $sanitizedCountry = preg_replace('/[0-9]/', '', $country);
         return htmlspecialchars(trim($sanitizedCountry));
     }
 
-    public static function sanitizeDateBirth($dateBirth)
+    public static function sanitizeDateBirth(string $dateBirth): string
     {
         // Elimina todos los caracteres que no sean números, guiones o barras
         $sanitizedDateBirth = preg_replace('/[^0-9\-\/]/', '', $dateBirth);
         return $sanitizedDateBirth;
     }
 
-    public static function sanitizeAssistiveDevices($assistiveDevices)
+    public static function sanitizeAssistiveDevices(string $assistiveDevices): string
     {
         // Elimina todos los números
         $sanitizedAssistiveDevices = preg_replace('/[0-9]/', '', $assistiveDevices);
         return htmlspecialchars(trim($sanitizedAssistiveDevices));
     }
 
-    public static function sanitizeMedicalEquipment($medicalEquipment)
+    public static function sanitizeMedicalEquipment(string $medicalEquipment): string
     {
         // Elimina todos los números
         $sanitizedMedicalEquipment = preg_replace('/[0-9]/', '', $medicalEquipment);
         return htmlspecialchars(trim($sanitizedMedicalEquipment));
     }
 
-    public static function sanitizeMobilityLimitations($mobilityLimitations)
+    public static function sanitizeMobilityLimitations(string $mobilityLimitations): string
     {
         // Elimina todos los números
         $sanitizedMobilityLimitations = preg_replace('/[0-9]/', '', $mobilityLimitations);
         return htmlspecialchars(trim($sanitizedMobilityLimitations));
     }
 
-    public static function sanitizeCommunicationNeeds($communicationNeeds)
+    public static function sanitizeCommunicationNeeds(string $communicationNeeds): string
     {
         // Elimina todos los números
         $sanitizedCommunicationNeeds = preg_replace('/[0-9]/', '', $communicationNeeds);
         return htmlspecialchars(trim($sanitizedCommunicationNeeds));
     }
 
-    public static function sanitizeMedicationRequirements($medicationRequirements)
+    public static function sanitizeMedicationRequirements(string $medicationRequirements): string
     {
         // Elimina todos los números
         $sanitizedMedicationRequirements = preg_replace('/[0-9]/', '', $medicationRequirements);
         return htmlspecialchars(trim($sanitizedMedicationRequirements));
     }
 
-    public static function sanitizeIndividualServiceCodes($individualServiceCodes)
+    public static function sanitizeIndividualServiceCodes(string $individualServiceCodes): string
     {
         if (is_array($individualServiceCodes)) {
             return array_map('trim', array_map('htmlspecialchars', $individualServiceCodes));
@@ -104,7 +104,7 @@ class PassengerSanitizer
         return $individualServiceCodes;
     }
 
-    public static function sanitize(array $data)
+    public static function sanitize(array $data): array
     {
         //Si es "", o null, o no está definida no se ejecutará el saneamiento
         if (!empty($data['documentationType'])) $data["documentationType"] = self::sanitizeDocumentationType($data['documentationType']);

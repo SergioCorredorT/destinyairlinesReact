@@ -2,7 +2,7 @@
 require_once "./Tools/IniTool.php";
 abstract class  PageBaseTemplate
 {
-  static function getFooterContent()
+  static function getFooterContent(): string
   {
     $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
     $companyInfo = $iniTool->getKeysAndValues("companyInfo");
@@ -13,7 +13,7 @@ abstract class  PageBaseTemplate
       <p>$companyLegalInfo</p>";
   }
 
-  static function getHeaderLogo()
+  static function getHeaderLogo(): string
   {
     $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
     $imageLinks = $iniTool->getKeysAndValues("imageLinks");
@@ -23,7 +23,7 @@ abstract class  PageBaseTemplate
     </div>";
   }
 
-  static function getHeaderBody($subject)
+  static function getHeaderBody(string $subject): string
   {
     return "<div class='header-body'>
     <table>
@@ -39,19 +39,19 @@ abstract class  PageBaseTemplate
   </div>";
   }
 
-  static function getHeaderContent($subject)
+  static function getHeaderContent(string $subject): string
   {
     return self::getHeaderLogo() . self::getHeaderBody($subject);
   }
 
-  static function getHeadBaseContent($title)
+  static function getHeadBaseContent(string $title): string
   {
     return "<meta charset='UTF-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>$title</title>";
   }
 
-  static function getHeadContent($title)
+  static function getHeadContent(string $title): string
   {
     return self::getHeadBaseContent($title) . "
     <style>
@@ -59,12 +59,12 @@ abstract class  PageBaseTemplate
     </style>";
   }
 
-  static function getPMainText($message)
+  static function getPMainText(string $message): string
   {
     return "<p class='mainText'>$message</p>";
   }
 
-  static function getBaseCSSContent()
+  static function getBaseCSSContent(): string
   {
     return "        
     body * {

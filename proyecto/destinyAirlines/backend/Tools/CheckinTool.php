@@ -15,7 +15,7 @@ class CheckinTool
         });
     }
 
-    public function generateCheckinData(array $checkinData)
+    public function generateCheckinData(array $checkinData): array|bool
     {
         if (!isset($checkinData['bookCode'], $checkinData['flightDate'], $checkinData['flightHour'], $checkinData['idItinerary'], $checkinData['flightCode'])) {
             return false;
@@ -47,7 +47,7 @@ class CheckinTool
         ];
     }
 
-    public function generateBoardingPassHtml($checkinData)
+    public function generateBoardingPassHtml(array $checkinData): string
     {
         require_once ROOT_PATH . '/Tools/TemplateTool.php';
         $templateTool = new TemplateTool();

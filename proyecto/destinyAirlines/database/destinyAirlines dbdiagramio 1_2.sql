@@ -166,11 +166,11 @@ CREATE TABLE `PASSENGERS` (
 CREATE TABLE `ADDITIONAL_INFORMATIONS` (
   `id_ADDITIONAL_INFORMATIONS` int PRIMARY KEY AUTO_INCREMENT,
   `id_PASSENGERS` int UNIQUE NOT NULL,
-  `assistiveDevices` ENUM ('wheelchair', 'serviceAnimal', 'crutches', 'cane', 'other'),
-  `medicalEquipment` ENUM ('oxygenTank', 'CPAPMachine', 'other'),
-  `mobilityLimitations` ENUM ('difficultyWalking', 'difficultyClimbingStairs', 'other'),
-  `communicationNeeds` ENUM ('signLanguageInterpreter', 'hearingAid', 'other'),
-  `medicationRequirements` ENUM ('insulin', 'other')
+  `assistiveDevices` varchar(50),
+  `medicalEquipment` varchar(50),
+  `mobilityLimitations` varchar(50),
+  `communicationNeeds` varchar(50),
+  `medicationRequirements` varchar(50)
 );
 
 ALTER TABLE `AIRPORTS` ADD FOREIGN KEY (`id_CURRENCIES`) REFERENCES `CURRENCIES` (`id_CURRENCIES`);

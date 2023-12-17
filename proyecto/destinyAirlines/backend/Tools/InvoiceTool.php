@@ -4,8 +4,8 @@ class InvoiceTool
 
     public function __construct()
     {
-        spl_autoload_register(function (string $class_name) {
-
+        spl_autoload_register(function (string $class_name)
+        {
             $file = ROOT_PATH . '/models/' . $class_name . '.php';
 
             if (file_exists($file)) {
@@ -15,7 +15,7 @@ class InvoiceTool
         });
     }
 
-    public function generateInvoiceData($idUser, $idInvoice)
+    public function generateInvoiceData(int|string $idUser, int|string $idInvoice): array
     {
         $invoiceModel = new InvoiceModel();
         $bookModel = new BookModel();
@@ -116,7 +116,7 @@ class InvoiceTool
         ];
     }
 
-    public function generateInvoiceHtml($invoiceData)
+    public function generateInvoiceHtml(array $invoiceData): string
     {
         require_once ROOT_PATH . '/Tools/TemplateTool.php';
         $templateTool = new TemplateTool();

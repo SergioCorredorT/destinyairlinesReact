@@ -3,7 +3,7 @@ require_once "./Tools/IniTool.php";
 require_once "./Templates/email/EmailBaseTemplate.php";
 class InvoiceTemplate extends EmailBaseTemplate
 {
-  static function applyInvoiceTemplate(array $data)
+  static function applyInvoiceTemplate(array $data): string
   {
     $title = "Invoice";
     $subject = $data["subject"];

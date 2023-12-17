@@ -37,12 +37,12 @@
             $this->ifError=null;
         }
 
-        function getIfError()
+        function getIfError(): bool
         {
             return $this->ifError;
         }
 
-        function getKey(string $section, string $key)
+        function getValue(string $section, string $key): bool|string
         {
             if(isset($this->iniContain[$section][$key]))
             {
@@ -54,7 +54,7 @@
             }
         }
 
-        function getKeysAndValues(string $section)
+        function getKeysAndValues(string $section): bool|string|array
         {
             if(isset($this->iniContain[$section]))
             {
@@ -66,7 +66,7 @@
             }
         }
 
-        public function getSection(string $section)
+        public function getSection(string $section): bool|string
         {
             if(isset($this->iniContain[$section]))
             {

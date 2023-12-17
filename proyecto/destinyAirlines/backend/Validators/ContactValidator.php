@@ -1,7 +1,7 @@
 <?php
 class ContactValidator
 {
-    public static function validateName($name)
+    public static function validateName(string $name): bool
     {
         if (strlen($name) < 2) {
             return false;
@@ -9,7 +9,7 @@ class ContactValidator
         return true;
     }
 
-    public static function validateEmail($email)
+    public static function validateEmail(string $email): bool
     {
         if (strlen($email) < 7 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return false;
@@ -17,7 +17,7 @@ class ContactValidator
         return true;
     }
 
-    public static function validateSubject($subject)
+    public static function validateSubject(string $subject): bool
     {
         if (empty($subject)) {
             return false;
@@ -25,7 +25,7 @@ class ContactValidator
         return true;
     }
 
-    public static function validatePhone($phoneNumber)
+    public static function validatePhone(string $phoneNumber): bool
     {
         if (strlen($phoneNumber) < 9) {
             return false;
@@ -33,7 +33,7 @@ class ContactValidator
         return true;
     }
 
-    public static function validateMessage($message)
+    public static function validateMessage(string $message): bool
     {
         if (strlen($message) < 3) {
             return false;
@@ -41,7 +41,7 @@ class ContactValidator
         return true;
     }
 
-    public static function validate($data)
+    public static function validate(array $data): bool
     {
         if (isset($data['name']) && !self::validateName($data['name'])) {
             return false;

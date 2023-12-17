@@ -3,94 +3,94 @@ require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
 class UserSanitizer
 {
 
-    public static function sanitizeDocumentationType($documentationType)
+    public static function sanitizeDocumentationType(string $documentationType): string
     {
         return htmlspecialchars(trim($documentationType));
     }
 
-    public static function sanitizeDocumentCode($documentCode)
+    public static function sanitizeDocumentCode(string $documentCode): string
     {
         // Aquí va tu código de saneamiento para 'documentCode'
         return htmlspecialchars(trim($documentCode));
     }
 
-    public static function sanitizeExpirationDate($expirationDate)
+    public static function sanitizeExpirationDate(string $expirationDate): string
     {
         // Elimina todos los caracteres que no sean números, guiones o barras
         $sanitizedExpirationDate = preg_replace('/[^0-9\-\/]/', '', $expirationDate);
         return $sanitizedExpirationDate;
     }
 
-    public static function sanitizeTitle($title)
+    public static function sanitizeTitle(string $title): string
     {
         return htmlspecialchars(trim($title));
     }
 
-    public static function sanitizeFirstName($firstName)
+    public static function sanitizeFirstName(string $firstName): string
     {
         return htmlspecialchars(trim($firstName));
     }
-    public static function sanitizeLastName($lastName)
+    public static function sanitizeLastName(string $lastName): string
     {
         return htmlspecialchars(trim($lastName));
     }
-    public static function sanitizeTownCity($townCity)
+    public static function sanitizeTownCity(string $townCity): string
     {
         return htmlspecialchars(trim($townCity));
     }
-    public static function sanitizeStreetAddress($streetAddress)
+    public static function sanitizeStreetAddress(string $streetAddress): string
     {
         return htmlspecialchars(trim($streetAddress));
     }
-    public static function sanitizeZipCode($zipCode)
+    public static function sanitizeZipCode(string $zipCode): string
     {
         return htmlspecialchars(trim($zipCode));
     }
-    public static function sanitizeCountry($country)
+    public static function sanitizeCountry(string $country): string
     {
         return htmlspecialchars(trim($country));
     }
-    public static function sanitizeEmailAddress($emailAddress)
+    public static function sanitizeEmailAddress(string $emailAddress): string
     {
         return trim($emailAddress);
     }
-    public static function sanitizePassword($password)
+    public static function sanitizePassword(string $password): string
     {
         return $password;
     }
-    public static function sanitizePhoneNumber1($phoneNumber1)
+    public static function sanitizePhoneNumber1(string $phoneNumber1): string
     {
         return htmlspecialchars(trim($phoneNumber1));
     }
-    public static function sanitizePhoneNumber2($phoneNumber2)
+    public static function sanitizePhoneNumber2(string $phoneNumber2): string
     {
         return htmlspecialchars(trim($phoneNumber2));
     }
-    public static function sanitizePhoneNumber3($phoneNumber3)
+    public static function sanitizePhoneNumber3(string $phoneNumber3): string
     {
         return htmlspecialchars(trim($phoneNumber3));
     }
-    public static function sanitizeCompanyName($companyName)
+    public static function sanitizeCompanyName(string $companyName): string
     {
         return htmlspecialchars(trim($companyName));
     }
-    public static function sanitizeCompanyTaxNumber($companyTaxNumber)
+    public static function sanitizeCompanyTaxNumber(string $companyTaxNumber): string
     {
         return htmlspecialchars(trim($companyTaxNumber));
     }
-    public static function sanitizeCompanyPhoneNumber($companyPhoneNumber)
+    public static function sanitizeCompanyPhoneNumber(string $companyPhoneNumber): string
     {
         return htmlspecialchars(trim($companyPhoneNumber));
     }
 
-    public static function sanitizeDateBirth($dateBirth)
+    public static function sanitizeDateBirth(string $dateBirth): string
     {
         // Elimina todos los caracteres que no sean números, guiones o barras
         $sanitizedDateBirth = preg_replace('/[^0-9\-\/]/', '', $dateBirth);
         return $sanitizedDateBirth;
     }
 
-    public static function sanitize(array $data)
+    public static function sanitize(array $data): array
     {
         //Si es "", o null, o no está definida no se ejecutará el saneamiento
         if (!empty($data['documentationType'])) $data["documentationType"] = self::sanitizeDocumentationType($data['documentationType']);

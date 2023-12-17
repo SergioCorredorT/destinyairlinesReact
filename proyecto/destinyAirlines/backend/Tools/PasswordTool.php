@@ -1,7 +1,7 @@
 <?php
 class PasswordTool
 {
-    public static function generateRandomPassword(int $length = 10)
+    public static function generateRandomPassword(int $length = 10): string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()';
         $charactersLength = strlen($characters);

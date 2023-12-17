@@ -11,7 +11,7 @@ final class ContactController extends BaseController
         parent::__construct();
     }
 
-    public function sendContact(array $POST)
+    public function sendContact(array $POST): bool
     {
         $keys_default = [
             'name' => '',
@@ -24,7 +24,7 @@ final class ContactController extends BaseController
         foreach ($keys_default as $key => $defaultValue) {
             $contactData[$key] = $POST[$key] ?? $defaultValue;
         }
-        
+
         $contactData = ContactSanitizer::sanitize($contactData);
         $isValidate = ContactValidator::validate($contactData);
         if ($isValidate) {
@@ -44,7 +44,7 @@ final class ContactController extends BaseController
         return false;
     }
 
-    private function chooseToFromSubject(string $subject)
+    private function chooseToFromSubject(string $subject): string
     {
         //devolver el "to" (correo destino) según el subject según el cfg.ini
         $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');

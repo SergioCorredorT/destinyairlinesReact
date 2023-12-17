@@ -23,11 +23,11 @@ USE `destiny_airlines`;
 CREATE TABLE IF NOT EXISTS `additional_informations` (
   `id_ADDITIONAL_INFORMATIONS` int(11) NOT NULL AUTO_INCREMENT,
   `id_PASSENGERS` int(11) NOT NULL,
-  `assistiveDevices` enum('wheelchair','serviceAnimal','crutches','cane','other') DEFAULT NULL,
-  `medicalEquipment` enum('oxygenTank','CPAPMachine','other') DEFAULT NULL,
-  `mobilityLimitations` enum('difficultyWalking','difficultyClimbingStairs','other') DEFAULT NULL,
-  `communicationNeeds` enum('signLanguageInterpreter','hearingAid','other') DEFAULT NULL,
-  `medicationRequirements` enum('insulin','other') DEFAULT NULL,
+  `assistiveDevices` varchar(50) DEFAULT NULL,
+  `medicalEquipment` varchar(50) DEFAULT NULL,
+  `mobilityLimitations` varchar(50) DEFAULT NULL,
+  `communicationNeeds` varchar(50) DEFAULT NULL,
+  `medicationRequirements` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id_ADDITIONAL_INFORMATIONS`),
   KEY `additional_informations_ibfk_1` (`id_PASSENGERS`),
   CONSTRAINT `additional_informations_ibfk_1` FOREIGN KEY (`id_PASSENGERS`) REFERENCES `passengers` (`id_PASSENGERS`) ON DELETE CASCADE

@@ -9,7 +9,7 @@ final class AirplaneModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function getSeats($idAirplane)
+    public function getSeats(string|int $idAirplane): bool|array
     {
         return parent::select('seats', " id_AIRPLANES = $idAirplane ");
     }

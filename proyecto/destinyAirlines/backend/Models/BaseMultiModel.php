@@ -21,7 +21,7 @@ abstract class BaseMultiModel
         }
     }
 
-    protected function executeSql($sql, $params = [])
+    protected function executeSql(string $sql, array $params = []): bool|array
     {
         //Params contendrá un array asociativo con los nombres de los parámetros contenidos en el sql y su valor
         try {

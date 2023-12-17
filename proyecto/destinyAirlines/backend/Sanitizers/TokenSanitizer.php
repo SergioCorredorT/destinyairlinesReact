@@ -1,7 +1,7 @@
 <?php
 class TokenSanitizer
 {
-    public static function sanitizeToken(string $token)
+    public static function sanitizeToken(string $token): string
     {
         return str_replace('$', '', trim($token));
     }

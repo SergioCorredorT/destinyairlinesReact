@@ -11,7 +11,7 @@ final class TokenController extends BaseController
         parent::__construct();
     }
 
-    public function checkUpdateAccessToken($POST)
+    public function checkUpdateAccessToken(array $POST): bool|array
     {
         $accessToken = $POST['accessToken'];
         $accessToken = TokenSanitizer::sanitizeToken($accessToken);
@@ -26,7 +26,7 @@ final class TokenController extends BaseController
         return TokenTool::checkUpdateAccessToken($accessToken, $secondsMinTimeLifeAccessToken, $secondsMaxTimeLifeAccessToken);
     }
 
-    public function checkUpdateRefreshToken($POST)
+    public function checkUpdateRefreshToken(array $POST): bool|array
     {
         $refreshToken = $POST['refreshToken'];
         $refreshToken = TokenSanitizer::sanitizeToken($refreshToken);

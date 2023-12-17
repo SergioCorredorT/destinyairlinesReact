@@ -121,7 +121,7 @@ final class UserController extends BaseController
         }
 
         if (isset($userData['password'])) {
-            $userData['passwordHash'] = "'" . password_hash($userData["password"], PASSWORD_BCRYPT) . "'";
+            $userData['passwordHash'] = password_hash($userData["password"], PASSWORD_BCRYPT);
             unset($userData['password']);
         }
 

@@ -9,12 +9,12 @@ final class PassengerModel extends BaseModel
         parent::__construct(self::TABLE);
     }
 
-    public function readAllowedValues($columnName)
+    public function readAllowedValues(string $columnName): bool|array
     {
         return parent::selectAllowedValues($columnName);
     }
 
-    public function isAllowedValue($value, $columnName)
+    public function isAllowedValue(string|int $value, string $columnName): bool
     {
         $allowedValues = parent::selectAllowedValues($columnName);
 
@@ -24,12 +24,12 @@ final class PassengerModel extends BaseModel
         return false;
     }
 
-    public function readFirstNameLastNamePassengerCode($idBook)
+    public function readFirstNameLastNamePassengerCode(string|int $idBook): bool|array
     {
         return parent::select('firstName, lastName, passengerCode'," id_BOOKS = $idBook ");
     }
 
-    public function createPassengers(array $data, bool $getId = false)
+    public function createPassengers(array $data, bool $getId = false): bool|array
     {
         return parent::insert($data, $getId);
     }

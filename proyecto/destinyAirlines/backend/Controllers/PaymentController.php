@@ -44,8 +44,7 @@ final class PaymentController extends BaseController
         $dedodedPaymentToken = TokenTool::decodeAndCheckToken($paymentDetails['token'], 'paypalredirectok');
         if (isset($dedodedPaymentToken['errorName'])) {
             error_log($dedodedPaymentToken['errorName']);
-            header('Location: ./Views/cancelPaymentPage.html');
-            exit;
+            return $this->paypalRedirectCancel();
         }
 
         //Cambiar el isPais de la tabla invoices aquí
@@ -116,7 +115,7 @@ final class PaymentController extends BaseController
 
     public function paypalRedirectCancel()
     {
-        header('Location: ./Views/cancelPaymentPage.html');
-        exit;
+        header('Location: ' . ROOT_PATH . '/Views/cancelPaymentPage.html');
+        return false;
     }
 }

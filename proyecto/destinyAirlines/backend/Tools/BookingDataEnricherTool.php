@@ -6,7 +6,7 @@ require_once ROOT_PATH . '/Models/ServicesModel.php';
 
 class BookingDataEnricherTool
 {
-    public function getCompleteBookWithPricesFromSession(string $direction)
+    public function getCompleteBookWithPricesFromSession(string $direction): array
     {
         $bookData =    SessionTool::getAll()[$direction];
 
@@ -23,14 +23,14 @@ class BookingDataEnricherTool
         return $bookData;
     }
 
-    private function setFlightPrice(&$flightDetails)
+    private function setFlightPrice(&$flightDetails): void
     {
         $flightModel = new FlightModel();
         $flightPrice = $flightModel->getFlightPrice($flightDetails['flightCode']);
         $flightDetails['flightPrice'] = $flightPrice;
     }
 
-    private function setPassengersPrice(&$passengersDetails)
+    private function setPassengersPrice(&$passengersDetails): void
     {
         $servicesModel = new ServicesModel();
         $serviceCodes = [];
@@ -58,7 +58,7 @@ class BookingDataEnricherTool
         }
     }
 
-    private function setBookServicesPrice(&$bookServicesDetails)
+    private function setBookServicesPrice(&$bookServicesDetails): void
     {
         $servicesModel = new ServicesModel();
         if (!empty($bookServicesDetails)) {
