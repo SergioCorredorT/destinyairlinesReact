@@ -1,5 +1,4 @@
-# destinyairlinesReact
-Este es un proyecto 
+# destiny Airlines
 > [!IMPORTANT]
 > EN CONSTRUCCIÓN
 > La API php está terminada, a falta de más pruebas para encontrar bugs
