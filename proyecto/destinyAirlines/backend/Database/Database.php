@@ -2,9 +2,9 @@
 final class Database
 {
     private static $instance = null;
-    private $conn;
+    private $conn = null;
 
-    private function __construct($config)
+    private function __construct(array $config)
     {
         try {
             $dsn = "mysql:host={$config['host']};dbname={$config['dbname']};port={$config['port']}";
@@ -22,7 +22,7 @@ final class Database
         }
     }
 
-    public static function getInstance($config)
+    public static function getInstance(array $config): self
     {
         if (self::$instance === null) {
             self::$instance = new self($config);
@@ -30,15 +30,16 @@ final class Database
         return self::$instance;
     }
 
-    public function getConnection()
+    public function getConnection(): PDO|null
     {
         return $this->conn;
     }
 
-    public function destroyConnection()
+    public function destroyConnection(): bool
     {
         $this->conn = null;
         self::$instance = null;
+        return true;
     }
 }
 ?>

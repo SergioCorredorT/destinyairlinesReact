@@ -10,19 +10,6 @@ final class PaymentController extends BaseController
         parent::__construct();
     }
 
-    public function debugPaypalRedirectOk()
-    {
-        require_once ROOT_PATH . '/Tools/TokenTool.php';
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $tokenSettings = $iniTool->getKeysAndValues('tokenSettings');
-
-        //CREAR TOKEN de 3 horas (caducidad de paypal en su web)
-        $data = ['id' => 138, 'idUser' => 138, 'idInvoiceD' => 30, 'type' => 'paypalredirectok'];
-        $paymentToken = TokenTool::generateToken($data, intval($tokenSettings['secondsTimeLifePaymentReturnUrl']));
-        return $this->paypalRedirectOk(['token' => $paymentToken]);
-    }
-
     public function paypalRedirectOk(array $GET)
     {
         require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
