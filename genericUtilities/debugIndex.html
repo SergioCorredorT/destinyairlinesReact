@@ -1466,7 +1466,7 @@
     <script>
       function nullifyInput(checkbox, querySelector) {
         //Solo se envían los campos que tengan name
-        var input = document.querySelector(querySelector);
+        const input = document.querySelector(querySelector);
         if (checkbox.checked) {
           input.removeAttribute("name");
         } else {
@@ -1477,8 +1477,9 @@
       function handleFormSubmit(event) {
         event.preventDefault();
 
-        var formData = new FormData(event.target);
-        var responseTextArea = document.getElementById("responseTextArea");
+        const formData = new FormData(event.target);
+        //const formData = Object.fromEntries(FormData(event.target));
+        const responseTextArea = document.getElementById("responseTextArea");
 
         fetch(event.target.action, {
           method: "POST",
@@ -1486,8 +1487,8 @@
         })
           .then((response) => response.text())
           .then((responseText) => {
-            var response = JSON.parse(responseText);
-            var responseTextValue = "Prueba: " + JSON.stringify(response);
+            const response = JSON.parse(responseText);
+            const responseTextValue = "Prueba: " + JSON.stringify(response);
             responseTextArea.value = responseTextValue;
           })
           .catch((error) => console.error(error));
@@ -1496,7 +1497,7 @@
       }
 
       document.addEventListener("mousemove", function (e) {
-        var brillo = document.getElementById("brillo");
+        const brillo = document.getElementById("brillo");
         brillo.style.left = e.pageX - 25 + "px";
         brillo.style.top = e.pageY - 25 + "px";
         brillo.style.display = "block";
@@ -1505,14 +1506,14 @@
       document
         .querySelector(".nullButton")
         .addEventListener("click", function (e) {
-          var checkboxes = document.getElementsByClassName("checkNullify");
+          const checkboxes = document.getElementsByClassName("checkNullify");
           let valueCheckbox = true;
           if (checkboxes[0].checked) {
             valueCheckbox = false;
           }
           for (var i = 0; i < checkboxes.length; i++) {
             checkboxes[i].checked = valueCheckbox;
-            var event = new Event("change");
+            const event = new Event("change");
             checkboxes[i].dispatchEvent(event);
           }
         });

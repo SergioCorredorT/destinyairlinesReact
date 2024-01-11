@@ -1,0 +1,17 @@
+[Seleccionadas]
+    Vite
+    react router dom
+    useSignal (useState y useContext)
+    Jest para test (y vitest?)
+    fetch o axios (viciarse el fetch primero)
+    CSS Modules
+    typescript
+
+[servidores]
+    Netlify para frontend
+    ¿? para backend
+    ¿? para bbdd
+
+
+[Descartadas]
+    Zustand (por preferir simplicidad a la funcionalidad)

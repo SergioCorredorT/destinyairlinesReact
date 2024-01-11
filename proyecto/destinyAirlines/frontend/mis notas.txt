@@ -2,6 +2,4 @@ usar axios en front para peticiones al back
 
 modificar title en front al perder foco el window
 
-qr
-whatsapp
 mostrar datos del propio user logueado
