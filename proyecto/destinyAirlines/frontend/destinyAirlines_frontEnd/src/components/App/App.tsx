@@ -1,4 +1,3 @@
-import React from "react";
 import "normalize.css"
 import styles from "./App.module.css"
 import { Header } from "../Header/Header"

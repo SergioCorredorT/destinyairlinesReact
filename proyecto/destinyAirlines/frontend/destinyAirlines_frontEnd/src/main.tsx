@@ -1,14 +1,14 @@
-import React from "react";
+import { createRoot } from "react-dom/client";
+
+import "../src/globalStyles/variables.css";
 import { App } from "./components/App/App";
 import "./main.css";
-import { createRoot } from "react-dom/client";
-import "../variables.css";
 
 const appElement = document.getElementById("app");
 
-if (appElement) {
-  const root = createRoot(appElement);
-  root.render(<App />);
-} else {
-  console.error("Element not found, id 'app'");
+if (!appElement) {
+  throw new Error("Element not found, id 'app'");
 }
+
+const root = createRoot(appElement);
+root.render(<App />);

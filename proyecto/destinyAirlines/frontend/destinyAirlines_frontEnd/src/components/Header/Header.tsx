@@ -1,10 +1,14 @@
-import React from'react';
 import styles from './Header.module.css';
-
+import logo from '../../images/Branding/isologo.PNG';
 export function Header() {
   return (
     <header>
-      <h1>Hello Header</h1>
+      <div>
+        <img src={logo} />
+      </div>
+      <div>
+        Login
+      </div>
     </header>
   );
 }
