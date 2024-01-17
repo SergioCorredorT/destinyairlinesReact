@@ -6,8 +6,13 @@ export function Header() {
       <div>
         <img src={logo} />
       </div>
-      <div>
-        Login
+      <div className={styles.loginControls}>
+        <button>
+          Sign in
+        </button>
+        <button>
+          Sign up
+        </button>
       </div>
     </header>
   );

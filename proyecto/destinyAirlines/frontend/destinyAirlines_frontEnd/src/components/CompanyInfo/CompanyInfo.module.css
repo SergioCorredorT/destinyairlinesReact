@@ -10,10 +10,15 @@
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-
 }
 
 .companyInfo > img {
     box-sizing: border-box;
     width: 100%;
+}
+
+.companyInfo .pTitle {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
 }

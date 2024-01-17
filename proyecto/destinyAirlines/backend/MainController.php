@@ -3,24 +3,27 @@
 if (!isset($_SERVER['HTTP_ORIGIN'])) {
     return false;
 }
+define('ROOT_PATH', __DIR__);
+require_once ROOT_PATH . '/Tools/IniTool.php';
+$iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+$requestConfiguration = $iniTool->getKeysAndValues('requestConfiguration');
 //Para averiguar el dominio de la petición recibida
 //error_log('Access-Control-Allow-Origin needed: ' . $_SERVER['HTTP_ORIGIN']);
 
 // Configuración de la petición permitida
-    // Establece la cabecera 'Access-Control-Allow-Origin' para permitir peticiones desde un origen específico
-    header('Access-Control-Allow-Origin: http://localhost:5173');
+// Establece la cabecera 'Access-Control-Allow-Origin' para permitir peticiones desde un origen específico
+header('Access-Control-Allow-Origin: ' . $requestConfiguration["accessControlAllowOrigin"]);
 
-    // Opcional: Establece la cabecera 'Access-Control-Allow-Methods' para permitir métodos HTTP específicos como GET, POST, PUT, DELETE
-    header('Access-Control-Allow-Methods: GET, POST');
+// Opcional: Establece la cabecera 'Access-Control-Allow-Methods' para permitir métodos HTTP específicos como GET, POST, PUT, DELETE
+header('Access-Control-Allow-Methods: ' . $requestConfiguration["accessControlAllowMethods"]);
 
-    // Opcional: Establece la cabecera 'Access-Control-Allow-Headers' para permitir cabeceras HTTP específicas
-    header('Access-Control-Allow-Headers: Content-Type');
+// Opcional: Establece la cabecera 'Access-Control-Allow-Headers' para permitir cabeceras HTTP específicas
+header('Access-Control-Allow-Headers: ' . $requestConfiguration["accessControlAllowHeaders"]);
 
 // En la siguiente línea se recogen los datos recibidos mediante JSON, de forma que se pueden recibir JSON, GET y POST
 $data = json_decode(file_get_contents('php://input'), true);
 
 $command = $data['command'] ?? $_POST['command'] ?? $_GET['command'] ?? '';
-define('ROOT_PATH', __DIR__);
 
 function executeCommand(string $controllerName, string $methodName, array $params): array
 {
