@@ -1,4 +1,9 @@
-header {
-    display: grid;
+.header {
+    display: flex;
     justify-content: space-between;
+    flex-direction: row;
+}
+
+.header, .header div, .header img {
+    height: 100%;
 }

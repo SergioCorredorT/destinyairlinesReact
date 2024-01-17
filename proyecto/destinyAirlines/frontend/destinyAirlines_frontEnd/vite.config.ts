@@ -4,5 +4,5 @@ import million from 'million/compiler';
 
 export default defineConfig({
     assetsInclude: ['**/*.PNG'],
-    plugins: [million.vite({ auto: true }), react()],
+    plugins: [ react(), million.vite({ auto: true })], //Aquí da error en la visualización de código en vscode porque typescript es incompatible con million. Aunque al ejecutarlo vite lo hace funcionar
 })

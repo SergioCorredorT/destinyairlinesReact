@@ -1,9 +1,20 @@
-import React from'react';
-import "./Footer.css"
-export function Footer() {
+import { lazy, FC, ReactElement, LazyExoticComponent } from "react";
+import styles from "./Footer.module.css";
+import ErrorBoundary from "../ErrorBoundary/ErrorBoundary";
+import { Suspense } from "react";
+// Aquí usamos React.lazy para hacer una importación dinámica de CompanyInfo
+const CompanyInfo: LazyExoticComponent<FC> = lazy(
+  () => import("../CompanyInfo/CompanyInfo")
+);
+
+export const Footer: FC = (): ReactElement => {
   return (
-    <footer>
-      <h1>Hello Footer</h1>
+    <footer className={styles.footer}>
+      <ErrorBoundary>
+        <Suspense fallback={<div>Cargando...</div>}>
+          <CompanyInfo />
+        </Suspense>
+      </ErrorBoundary>
     </footer>
   );
-}
+};

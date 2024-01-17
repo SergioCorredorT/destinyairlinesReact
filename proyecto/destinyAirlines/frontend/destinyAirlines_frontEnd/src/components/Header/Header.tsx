@@ -1,8 +1,8 @@
-import styles from './Header.module.css';
 import logo from '../../images/Branding/isologo.PNG';
+import styles from './Header.module.css';
 export function Header() {
   return (
-    <header>
+    <header className={styles.header}>
       <div>
         <img src={logo} />
       </div>
