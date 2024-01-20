@@ -7,9 +7,10 @@
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 10px;
-    background-color: #fff;
+    background-color: var(--primary-color);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    grid-auto-flow: dense;
 }
 
 .companyInfo > img {

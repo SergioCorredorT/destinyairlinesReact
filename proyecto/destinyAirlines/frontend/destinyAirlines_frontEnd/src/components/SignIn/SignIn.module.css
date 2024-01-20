@@ -1,0 +1,39 @@
+.form {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+    align-items: end;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.inputGroup label {
+    font-weight: 500;
+}
+
+.signIn {
+    display: flex;
+    align-content: space-evenly;
+    flex-direction: column;
+}
+
+.signIn h2 {
+    margin: 0 0 20px;
+}
+
+.signIn input:hover {
+    border-color: var(--tertiary-color);
+}
+
+.signIn input:focus {
+    outline: 2px solid var(--tertiary-color);
+}
+
+.inputGroup button {
+    align-self: center;
+}

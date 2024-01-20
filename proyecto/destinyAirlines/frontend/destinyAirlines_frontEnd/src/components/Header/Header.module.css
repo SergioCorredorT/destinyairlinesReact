@@ -7,13 +7,13 @@
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 10px;
-    background-color: #fff;
+    background-color: var(--primary-color);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     color: #000;
 }
 
-.header, .header div, .header img {
+.header, .header .logo, .header .logo img {
     height: 100%;
 }
 
@@ -24,17 +24,10 @@
     align-items: center;
 }
 
-.loginControls button {
-    padding: 10px;
-    height: 50px;
-    width: 100px;
-    background-color: var(--secondary-color);
-}
-
 .loginControls button:hover {
     border-color: var(--tertiary-color);
 }
 
 .loginControls button:focus {
-    outline: 2px solid var(--quaternary-color);
+    outline: 2px solid var(--tertiary-color);
 }

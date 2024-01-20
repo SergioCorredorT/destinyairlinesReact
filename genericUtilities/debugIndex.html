@@ -1477,13 +1477,17 @@
       function handleFormSubmit(event) {
         event.preventDefault();
 
-        const formData = new FormData(event.target);
-        //const formData = Object.fromEntries(FormData(event.target));
+        //const formData = new FormData(event.target);
+        const formData = Object.fromEntries(new FormData(event.target));
+        //console.log(formData);
         const responseTextArea = document.getElementById("responseTextArea");
 
         fetch(event.target.action, {
           method: "POST",
-          body: formData,
+          headers: {
+                'Content-Type': 'application/json',
+            },
+          body: JSON.stringify(formData),
         })
           .then((response) => response.text())
           .then((responseText) => {

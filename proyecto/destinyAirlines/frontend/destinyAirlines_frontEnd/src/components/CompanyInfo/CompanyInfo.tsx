@@ -19,7 +19,7 @@ const apiData = fetchData(
   options
 );
 
-function CompanyInfo() {
+export function CompanyInfo() {
   const data = apiData.read();
   const { airlineAddress, phoneNumber, airlineEmail, legalInfo } = data.response;
 
@@ -35,5 +35,3 @@ function CompanyInfo() {
     </>
   );
 }
-
-export default CompanyInfo;
