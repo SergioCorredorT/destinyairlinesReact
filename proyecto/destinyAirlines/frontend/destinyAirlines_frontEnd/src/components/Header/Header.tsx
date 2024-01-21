@@ -1,31 +1,27 @@
-// Header.js
-import { useState } from "react";
 import logo from "../../images/Branding/isologo.PNG";
 import styles from "./Header.module.css";
-import { SignIn } from "../SignIn/SignIn";
-import { Modal } from "../Modal/Modal";
-import { SignUp } from "../SignUp/SignUp";
+import { useAuthStore } from "../../store/authStore";
+import { UserGreeting } from "../UserGreeting/UserGreeting";
+import { SessionStartControls } from "../SessionStartControls/SessionStartControls";
+import { SessionEndControls } from "../SessionEndControls/SessionEndControls";
 
 export function Header() {
-  const [isOpenSignIn, setIsOpenSignIn] = useState(false);
-  const [isOpenSignUp, setIsOpenSignUp] = useState(false);
-
-
+  const { isLoggedIn } = useAuthStore();
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
         <img src={logo} />
       </div>
-      <div className={styles.loginControls}>
-        <button onClick={() => setIsOpenSignIn(true)}>Sign in</button>
-        <button onClick={() => setIsOpenSignUp(true)}>Sign up</button>
+      <div className={styles.sessionControlsContainer}>
+        {isLoggedIn
+        ? (
+          <>
+            <UserGreeting /> <SessionEndControls />
+          </>
+        ) : (
+          <SessionStartControls />
+        )}
       </div>
-      <Modal isOpen={isOpenSignIn} onClose={() => setIsOpenSignIn(false)}>
-        <SignIn />
-      </Modal>
-      <Modal isOpen={isOpenSignUp} onClose={() => setIsOpenSignUp(false)}>
-        <SignUp />
-      </Modal>
     </header>
   );
 }

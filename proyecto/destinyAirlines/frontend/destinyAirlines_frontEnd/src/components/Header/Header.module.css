@@ -1,33 +1,27 @@
 .header {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: var(--primary-color);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    color: #000;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: var(--primary-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  color: #000;
 }
 
-.header, .header .logo, .header .logo img {
-    height: 100%;
+.header,
+.header .logo,
+.header .logo img {
+  height: 100%;
 }
 
-.loginControls {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
-}
-
-.loginControls button:hover {
-    border-color: var(--tertiary-color);
-}
-
-.loginControls button:focus {
-    outline: 2px solid var(--tertiary-color);
+.sessionControlsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
 }

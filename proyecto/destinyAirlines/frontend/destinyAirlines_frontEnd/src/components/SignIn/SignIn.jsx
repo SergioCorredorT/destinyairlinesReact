@@ -1,24 +1,44 @@
 import styles from "./SignIn.module.css";
 import { customFetch } from "../../services/fetchUtils";
+import { useAuthStore } from "../../store/authStore";
 import { useState } from "react";
 
-export function SignIn() {
-  const [isLogin, setIsLogin] = useState(false);//Pasar esto a un contexto global
+export function SignIn({ isOpen }) {
+  const [error, setError] = useState(null);
+
+  const {
+    setAccessToken,
+    setRefreshToken,
+    setTitle,
+    setFirstName,
+    setLastName,
+    setIsLoggedIn,
+  } = useAuthStore();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const formData = Object.fromEntries(new FormData(event.target));
-    const data = await customFetch(
+
+    const response = await customFetch(
       "http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php",
       formData
     );
 
-    if (data) {
-      setIsLogin(formData.emailAddress);
-      //Guardar tokens en localStorage y el email
+    if(response.error){
+      setError(response.error)
+      return ;
     }
 
-    console.log(data);
+    if (response && response.status) {
+      setAccessToken(response.tokens.accessToken);
+      setRefreshToken(response.tokens.refreshToken);
+      setTitle(response.response.userData.title);
+      setFirstName(response.response.userData.firstName);
+      setLastName(response.response.userData.lastName);
+      setIsLoggedIn(true)
+      isOpen(false);
+    }
   };
 
   return (
@@ -48,6 +68,7 @@ export function SignIn() {
         <div className={styles.inputGroup}>
           <button type="submit">Sign in</button>
         </div>
+        {error && <div className={styles.errorMessage}><p>{error}</p></div>}
       </form>
     </div>
   );

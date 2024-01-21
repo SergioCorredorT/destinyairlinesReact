@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 
 import "../src/globalStyles/variables.css";
+import "../src/globalStyles/buttons.css";
 import { App } from "./components/App/App";
 import "./main.css";
 

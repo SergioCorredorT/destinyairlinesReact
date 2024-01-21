@@ -37,7 +37,14 @@ final class UserModel extends BaseModel
 
     public function readUserByEmail(string $email): bool|array
     {
-        return parent::select('*', "emailAddress = '$email' ");
+        $results = parent::select('*', "emailAddress = '$email' ");
+        if($results) {
+            return $results[0];
+        }
+        else {
+            return false;
+        }
+        //return parent::select('*', "emailAddress = '$email' ");
     }
 
     public function readUserById(int $id_USERS): bool|array

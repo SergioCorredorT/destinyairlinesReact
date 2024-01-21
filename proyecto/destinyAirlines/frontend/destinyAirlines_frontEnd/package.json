@@ -22,6 +22,7 @@
     "million": "^2.6.4",
     "normalize.css": "^8.0.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "zustand": "^4.5.0"
   }
 }

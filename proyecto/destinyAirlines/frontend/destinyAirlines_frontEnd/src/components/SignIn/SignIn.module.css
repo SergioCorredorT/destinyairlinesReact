@@ -1,39 +1,48 @@
 .form {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, 1fr);
-    gap: 10px;
-    align-items: end;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+  align-items: end;
 }
 
 .inputGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .inputGroup label {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 .signIn {
-    display: flex;
-    align-content: space-evenly;
-    flex-direction: column;
+  display: flex;
+  align-content: space-evenly;
+  flex-direction: column;
+  width: 300px;
 }
 
 .signIn h2 {
-    margin: 0 0 20px;
+  margin: 0 0 20px;
 }
 
 .signIn input:hover {
-    border-color: var(--tertiary-color);
+  border-color: var(--tertiary-color);
 }
 
 .signIn input:focus {
-    outline: 2px solid var(--tertiary-color);
+  outline: 2px solid var(--tertiary-color);
 }
 
 .inputGroup button {
-    align-self: center;
+  align-self: center;
+}
+
+.errorMessage {
+  color: #ff0000;
+  font-weight: 600;
+  max-width: 100%; /* Limita el ancho al 100% del contenedor padre */
+  overflow-wrap: break-word; /* Permite que las palabras largas se rompan y pasen a la siguiente línea */
+  word-wrap: break-word; /* Un alias para 'overflow-wrap' para mayor compatibilidad con navegadores antiguos */
 }

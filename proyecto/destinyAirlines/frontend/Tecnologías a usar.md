@@ -11,10 +11,10 @@
                 declarations.d.tsx
                 tsconfig.json
 
-        react router dom
-        useSignal (useState y useContext)
-        zod+react hook form (formik está menos preparado para typescript)
         fetch o axios (viciarse el fetch primero)
+        Zustand (por preferir simplicidad a la funcionalidad del useContext)
+        react router dom
+        zod+react hook form (formik está menos preparado para typescript)
         Jest para test ¿ + testing library?
 
 [hosting]
@@ -23,5 +23,5 @@
     000webhost              para sql MariaDB de bbdd
 
 [Descartadas]
-    Zustand (por preferir simplicidad a la funcionalidad)
+    useSignal (useState) Al ser de Preact parece no ser completamente compatible con React, no me funcionó para mostrar el panel sign in al clicar en su botón sign in
     Vitest (por simplicidad)

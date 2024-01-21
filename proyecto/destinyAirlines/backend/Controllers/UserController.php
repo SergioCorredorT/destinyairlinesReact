@@ -193,7 +193,7 @@ final class UserController extends BaseController
 
             if ($user) {
                 //Recogemos datos que necesitaremos
-                [$user] = $user;
+                //[$user] = $user;
                 $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
                 $cfgAboutLogin = $iniTool->getKeysAndValues('aboutLogin');
                 $maxLoginAttemps = intval($cfgAboutLogin['maxLoginAttemps']);
@@ -217,7 +217,7 @@ final class UserController extends BaseController
                     $accessToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'access'], $secondsMaxTimeLifeAccessToken);
                     $refreshToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'refresh'], $secondsMaxTimeLifeRefreshToken);
 
-                    return ['tokens' => ['accessToken' => $accessToken, 'refreshToken' => $refreshToken]];
+                    return ['tokens' => ['accessToken' => $accessToken, 'refreshToken' => $refreshToken], 'response' => ['userData' =>  ['title' => $user['title'] ,'firstName' => $user['firstName'], 'lastName' => $user['lastName']]]];
                     //Si hemos fallado contraseña o si estamos fuera del rango de intentos comprobamos si debemos mandar el email al usuario
                 } elseif (intval($user['currentLoginAttempts']) >= $maxLoginAttemps) {
                     $isEmailSent = false;
@@ -457,7 +457,7 @@ final class UserController extends BaseController
         $cfgAboutLogin = $iniTool->getKeysAndValues('aboutLogin');
 
         $UserModel = new UserModel();
-        [$user] = $UserModel->readUserByEmail($userData['emailAddress']);
+        $user = $UserModel->readUserByEmail($userData['emailAddress']);
 
         if (!$user) {
             return ['response' => false, 'errorCode' => 2];
