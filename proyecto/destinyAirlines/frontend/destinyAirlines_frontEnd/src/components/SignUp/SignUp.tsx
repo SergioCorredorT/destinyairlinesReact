@@ -1,9 +1,14 @@
 import styles from "./SignUp.module.css";
 export function SignUp() {
+  const handleSubmit = () => {
+    //TEMPORAL
+
+  };
+
   return (
     <div className={styles.signUp}>
       <h2>Sign up</h2>
-      <form className={styles.form}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.inputGroup}>
           <label htmlFor="emailAddress">Email*</label>
           <input

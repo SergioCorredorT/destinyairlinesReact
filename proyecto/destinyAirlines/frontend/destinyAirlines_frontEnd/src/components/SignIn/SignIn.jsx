@@ -36,7 +36,7 @@ export function SignIn({ isOpen }) {
       setTitle(response.response.userData.title);
       setFirstName(response.response.userData.firstName);
       setLastName(response.response.userData.lastName);
-      setIsLoggedIn(true)
+      setIsLoggedIn(true);
       isOpen(false);
     }
   };

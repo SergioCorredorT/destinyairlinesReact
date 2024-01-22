@@ -9,6 +9,8 @@ import {
   getToNestedKeyInLocalStorage,
 } from "../../services/localStorageUtils";
 import { useAuthStore } from "../../store/authStore";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export function App() {
   const {
@@ -35,6 +37,7 @@ export function App() {
       <Header />
       <Main />
       <Footer />
+      <ToastContainer />
     </div>
   );
 }
