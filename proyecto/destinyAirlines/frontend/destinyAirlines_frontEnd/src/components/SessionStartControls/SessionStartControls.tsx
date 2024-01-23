@@ -5,21 +5,24 @@ import { SignUp } from "../SignUp/SignUp";
 import { Modal } from "../Modal/Modal";
 
 export function SessionStartControls() {
-  const [isOpenSignIn, setIsOpenSignIn] = useState(false);
-  const [isOpenSignUp, setIsOpenSignUp] = useState(false);
+  const [openModal, setOpenModal] = useState("");
 
   return (
     <>
       <div className={styles.loginControls}>
-        <button onClick={() => setIsOpenSignIn(true)}>Sign in</button>
-        <button onClick={() => setIsOpenSignUp(true)}>Sign up</button>
+        <button onClick={() => setOpenModal("signIn")}>Sign in</button>
+        <button onClick={() => setOpenModal("signUp")}>Sign up</button>
       </div>
-      <Modal isOpen={isOpenSignIn} onClose={() => setIsOpenSignIn(false)}>
-        <SignIn isOpen= {setIsOpenSignIn}/>
-      </Modal>
-      <Modal isOpen={isOpenSignUp} onClose={() => setIsOpenSignUp(false)}>
-        <SignUp />
-      </Modal>
+      {
+        <Modal isOpen = {openModal === "signIn"} closeModal={()=>setOpenModal("")}>
+          <SignIn />
+        </Modal>
+      }
+      {
+        <Modal isOpen = {openModal === "signUp"} closeModal={()=>setOpenModal("")}>
+          <SignUp />
+        </Modal>
+      }
     </>
   );
 }

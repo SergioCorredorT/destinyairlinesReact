@@ -27,7 +27,7 @@ export function App() {
       setIsLoggedIn(true);
       setAccessToken(getToNestedKeyInLocalStorage(["tokens", "accessToken"]));
       setRefreshToken(getToNestedKeyInLocalStorage(["tokens", "refreshToken"]));
-      setTitle(getToNestedKeyInLocalStorage(["userData", "title"]));
+      setTitle(getToNestedKeyInLocalStorage(["userData", "title"]) || "");
       setFirstName(getToNestedKeyInLocalStorage(["userData", "firstName"]));
       setLastName(getToNestedKeyInLocalStorage(["userData", "lastName"]));
     }

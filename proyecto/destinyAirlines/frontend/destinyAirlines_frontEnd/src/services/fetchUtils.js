@@ -1,11 +1,11 @@
-export const customFetch = async (url, formData) => {
+export const customFetch = async (url, JsonData) => {
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(JsonData),
         });
 
         if (!response.ok) {
@@ -22,4 +22,9 @@ export const customFetch = async (url, formData) => {
         }
         return { error: 'An unknown error occurred.' };
     }
+};
+
+export const destinyAirlinesFetch = async (JsonData) => {
+    const url = import.meta.env.VITE_API_URL;
+    return await customFetch(url, JsonData);
 };

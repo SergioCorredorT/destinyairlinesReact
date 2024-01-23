@@ -2,10 +2,10 @@ import { useAuthStore } from "../../store/authStore";
 import styles from "./SignOut.module.css";
 
 export function SignOut() {
-  const { reset } = useAuthStore();
+  const { signOut } = useAuthStore();
 
   const handleClick = () => {
-    reset();
+    signOut();
   };
 
   return (
