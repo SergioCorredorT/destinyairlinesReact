@@ -10,8 +10,8 @@ export function SessionStartControls() {
   return (
     <>
       <div className={styles.loginControls}>
-        <button onClick={() => setOpenModal("signIn")}>Sign in</button>
-        <button onClick={() => setOpenModal("signUp")}>Sign up</button>
+        <button onClick={() => setOpenModal("signIn")}>Iniciar sesión</button>
+        <button onClick={() => setOpenModal("signUp")}>Registrarse</button>
       </div>
       {
         <Modal isOpen = {openModal === "signIn"} closeModal={()=>setOpenModal("")}>

@@ -13,8 +13,8 @@
 
         fetch o axios (viciarse el fetch primero)
         Zustand (por preferir simplicidad a la funcionalidad del useContext)
-        react router dom
         zod+react hook form (formik está menos preparado para typescript)
+        react router dom
         Jest para test ¿ + testing library?
 
 [hosting]

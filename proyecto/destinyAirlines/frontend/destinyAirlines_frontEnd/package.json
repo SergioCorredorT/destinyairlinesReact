@@ -18,12 +18,15 @@
     "vite-plugin-million": "^0.0.2"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.3.4",
     "@vitejs/plugin-react": "4.2.1",
     "million": "^2.6.4",
     "normalize.css": "^8.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.49.3",
     "react-toastify": "^10.0.4",
+    "zod": "^3.22.4",
     "zustand": "^4.5.0"
   }
 }

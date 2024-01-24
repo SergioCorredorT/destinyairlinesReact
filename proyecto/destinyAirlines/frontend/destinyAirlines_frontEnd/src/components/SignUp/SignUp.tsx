@@ -1,5 +1,6 @@
 import styles from "./SignUp.module.css";
 export function SignUp() {
+  
   const handleSubmit = () => {
     //TEMPORAL
 
@@ -157,7 +158,7 @@ export function SignUp() {
           />
         </div>
         <div className={styles.inputGroup}>
-          <label htmlFor="companyName">Nombre de la empresa</label>
+          <label htmlFor="companyName">Nombre de empresa</label>
           <input
             type="text"
             id="companyName"
@@ -180,7 +181,7 @@ export function SignUp() {
         </div>
         <div className={styles.inputGroup}>
           <label htmlFor="companyPhoneNumber">
-            Número de teléfono de la empresa
+            Número de teléfono de empresa
           </label>
           <input
             type="text"
@@ -200,7 +201,7 @@ export function SignUp() {
           />
         </div>
         <div className={styles.inputGroup}>
-          <button type="submit">Sign up</button>
+          <button type="submit">Registrarse</button>
         </div>
       </form>
     </div>

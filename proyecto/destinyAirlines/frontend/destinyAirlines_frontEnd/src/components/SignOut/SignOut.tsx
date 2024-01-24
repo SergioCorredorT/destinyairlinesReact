@@ -11,7 +11,7 @@ export function SignOut() {
   return (
     <>
       <div className={styles.logoutControls}>
-        <button onClick={() => handleClick()}>Sign out</button>
+        <button onClick={() => handleClick()}>Cerrar sesión</button>
       </div>
     </>
   );

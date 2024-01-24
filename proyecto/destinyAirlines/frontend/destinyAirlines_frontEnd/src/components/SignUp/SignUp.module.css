@@ -24,18 +24,6 @@
     margin: 0 0 20px;
 }
 
-.signUp input:hover {
-    border-color: var(--tertiary-color);
-}
-
-.signUp input:focus {
-    outline: 2px solid var(--tertiary-color);
-}
-
 .inputGroup button {
     align-self: center;
-}
-
-.inputGroup label {
-    font-weight: 500;
 }

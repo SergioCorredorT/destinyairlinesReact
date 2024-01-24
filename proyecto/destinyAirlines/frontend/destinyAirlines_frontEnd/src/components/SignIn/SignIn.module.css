@@ -27,22 +27,18 @@
   margin: 0 0 20px;
 }
 
-.signIn input:hover {
-  border-color: var(--tertiary-color);
-}
-
-.signIn input:focus {
-  outline: 2px solid var(--tertiary-color);
-}
-
 .inputGroup button {
   align-self: center;
 }
 
 .errorMessage {
-  color: #ff0000;
+  color: #dc143c;
   font-weight: 600;
-  max-width: 100%; /* Limita el ancho al 100% del contenedor padre */
-  overflow-wrap: break-word; /* Permite que las palabras largas se rompan y pasen a la siguiente línea */
-  word-wrap: break-word; /* Un alias para 'overflow-wrap' para mayor compatibilidad con navegadores antiguos */
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.errorInput {
+  border-color: #dc143c;
 }

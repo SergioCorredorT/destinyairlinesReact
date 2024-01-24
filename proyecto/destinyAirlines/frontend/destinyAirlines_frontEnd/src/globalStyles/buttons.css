@@ -1,20 +1,22 @@
 button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    height: 50px;
-    width: 100px;
-    padding: 10px;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    cursor: pointer;
-    transition: border-color 0.25s;
-    background-color: var(--secondary-color);
-  }
-  
-  button:hover {
-    border-color: var(--tertiary-color);
-  }
-  button:focus {
-    outline: 4px solid var(--tertiary-color);
-  }
+  border-radius: 8px;
+  border: 1px solid transparent;
+  height: 50px;
+  width: 100px;
+  padding: 10px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  background-color: var(--secondary-color);
+  display: grid;
+  place-content: center;
+}
+
+button:hover {
+  border-color: var(--tertiary-color);
+}
+button:focus {
+  outline: 4px solid var(--tertiary-color);
+}
