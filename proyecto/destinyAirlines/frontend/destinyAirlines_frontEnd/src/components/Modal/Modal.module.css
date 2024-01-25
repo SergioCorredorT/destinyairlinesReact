@@ -32,13 +32,22 @@
 
 
 .closeModal {
-    position: absolute;
-    top: 10px;
-    right: 15px;
+    position: sticky;
+    width: min-content;
+    top: 0;
+    left: 100%;
     font-size: 30px;
     cursor: pointer;
+    border: 1px solid;
+    border-radius: 100%;
+    aspect-ratio: 1/1;
+    background-color: #242424;
+    opacity: 0.7;
+    color: #FFF;
 }
 
 .closeModal:hover {
-    text-shadow: 1px 0px 0px var(--tertiary-color), 0px 1px 0px var(--tertiary-color), -1px 0px 0px var(--tertiary-color), 0px -1px 0px var(--tertiary-color);
+    box-shadow: 0 0 0px 2px var(--tertiary-color);
+    opacity: 1;
+    background-color: #242424;
 }

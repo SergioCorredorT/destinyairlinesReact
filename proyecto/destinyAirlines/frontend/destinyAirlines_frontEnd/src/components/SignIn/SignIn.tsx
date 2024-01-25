@@ -8,7 +8,6 @@ import { signInSchema } from "../../validations/signInSchema";
 type Inputs = {
   emailAddress: string;
   password: string;
-  command: string;
 };
 
 export function SignIn() {
@@ -53,7 +52,6 @@ export function SignIn() {
             id="emailAddress"
             placeholder="Email address"
             title="Introduzca aquí su email"
-            className={errors.emailAddress && styles.errorInput}
             {...register("emailAddress")}
           />
         </div>
@@ -69,17 +67,10 @@ export function SignIn() {
             type="password"
             id="password"
             placeholder="Password"
-            className={errors.password && styles.errorInput}
             {...register("password")}
           />
         </div>
-        <input
-          type="hidden"
-          id="command"
-          value="loginUser"
-          {...register("command")}
-        />
-        <div className={styles.inputGroup}>
+        <div className={styles.buttonsContainer}>
           <button type="submit">Iniciar sesión</button>
         </div>
         {error && (

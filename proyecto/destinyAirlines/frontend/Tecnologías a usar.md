@@ -15,6 +15,7 @@
         Zustand (por preferir simplicidad a la funcionalidad del useContext)
         zod+react hook form (formik está menos preparado para typescript)
         react router dom
+        react lazy load image component + tipos
         Jest para test ¿ + testing library?
 
 [hosting]

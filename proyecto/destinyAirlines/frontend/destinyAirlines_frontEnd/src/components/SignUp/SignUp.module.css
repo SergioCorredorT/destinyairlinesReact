@@ -1,29 +1,47 @@
-.form {
+form {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(3, 1fr);
     gap: 10px;
-    align-items: end;
-    padding: 10px;
-    height: 100%;
+}
+
+.inputGroupsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: end;
+  padding: 10px;
 }
 
 .inputGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: min-content;
+  margin: 0 auto;
+  min-width: fit-content;
 }
 
-.signUp {
+.buttonsContainer {
     display: flex;
-    flex-direction: column;
-    max-height: 100%;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    padding: 10px;
+  }
+
+.signUp {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
 }
 
 .signUp h2 {
-    margin: 0 0 20px;
+  margin: 0 0 20px;
 }
 
 .inputGroup button {
-    align-self: center;
+  align-self: center;
+}
+
+.errorMessage {
+  color: #dc143c;
 }

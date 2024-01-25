@@ -24,7 +24,7 @@ class UserValidator
         $currentDate = date('Y-m-d');
         $exp = strtotime($expirationDate);
         $current = strtotime($currentDate);
-        if ($current > $exp) {
+        if ($current >= $exp) {
             return false;
         }
     
@@ -33,7 +33,7 @@ class UserValidator
 
     public static function validateTitle(string $title): bool
     {
-        if ($title != "" && strlen($title) < 3) {
+        if ($title != "" && (strlen($title) < 2 || strlen($title) > 100)) {
             return false;
         }
         return true;
@@ -41,7 +41,7 @@ class UserValidator
 
     public static function validateFirstName(string $firstName): bool
     {
-        if (strlen($firstName) < 2) {
+        if (strlen($firstName) < 2 || strlen($firstName) > 100) {
             return false;
         }
         return true;
@@ -49,7 +49,7 @@ class UserValidator
 
     public static function validateLastName(string $lastName): bool
     {
-        if (strlen($lastName) < 2) {
+        if (strlen($lastName) < 2 || strlen($lastName) > 100) {
             return false;
         }
         return true;
@@ -57,7 +57,7 @@ class UserValidator
 
     public static function validateTownCity(string $townCity): bool
     {
-        if (strlen($townCity) < 2) {
+        if (strlen($townCity) < 2 || strlen($townCity) > 100) {
             return false;
         }
         return true;
@@ -65,7 +65,7 @@ class UserValidator
 
     public static function validateStreetAddress(string $streetAddress): bool
     {
-        if (strlen($streetAddress) < 2) {
+        if (strlen($streetAddress) < 2 || strlen($streetAddress) > 100) {
             return false;
         }
         return true;
@@ -73,7 +73,7 @@ class UserValidator
 
     public static function validateZipCode(string $zipCode): bool
     {
-        if (strlen($zipCode) < 2) {
+        if (strlen($zipCode) < 2 || strlen($zipCode) > 100) {
             return false;
         }
         return true;
@@ -81,7 +81,7 @@ class UserValidator
 
     public static function validateCountry(string $country): bool
     {
-        if (strlen($country) < 2) {
+        if (strlen($country) < 2 || strlen($country) > 100) {
             return false;
         }
         return true;
@@ -89,7 +89,7 @@ class UserValidator
 
     public static function validateEmailAddress(string $emailAddress): bool
     {
-        if (strlen($emailAddress) < 7 || !filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
+        if (strlen($emailAddress) < 7 || strlen($emailAddress) > 100 ||  !filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
             return false;
         }
         return true;
@@ -97,7 +97,7 @@ class UserValidator
 
     public static function validatePassword(string $password): bool
     {
-        if (strlen($password) < 8) {
+        if (strlen($password) < 8 || strlen($password) > 100) {
             return false;
         }
         return true;
@@ -105,7 +105,7 @@ class UserValidator
 
     public static function validatePhoneNumber1(string $phoneNumber1): bool
     {
-        if (!preg_match("/^(\+?[0-9]{9,})$/", $phoneNumber1)) {
+        if (strlen($phoneNumber1) < 9 || strlen($phoneNumber1) > 20 || !preg_match("/^(\+?[0-9]{9,})$/", $phoneNumber1)) {
             return false;
         }
         return true;
@@ -113,7 +113,7 @@ class UserValidator
 
     public static function validatePhoneNumber2(string $phoneNumber2): bool
     {
-        if ($phoneNumber2 != "" && !preg_match("/^(\+?[0-9]{9,})$/", $phoneNumber2)) {
+        if ($phoneNumber2 != "" && (strlen($phoneNumber2) < 9 || strlen($phoneNumber2) > 20 || !preg_match("/^(\+?[0-9]{9,})$/", $phoneNumber2))) {
             return false;
         }
         return true;
@@ -121,14 +121,14 @@ class UserValidator
 
     public static function validatePhoneNumber3(string $phoneNumber3): bool
     {
-        if ($phoneNumber3 != "" && !preg_match("/^(\+?[0-9]{9,})$/", $phoneNumber3)) {
+        if ($phoneNumber3 != "" && (strlen($phoneNumber3) < 9 || strlen($phoneNumber3) > 20 || !preg_match("/^(\+?[0-9]{9,})$/", $phoneNumber3))) {
             return false;
         }
         return true;
     }
     public static function validateCompanyName(string $companyName): bool
     {
-        if ($companyName != "" && strlen($companyName) < 2) {
+        if ($companyName != "" && (strlen($companyName) < 2 || strlen($companyName) > 100)) {
             return false;
         }
         return true;
@@ -136,7 +136,7 @@ class UserValidator
 
     public static function validateCompanyTaxNumber(string $companyTaxNumber): bool
     {
-        if ($companyTaxNumber != "" && strlen($companyTaxNumber) < 2) {
+        if ($companyTaxNumber != "" && (strlen($companyTaxNumber) < 2 || strlen($companyTaxNumber) > 100)) {
             return false;
         }
         return true;
@@ -169,7 +169,7 @@ class UserValidator
 
     public static function validateCompanyPhoneNumber(string $companyPhoneNumber): bool
     {
-        if ($companyPhoneNumber != "" && !preg_match("/^(\+?[0-9]{9,})$/", $companyPhoneNumber)) {
+        if ($companyPhoneNumber != "" && (strlen($companyPhoneNumber) < 2 || strlen($companyPhoneNumber) > 100 || !preg_match("/^(\+?[0-9]{9,})$/", $companyPhoneNumber))) {
             return false;
         }
         return true;
@@ -239,7 +239,6 @@ class UserValidator
         if (isset($data['refreshToken']) && !TokenValidator::validateToken($data['refreshToken'])) {
             return false;
         }
-
         return true;
     }
 }

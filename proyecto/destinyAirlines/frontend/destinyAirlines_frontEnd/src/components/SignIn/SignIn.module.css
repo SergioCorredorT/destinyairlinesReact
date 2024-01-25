@@ -1,15 +1,23 @@
 .form {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: repeat(3, 1fr);
-  gap: 10px;
+  gap: 30px;
   align-items: end;
+  padding: 10px;
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
   gap: 5px;
+}
+
+.buttonsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px;
 }
 
 .inputGroup label {
@@ -37,8 +45,4 @@
   max-width: 100%;
   overflow-wrap: break-word;
   word-wrap: break-word;
-}
-
-.errorInput {
-  border-color: #dc143c;
 }

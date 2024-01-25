@@ -1,15 +1,24 @@
-input:hover {
+input:hover, select:hover {
   border-color: var(--tertiary-color);
 }
 
-input:focus {
+input:focus, select:focus {
   outline: 2px solid var(--tertiary-color);
 }
 
-input {
+input, select {
   padding: 10px;
 }
 
 label {
   font-weight: 500;
+}
+
+/*En principio para los signin u up*/
+label {
+  line-height: 1.2;
+  height: 2.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -6,6 +6,8 @@ import {
 import { destinyAirlinesFetch } from "../services/fetchUtils";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { signIn } from "../services/signIn";
+import { signOut } from "../services/signOut";
 
 interface AuthStoreState {
   isLoggedIn: boolean;
@@ -32,23 +34,31 @@ interface AuthStoreState {
 }
 
 const updateAccessToken = async (accessToken: string) => {
-  return await destinyAirlinesFetch(
-    { command: "checkUpdateAccessToken", accessToken: accessToken }
-  );
+  return await destinyAirlinesFetch({
+    command: "checkUpdateAccessToken",
+    accessToken: accessToken,
+  });
 };
 
 const updateRefreshToken = async (refreshToken: string) => {
-  return await destinyAirlinesFetch(
-    { command: "checkUpdateRefreshToken", refreshToken: refreshToken }
-  );
+  return await destinyAirlinesFetch({
+    command: "checkUpdateRefreshToken",
+    refreshToken: refreshToken,
+  });
 };
 
-const handleError =  ({ error, signOut }: { error: string; signOut: () => void; }) => {
-    if (error === "expired_token") {
-      signOut();
-      toast.info("Sesión expirada");
-    }
-    toast.error("Hubo un error en la actualización de sesión");
+const handleError = ({
+  error,
+  signOut,
+}: {
+  error: string;
+  signOut: () => void;
+}) => {
+  if (error === "expired_token") {
+    signOut();
+    toast.info("Sesión expirada");
+  }
+  toast.error("Hubo un error en la actualización de sesión");
 };
 
 export const useAuthStore = create<AuthStoreState>((set, get) => ({
@@ -87,7 +97,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       } else if (data.tokenError && data.tokenError == "expired_token") {
         updateRefreshToken(refreshToken).then((data) => {
           if (data.tokenError) {
-            handleError({error : data.tokenError, signOut})
+            handleError({ error: data.tokenError, signOut });
             return;
           }
           setAccessToken(data.accessToken);
@@ -110,52 +120,6 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
     saveToNestedKeyInLocalStorage(["userData", "lastName"], lastName || "");
     set({ lastName });
   },
-  signIn: async ({ emailAddress, password }) => {
-    const response = await destinyAirlinesFetch(
-      { emailAddress, password, command: "loginUser" }
-    );
-    const {
-      setAccessToken,
-      setRefreshToken,
-      setTitle,
-      setFirstName,
-      setLastName,
-      setIsLoggedIn,
-    } = get();
-
-    if (response.error) {
-      toast.error(`Error en la petición a servidor: ${response.error}`);
-      return { status: false, message: "Error de servidor" };
-    }
-
-    if (response && response.status && response.response) {
-      setAccessToken(response.tokens.accessToken);
-      setRefreshToken(response.tokens.refreshToken);
-      setTitle(response.response.userData.title);
-      setFirstName(response.response.userData.firstName);
-      setLastName(response.response.userData.lastName);
-      setIsLoggedIn(true);
-      toast.success("Se ha iniciado sesión");
-      return { status: true, message: "Se ha iniciado sesión" };
-    } else {
-      toast.error(
-        "Correo electrónico o contraseña incorrectos. Tras 5 intentos fallidos, tu cuenta se bloqueará y recibirás un correo de recuperación"
-      );
-      return { status: false, message: "La autenticación ha fallado" };
-    }
-  },
-  signOut: () => {
-    removeFromNestedKeyInLocalStorage(["tokens"]);
-    removeFromNestedKeyInLocalStorage(["userData"]);
-    removeFromNestedKeyInLocalStorage(["isLoggedIn"]);
-    set({
-      isLoggedIn: false,
-      accessToken: "",
-      refreshToken: "",
-      title: "",
-      firstName: "",
-      lastName: "",
-    });
-    toast.warn("Sesión cerrada");
-  },
+  signIn: data => signIn({ ...data, get }),
+  signOut: () => signOut({ set }),
 }));
