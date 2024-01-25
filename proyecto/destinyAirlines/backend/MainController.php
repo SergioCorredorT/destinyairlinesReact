@@ -69,7 +69,9 @@ $controllers = [
     'getcommunicationneeds'                     => ['controller' => 'OptionsController',        'method' => 'getCommunicationNeeds'],
     'getmedicationrequirements'                 => ['controller' => 'OptionsController',        'method' => 'getMedicationRequirements'],
     'getdoctypes'                               => ['controller' => 'OptionsController',        'method' => 'getDocTypes'],
+    'getdoctypeses'                             => ['controller' => 'OptionsController',        'method' => 'getDocTypesEs'],
     'getagecategories'                          => ['controller' => 'OptionsController',        'method' => 'getAgeCategories'],
+    'getoptionsforuserregister'                 => ['controller' => 'OptionsController',        'method' => 'getOptionsForUserRegister'],
     'getcompanyinfo'                            => ['controller' => 'PageDetailsController',    'method' => 'getCompanyInfo'],
     //GET
     'gotopasswordreset'                         => ['controller' => 'passwordResetController',  'method' => 'goToPasswordReset'],

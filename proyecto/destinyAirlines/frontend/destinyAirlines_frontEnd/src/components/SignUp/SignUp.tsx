@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styles from "./SignUp.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signUpSchema } from "../../validations/signUpSchema";
 import { signUp } from "../../services/signUp";
+import { getOptionsForUserRegister } from "../../services/getOptionsForUserRegister";
 
 type Inputs = {
   emailAddress: string;
@@ -28,8 +29,33 @@ type Inputs = {
   dateBirth: string;
 };
 
+type optionsForUserRegister = {
+  docTypesEs: { [key: string]: string };
+  docTypes: { [key: string]: string };
+  titles: { [key: string]: string };
+  countries: { [key: string]: string };
+};
+
 export function SignUp() {
   const [error, setError] = useState<string | null>(null);
+  const [optionsForUserRegister, setOptionsForUserRegister] =
+    useState<optionsForUserRegister | null>(null);
+
+  useEffect(() => {
+    async function helperOptionsForUserRegister() {
+      const response = await getOptionsForUserRegister();
+      console.log(response);
+      if (!response || !response.status) {
+        setError("Could not load document types");
+        return;
+      } else {
+        setError(null);
+      }
+      setOptionsForUserRegister(response.response);
+    }
+    helperOptionsForUserRegister();
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -43,12 +69,10 @@ export function SignUp() {
     signUp(jsonData).then((data) => {
       if (!data.status) {
         setError(data.message);
-      }
-      else {
+      } else {
         setError(null);
       }
     });
-    //Aquí meter lógica del fetcheo parecido a signIn
   });
 
   return (
@@ -144,10 +168,18 @@ export function SignUp() {
             ) : (
               <label htmlFor="country">País*</label>
             )}
+            <datalist id="countries">
+              {optionsForUserRegister &&
+                optionsForUserRegister.countries &&
+                Object.keys(optionsForUserRegister.countries).map((country) => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+            </datalist>
             <input
-              type="text"
+              list="countries"
               id="country"
-              placeholder="España"
               title="Introduzca aquí su país"
               {...register("country")}
             />
@@ -220,12 +252,15 @@ export function SignUp() {
               <option value="" disabled>
                 Seleccione una opción
               </option>
-              <option value="dni">DNI</option>
-              <option value="passport">Pasaporte</option>
-              <option value="drivers_license">Licencia de conducir</option>
-              <option value="residence_card_or_work_permit">
-                Tarjeta de residencia o permiso de trabajo
-              </option>
+              {optionsForUserRegister &&
+                optionsForUserRegister.docTypesEs &&
+                Object.keys(optionsForUserRegister.docTypesEs).map(
+                  (docTypeKey) => (
+                    <option key={docTypeKey} value={docTypeKey}>
+                      {optionsForUserRegister.docTypesEs[docTypeKey]}
+                    </option>
+                  )
+                )}
             </select>
           </div>
           <div className={styles.inputGroup}>
@@ -276,9 +311,13 @@ export function SignUp() {
               <option value="" disabled>
                 Seleccione una opción
               </option>
-              <option value="sr">Señor</option>
-              <option value="sra">Señora</option>
-              <option value="srta">Señorita</option>
+              {optionsForUserRegister &&
+                optionsForUserRegister.titles &&
+                Object.keys(optionsForUserRegister.titles).map((title) => (
+                  <option key={title} value={title}>
+                    {optionsForUserRegister.titles[title]}
+                  </option>
+                ))}
             </select>
           </div>
           <div className={styles.inputGroup}>

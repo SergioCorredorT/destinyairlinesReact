@@ -7,12 +7,47 @@ final class OptionsController extends BaseController
         parent::__construct();
     }
 
+    public function getOptionsForUserRegister(): array
+    {
+        return ['response' =>
+        [
+            'docTypes' => $this->getDocTypes()['response'],
+            'docTypesEs' => $this->getDocTypesEs()['response'],
+            'titles' => $this->getTitles()['response'],
+            'countries' => $this->getCountryList()['response']
+        ]];
+    }
+
     public function getDocTypes(): array
     {
         require_once ROOT_PATH . '/Tools/IniTool.php';
         $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $documentTypes = $iniTool->getKeysAndValues('documentTypes');
         return ['response' => $documentTypes];
+    }
+
+    public function getDocTypesEs(): array
+    {
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $documentTypesEs = $iniTool->getKeysAndValues('documentTypesEs');
+        return ['response' => $documentTypesEs];
+    }
+
+    public function getTitles(): array
+    {
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $titles = $iniTool->getKeysAndValues('titles');
+        return ['response' => $titles];
+    }
+
+    public function getCountryList(): array
+    {
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $countryList = $iniTool->getKeysAndValues('countryList');
+        return ['response' => $countryList];
     }
 
     public function getAgeCategories(): array
