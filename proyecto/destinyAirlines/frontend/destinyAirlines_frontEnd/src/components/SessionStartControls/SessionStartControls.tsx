@@ -6,21 +6,31 @@ import { Modal } from "../Modal/Modal";
 
 export function SessionStartControls() {
   const [openModal, setOpenModal] = useState("");
+  const handleSignInClick = () => {
+    setOpenModal("signIn");
+  };
 
+  const handleSignUpClick = () => {
+    setOpenModal("signUp");
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal("");
+  };
   return (
     <>
       <div className={styles.loginControls}>
-        <button onClick={() => setOpenModal("signIn")}>Iniciar sesión</button>
-        <button onClick={() => setOpenModal("signUp")}>Registrarse</button>
+        <button onClick={handleSignInClick}>Iniciar sesión</button>
+        <button onClick={handleSignUpClick}>Registrarse</button>
       </div>
       {
-        <Modal isOpen = {openModal === "signIn"} closeModal={()=>setOpenModal("")}>
+        <Modal isOpen = {openModal === "signIn"} closeModal={handleCloseModal}>
           <SignIn />
         </Modal>
       }
       {
-        <Modal isOpen = {openModal === "signUp"} closeModal={()=>setOpenModal("")}>
-          <SignUp />
+        <Modal isOpen = {openModal === "signUp"} closeModal={handleCloseModal}>
+          <SignUp closeModal={handleCloseModal} />
         </Modal>
       }
     </>

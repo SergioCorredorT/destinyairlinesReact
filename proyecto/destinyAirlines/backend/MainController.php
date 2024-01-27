@@ -21,7 +21,6 @@ header('Access-Control-Allow-Headers: ' . $requestConfiguration["accessControlAl
 
 // En la siguiente línea se recogen los datos recibidos mediante JSON, de forma que se pueden recibir JSON, GET y POST
 $data = json_decode(file_get_contents('php://input'), true);
-
 $command = $data['command'] ?? $_POST['command'] ?? $_GET['command'] ?? '';
 
 function executeCommand(string $controllerName, string $methodName, array $params): array

@@ -6,11 +6,10 @@ export function Modal({
   closeModal,
   children,
 }: {
-  isOpen: boolean;
+  isOpen?: boolean;
   closeModal: () => void;
   children: ReactNode;
 }) {
-
   if (!isOpen) {
     return null;
   }

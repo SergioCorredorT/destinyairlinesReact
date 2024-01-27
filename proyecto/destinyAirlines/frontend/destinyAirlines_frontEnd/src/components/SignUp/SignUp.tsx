@@ -4,7 +4,7 @@ import styles from "./SignUp.module.css";
 import { useEffect, useState } from "react";
 import { signUpSchema } from "../../validations/signUpSchema";
 import { signUp } from "../../services/signUp";
-import { signal, useSignal } from "@preact/signals-react";
+import { useSignal } from "@preact/signals-react";
 import { optionsStore } from "../../store/optionsStore";
 
 type Inputs = {
@@ -37,10 +37,13 @@ type optionsForUserRegister = {
   countries?: { [key: string]: string };
 };
 
-const signUpGeneralError = signal<string | null>(null);
 
-export function SignUp() {
-  const generalError = useSignal(signUpGeneralError);
+export function SignUp({
+  closeModal,
+}: {
+  closeModal: () => void;
+}) {
+  const generalError = useSignal("");
   const [optionsForUserRegister, setOptionsForUserRegister] =
     useState<optionsForUserRegister | null>(null);
   const { getOptions } = optionsStore();
@@ -54,10 +57,10 @@ export function SignUp() {
         docTypesAndRegExp: true,
       });
       if (!response) {
-        signUpGeneralError.value = "Could not load document types";
+        generalError.value = "Could not load document types";
         return;
       } else {
-        signUpGeneralError.value = null;
+        generalError.value = "";
       }
       setOptionsForUserRegister(response);
     }
@@ -73,12 +76,12 @@ export function SignUp() {
   });
 
   const onsubmit = handleSubmit((jsonData) => {
-    console.log(jsonData);
     signUp(jsonData).then((data) => {
       if (!data.status) {
-        signUpGeneralError.value = data.message;
+        generalError.value = data.message;
       } else {
-        signUpGeneralError.value = null;
+        generalError.value = "";
+        closeModal();
       }
     });
   });

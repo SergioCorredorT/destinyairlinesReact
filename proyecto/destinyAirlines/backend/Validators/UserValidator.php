@@ -180,7 +180,6 @@ class UserValidator
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
             return false;
         }
-
         if (isset($data['expirationDate']) && !self::validateExpirationDate($data['expirationDate'])) {
             return false;
         }
@@ -239,6 +238,7 @@ class UserValidator
         if (isset($data['refreshToken']) && !TokenValidator::validateToken($data['refreshToken'])) {
             return false;
         }
+
         return true;
     }
 }

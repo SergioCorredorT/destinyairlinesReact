@@ -10,10 +10,8 @@ type Inputs = {
   password: string;
 };
 
-const signInGeneralError = signal<string | null>(null);
-
 export function SignIn() {
-  const generalError = useSignal(signInGeneralError);
+  const generalError = useSignal("");
   //const [generalError, setGeneralError] = useState<string | null>(null);
   const { signIn } = useAuthStore();
   const {
@@ -33,7 +31,7 @@ export function SignIn() {
       password: jsonData.password,
     }).then((data) => {
       if (!data.status) {
-        signInGeneralError.value = data.message;
+        generalError.value = data.message;
       }
     });
   });
