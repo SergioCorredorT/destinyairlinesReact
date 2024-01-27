@@ -36,6 +36,9 @@ export function fetchData(url, options) {
             }
             return response.json();
         })
+        .catch((error) => {
+            throw new Error(error.message);
+        });
 
     return getSuspender(promise);
 }

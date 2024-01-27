@@ -4,7 +4,8 @@ import styles from "./SignUp.module.css";
 import { useEffect, useState } from "react";
 import { signUpSchema } from "../../validations/signUpSchema";
 import { signUp } from "../../services/signUp";
-import { getOptionsForUserRegister } from "../../services/getOptionsForUserRegister";
+import { signal, useSignal } from "@preact/signals-react";
+import { optionsStore } from "../../store/optionsStore";
 
 type Inputs = {
   emailAddress: string;
@@ -30,28 +31,35 @@ type Inputs = {
 };
 
 type optionsForUserRegister = {
-  docTypesEs: { [key: string]: string };
-  docTypes: { [key: string]: string };
-  titles: { [key: string]: string };
-  countries: { [key: string]: string };
+  docTypesEs?: { [key: string]: string };
+  docTypesAndRegExp?: { [key: string]: string };
+  titles?: { [key: string]: string };
+  countries?: { [key: string]: string };
 };
 
+const signUpGeneralError = signal<string | null>(null);
+
 export function SignUp() {
-  const [error, setError] = useState<string | null>(null);
+  const generalError = useSignal(signUpGeneralError);
   const [optionsForUserRegister, setOptionsForUserRegister] =
     useState<optionsForUserRegister | null>(null);
+  const { getOptions } = optionsStore();
 
   useEffect(() => {
     async function helperOptionsForUserRegister() {
-      const response = await getOptionsForUserRegister();
-      console.log(response);
-      if (!response || !response.status) {
-        setError("Could not load document types");
+      const response = await getOptions({
+        countries: true,
+        titles: true,
+        docTypesEs: true,
+        docTypesAndRegExp: true,
+      });
+      if (!response) {
+        signUpGeneralError.value = "Could not load document types";
         return;
       } else {
-        setError(null);
+        signUpGeneralError.value = null;
       }
-      setOptionsForUserRegister(response.response);
+      setOptionsForUserRegister(response);
     }
     helperOptionsForUserRegister();
   }, []);
@@ -59,7 +67,7 @@ export function SignUp() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors: formErrors },
   } = useForm<Inputs>({
     resolver: zodResolver(signUpSchema),
   });
@@ -68,9 +76,9 @@ export function SignUp() {
     console.log(jsonData);
     signUp(jsonData).then((data) => {
       if (!data.status) {
-        setError(data.message);
+        signUpGeneralError.value = data.message;
       } else {
-        setError(null);
+        signUpGeneralError.value = null;
       }
     });
   });
@@ -81,9 +89,9 @@ export function SignUp() {
       <form className={styles.form} onSubmit={onsubmit}>
         <div className={styles.inputGroupsContainer}>
           <div className={styles.inputGroup}>
-            {errors.emailAddress ? (
+            {formErrors.emailAddress ? (
               <label htmlFor="emailAddress" className={styles.errorMessage}>
-                {errors.emailAddress.message}
+                {formErrors.emailAddress.message}
               </label>
             ) : (
               <label htmlFor="emailAddress">Email*</label>
@@ -97,9 +105,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.password ? (
+            {formErrors.password ? (
               <label htmlFor="password" className={styles.errorMessage}>
-                {errors.password.message}
+                {formErrors.password.message}
               </label>
             ) : (
               <label htmlFor="password">Password*</label>
@@ -113,9 +121,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.confirmPassword ? (
+            {formErrors.confirmPassword ? (
               <label htmlFor="confirmPassword" className={styles.errorMessage}>
-                {errors.confirmPassword.message}
+                {formErrors.confirmPassword.message}
               </label>
             ) : (
               <label htmlFor="confirmPassword">Repite password*</label>
@@ -129,9 +137,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.firstName ? (
+            {formErrors.firstName ? (
               <label htmlFor="firstName" className={styles.errorMessage}>
-                {errors.firstName.message}
+                {formErrors.firstName.message}
               </label>
             ) : (
               <label htmlFor="firstName">Nombre*</label>
@@ -145,9 +153,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.lastName ? (
+            {formErrors.lastName ? (
               <label htmlFor="lastName" className={styles.errorMessage}>
-                {errors.lastName.message}
+                {formErrors.lastName.message}
               </label>
             ) : (
               <label htmlFor="lastName">Apellidos*</label>
@@ -161,9 +169,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.country ? (
+            {formErrors.country ? (
               <label htmlFor="country" className={styles.errorMessage}>
-                {errors.country.message}
+                {formErrors.country.message}
               </label>
             ) : (
               <label htmlFor="country">País*</label>
@@ -185,9 +193,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.townCity ? (
+            {formErrors.townCity ? (
               <label htmlFor="townCity" className={styles.errorMessage}>
-                {errors.townCity.message}
+                {formErrors.townCity.message}
               </label>
             ) : (
               <label htmlFor="townCity">Ciudad*</label>
@@ -201,9 +209,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.streetAddress ? (
+            {formErrors.streetAddress ? (
               <label htmlFor="streetAddress" className={styles.errorMessage}>
-                {errors.streetAddress.message}
+                {formErrors.streetAddress.message}
               </label>
             ) : (
               <label htmlFor="streetAddress">Calle*</label>
@@ -217,9 +225,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.zipCode ? (
+            {formErrors.zipCode ? (
               <label htmlFor="zipCode" className={styles.errorMessage}>
-                {errors.zipCode.message}
+                {formErrors.zipCode.message}
               </label>
             ) : (
               <label htmlFor="zipCode">Código postal*</label>
@@ -233,12 +241,12 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.documentationType ? (
+            {formErrors.documentationType ? (
               <label
                 htmlFor="documentationType"
                 className={styles.errorMessage}
               >
-                {errors.documentationType.message}
+                {formErrors.documentationType.message}
               </label>
             ) : (
               <label htmlFor="documentationType">Tipo de documento*</label>
@@ -257,16 +265,17 @@ export function SignUp() {
                 Object.keys(optionsForUserRegister.docTypesEs).map(
                   (docTypeKey) => (
                     <option key={docTypeKey} value={docTypeKey}>
-                      {optionsForUserRegister.docTypesEs[docTypeKey]}
+                      {optionsForUserRegister.docTypesEs &&
+                        optionsForUserRegister.docTypesEs[docTypeKey]}
                     </option>
                   )
                 )}
             </select>
           </div>
           <div className={styles.inputGroup}>
-            {errors.documentCode ? (
+            {formErrors.documentCode ? (
               <label htmlFor="documentCode" className={styles.errorMessage}>
-                {errors.documentCode.message}
+                {formErrors.documentCode.message}
               </label>
             ) : (
               <label htmlFor="documentCode">Número de documento*</label>
@@ -280,9 +289,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.expirationDate ? (
+            {formErrors.expirationDate ? (
               <label htmlFor="expirationDate" className={styles.errorMessage}>
-                {errors.expirationDate.message}
+                {formErrors.expirationDate.message}
               </label>
             ) : (
               <label htmlFor="expirationDate">Fecha de caducidad*</label>
@@ -295,9 +304,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.title ? (
+            {formErrors.title ? (
               <label htmlFor="title" className={styles.errorMessage}>
-                {errors.title.message}
+                {formErrors.title.message}
               </label>
             ) : (
               <label htmlFor="title">Título</label>
@@ -315,15 +324,16 @@ export function SignUp() {
                 optionsForUserRegister.titles &&
                 Object.keys(optionsForUserRegister.titles).map((title) => (
                   <option key={title} value={title}>
-                    {optionsForUserRegister.titles[title]}
+                    {optionsForUserRegister.titles &&
+                      optionsForUserRegister.titles[title]}
                   </option>
                 ))}
             </select>
           </div>
           <div className={styles.inputGroup}>
-            {errors.phoneNumber1 ? (
+            {formErrors.phoneNumber1 ? (
               <label htmlFor="phoneNumber1" className={styles.errorMessage}>
-                {errors.phoneNumber1.message}
+                {formErrors.phoneNumber1.message}
               </label>
             ) : (
               <label htmlFor="phoneNumber1">Número de teléfono 1*</label>
@@ -337,9 +347,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.phoneNumber2 ? (
+            {formErrors.phoneNumber2 ? (
               <label htmlFor="phoneNumber2" className={styles.errorMessage}>
-                {errors.phoneNumber2.message}
+                {formErrors.phoneNumber2.message}
               </label>
             ) : (
               <label htmlFor="phoneNumber2">Número de teléfono 2</label>
@@ -353,9 +363,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.phoneNumber3 ? (
+            {formErrors.phoneNumber3 ? (
               <label htmlFor="phoneNumber3" className={styles.errorMessage}>
-                {errors.phoneNumber3.message}
+                {formErrors.phoneNumber3.message}
               </label>
             ) : (
               <label htmlFor="phoneNumber3">Número de teléfono 3</label>
@@ -369,9 +379,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.companyName ? (
+            {formErrors.companyName ? (
               <label htmlFor="companyName" className={styles.errorMessage}>
-                {errors.companyName.message}
+                {formErrors.companyName.message}
               </label>
             ) : (
               <label htmlFor="companyName">Nombre de empresa</label>
@@ -385,9 +395,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.companyTaxNumber ? (
+            {formErrors.companyTaxNumber ? (
               <label htmlFor="companyTaxNumber" className={styles.errorMessage}>
-                {errors.companyTaxNumber.message}
+                {formErrors.companyTaxNumber.message}
               </label>
             ) : (
               <label htmlFor="companyTaxNumber">
@@ -403,12 +413,12 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.companyPhoneNumber ? (
+            {formErrors.companyPhoneNumber ? (
               <label
                 htmlFor="companyPhoneNumber"
                 className={styles.errorMessage}
               >
-                {errors.companyPhoneNumber.message}
+                {formErrors.companyPhoneNumber.message}
               </label>
             ) : (
               <label htmlFor="companyPhoneNumber">
@@ -424,9 +434,9 @@ export function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            {errors.dateBirth ? (
+            {formErrors.dateBirth ? (
               <label htmlFor="dateBirth" className={styles.errorMessage}>
-                {errors.dateBirth.message}
+                {formErrors.dateBirth.message}
               </label>
             ) : (
               <label htmlFor="dateBirth">Fecha de nacimiento*</label>
@@ -442,9 +452,9 @@ export function SignUp() {
         <div className={styles.buttonsContainer}>
           <button type="submit">Registrarse</button>
         </div>
-        {error && (
+        {generalError && (
           <div className={styles.errorMessage}>
-            <p>{error}</p>
+            <p>{generalError}</p>
           </div>
         )}
       </form>

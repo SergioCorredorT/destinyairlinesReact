@@ -7,15 +7,23 @@ final class OptionsController extends BaseController
         parent::__construct();
     }
 
-    public function getOptionsForUserRegister(): array
+    public function getOptions(array $POST): array
     {
-        return ['response' =>
-        [
-            'docTypes' => $this->getDocTypes()['response'],
-            'docTypesEs' => $this->getDocTypesEs()['response'],
-            'titles' => $this->getTitles()['response'],
-            'countries' => $this->getCountryList()['response']
-        ]];
+        $rsp = [];
+        $options = $POST['listOptions'];
+        if (isset($options['docTypesAndRegExp'])) {
+            $rsp['docTypesAndRegExp'] = $this->getDocTypes()['response'];
+        }
+        if (isset($options['docTypesEs'])) {
+            $rsp['docTypesEs'] = $this->getDocTypesEs()['response'];
+        }
+        if (isset($options['titles'])) {
+            $rsp['titles'] = $this->getTitles()['response'];
+        }
+        if (isset($options['countries'])) {
+            $rsp['countries'] = $this->getCountryList()['response'];
+        }
+        return ['response' => $rsp];
     }
 
     public function getDocTypes(): array

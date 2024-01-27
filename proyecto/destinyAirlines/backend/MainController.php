@@ -71,7 +71,9 @@ $controllers = [
     'getdoctypes'                               => ['controller' => 'OptionsController',        'method' => 'getDocTypes'],
     'getdoctypeses'                             => ['controller' => 'OptionsController',        'method' => 'getDocTypesEs'],
     'getagecategories'                          => ['controller' => 'OptionsController',        'method' => 'getAgeCategories'],
-    'getoptionsforuserregister'                 => ['controller' => 'OptionsController',        'method' => 'getOptionsForUserRegister'],
+    'getoptions'                                => ['controller' => 'OptionsController',        'method' => 'getOptions'],
+
+
     'getcompanyinfo'                            => ['controller' => 'PageDetailsController',    'method' => 'getCompanyInfo'],
     //GET
     'gotopasswordreset'                         => ['controller' => 'passwordResetController',  'method' => 'goToPasswordReset'],

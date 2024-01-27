@@ -1,22 +1,25 @@
 import styles from "./SignIn.module.css";
 import { useAuthStore } from "../../store/authStore";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "../../validations/signInSchema";
+import { useSignal, signal } from "@preact/signals-react";
 
 type Inputs = {
   emailAddress: string;
   password: string;
 };
 
+const signInGeneralError = signal<string | null>(null);
+
 export function SignIn() {
-  const [error, setError] = useState<string | null>(null);
+  const generalError = useSignal(signInGeneralError);
+  //const [generalError, setGeneralError] = useState<string | null>(null);
   const { signIn } = useAuthStore();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors: formErrors },
   } = useForm<Inputs>({
     resolver: zodResolver(signInSchema),
   });
@@ -30,7 +33,7 @@ export function SignIn() {
       password: jsonData.password,
     }).then((data) => {
       if (!data.status) {
-        setError(data.message);
+        signInGeneralError.value = data.message;
       }
     });
   });
@@ -40,9 +43,9 @@ export function SignIn() {
       <h2>Iniciar sesión</h2>
       <form className={styles.form} onSubmit={onSubmit}>
         <div className={styles.inputGroup}>
-          {errors.emailAddress ? (
+          {formErrors.emailAddress ? (
             <label htmlFor="emailAddress" className={styles.errorMessage}>
-              {errors.emailAddress.message}
+              {formErrors.emailAddress.message}
             </label>
           ) : (
             <label htmlFor="emailAddress">Email</label>
@@ -56,9 +59,9 @@ export function SignIn() {
           />
         </div>
         <div className={styles.inputGroup}>
-          {errors.password ? (
+          {formErrors.password ? (
             <label htmlFor="password" className={styles.errorMessage}>
-              {errors.password.message}
+              {formErrors.password.message}
             </label>
           ) : (
             <label htmlFor="password">Password</label>
@@ -73,9 +76,9 @@ export function SignIn() {
         <div className={styles.buttonsContainer}>
           <button type="submit">Iniciar sesión</button>
         </div>
-        {error && (
+        {generalError && (
           <div className={styles.errorMessage}>
-            <p>{error}</p>
+            <p>{generalError}</p>
           </div>
         )}
       </form>

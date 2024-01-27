@@ -1,9 +1,9 @@
 import { toast } from "react-toastify";
 import { destinyAirlinesFetch } from "./fetchUtils";
 
-export async function getOptionsForUserRegister() {
+export async function getOptions({listOptions}) {
     const response = await destinyAirlinesFetch(
-        { command: "getOptionsForUserRegister" }
+        { command: "getOptions", listOptions }
     );
 
     if (response.error) {

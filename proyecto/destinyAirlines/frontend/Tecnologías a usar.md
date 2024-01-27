@@ -10,7 +10,7 @@
             Necesario crear para que vscode no vea como error por culpa de typescript, aunque ya funcione el proyecto:
                 declarations.d.tsx
                 tsconfig.json
-
+        Signal , useSignal (sustitución de useState) (signal para crear la señal, useSignal para forzar re-renderizado )
         fetch o axios (viciarse el fetch primero)
         Zustand (por preferir simplicidad a la funcionalidad del useContext)
         zod+react hook form (formik está menos preparado para typescript)
@@ -24,5 +24,4 @@
     000webhost              para sql MariaDB de bbdd
 
 [Descartadas]
-    useSignal (useState) Al ser de Preact parece no ser completamente compatible con React, no me funcionó para mostrar el panel sign in al clicar en su botón sign in
     Vitest (por simplicidad)
