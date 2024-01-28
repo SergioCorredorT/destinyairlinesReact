@@ -37,12 +37,7 @@ type optionsForUserRegister = {
   countries?: { [key: string]: string };
 };
 
-
-export function SignUp({
-  closeModal,
-}: {
-  closeModal: () => void;
-}) {
+export function SignUp({ closeModal }: { closeModal: () => void }) {
   const generalError = useSignal("");
   const [optionsForUserRegister, setOptionsForUserRegister] =
     useState<optionsForUserRegister | null>(null);
@@ -179,7 +174,15 @@ export function SignUp({
             ) : (
               <label htmlFor="country">País*</label>
             )}
-            <datalist id="countries">
+            <select
+              defaultValue=""
+              id="country"
+              title="Introduzca aquí su país"
+              {...register("country")}
+            >
+              <option value="" disabled>
+                Seleccione una opción
+              </option>
               {optionsForUserRegister &&
                 optionsForUserRegister.countries &&
                 Object.keys(optionsForUserRegister.countries).map((country) => (
@@ -187,13 +190,7 @@ export function SignUp({
                     {country}
                   </option>
                 ))}
-            </datalist>
-            <input
-              list="countries"
-              id="country"
-              title="Introduzca aquí su país"
-              {...register("country")}
-            />
+            </select>
           </div>
           <div className={styles.inputGroup}>
             {formErrors.townCity ? (
@@ -203,7 +200,33 @@ export function SignUp({
             ) : (
               <label htmlFor="townCity">Ciudad*</label>
             )}
+            <datalist>
+              <option></option>
+            </datalist>
+            <datalist id="towns">
+              <option value="Moscú">Moscú</option>
+              <option value="Londres">Londres</option>
+              <option value="Berlín">Berlín</option>
+              <option value="Madrid">Madrid</option>
+              <option value="Kiev">Kiev</option>
+              <option value="Roma">Roma</option>
+              <option value="Bakú">Bakú</option>
+              <option value="París">París</option>
+              <option value="Bucarest">Bucarest</option>
+              <option value="Minsk">Minsk</option>
+              <option value="Viena">Viena</option>
+              <option value="Varsovia">Varsovia</option>
+              <option value="Budapest">Budapest</option>
+              <option value="Belgrado">Belgrado</option>
+              <option value="Praga">Praga</option>
+              <option value="Sofía">Sofía</option>
+              <option value="Tiflis">Tiflis</option>
+              <option value="Ereván">Ereván</option>
+              <option value="Estocolmo">Estocolmo</option>
+              <option value="Ámsterdam">Ámsterdam</option>
+            </datalist>
             <input
+              list="towns"
               type="text"
               id="townCity"
               placeholder="Albacete"
@@ -257,7 +280,7 @@ export function SignUp({
             <select
               id="documentationType"
               title="Introduzca aquí su tipo de documento"
-              defaultValue="none"
+              defaultValue=""
               {...register("documentationType")}
             >
               <option value="" disabled>
@@ -317,7 +340,7 @@ export function SignUp({
             <select
               id="title"
               title="Introduzca aquí su título"
-              defaultValue="none"
+              defaultValue=""
               {...register("title")}
             >
               <option value="" disabled>

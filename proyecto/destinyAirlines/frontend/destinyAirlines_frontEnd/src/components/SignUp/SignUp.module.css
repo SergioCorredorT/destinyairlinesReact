@@ -1,6 +1,6 @@
 form {
-    display: grid;
-    gap: 10px;
+  display: grid;
+  gap: 10px;
 }
 
 .inputGroupsContainer {
@@ -12,26 +12,26 @@ form {
 }
 
 .inputGroup {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  width: min-content;
   margin: 0 auto;
-  min-width: fit-content;
 }
 
 .buttonsContainer {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    justify-content: center;
-    padding: 10px;
-  }
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px;
+}
 
 .signUp {
   display: flex;
   flex-direction: column;
   max-height: 100%;
+  margin: auto;
 }
 
 .signUp h2 {
@@ -44,4 +44,14 @@ form {
 
 .errorMessage {
   color: #dc143c;
+}
+
+input, select, textarea {
+  width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  .inputGroupsContainer {
+    grid-template-columns: 1fr;
+  }
 }

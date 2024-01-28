@@ -1,8 +1,5 @@
 import { create } from "zustand";
-import {
-  removeFromNestedKeyInLocalStorage,
-  saveToNestedKeyInLocalStorage,
-} from "../services/localStorageUtils";
+import { saveToNestedKeyInLocalStorage } from "../services/localStorageUtils";
 import { destinyAirlinesFetch } from "../services/fetchUtils";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -57,8 +54,10 @@ const handleError = ({
   if (error === "expired_token") {
     signOut();
     toast.info("Sesión expirada");
+    return "expired_token";
   }
   toast.error("Hubo un error en la actualización de sesión");
+  return "generic_error";
 };
 
 export const useAuthStore = create<AuthStoreState>((set, get) => ({
@@ -97,8 +96,11 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       } else if (data.tokenError && data.tokenError == "expired_token") {
         updateRefreshToken(refreshToken).then((data) => {
           if (data.tokenError) {
-            handleError({ error: data.tokenError, signOut });
-            return;
+            const errorResponse = handleError({
+              error: data.tokenError,
+              signOut,
+            });
+            return { error: errorResponse };
           }
           setAccessToken(data.accessToken);
           if (data.refreshToken) {
@@ -106,6 +108,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
           }
         });
       }
+      return { error: null };
     });
   },
   setTitle: (title) => {
@@ -120,6 +123,6 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
     saveToNestedKeyInLocalStorage(["userData", "lastName"], lastName || "");
     set({ lastName });
   },
-  signIn: data => signIn({ ...data, get }),
+  signIn: (data) => signIn({ ...data, get }),
   signOut: () => signOut({ set }),
 }));
