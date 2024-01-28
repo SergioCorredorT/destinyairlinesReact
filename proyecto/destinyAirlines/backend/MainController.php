@@ -1,7 +1,9 @@
 <?php
-if (!isset($_SERVER['HTTP_ORIGIN'])) {
-    return false;
+
+if (!isset($_SERVER['HTTP_ORIGIN'])) {//Si la petición es get no pasa este filtro
+    //return false;
 }
+
 define('ROOT_PATH', __DIR__);
 require_once ROOT_PATH . '/Tools/IniTool.php';
 $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
@@ -22,7 +24,6 @@ header('Access-Control-Allow-Headers: ' . $requestConfiguration["accessControlAl
 // En la siguiente línea se recogen los datos recibidos mediante JSON, de forma que se pueden recibir JSON, GET y POST
 $data = json_decode(file_get_contents('php://input'), true);
 $command = $data['command'] ?? $_POST['command'] ?? $_GET['command'] ?? '';
-
 function executeCommand(string $controllerName, string $methodName, array $params): array
 {
     try {

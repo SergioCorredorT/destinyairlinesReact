@@ -51,6 +51,7 @@ final class UserController extends BaseController
 
             $UserModel = new UserModel();
             if ($UserModel->createUser($userData)) {
+                //Enviar email con token
                 return true;
             }
         }
@@ -222,7 +223,7 @@ final class UserController extends BaseController
                 } elseif (intval($user['currentLoginAttempts']) >= $maxLoginAttemps) {
                     $isEmailSent = false;
                     //Comprobamos que no haya email de desbloqueo pendiente para saber si debemos enviarlo por primera vez
-                    if (!$UserTempIdsModel->readUserByUserId($user['id_USERS'])) {
+                    if (!$UserTempIdsModel->readUserByUserId($user['id_USERS'], 'failedAttemptsTemplate')) {
                         $cfgOriginEmailIni = $iniTool->getKeysAndValues('originEmail');
                         $userRestartData = [
                             'fromEmail' => $cfgOriginEmailIni['email'],
@@ -253,7 +254,7 @@ final class UserController extends BaseController
                         $isEmailSent = EmailTool::sendEmail($userRestartData, 'failedAttemptsTemplate');
                         if ($isEmailSent) {
                             //Si el email se ha enviado creamos registro como que hay un email de reactivación pendiente
-                            $this->updateCreateTempIdByUserId($user['id_USERS'], $tempId);
+                            $this->updateCreateTempIdByUserId($user['id_USERS'], $tempId, 'failedAttempts');
                         }
                     }
                     return ['response' => false, 'currentLoginAttempts' => $user['currentLoginAttempts'], 'lastAttempt' => $user['lastAttempt'], 'emailSent' => $isEmailSent];
@@ -336,9 +337,9 @@ final class UserController extends BaseController
                 if ($dedodedPasswordResetToken['response']) {
                     $userId = $dedodedPasswordResetToken['response']->data->id;
                     //Comprobamos si no hay un email de desbloqueo pendiente
-                    if ($UserTempIdsModel->readUserByUserId($userId)) {
+                    if ($UserTempIdsModel->readUserByUserId($userId, 'failedAttempts')) {
                         //Eliminamos el registro que decía que había un email de desbloqueo pendiente
-                        $UserTempIdsModel->deleteTempIdByUserId($userId);
+                        $UserTempIdsModel->deleteTempIdByUserId($userId, 'failedAttempts');
 
                         //Reiniciamos el contador de intentos
                         $UserModel->updateResetCurrentLoginAttempts($userId);
@@ -352,13 +353,13 @@ final class UserController extends BaseController
                     }
                 } else {
                     //y comprobamos si aún no se ha resuelto el id temporal, ya que es posible que el usuario intente de nuevo cambiar el pass desde la página del link enviado al email
-                    $readUserByTempIdResults = $UserTempIdsModel->readUserByTempId($tempId);
+                    $readUserByTempIdResults = $UserTempIdsModel->readUserByTempId($tempId, 'failedAttempts');
                     if ($dedodedPasswordResetToken['errorName'] === 'expired_token' &&  $readUserByTempIdResults) {
                         $user = $UserModel->readUserById($readUserByTempIdResults[0]['id_USERS']);
                         $userId = $user['id_USERS'];
 
                         //Eliminamos el registro que decía que había un email de desbloqueo pendiente para después renovarlos
-                        $UserTempIdsModel->deleteTempIdByUserId($userId);
+                        $UserTempIdsModel->deleteTempIdByUserId($userId, 'failedAttempts');
 
                         //Recopilamos cfg
                         $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
@@ -385,7 +386,7 @@ final class UserController extends BaseController
                         //Enviamos email con link+token+id temporal
                         if (EmailTool::sendEmail($userRestartData, 'failedAttemptsTemplate')) {
                             //Si el email se ha enviado creamos registro de email de reactivación pendiente
-                            $UserTempIdsModel->createTempId($userId, $tempId);
+                            $UserTempIdsModel->createTempId($userId, $tempId, 'failedAttempts');
                         }
 
                         return ['response' => false, 'message' => '<span class="warning">Token caducado. Le hemos enviado un nuevo enlace de activación a su dirección de correo electrónico, por favor, no se demore mucho en acceder al enlace enviado para evitar su caducidad</span>'];
@@ -508,11 +509,11 @@ final class UserController extends BaseController
         return ['response' => false, 'errorCode' => 5];
     }
 
-    private function updateCreateTempIdByUserId(int $userId, string $tempId)
+    private function updateCreateTempIdByUserId(int $userId, string $tempId, string $recordCause)
     {
         $UserTempIdsModel = new UserTempIdsModel();
-        $UserTempIdsModel->removeTempIdIfExistByIdUser($userId);
-        $UserTempIdsModel->createTempId($userId, $tempId);
+        $UserTempIdsModel->removeTempIdIfExistByIdUser($userId, $recordCause);
+        $UserTempIdsModel->createTempId($userId, $tempId, $recordCause);
     }
 
     private function generateLinkPasswordReset(string $base, array $parametres)
