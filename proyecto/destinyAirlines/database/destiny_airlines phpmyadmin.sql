@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-12-2023 a las 13:29:04
+-- Tiempo de generación: 28-01-2024 a las 20:05:20
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -243,7 +243,7 @@ INSERT INTO `invoices` (`id_INVOICES`, `id_BOOKS`, `invoiceCode`, `invoicedDate`
 (2, 28, 'ewqewqq2312', '2023-11-05 23:03:14', 40, 0),
 (27, NULL, 'de672819-ca38-4930-83e2-d7d69b5cacf5', '2023-12-06 19:48:33', 790, 1),
 (29, 61, '64be8e6b-a76f-40ba-9cda-b3dea4e21ab3', '2023-12-13 22:17:59', 700, 0),
-(30, 62, '93333094-e0ea-4f50-a414-c60854683c86', '2023-12-14 14:57:25', 700, 0);
+(30, 62, '93333094-e0ea-4f50-a414-c60854683c86', '2023-12-14 14:57:25', 700, 1);
 
 -- --------------------------------------------------------
 
@@ -462,20 +462,20 @@ CREATE TABLE `users` (
   `documentationType` varchar(50) NOT NULL DEFAULT '',
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
-  `dateBirth` date NOT NULL
+  `dateBirth` date NOT NULL,
+  `isEmailVerified` tinyint(1) UNSIGNED NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `users`
 --
 
-INSERT INTO `users` (`id_USERS`, `title`, `firstName`, `lastName`, `townCity`, `streetAddress`, `zipCode`, `country`, `emailAddress`, `passwordHash`, `phoneNumber1`, `phoneNumber2`, `phoneNumber3`, `companyName`, `companyTaxNumber`, `companyPhoneNumber`, `currentLoginAttempts`, `lastAttempt`, `lastForgotPasswordEmail`, `documentationType`, `documentCode`, `expirationDate`, `dateBirth`) VALUES
-(1, 'Mr', 'John', 'Doe', 'New York', '123 Main St', '11113', 'USA', 'john.doe@example.com', '', '123456789', '987654321', '123456', '', '', '', 0, NULL, NULL, 'DNI', '', '2049-12-14', '2008-12-14'),
-(2, 'Ms', 'Alice', 'Smith', 'London', '456 Elm St', 'SW1A ', 'UK', 'alice.smith@example.com', '', '111222333', '', '', 'XYZ Company', '12345678', '999888777', 0, NULL, NULL, 'DNI', '', '2038-11-17', '2009-11-17'),
-(96, 'Dr', 'Michael', 'Anderson', 'Sydney', '456 George St', '2000', 'Australia', 'michael.anderson@example.com', '', '987654321', '987123654', '789456123', 'Tech Corp', 'AUS098765432', '+61 987 654 321', 0, NULL, NULL, 'DNI', '', '2025-08-17', '1997-08-17'),
-(131, NULL, 'A555', '', '', '', '25', '', 'aaaa5@example.com', '$2y$10$.EG9ubn2GmCllCHzXNdCau/4Tc9HQC8dugE8TjilPfmcHsuPx0yT2', '', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 'DNI', '', '2028-08-05', '2002-08-05'),
-(138, NULL, 'Serg', '', '', '', '25', '', 'sergiodesarrolladorweb@gmail.com', '$2y$10$uiwtsHD/9wWlP0H5m1Y14eRtGJ8BaTAWiLcR96vgkzFd8kaORR8ra', '', NULL, NULL, NULL, NULL, NULL, 0, '2023-12-14 17:46:05', NULL, 'DNI', '', '2057-01-16', '1987-01-16'),
-(147, NULL, 'UsuarioNuevísimo', 'Corredor', 'Albacete', 'Calle falsa 123', '44', 'Españolas', 'sergiodesarrolladorwebb@gmail.com', '$2y$10$0DDkevwZKNoiuUARui27meAd6lQoRjD5mChYZ2Su2M.vNhkM9NQbC', '111223344', NULL, NULL, NULL, NULL, NULL, 0, '2023-12-14 19:48:52', NULL, 'DNI', '12345678A', '2024-11-30', '1906-01-14');
+INSERT INTO `users` (`id_USERS`, `title`, `firstName`, `lastName`, `townCity`, `streetAddress`, `zipCode`, `country`, `emailAddress`, `passwordHash`, `phoneNumber1`, `phoneNumber2`, `phoneNumber3`, `companyName`, `companyTaxNumber`, `companyPhoneNumber`, `currentLoginAttempts`, `lastAttempt`, `lastForgotPasswordEmail`, `documentationType`, `documentCode`, `expirationDate`, `dateBirth`, `isEmailVerified`) VALUES
+(1, 'Mr', 'John', 'Doe', 'New York', '123 Main St', '11113', 'USA', 'john.doe@example.com', '', '123456789', '987654321', '123456', '', '', '', 0, NULL, NULL, 'DNI', '', '2049-12-14', '2008-12-14', 0),
+(2, 'Ms', 'Alice', 'Smith', 'London', '456 Elm St', 'SW1A ', 'UK', 'alice.smith@example.com', '', '111222333', '', '', 'XYZ Company', '12345678', '999888777', 0, NULL, NULL, 'DNI', '', '2038-11-17', '2009-11-17', 0),
+(96, 'Dr', 'Michael', 'Anderson', 'Sydney', '456 George St', '2000', 'Australia', 'michael.anderson@example.com', '', '987654321', '987123654', '789456123', 'Tech Corp', 'AUS098765432', '+61 987 654 321', 0, NULL, NULL, 'DNI', '', '2025-08-17', '1997-08-17', 0),
+(131, NULL, 'A555', '', '', '', '25', '', 'aaaa5@example.com', '$2y$10$.EG9ubn2GmCllCHzXNdCau/4Tc9HQC8dugE8TjilPfmcHsuPx0yT2', '', NULL, NULL, NULL, NULL, NULL, 1, '2024-01-23 16:27:47', NULL, 'DNI', '', '2028-08-05', '2002-08-05', 0),
+(138, 'Sr', 'Sergio', 'Corredor', '', '', '25', '', 'sergiodesarrolladorweb@gmail.com', '$2y$10$Q3cHlHWHshUaXPxR8GkXLeiL7nMlHoNa76m0DDRBM9tbdYa.I7fU6', '', NULL, NULL, NULL, NULL, NULL, 0, '2024-01-28 19:45:04', '2024-01-28 19:35:26', 'DNI', '', '2057-01-16', '1987-01-16', 0);
 
 -- --------------------------------------------------------
 
@@ -487,7 +487,8 @@ CREATE TABLE `user_temp_ids` (
   `id_USER_TEMP_IDS` int(11) NOT NULL,
   `id_USERS` int(11) NOT NULL,
   `tempId` varchar(40) NOT NULL,
-  `unlockEmailPending` datetime DEFAULT current_timestamp()
+  `unlockEmailPending` datetime DEFAULT current_timestamp(),
+  `recordCause` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -714,13 +715,13 @@ ALTER TABLE `services_invoices`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_USERS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
+  MODIFY `id_USERS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=153;
 
 --
 -- AUTO_INCREMENT de la tabla `user_temp_ids`
 --
 ALTER TABLE `user_temp_ids`
-  MODIFY `id_USER_TEMP_IDS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+  MODIFY `id_USER_TEMP_IDS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- Restricciones para tablas volcadas

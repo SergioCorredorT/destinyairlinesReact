@@ -62,6 +62,7 @@ Table USERS {
   documentCode varchar(30) [not null]
   expirationDate date [not null]
   dateBirth date [not null]
+  isEmailVerified tinyint [default: 0, not null]
 }
 
 Table USER_TEMP_IDS {
@@ -69,6 +70,7 @@ Table USER_TEMP_IDS {
   id_USERS int [not null]
   tempId varchar(40) [UNIQUE, not null]
   unlockEmailPending datetime [default: `CURRENT_TIMESTAMP`]
+  recordCause varchar(50) [not null]
 }
 
 Ref: USER_TEMP_IDS.id_USERS > USERS.id_USERS [delete: cascade]
