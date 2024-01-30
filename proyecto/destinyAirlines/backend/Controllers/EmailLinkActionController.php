@@ -26,22 +26,12 @@ final class EmailLinkActionController extends BaseController
             return false;
         }
 
-        /* require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $aboutLogin = $iniTool->getKeysAndValues('aboutLogin');
-        $headerLocation = 'Location: '.$aboutLogin['passwordResetLink'].'?type='.$goToPasswordResetData['type'].'&passwordResetToken='.$goToPasswordResetData['passwordResetToken'];
-        if(isset($goToPasswordResetData['tempId']) && $goToPasswordResetData['tempId'] !== null)
-        {
-            $headerLocation.= '&tempId=' . $goToPasswordResetData['tempId'];
-        }
-        header($headerLocation);
-        return true; */
-
-        require_once ROOT_PATH . '/Tools/RedirectTool.php';
         require_once ROOT_PATH . '/Tools/IniTool.php';
         $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $aboutLogin = $iniTool->getKeysAndValues('aboutLogin');
-        
+
+        require_once ROOT_PATH . '/Tools/RedirectTool.php';
+
         $params = [
             'type' => $goToPasswordResetData['type'],
             'passwordResetToken' => $goToPasswordResetData['passwordResetToken']
@@ -53,7 +43,6 @@ final class EmailLinkActionController extends BaseController
         
         RedirectTool::redirectTo($aboutLogin['passwordResetLink'], $params);
         exit;
-        //return true;
     }
 
     public function goToEmailVerification(array $GET): bool
@@ -79,7 +68,6 @@ final class EmailLinkActionController extends BaseController
         if (!EmailLinkActionValidator::validate($goToEmailVerificationData)) {
             RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Datos recibidos no válidos', 'messageType'=>'error']);
             exit;
-            //return false;
         }
 
         require_once ROOT_PATH . '/Tools/TokenTool.php';
@@ -96,19 +84,16 @@ final class EmailLinkActionController extends BaseController
             }
             RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Token expirado o inválido', 'messageType'=>'error']);
             exit;
-            //return false;
         }
 
         if(!$UserModel->updateIsEmailVerified($id_USERS)) {
             RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Error en la verificación de email', 'messageType'=>'error']);
             exit;
-            //return false;
         }
 
         $UserTempIdsModel->deleteTempIdByUserId($id_USERS, 'emailVerification');
         RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Cuenta activada con éxito, puede iniciar sesión en la página principal', 'messageType'=>'success']);
         exit;
-        //return true;
     }
 
     public function goToAccountDeletion(array $GET): bool
@@ -134,7 +119,6 @@ final class EmailLinkActionController extends BaseController
         if (!EmailLinkActionValidator::validate($goToAccountDeletionData)) {
             RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Datos recibidos no válidos', 'messageType'=>'error']);
             exit;
-            //return false;
         }
 
         require_once ROOT_PATH . '/Tools/TokenTool.php';
@@ -144,12 +128,10 @@ final class EmailLinkActionController extends BaseController
         if (!$decodedToken['response']) {
             RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Token expirado o inválido', 'messageType'=>'error']);
             exit;
-            //return false;
         }
 
         $UserModel->deleteUserNoVerifiedById($id_USERS);
         RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Cuenta revocada con éxito', 'messageType'=>'success']);
         exit;
-        //return true;
     }
 }

@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
 
     <body>
         <div class="messageContainer">
-            <p class="message" class="<?php echo $messageType ?>"><?php echo $message ?></p>
+            <p class="message <?php echo $messageType ?>"><?php echo $message ?></p>
         </div>
     </body>
 

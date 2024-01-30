@@ -7,7 +7,6 @@ class RedirectTool
     {
         $queryString = http_build_query($params);
         $headerLocation = 'Location: ' . $url . '?' . $queryString;
-        error_log($headerLocation);
         header($headerLocation);
     }
 }

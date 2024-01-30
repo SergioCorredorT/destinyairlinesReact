@@ -5,11 +5,16 @@ abstract class BaseController
     {
         spl_autoload_register(function (string $class_name) {
 
-            $file = ROOT_PATH . '/models/' . $class_name . '.php';
+            // Buscar en la carpeta de modelos
+            $modelFile = ROOT_PATH . '/models/' . $class_name . '.php';
 
-            if (file_exists($file)) {
+            // Buscar en la carpeta de herramientas
+            $toolFile = ROOT_PATH . '/tools/' . $class_name . '.php';
 
-                require_once $file;
+            if (file_exists($modelFile)) {
+                require_once $modelFile;
+            } elseif (file_exists($toolFile)) {
+                require_once $toolFile;
             }
         });
     }
