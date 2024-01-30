@@ -4,10 +4,11 @@ define('RELATIVE_ROOT_PATH', '../');
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
     $tokenType = $_GET['type'];
+    if($tokenType === 'failedAttempts' || $tokenType === 'forgotPassword') {
     //failedAttempts o forgotPassword
     $passwordResetTokenGet = $_GET['passwordResetToken'];
     $tempId = '';
-    if ($tokenType == 'failedAttempts') {
+    if ($tokenType === 'failedAttempts') {
         $tempId = $_GET['tempId'];
     }
 ?>
@@ -199,4 +200,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
 
     </html>
 <?php
+    }
 }

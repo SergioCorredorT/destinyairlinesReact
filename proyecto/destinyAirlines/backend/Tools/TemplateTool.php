@@ -25,6 +25,11 @@ class TemplateTool
                     $emailBody = InvoiceTemplate::applyInvoiceTemplate($data);
                     return $emailBody;
                 }
+            case 'emailverificationtemplate': {
+                    require_once ROOT_PATH . '/Templates/email/emailVerificationTemplate.php';
+                    $emailBody = EmailVerificationTemplate::applyEmailVerificationTemplate($data);
+                    return $emailBody;
+                }
             default: {
                     //CUANDO ES '' P.E.
                     return $data['message'];

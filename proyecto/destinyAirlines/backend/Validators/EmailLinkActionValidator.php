@@ -1,5 +1,5 @@
 <?php
-class GoToPasswordResetValidator
+class EmailLinkActionValidator
 {
     public static function validateType(string $type): bool
     {
@@ -9,7 +9,7 @@ class GoToPasswordResetValidator
         return true;
     }
 
-    public static function validatePasswordResetToken(string $token): bool
+    public static function validateToken(string $token): bool
     {
         require_once ROOT_PATH . '/Validators/TokenValidator.php';
         $tokenValidator = new TokenValidator();
@@ -34,7 +34,7 @@ class GoToPasswordResetValidator
             return false;
         }
 
-        if (isset($data['passwordResetToken']) && !self::validatePasswordResetToken($data['passwordResetToken'])) {
+        if (isset($data['passwordResetToken']) && !self::validateToken($data['passwordResetToken'])) {
             return false;
         }
 

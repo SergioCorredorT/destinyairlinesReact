@@ -14,14 +14,24 @@ export function Modal({
     return null;
   }
 
-  const handleClick = () => {
+  const handleClickModal = () => {
     closeModal();
   };
 
+  const handleClickModalPanel = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+  };
+
+  const handleClickCloseButton = () => {
+    closeModal();
+  };
+
+
+
   return (
-    <div className={styles.modal}>
-      <div className={styles.modalPanel}>
-        <span className={styles.closeModal} onClick={handleClick}>
+    <div className={styles.modal} onClick={handleClickModal}>
+      <div className={styles.modalPanel} onClick={handleClickModalPanel}>
+        <span className={styles.closeModal} onClick={handleClickCloseButton}>
           ✕
         </span>
         {children}

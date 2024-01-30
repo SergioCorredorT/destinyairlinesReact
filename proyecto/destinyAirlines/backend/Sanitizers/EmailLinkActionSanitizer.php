@@ -1,16 +1,16 @@
 <?php
 require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
-class GoToPasswordResetSanitizer
+class EmailLinkActionSanitizer
 {
     public static function sanitizeType(string $type): string
     {
         return htmlspecialchars(trim($type));
     }
 
-    public static function sanitizePasswordResetToken(string $passwordResetToken): string
+    public static function sanitizeToken(string $token): string
     {
         $TokenSanitizer = new TokenSanitizer();
-        return $TokenSanitizer->sanitizeToken($passwordResetToken);
+        return $TokenSanitizer->sanitizeToken($token);
     }
 
     public static function sanitizeTempId(string $tempId): string
@@ -22,7 +22,7 @@ class GoToPasswordResetSanitizer
     {
         //Si es '', o null, o no está definida no se ejecutará el saneamiento
         if (!empty($data['type'])) $data['type'] = self::sanitizeType($data['type']);
-        if (!empty($data['passwordResetToken'])) $data['passwordResetToken'] = self::sanitizePasswordResetToken($data['passwordResetToken']);
+        if (!empty($data['passwordResetToken'])) $data['passwordResetToken'] = self::sanitizeToken($data['passwordResetToken']);
         if (!empty($data['tempId'])) $data['tempId'] = self::sanitizeTempId($data['tempId']);
 
         return $data;

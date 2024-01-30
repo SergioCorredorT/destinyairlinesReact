@@ -45,17 +45,58 @@ final class UserController extends BaseController
 
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
-        if ($isValidate) {
-            $userData['passwordHash'] = password_hash($userData['password'], PASSWORD_BCRYPT);
-            unset($userData['password']);
-
-            $UserModel = new UserModel();
-            if ($UserModel->createUser($userData)) {
-                //Enviar email con token
-                return true;
-            }
+        if (!$isValidate) {
+            return  ['response' => false, 'message' => 'No se pudo crear la cuenta. El formato de los datos recibidos es inválido.'];
         }
-        return false;
+        $userData['passwordHash'] = password_hash($userData['password'], PASSWORD_BCRYPT);
+        unset($userData['password']);
+
+        $UserModel = new UserModel();
+        $userId = $UserModel->createUser($userData,true);
+        if (!$userId) {
+            return  ['response' => false, 'message' => 'No se ha podido crear la cuenta. Esto puede deberse a un error del servidor o a que ya hay una cuenta registrada con ese email o a que ya se haya enviado un correo electrónico de activación de cuenta. Por favor, revisa tu correo electrónico para obtener instrucciones detalladas. Si no reconoces la solicitud de creación de la cuenta, por favor, haz clic en el enlace de revocación de la cuenta que se proporciona en el correo electrónico.'];
+        }
+
+        $userId = $userId[0];
+        //Recopilamos cfg
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $cfgTokenSettings = $iniTool->getKeysAndValues('tokenSettings');
+        $secondsTimeLifeActivationAccount = intval($cfgTokenSettings['secondsTimeLifeActivationAccount']);
+        $cfgOriginEmailIni = $iniTool->getKeysAndValues('originEmail');
+        $cfgAboutLogin = $iniTool->getKeysAndValues('aboutLogin');
+
+        require_once ROOT_PATH . '/Tools/TokenTool.php';
+        $tempId = TokenTool::generateUUID();
+
+        $userVerificationData = [
+            'fromEmail' => $cfgOriginEmailIni['email'],
+            'fromPassword' => $cfgOriginEmailIni['password'],
+            'toEmail' => $userData['emailAddress'],
+            'subject' => 'Activación de cuenta registrada recientemente',
+            'emailVerificationLink' => $this->generateLink($cfgAboutLogin['mainControllerLink'], [
+                'emailVerificationToken' => TokenTool::generateToken(['id' => $userId, 'type' => 'emailVerification'], $secondsTimeLifeActivationAccount),
+                'tempId' => $tempId,
+                'type' => 'emailVerification',
+                'command' => 'goToEmailVerification'
+            ]),
+            'accountDeletionLink' => $this->generateLink($cfgAboutLogin['mainControllerLink'], [
+                'accountDeletionToken' => TokenTool::generateToken(['id' => $userId, 'type' => 'accountDeletionLink'], $secondsTimeLifeActivationAccount),
+                'tempId' => $tempId,
+                'type' => 'accountDeletionLink',
+                'command' => 'goToAccountDeletion'
+            ])
+        ];
+        require_once ROOT_PATH . '/Tools/EmailTool.php';
+        if (EmailTool::sendEmail($userVerificationData, 'emailVerificationTemplate')) {
+            //Si el email se ha enviado creamos registro de email de reactivación pendiente
+            $UserTempIdsModel = new UserTempIdsModel();
+            $UserTempIdsModel->createTempId($userId, $tempId, 'emailVerification');
+            return  ['response' => true, 'message' => 'Email de activación de cuenta enviado con éxito. Por favor, revise su email y siga sus instrucciones para posibilitar que se autentique con su cuenta.'];
+        }
+
+        //Limpiar el usuario y el tempId creados por no ser posible su activación mediante email, ya que no se envió email (el tempId se elimina desde el on delete cascade)
+        $UserModel->deleteUserById($userId);
+        return  ['response' => false, 'message' => 'Hubo un error en el envío de email de activación de cuenta. Por favor, vuelva a intentar crear la cuenta.'];
     }
 
     public function updateUser(array $POST)
@@ -155,7 +196,6 @@ final class UserController extends BaseController
 
         $decodedToken = TokenTool::decodeAndCheckToken($userData['refreshToken'], 'refresh');
 
-
         if (!$decodedToken['response']) {
             return false;
         }
@@ -190,7 +230,7 @@ final class UserController extends BaseController
         if ($isValidate) {
             $UserModel = new UserModel();
             $UserTempIdsModel = new UserTempIdsModel();
-            $user = $UserModel->readUserByEmail($userData['emailAddress']);
+            $user = $UserModel->readUserVerifiedByEmail($userData['emailAddress']);
 
             if ($user) {
                 //Recogemos datos que necesitaremos
@@ -242,7 +282,7 @@ final class UserController extends BaseController
                         $tempId = TokenTool::generateUUID();
 
                         //Generamos link que se enviará por email
-                        $userRestartData['passwordResetLink'] = $this->generateLinkPasswordReset(
+                        $userRestartData['passwordResetLink'] = $this->generateLink(
                             $cfgAboutLogin['mainControllerLink'], 
                             [
                                 'passwordResetToken' => $failedAttemptsToken, 
@@ -261,6 +301,11 @@ final class UserController extends BaseController
                 }
                 //Si no hemos sobrepasado el número de intentos máximo y hemos fallado contraseña
                 return ['response' => false, 'currentLoginAttempts' => $user['currentLoginAttempts'], 'lastAttempt' => $user['lastAttempt']];
+            }
+            else
+            {
+//Este mensaje no llega a ningún lado en el frontend
+                return ['response' => false, 'message' => 'Parece que la cuenta señalada no existe o no está activada, si este es el caso puede mirar en el email si hay un correo de activación.'];
             }
         }
         return false;
@@ -375,7 +420,7 @@ final class UserController extends BaseController
                             'toEmail' => $user['emailAddress'],
                             'lastAttempt' => $user['lastAttempt'],
                             'subject' => 'Cambio de contraseña',
-                            'passwordResetLink' => $this->generateLinkPasswordReset($cfgAboutLogin['mainControllerLink'], [
+                            'passwordResetLink' => $this->generateLink($cfgAboutLogin['mainControllerLink'], [
                                 'passwordResetToken' => TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'failedAttempts'], intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken'])),
                                 'tempId' => $tempId,
                                 'type' => 'failedAttempts',
@@ -488,7 +533,7 @@ final class UserController extends BaseController
             'fromPassword' => $cfgOriginEmailIni['password'],
             'toEmail' => $user['emailAddress'],
             'subject' => 'Cambio de contraseña por olvido de contraseña original',
-            'forgotPasswordLink' => $this->generateLinkPasswordReset(
+            'forgotPasswordLink' => $this->generateLink(
                 $cfgAboutLogin['mainControllerLink'],
                 [
                     'passwordResetToken' => TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'forgotPassword'], intval($cfgTokenSettings['secondsMinTimeLifeForgotPasswordToken'])),
@@ -516,7 +561,7 @@ final class UserController extends BaseController
         $UserTempIdsModel->createTempId($userId, $tempId, $recordCause);
     }
 
-    private function generateLinkPasswordReset(string $base, array $parametres)
+    private function generateLink(string $base, array $parametres)
     {
         return $base . $this->generateLinkParametres($parametres);
     }

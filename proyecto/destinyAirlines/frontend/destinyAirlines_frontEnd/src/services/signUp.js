@@ -11,12 +11,12 @@ export async function signUp({ documentationType, documentCode, expirationDate, 
         return { status: false, message: "Error de servidor" };
     }
     if (response && response.status && response.response) {
-        toast.success("Se ha registrado la cuenta con éxito");
-        return { status: true, message: "Se ha registrado la cuenta con éxito" };
+        toast.success(response.message);
+        return { status: true, message: response.message };
     } else {
         toast.error(
-            "Hubo un error al registrar la cuenta. Por favor, inténtelo de nuevo"
+            response.message
         );
-        return { status: false, message: "Hubo un error al registrar la cuenta. Por favor, inténtelo de nuevo" };
+        return { status: false, message: response.message };
     }
 }

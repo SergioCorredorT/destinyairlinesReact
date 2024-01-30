@@ -76,9 +76,11 @@ $controllers = [
 
     'getcompanyinfo'                            => ['controller' => 'PageDetailsController',    'method' => 'getCompanyInfo'],
     //GET
-    'gotopasswordreset'                         => ['controller' => 'passwordResetController',  'method' => 'goToPasswordReset'],
-    'paypalredirectok'                          => ['controller' => 'paymentController',        'method' => 'paypalRedirectOk'],
-    'paypalredirectcancel'                      => ['controller' => 'paymentController',        'method' => 'paypalRedirectCancel'],
+    'gotopasswordreset'                         => ['controller' => 'EmailLinkActionController','method' => 'goToPasswordReset'],
+    'gotoemailverification'                     => ['controller' => 'EmailLinkActionController','method' => 'goToEmailVerification'],
+    'gotoaccountdeletion'                       => ['controller' => 'EmailLinkActionController','method' => 'goToAccountDeletion'],
+    'paypalredirectok'                          => ['controller' => 'PaymentController',        'method' => 'paypalRedirectOk'],
+    'paypalredirectcancel'                      => ['controller' => 'PaymentController',        'method' => 'paypalRedirectCancel'],
     //SOLO PARA DEBUG
     'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',          'method' => 'obtenerVariablesDeSesionDebug'],
     'debugpaypalredirectok'                     => ['controller' => 'DebugController',          'method' => 'debugPaypalRedirectOk']

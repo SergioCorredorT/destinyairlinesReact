@@ -47,6 +47,18 @@ final class UserModel extends BaseModel
         //return parent::select('*', "emailAddress = '$email' ");
     }
 
+    public function readUserVerifiedByEmail(string $email): bool|array
+    {
+        $results = parent::select('*', "emailAddress = '$email' AND isEmailVerified = 1");
+        if($results) {
+            return $results[0];
+        }
+        else {
+            return false;
+        }
+        //return parent::select('*', "emailAddress = '$email' ");
+    }
+
     public function readUserById(int $id_USERS): bool|array
     {
         $results = parent::select('*', "id_USERS = $id_USERS ");
@@ -62,6 +74,11 @@ final class UserModel extends BaseModel
     public function updateUsersByEmail(array $data, string $email): bool
     {
         return parent::update($data, " emailAddress = '$email'");
+    }
+
+    public function updateIsEmailVerified(int $id_USERS): bool
+    {
+        return parent::update(["isEmailVerified"=> 1], " id_USERS = $id_USERS");
     }
 
     public function updateAddCurrentLoginAttempts(int $id_USERS): bool
@@ -87,5 +104,15 @@ final class UserModel extends BaseModel
             return parent::delete("emailAddress = '$email'");
         }
         return false;
+    }
+
+    public function deleteUserById(int $id_USERS): bool
+    {
+        return parent::delete("id_USERS = $id_USERS");
+    }
+
+    public function deleteUserNoVerifiedById(int $id_USERS): bool
+    {
+        return parent::delete("id_USERS = $id_USERS AND isEmailVerified = 0");
     }
 }
