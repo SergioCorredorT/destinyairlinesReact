@@ -1,7 +1,5 @@
 <?php
 require_once ROOT_PATH . '/Controllers/BaseController.php';
-require_once ROOT_PATH . '/Tools/TokenTool.php';
-require_once ROOT_PATH . '/Tools/IniTool.php';
 require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
 require_once ROOT_PATH . '/Validators/TokenValidator.php';
 final class TokenController extends BaseController
@@ -19,8 +17,7 @@ final class TokenController extends BaseController
         {
             return false;
         }
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $cfgTokenSettings = $iniTool->getKeysAndValues('tokenSettings');
+        $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         $secondsMinTimeLifeAccessToken = intval($cfgTokenSettings['secondsMinTimeLifeAccessToken']);
         $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);
         return TokenTool::checkUpdateAccessToken($accessToken, $secondsMinTimeLifeAccessToken, $secondsMaxTimeLifeAccessToken);
@@ -34,8 +31,7 @@ final class TokenController extends BaseController
         {
             return false;
         }
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $cfgTokenSettings = $iniTool->getKeysAndValues('tokenSettings');
+        $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         $secondsMinTimeLifeRefreshToken = intval($cfgTokenSettings['secondsMinTimeLifeRefreshToken']);
         $secondsMaxTimeLifeRefreshToken = intval($cfgTokenSettings['secondsMaxTimeLifeRefreshToken']);
         $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);

@@ -26,11 +26,7 @@ final class EmailLinkActionController extends BaseController
             return false;
         }
 
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $aboutLogin = $iniTool->getKeysAndValues('aboutLogin');
-
-        require_once ROOT_PATH . '/Tools/RedirectTool.php';
+        $aboutLogin = $this->iniTool->getKeysAndValues('aboutLogin');
 
         $params = [
             'type' => $goToPasswordResetData['type'],
@@ -47,10 +43,7 @@ final class EmailLinkActionController extends BaseController
 
     public function goToEmailVerification(array $GET): bool
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        require_once ROOT_PATH . '/Tools/RedirectTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $additionalFeatures = $iniTool->getKeysAndValues('additionalFeatures');
+        $additionalFeatures = $this->iniTool->getKeysAndValues('additionalFeatures');
         $title = 'Activación de cuenta';
 
         $keys_default = [
@@ -70,7 +63,6 @@ final class EmailLinkActionController extends BaseController
             exit;
         }
 
-        require_once ROOT_PATH . '/Tools/TokenTool.php';
         $decodedToken = TokenTool::decodeAndCheckToken($goToEmailVerificationData['emailVerificationToken'], 'emailVerification');
         $UserModel = new UserModel();
 
@@ -98,10 +90,7 @@ final class EmailLinkActionController extends BaseController
 
     public function goToAccountDeletion(array $GET): bool
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        require_once ROOT_PATH . '/Tools/RedirectTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $additionalFeatures = $iniTool->getKeysAndValues('additionalFeatures');
+        $additionalFeatures = $this->iniTool->getKeysAndValues('additionalFeatures');
         $title = 'Revocación de cuenta no verificada';
 
         $keys_default = [
@@ -121,7 +110,6 @@ final class EmailLinkActionController extends BaseController
             exit;
         }
 
-        require_once ROOT_PATH . '/Tools/TokenTool.php';
         $decodedToken = TokenTool::decodeAndCheckToken($goToAccountDeletionData['accountDeletionToken'], 'accountDeletion');
         $UserModel = new UserModel();
 
@@ -130,7 +118,7 @@ final class EmailLinkActionController extends BaseController
             exit;
         }
 
-        $UserModel->deleteUserNoVerifiedById($id_USERS);
+        $UserModel->deleteUserNoVerifiedById($decodedToken['response']->data->userId);
         RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Cuenta revocada con éxito', 'messageType'=>'success']);
         exit;
     }

@@ -1,7 +1,5 @@
 <?php
 require_once ROOT_PATH . '/Controllers/BaseController.php';
-require_once ROOT_PATH . '/Tools/IniTool.php';
-require_once ROOT_PATH . '/Tools/EmailTool.php';
 require_once ROOT_PATH . '/Sanitizers/ContactSanitizer.php';
 require_once ROOT_PATH . '/Validators/ContactValidator.php';
 final class ContactController extends BaseController
@@ -32,8 +30,7 @@ final class ContactController extends BaseController
             $contactData['toEmail'] = $this->chooseToFromSubject($contactData['subject']);
 
             //Recogemos del cfg.ini la cuenta remitente de correo
-            $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-            $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
+            $cfgOriginEmailIni = $this->iniTool->getKeysAndValues("originEmail");
             $contactData['fromEmail'] = $cfgOriginEmailIni['email'];
             $contactData['fromPassword'] = $cfgOriginEmailIni['password'];
 
@@ -47,8 +44,7 @@ final class ContactController extends BaseController
     private function chooseToFromSubject(string $subject): string
     {
         //devolver el "to" (correo destino) según el subject según el cfg.ini
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $cfgSubjectWithItsEmails = $iniTool->getKeysAndValues("destinyContactEmails");
+        $cfgSubjectWithItsEmails = $this->iniTool->getKeysAndValues("destinyContactEmails");
         if (isset($cfgSubjectWithItsEmails[$subject])) {
             return $cfgSubjectWithItsEmails[$subject];
         }

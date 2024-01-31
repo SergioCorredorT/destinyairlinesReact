@@ -21,13 +21,18 @@ class TemplateTool
                     return $emailBody;
                 }
             case 'invoicetemplate': {
-                    require_once ROOT_PATH . '/Templates/email/invoiceTemplate.php';
+                    require_once ROOT_PATH . '/Templates/email/InvoiceTemplate.php';
                     $emailBody = InvoiceTemplate::applyInvoiceTemplate($data);
                     return $emailBody;
                 }
             case 'emailverificationtemplate': {
-                    require_once ROOT_PATH . '/Templates/email/emailVerificationTemplate.php';
+                    require_once ROOT_PATH . '/Templates/email/EmailVerificationTemplate.php';
                     $emailBody = EmailVerificationTemplate::applyEmailVerificationTemplate($data);
+                    return $emailBody;
+                }
+            case 'accountdeletiontemplate': {
+                    require_once ROOT_PATH . '/Templates/email/AccountDeletionTemplate.php';
+                    $emailBody = AccountDeletionTemplate::applyAccountDeletionTemplate($data);
                     return $emailBody;
                 }
             default: {

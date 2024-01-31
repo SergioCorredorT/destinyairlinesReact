@@ -28,81 +28,61 @@ final class OptionsController extends BaseController
 
     public function getDocTypes(): array
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $documentTypes = $iniTool->getKeysAndValues('documentTypes');
+        $documentTypes = $this->iniTool->getKeysAndValues('documentTypes');
         return ['response' => $documentTypes];
     }
 
     public function getDocTypesEs(): array
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $documentTypesEs = $iniTool->getKeysAndValues('documentTypesEs');
+        $documentTypesEs = $this->iniTool->getKeysAndValues('documentTypesEs');
         return ['response' => $documentTypesEs];
     }
 
     public function getTitles(): array
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $titles = $iniTool->getKeysAndValues('titles');
+        $titles = $this->iniTool->getKeysAndValues('titles');
         return ['response' => $titles];
     }
 
     public function getCountryList(): array
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $countryList = $iniTool->getKeysAndValues('countryList');
+        $countryList = $this->iniTool->getKeysAndValues('countryList');
         return ['response' => $countryList];
     }
 
     public function getAgeCategories(): array
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $ageCategories = $iniTool->getKeysAndValues('ageCategories');
+        $ageCategories = $this->iniTool->getKeysAndValues('ageCategories');
         return ['response' => $ageCategories];
     }
 
     public function getAssistiveDevices(): array|bool
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        $additional_informations = $this->iniTool->getKeysAndValues('additional_informations');
         return $additional_informations['assistiveDevices'];
     }
 
     public function getMedicalEquipments(): array|bool
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        $additional_informations = $this->iniTool->getKeysAndValues('additional_informations');
         return $additional_informations['medicalEquipment'];
     }
 
     public function getMobilityLimitations(): array|bool
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        $additional_informations = $this->iniTool->getKeysAndValues('additional_informations');
         return $additional_informations['mobilityLimitations'];
     }
 
     public function getCommunicationNeeds(): array|bool
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        $additional_informations = $this->iniTool->getKeysAndValues('additional_informations');
         return $additional_informations['communicationNeeds'];
     }
 
     public function getMedicationRequirements(): array|bool
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $additional_informations = $iniTool->getKeysAndValues('additional_informations');
+        $additional_informations = $this->iniTool->getKeysAndValues('additional_informations');
         return $additional_informations['medicationRequirements'];
     }
 }

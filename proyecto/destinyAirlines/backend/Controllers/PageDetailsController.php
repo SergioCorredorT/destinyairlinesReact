@@ -9,9 +9,7 @@ final class PageDetailsController extends BaseController
 
     public function getCompanyInfo(): array
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $companyInfo = $iniTool->getKeysAndValues('companyInfo');
+        $companyInfo = $this->iniTool->getKeysAndValues('companyInfo');
         return ['response' => $companyInfo];
     }
 }

@@ -1,8 +1,13 @@
 <?php
 abstract class BaseController
 {
+    protected $iniTool;
+
     public function __construct()
     {
+        require_once ROOT_PATH . '/Tools/IniTool.php';
+        $this->iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+
         spl_autoload_register(function (string $class_name) {
 
             // Buscar en la carpeta de modelos

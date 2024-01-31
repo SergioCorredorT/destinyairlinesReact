@@ -2,7 +2,6 @@
 //Ver vuelos/reservas hechos y pendientes, crear reserva, editar los servicios contratados, crear nuevo vuelo
 
 require_once ROOT_PATH . '/Controllers/BaseController.php';
-require_once ROOT_PATH . '/Tools/SessionTool.php';
 final class PaymentController extends BaseController
 {
     public function __construct()
@@ -14,15 +13,11 @@ final class PaymentController extends BaseController
     {
         require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
         require_once ROOT_PATH . '/Validators/TokenValidator.php';
-        require_once ROOT_PATH . '/Tools/TokenTool.php';
-        require_once ROOT_PATH . '/Tools/InvoiceTool.php';
-        require_once ROOT_PATH . '/Tools/PdfTool.php';
-        require_once ROOT_PATH . '/Tools/EmailTool.php';
 
         $paymentDetails = [
             'token'           => $GET['token'] ?? ''
         ];
-
+        var_dump($paymentDetails['token']);
         $paymentDetails['token'] = TokenSanitizer::sanitizeToken($paymentDetails['token']);
         if (!TokenValidator::validateToken($paymentDetails['token'])) {
             return false;
@@ -44,8 +39,7 @@ final class PaymentController extends BaseController
         $invoiceTool = new InvoiceTool();
         $pdfTool = new PdfTool();
         $emailTool = new EmailTool();
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
+        $cfgOriginEmailIni = $this->iniTool->getKeysAndValues("originEmail");
         $subject = 'Factura de su nuevo viaje';
         $message = '¡Gracias por elegir volar con Destiny Airlines! Confirmamos que hemos recibido su pago y su reserva está confirmada.
 

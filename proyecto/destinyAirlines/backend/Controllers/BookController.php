@@ -2,7 +2,6 @@
 //Ver vuelos/reservas hechas y pendientes, crear reserva, crear nuevo vuelo
 
 require_once ROOT_PATH . '/Controllers/BaseController.php';
-require_once ROOT_PATH . '/Tools/SessionTool.php';
 final class BookController extends BaseController
 {
     public function __construct()
@@ -43,7 +42,6 @@ final class BookController extends BaseController
         require_once ROOT_PATH . '/Sanitizers/PassengerSanitizer.php';
         require_once ROOT_PATH . '/Validators/PassengerValidator.php';
         require_once ROOT_PATH . '/Validators/PassengersValidator.php';
-        require_once ROOT_PATH . '/Tools/TimeTool.php';
 
         $passengers = $POST['passengers'];
         $passengersDetails = [];
@@ -179,9 +177,6 @@ final class BookController extends BaseController
     {
         require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
         require_once ROOT_PATH . '/Validators/TokenValidator.php';
-        require_once ROOT_PATH . '/Tools/TokenTool.php';
-        require_once ROOT_PATH . '/Tools/BookingPriceCalculatorTool.php';
-        require_once ROOT_PATH . '/Tools/BookingDataEnricherTool.php';
 
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
         $BookingDataEnricherTool = new BookingDataEnricherTool();
@@ -254,12 +249,9 @@ final class BookController extends BaseController
 
     private function saveBooking(array $bookData, string|int $idUser, string $direction = 'departure', float $totalPrice): bool|string
     {
-        require_once ROOT_PATH . '/Tools/IniTool.php';
-        require_once ROOT_PATH . '/Tools/BookingProcessTool.php';
         $BookingProcessTool = new BookingProcessTool();
         $flightModel = new FlightModel();
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $priceSettings = $iniTool->getKeysAndValues('priceSettings');
+        $priceSettings = $this->iniTool->getKeysAndValues('priceSettings');
 
         if (!$BookingProcessTool->validateSeatAvailability($bookData['passengersDetails'], $bookData['flightDetails']['flightCode'])) {
             return false;
@@ -298,7 +290,7 @@ final class BookController extends BaseController
             //Discounts
             //Almacenar descuento de más de x pasajeros
             $servicesModel = new ServicesModel();
-            $databaseFieldMappings = $iniTool->getKeysAndValues("databaseFieldMappings");
+            $databaseFieldMappings = $this->iniTool->getKeysAndValues("databaseFieldMappings");
             $discounts = [];
             if (count($bookData['passengersDetails']) > intval($priceSettings['discountForMoreThanXPersons'])) {
                 $discountForMoreThanXPersonsCode = $databaseFieldMappings['discountForMoreThanXPersonsCode'];
@@ -333,13 +325,9 @@ final class BookController extends BaseController
 
     private function doPayment(float $totalPrice, string|int $idUser, string|int $idInvoiceD, string|int $idInvoiceR = null): bool
     {
-        require_once ROOT_PATH . '/Tools/PaymentTool.php';
-        require_once ROOT_PATH . '/Tools/TokenTool.php';
-        require_once ROOT_PATH . '/Tools/IniTool.php';
         $PaymentTool = new PaymentTool();
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $paypalCfg = $iniTool->getKeysAndValues('paypal');
-        $projectSettings = $iniTool->getKeysAndValues('projectSettings');
+        $paypalCfg = $this->iniTool->getKeysAndValues('paypal');
+        $projectSettings = $this->iniTool->getKeysAndValues('projectSettings');
 
         //CREAR TOKEN de 3 horas (caducidad de paypal en su web)
         $data = ['id' => $idUser, 'idUser' => $idUser, 'idInvoiceD' => $idInvoiceD, 'type' => 'paypalredirectok'];
@@ -368,12 +356,6 @@ final class BookController extends BaseController
         require_once ROOT_PATH . '/Validators/CheckinValidator.php';
         require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
         require_once ROOT_PATH . '/Validators/TokenValidator.php';
-        require_once ROOT_PATH . '/Tools/TimeTool.php';
-        require_once ROOT_PATH . '/Tools/TokenTool.php';
-        require_once ROOT_PATH . '/Tools/EmailTool.php';
-        require_once ROOT_PATH . '/Tools/CheckinTool.php';
-        require_once ROOT_PATH . '/Tools/PdfTool.php';
-        require_once ROOT_PATH . '/Tools/IniTool.php';
 
         $checkinDetails = [
             'accessToken'       => $POST['accessToken'] ?? '',
@@ -414,9 +396,7 @@ final class BookController extends BaseController
         $idItinerary = $flightData['id_ITINERARIES'];
         $flightCode = $flightData['flightCode'];
 
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-
-        $checkinSettings = $iniTool->getKeysAndValues('checkinSettings');
+        $checkinSettings = $this->iniTool->getKeysAndValues('checkinSettings');
         $timeTool = new TimeTool();
         $isPastDateTime = $timeTool->isPastDateTime($flightDate, $flightHour);
         $hoursDifference = $timeTool->getHoursDifference($flightDate, $flightHour);
@@ -439,7 +419,7 @@ final class BookController extends BaseController
 
         $boardingPassPdf = $pdfTool->generatePdfFromHtml($boardingPassHtml, false);
 
-        $cfgOriginEmailIni = $iniTool->getKeysAndValues("originEmail");
+        $cfgOriginEmailIni = $this->iniTool->getKeysAndValues("originEmail");
         $subject = 'Tarjetas de embarque para su viaje';
         $message = '¡Gracias por elegir volar con Destiny Airlines!.
 
@@ -479,7 +459,6 @@ final class BookController extends BaseController
         //Recibe id del usuario y accessToken, y devuelve un array o un JSON de los books
         require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
         require_once ROOT_PATH . '/Validators/TokenValidator.php';
-        require_once ROOT_PATH . '/Tools/TokenTool.php';
 
         $accessToken = $POST['accessToken'];
         $accessToken = TokenSanitizer::sanitizeToken($accessToken);
@@ -507,7 +486,6 @@ final class BookController extends BaseController
         require_once ROOT_PATH . '/Validators/TokenValidator.php';
         require_once ROOT_PATH . '/Sanitizers/BookInfoSanitizer.php';
         require_once ROOT_PATH . '/Validators/BookInfoValidator.php';
-        require_once ROOT_PATH . '/Tools/TokenTool.php';
 
         $bookInfo = [
             'accessToken'       => $POST['accessToken'] ?? '',
@@ -545,7 +523,6 @@ final class BookController extends BaseController
         require_once ROOT_PATH . '/Validators/TokenValidator.php';
         require_once ROOT_PATH . '/Sanitizers/BookInfoSanitizer.php';
         require_once ROOT_PATH . '/Validators/BookInfoValidator.php';
-        require_once ROOT_PATH . '/Tools/TokenTool.php';
 
         $bookInfo = [
             'accessToken'       => $POST['accessToken'] ?? '',
@@ -574,7 +551,6 @@ final class BookController extends BaseController
 
         $bookModel = new BookModel();
         $flightModel = new FlightModel();
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
         $timeTool = new TimeTool();
 
         if (!$bookModel->checkBookCodeWithIdUser($bookCode, $idUser)) {
@@ -592,7 +568,7 @@ final class BookController extends BaseController
         $flightDate = $flightData['date'];
         $flightHour = $flightData['hour'];
 
-        $bookSettings = $iniTool->getKeysAndValues('bookSettings');
+        $bookSettings = $this->iniTool->getKeysAndValues('bookSettings');
         $isPastDateTime = $timeTool->isPastDateTime($flightDate, $flightHour);
         $hoursDifference = $timeTool->getHoursDifference($flightDate, $flightHour);
         if ($isPastDateTime || $hoursDifference < intval($bookSettings['maxAdvantaceHoursForCancelBook'])) {
