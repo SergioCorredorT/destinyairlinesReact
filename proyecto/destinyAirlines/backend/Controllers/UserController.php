@@ -308,8 +308,7 @@ final class UserController extends BaseController
             }
             else
             {
-//Este mensaje no llega a ningún lado en el frontend
-                return ['response' => false, 'message' => 'Parece que la cuenta señalada no existe o no está activada, si este es el caso puede mirar en el email si hay un correo de activación.'];
+                return ['response' => false];
             }
         }
         return false;

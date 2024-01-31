@@ -72,6 +72,7 @@ final class EmailLinkActionController extends BaseController
 
         if (!$decodedToken['response']) {
             if($decodedToken['errorName']==='expired_token') {
+                //Si el token ha expirado, puesto que no se enviarán más tokens para una creación de cuenta, se elimina. Y el usuario podrá crear otra nueva
                 $UserModel->deleteUserById($id_USERS);
             }
             RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Token expirado o inválido', 'messageType'=>'error']);
@@ -114,6 +115,11 @@ final class EmailLinkActionController extends BaseController
         $UserModel = new UserModel();
 
         if (!$decodedToken['response']) {
+            if($decodedToken['errorName']==='expired_token') {
+                //Si el token ha expirado, puesto que no se enviarán más tokens para una creación de cuenta, se elimina. Y el usuario podrá crear otra nueva
+                $multiModel = new MultiModel();
+                $multiModel->deleteUserByTempId($goToAccountDeletionData['tempId'], 'emailVerification');
+            }
             RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Token expirado o inválido', 'messageType'=>'error']);
             exit;
         }

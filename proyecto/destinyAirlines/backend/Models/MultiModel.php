@@ -73,7 +73,6 @@ final class MultiModel extends BaseMultiModel
         $idServicesWithSubtype = $servicesModel->readSubTypeFromIdServices($idsServices);
         $actualServicesInvoicesWithSubtypes = $this->replaceIdServiceFieldWithServiceName($actualServicesInvoices, $idServicesWithSubtype);
         $groupedServicesByPassenger = $arrayTool->groupByField($actualServicesInvoicesWithSubtypes, 'id_PASSENGERS');
-
         return [
             'book' => [
                 'bookCode' => $book_flight_results[0]['bookCode'],
@@ -162,6 +161,15 @@ final class MultiModel extends BaseMultiModel
             JOIN airports a2 ON i.destiny = a2.id_AIRPORTS
             WHERE b.bookCode = :bookCode';
         return parent::executeSql($sqlMultiTable, ['bookCode' => $bookCode]);
+    }
+
+    public function deleteUserByTempId(string $tempId, string $recordCause): bool
+    {
+        $sqlMultiTable =
+            'DELETE FROM users WHERE id_USERS IN (
+                SELECT id_USERS FROM user_temp_ids WHERE recordCause = :recordCause AND tempId = :tempId
+            );';
+        return parent::executeSql($sqlMultiTable, ['tempId' => $tempId, 'recordCause' => $recordCause]);
     }
 
     private function getActualServicesInvoices(array $servicesInvoicesData): array

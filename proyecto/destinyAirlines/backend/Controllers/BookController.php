@@ -43,7 +43,9 @@ final class BookController extends BaseController
         require_once ROOT_PATH . '/Validators/PassengerValidator.php';
         require_once ROOT_PATH . '/Validators/PassengersValidator.php';
 
-        $passengers = $POST['passengers'];
+        $FrontendDataHelpersTool = new FrontendDataHelpersTool();
+        $NestedPOST = $FrontendDataHelpersTool->processNestedKeys($POST);
+        $passengers = $NestedPOST['passengers'];
         $passengersDetails = [];
 
         //Vamos recogiendo los datos de los pasajeros
@@ -111,8 +113,11 @@ final class BookController extends BaseController
         // porque en el validate ya se hace una solicitud a BBDD para comprobar las key y value que se envíen,
         // así evitamos una llamada extra a BBDD
 
-        $servicesDetails = $POST['bookServices'] ?? [];
-        $direction = $POST['direction'] ?? '';
+        $FrontendDataHelpersTool = new FrontendDataHelpersTool();
+        $NestedPOST = $FrontendDataHelpersTool->processNestedKeys($POST);
+
+        $servicesDetails = $NestedPOST['bookServices'] ?? [];
+        $direction = $NestedPOST['direction'] ?? '';
 
         if (!$this->validateDirection($direction)) {
             return false;
@@ -223,6 +228,7 @@ final class BookController extends BaseController
             }
         }
 
+        $totalPrice = $departureTotalPrice + $returnTotalPrice;
         if (!$this->doPayment($totalPrice,  $idUser, $idInvoiceD, $idInvoiceR)) {
             return false;
         }
@@ -278,12 +284,10 @@ final class BookController extends BaseController
             //insertar pasajeros + aditional_information
             [$additionalInformationData, $passengerServiceData, $servicesInvoicesData] = $BookingProcessTool->savePassengersAndGetAddiInfoAndPassServAndServInvo($bookData['passengersDetails'], $idBook, $idInvoice);
             $BookingProcessTool->createAdditionalInformation($additionalInformationData);
-            if(!empty($passengerServiceData))
-            {
+            if (!empty($passengerServiceData)) {
                 $BookingProcessTool->createPassengerBookService($passengerServiceData);
             }
-            if(!empty($servicesInvoicesData))
-            {
+            if (!empty($servicesInvoicesData)) {
                 $BookingProcessTool->createServicesInvoices($servicesInvoicesData);
             }
 
@@ -327,6 +331,7 @@ final class BookController extends BaseController
     {
         $PaymentTool = new PaymentTool();
         $paypalCfg = $this->iniTool->getKeysAndValues('paypal');
+        $tokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         $projectSettings = $this->iniTool->getKeysAndValues('projectSettings');
 
         //CREAR TOKEN de 3 horas (caducidad de paypal en su web)
@@ -334,7 +339,7 @@ final class BookController extends BaseController
         if ($idInvoiceR) {
             $data['idInvoiceR'] = $idInvoiceR;
         }
-        $paymentToken = TokenTool::generateToken($data, intval($paypalCfg['secondsTimeLifePaymentReturnUrl']));
+        $paymentToken = TokenTool::generateToken($data, intval($tokenSettings['secondsTimeLifePaymentReturnUrl']));
 
         //En el cfg.ini se puede configurar, si se desea, probar el proyecto sin el proceso de paypal
         if ($projectSettings['doPaypalProccess'] === '0') {
