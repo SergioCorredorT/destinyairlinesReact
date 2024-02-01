@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "../../validations/signInSchema";
 import { useSignal, signal } from "@preact/signals-react";
+import { forgotPassword } from "../../services/forgotPassword";
 
 type Inputs = {
   emailAddress: string;
@@ -24,7 +25,7 @@ export function SignIn() {
   //Register :Para señalar los inputs a tener en cuenta en react-hook-form
   //handleSubmit :Para enviar los datos al backend dándole el esquema de validación o resolver de tipo zod
 
-  const onSubmit = handleSubmit((jsonData) => {
+  const onSubmitSignUp = handleSubmit((jsonData) => {
     //Tras ser validado el form con el schema
     signIn({
       emailAddress: jsonData.emailAddress,
@@ -36,10 +37,28 @@ export function SignIn() {
     });
   });
 
+  const onSubmitForgotPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+    const form = event.currentTarget.closest("form");
+    if (!form) return;
+    const input = form.querySelector("#emailAddress");
+    if (!input) return;
+    const emailAddress = (input as HTMLInputElement).value;
+    forgotPassword({
+      emailAddress,
+    }).then((data) => {
+      if (!data.status) {
+        generalError.value = data.message;
+      }
+    });
+  };
+
   return (
     <div className={styles.signIn}>
       <h2>Iniciar sesión</h2>
-      <form className={styles.form} onSubmit={onSubmit}>
+      <form className={styles.form} onSubmit={onSubmitSignUp}>
         <div className={styles.inputGroup}>
           {formErrors.emailAddress ? (
             <label htmlFor="emailAddress" className={styles.errorMessage}>
@@ -73,6 +92,9 @@ export function SignIn() {
         </div>
         <div className={styles.buttonsContainer}>
           <button type="submit">Iniciar sesión</button>
+          <button type="button" onClick={onSubmitForgotPassword}>
+            Contraseña olvidada
+          </button>
         </div>
         {generalError && (
           <div className={styles.errorMessage}>

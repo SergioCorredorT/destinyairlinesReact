@@ -41,7 +41,7 @@ final class BookModel extends BaseModel
 
     public function updateChecking(string $bookCode): bool
     {
-        return parent::update(['checkinDate' => '"' . date('Y-m-d') . '"'], "bookCode = '$bookCode'");
+        return parent::update(['checkinDate' => date('Y-m-d')], "bookCode = '$bookCode'");
     }
 
     public function deleteBookFromBookCode(string $bookCode): bool

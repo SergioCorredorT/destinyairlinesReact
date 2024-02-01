@@ -15,12 +15,12 @@ final class FlightModel extends BaseModel
     }
 
     public function getFlightDateHourIdItineraryFlightCodeFromIdFlight(int $idFlight): bool|array
-    { 
+    {
         return parent::select('date, hour, id_ITINERARIES, flightCode', "id_FLIGHTS = $idFlight")[0];
     }
 
     public function getFlightDateHourFromIdFlight(int $idFlight): bool|array
-    { 
+    {
         return parent::select('date, hour', "id_FLIGHTS = $idFlight")[0];
     }
 
@@ -51,6 +51,6 @@ final class FlightModel extends BaseModel
 
     public function decreaseAvailableSeats(string|int $seatsNumber, string|int $flightCode): bool
     {
-        return parent::update(['freeSeats' => "freeSeats - $seatsNumber "], "flightCode = '$flightCode' ");
+        return parent::update(['freeSeats' => "freeSeats - $seatsNumber "], "flightCode = '$flightCode' ", ['freeSeats' => true]);
     }
 }

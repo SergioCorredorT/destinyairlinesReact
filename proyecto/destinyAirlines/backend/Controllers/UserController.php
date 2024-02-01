@@ -51,7 +51,7 @@ final class UserController extends BaseController
         unset($userData['password']);
 
         $UserModel = new UserModel();
-        $userId = $UserModel->createUser($userData,true);
+        $userId = $UserModel->createUser($userData, true);
         if (!$userId) {
             return  ['response' => false, 'message' => 'No se ha podido crear la cuenta. Esto puede deberse a un error del servidor o a que ya hay una cuenta registrada con ese email o a que ya se haya enviado un correo electrónico de activación de cuenta. Por favor, revisa tu correo electrónico para obtener instrucciones detalladas. Si no reconoces la solicitud de creación de la cuenta, por favor, haz clic en el enlace de revocación de la cuenta que se proporciona en el correo electrónico.'];
         }
@@ -77,7 +77,7 @@ final class UserController extends BaseController
                 'command' => 'goToEmailVerification'
             ]),
             'accountDeletionLink' => $this->generateLink($cfgAboutLogin['mainControllerLink'], [
-                'accountDeletionToken' => TokenTool::generateToken(['id' => $userId, 'userId'=> $userId, 'type' => 'accountDeletion'], $secondsTimeLifeActivationAccount),
+                'accountDeletionToken' => TokenTool::generateToken(['id' => $userId, 'userId' => $userId, 'type' => 'accountDeletion'], $secondsTimeLifeActivationAccount),
                 'tempId' => $tempId,
                 'type' => 'accountDeletion',
                 'command' => 'goToAccountDeletion'
@@ -133,7 +133,7 @@ final class UserController extends BaseController
         foreach ($fixed_keys_default as $key => $defaultValue) {
             $userData[$key] = $POST[$key] ?? $defaultValue;
         }
-        
+
         //SANEAR y VALIDAR
         $userData = UserSanitizer::sanitize($userData);
         if (!UserValidator::validate($userData)) {
@@ -263,7 +263,7 @@ final class UserController extends BaseController
                     $accessToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'access'], $secondsMaxTimeLifeAccessToken);
                     $refreshToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'refresh'], $secondsMaxTimeLifeRefreshToken);
 
-                    return ['tokens' => ['accessToken' => $accessToken, 'refreshToken' => $refreshToken], 'response' => ['userData' =>  ['title' => $user['title'] ,'firstName' => $user['firstName'], 'lastName' => $user['lastName']]]];
+                    return ['tokens' => ['accessToken' => $accessToken, 'refreshToken' => $refreshToken], 'response' => ['userData' =>  ['title' => $user['title'], 'firstName' => $user['firstName'], 'lastName' => $user['lastName']]]];
                     //Si hemos fallado contraseña o si estamos fuera del rango de intentos comprobamos si debemos mandar el email al usuario
                 } elseif (intval($user['currentLoginAttempts']) >= $maxLoginAttemps) {
                     $isEmailSent = false;
@@ -288,13 +288,14 @@ final class UserController extends BaseController
 
                         //Generamos link que se enviará por email
                         $userRestartData['passwordResetLink'] = $this->generateLink(
-                            $cfgAboutLogin['mainControllerLink'], 
+                            $cfgAboutLogin['mainControllerLink'],
                             [
-                                'passwordResetToken' => $failedAttemptsToken, 
-                                'tempId' => $tempId, 
-                                'type' => 'failedAttempts', 
+                                'passwordResetToken' => $failedAttemptsToken,
+                                'tempId' => $tempId,
+                                'type' => 'failedAttempts',
                                 'command' => 'goToPasswordReset'
-                            ]);
+                            ]
+                        );
                         $isEmailSent = EmailTool::sendEmail($userRestartData, 'failedAttemptsTemplate');
                         if ($isEmailSent) {
                             //Si el email se ha enviado creamos registro como que hay un email de reactivación pendiente
@@ -305,9 +306,7 @@ final class UserController extends BaseController
                 }
                 //Si no hemos sobrepasado el número de intentos máximo y hemos fallado contraseña
                 return ['response' => false, 'currentLoginAttempts' => $user['currentLoginAttempts'], 'lastAttempt' => $user['lastAttempt']];
-            }
-            else
-            {
+            } else {
                 return ['response' => false];
             }
         }
@@ -388,7 +387,7 @@ final class UserController extends BaseController
                         $UserModel->updateResetCurrentLoginAttempts($userId);
 
                         //Incorporamos la nueva pass en bbdd
-                        $UserModel->updatePasswordHashById("'".password_hash($new_password, PASSWORD_BCRYPT)."'", $userId);
+                        $UserModel->updatePasswordHashById("'" . password_hash($new_password, PASSWORD_BCRYPT) . "'", $userId);
 
                         return ['response' => true, 'message' => '<span class="success">Contraseña cambiada con éxito, puede cerrar esta página.</span>'];
                     } else {
@@ -462,7 +461,7 @@ final class UserController extends BaseController
                     $cfgAboutLogin = $this->iniTool->getKeysAndValues('aboutLogin');
                     //Comprobamos que la cuenta no esté bloqueada por exceder el máximo de intentos permitidos de login
                     if ($user || intval($user['currentLoginAttempts']) < intval($cfgAboutLogin['maxLoginAttemps'])) {
-                        $response = $UserModel->updatePasswordHashById("'".password_hash($new_password, PASSWORD_BCRYPT)."'", $userId);
+                        $response = $UserModel->updatePasswordHashById(password_hash($new_password, PASSWORD_BCRYPT), $userId);
                     }
 
                     if ($response) {

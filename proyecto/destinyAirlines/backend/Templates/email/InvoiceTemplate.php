@@ -7,7 +7,16 @@ class InvoiceTemplate extends EmailBaseTemplate
   {
     $title = "Invoice";
     $subject = $data["subject"];
-    $message = $data["message"];
+    $message = '¡Gracias por elegir volar con Destiny Airlines! Confirmamos que hemos recibido su pago y su reserva está confirmada.
+
+    Adjuntamos a este correo electrónico la factura de su viaje. Le recomendamos que la guarde para sus registros.
+    
+    Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros.
+    
+    ¡Esperamos verle a bordo pronto!
+    
+    Saludos cordiales,
+    El equipo de Destiny Airlines';
 
     return "
     <!DOCTYPE html>

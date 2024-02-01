@@ -38,25 +38,21 @@ final class UserModel extends BaseModel
     public function readUserByEmail(string $email): bool|array
     {
         $results = parent::select('*', "emailAddress = '$email' ");
-        if($results) {
+        if ($results) {
             return $results[0];
-        }
-        else {
+        } else {
             return false;
         }
-        //return parent::select('*', "emailAddress = '$email' ");
     }
 
     public function readUserVerifiedByEmail(string $email): bool|array
     {
         $results = parent::select('*', "emailAddress = '$email' AND isEmailVerified = 1");
-        if($results) {
+        if ($results) {
             return $results[0];
-        }
-        else {
+        } else {
             return false;
         }
-        //return parent::select('*', "emailAddress = '$email' ");
     }
 
     public function readUserById(int $id_USERS): bool|array
@@ -65,10 +61,20 @@ final class UserModel extends BaseModel
         return $results ? $results[0] : false;
     }
 
+    public function readCurrentLoginAttempts(int $id_USERS): bool|int
+    {
+        $results = parent::select('currentLoginAttempts', "id_USERS = $id_USERS ");
+        return $results ? intval($results[0]) : false;
+    }
+
+    public function updateAddCurrentLoginAttempts(int $id_USERS): bool
+    {
+        return parent::update(['currentLoginAttempts' => 'currentLoginAttempts + 1', 'lastAttempt' => "'" . date('Y-m-d H:i:s') . "'"], "id_USERS = $id_USERS", ['currentLoginAttempts'=>true]);
+    }
+
     public function updatePasswordHashById(string $passwordHash, int $id_USERS): bool
     {
         return parent::update(['passwordHash' => $passwordHash], " id_USERS = $id_USERS");
-        //return parent::update(['passwordHash' => "'" . $passwordHash . "'"], " id_USERS = $id_USERS");
     }
 
     public function updateUsersByEmail(array $data, string $email): bool
@@ -78,13 +84,9 @@ final class UserModel extends BaseModel
 
     public function updateIsEmailVerified(int $id_USERS): bool
     {
-        return parent::update(["isEmailVerified"=> 1], " id_USERS = $id_USERS");
+        return parent::update(["isEmailVerified" => 1], " id_USERS = $id_USERS");
     }
 
-    public function updateAddCurrentLoginAttempts(int $id_USERS): bool
-    {
-        return parent::update(['currentLoginAttempts' => 'currentLoginAttempts + 1', 'lastAttempt' => "'" . date('Y-m-d H:i:s') . "'"], "id_USERS = $id_USERS");
-    }
 
     public function updateResetCurrentLoginAttempts(int $id_USERS): bool
     {
@@ -93,7 +95,7 @@ final class UserModel extends BaseModel
 
     public function updateLastForgotPasswordEmailById(int $id_USERS): bool
     {
-        return parent::update(['lastForgotPasswordEmail' => "'" . date('Y-m-d H:i:s') . "'"], " id_USERS = $id_USERS");
+        return parent::update(['lastForgotPasswordEmail' => date('Y-m-d H:i:s')], " id_USERS = $id_USERS");
     }
 
     public function deleteUserByEmailAndPassword(string $email, string $password): bool|array

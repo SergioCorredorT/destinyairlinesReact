@@ -17,13 +17,14 @@ final class PaymentController extends BaseController
         $paymentDetails = [
             'token'           => $GET['token'] ?? ''
         ];
-        var_dump($paymentDetails['token']);
-        $paymentDetails['token'] = TokenSanitizer::sanitizeToken($paymentDetails['token']);
-        if (!TokenValidator::validateToken($paymentDetails['token'])) {
+
+        $tokenSanitized = TokenSanitizer::sanitizeToken($paymentDetails['token']);
+        if (!TokenValidator::validateToken($tokenSanitized)) {
             return false;
         }
+        $paymentDetails['token']= $tokenSanitized;
 
-        $dedodedPaymentToken = TokenTool::decodeAndCheckToken($paymentDetails['token'], 'paypalredirectok');
+        $dedodedPaymentToken = TokenTool::decodeAndCheckToken(strval($paymentDetails['token']), 'paypalredirectok');
         if (isset($dedodedPaymentToken['errorName'])) {
             error_log($dedodedPaymentToken['errorName']);
             return $this->paypalRedirectCancel();
@@ -41,17 +42,6 @@ final class PaymentController extends BaseController
         $emailTool = new EmailTool();
         $cfgOriginEmailIni = $this->iniTool->getKeysAndValues("originEmail");
         $subject = 'Factura de su nuevo viaje';
-        $message = '¡Gracias por elegir volar con Destiny Airlines! Confirmamos que hemos recibido su pago y su reserva está confirmada.
-
-        Adjuntamos a este correo electrónico la factura de su viaje. Le recomendamos que la guarde para sus registros.
-        
-        Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros.
-        
-        ¡Esperamos verle a bordo pronto!
-        
-        Saludos cordiales,
-        El equipo de Destiny Airlines';
-
         //Generamos las facturas con los id que contiene el token válido
         $invoiceDepartureData = $invoiceTool->generateInvoiceData($dedodedPaymentToken['response']->data->idUser, $dedodedPaymentToken['response']->data->idInvoiceD);
         $invoiceDepartureHtml = $invoiceTool->generateInvoiceHtml($invoiceDepartureData);
@@ -61,8 +51,7 @@ final class PaymentController extends BaseController
                 'toEmail' => $invoiceDepartureData['userData']['emailAddress'],
                 'fromEmail' => $cfgOriginEmailIni['email'],
                 'fromPassword' => $cfgOriginEmailIni['password'],
-                'subject' => $subject,
-                'message' => $message
+                'subject' => $subject
             ],
             'invoiceTemplate',
             $invoiceDeparturePdf,
@@ -80,8 +69,7 @@ final class PaymentController extends BaseController
                     'toEmail' => $invoiceReturnData['userData']['emailAddress'],
                     'fromEmail' => $cfgOriginEmailIni['email'],
                     'fromPassword' => $cfgOriginEmailIni['password'],
-                    'subject' => $subject,
-                    'message' => $message
+                    'subject' => $subject
                 ],
                 'invoiceTemplate',
                 $invoiceReturnPdf,

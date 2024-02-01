@@ -71,7 +71,6 @@ final class BookController extends BaseController
             ];
 
             foreach ($keys_default as $key => $defaultValue) {
-                //$passengerDetails[$key] = (isset($passenger[$key]) && $passenger[$key] !== '') ? $passenger[$key] : $defaultValue;
                 $passengerDetails[$key] = !isset($passenger[$key]) || $passenger[$key] === "" ? $defaultValue : $passenger[$key];
             }
             //Cada pasajero lo saneamos y validamos
@@ -158,7 +157,6 @@ final class BookController extends BaseController
         ];
 
         foreach ($primaryContactDetails as $key => $defaultValue) {
-            //$primaryContactDetails[$key] = (isset($primaryContactDetails[$key]) && $primaryContactDetails[$key] !== '') ? $primaryContactDetails[$key] : $defaultValue;
             $primaryContactDetails[$key] = $POST[$key] ?? $defaultValue;
         }
         $direction = $POST['direction'] ?? '';
@@ -497,13 +495,13 @@ final class BookController extends BaseController
             'bookCode'          => $POST['bookCode'] ?? ''
         ];
 
-        $accessToken = $bookInfo['accessToken'];
-        $bookInfo['accessToken'] = TokenSanitizer::sanitizeToken($bookInfo['accessToken']);
-        if (!TokenValidator::validateToken($accessToken)) {
+        $tokenSanitized = TokenSanitizer::sanitizeToken($bookInfo['accessToken']);
+        if (!TokenValidator::validateToken($tokenSanitized)) {
             return false;
         }
+        $bookInfo['accessToken'] = $tokenSanitized;
 
-        $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
+        $decodedToken = TokenTool::decodeAndCheckToken($tokenSanitized, 'access');
 
         if (!$decodedToken['response']) {
             return false;
@@ -534,13 +532,13 @@ final class BookController extends BaseController
             'bookCode'          => $POST['bookCode'] ?? ''
         ];
 
-        $accessToken = $bookInfo['accessToken'];
-        $bookInfo['accessToken'] = TokenSanitizer::sanitizeToken($bookInfo['accessToken']);
-        if (!TokenValidator::validateToken($accessToken)) {
+        $tokenSanitized = TokenSanitizer::sanitizeToken($bookInfo['accessToken']);
+        if (!TokenValidator::validateToken($tokenSanitized)) {
             return false;
         }
+        $bookInfo['accessToken'] = $tokenSanitized;
 
-        $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
+        $decodedToken = TokenTool::decodeAndCheckToken($tokenSanitized, 'access');
 
         if (!$decodedToken['response']) {
             return false;

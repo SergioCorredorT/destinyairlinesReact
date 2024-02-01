@@ -168,19 +168,13 @@ abstract class BaseModel
         return $miString;
     }
 
-    protected function update(array $data, string $where): bool
+    protected function update(array $data, string $where, array $mathExpKeys = []): bool
     {
         $updateData = '';
         $bindValues = [];
         $i = 1;
         foreach ($data as $key => $value) {
-            // Check if the value is a date
-            if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $value)) {
-                $updateData .= "$key = :value$i, ";
-                $bindValues[":value$i"] = $value;
-                $i++;
-            } elseif (preg_match('/[\\+\\-\\*\\/]/', $value)) {
-                // Handle mathematical expressions specially
+            if (isset($mathExpKeys[$key])) {
                 $updateData .= "$key = $value, ";
             } else {
                 $updateData .= "$key = :value$i, ";
@@ -195,7 +189,7 @@ abstract class BaseModel
         try {
             $stmt = $this->con->prepare($query);
             foreach ($bindValues as $param => $value) {
-                $stmt->bindValue($param, $value);
+                $stmt->bindValue($param, trim($value, "'"));
             }
         } catch (Exception $er) {
             error_log('Catched exception: ' . $er->getMessage() . "\n");
