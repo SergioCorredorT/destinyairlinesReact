@@ -1,6 +1,6 @@
 # Destiny Airlines
 > [!IMPORTANT]
-> EN CONSTRUCCIÓN
+> EN CONSTRUCCIÓN, Actualmente proyecto PAUSADO
 > La API php está terminada, a falta de más pruebas para encontrar bugs
 > En la parte de Frontend usaré React js
 
