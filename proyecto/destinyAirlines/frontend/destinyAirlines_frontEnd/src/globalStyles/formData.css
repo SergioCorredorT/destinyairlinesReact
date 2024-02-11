@@ -1,5 +1,5 @@
 input:hover, select:hover {
-  border-color: var(--tertiary-color);
+  outline: 1px solid var(--tertiary-color);
 }
 
 input:focus, select:focus {
@@ -21,4 +21,9 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+input, select, textarea {
+  background-color: rgba(0,0,0,0.5);
+  color: #fff;
 }

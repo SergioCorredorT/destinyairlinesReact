@@ -83,7 +83,7 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
 
   return (
     <div className={styles.signUp}>
-      <h2>Sign up</h2>
+      <h2>Registrarse</h2>
       <form className={styles.form} onSubmit={onsubmit}>
         <div className={styles.inputGroupsContainer}>
           <div className={styles.inputGroup}>

@@ -1,0 +1,41 @@
+details {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color 0.25s;
+  background-color: var(--secondary-color);
+  color: #fff;
+  cursor: pointer;
+  width: 20em;
+  height: fit-content;
+}
+
+details:hover {
+  border-color: var(--tertiary-color);
+}
+
+details[open] {
+  outline: 4px solid var(--tertiary-color);
+}
+
+summary {
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  display: grid;
+  place-content: center;
+  height: 3em;
+  user-select: none;
+}
+
+.detailsContent {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 10px;
+  transition: border-color 0.25s;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  width: 8em;
+  display: grid;
+  place-content: center;
+  width: 100%;
+}

@@ -26,14 +26,14 @@ export function Modal({
     closeModal();
   };
 
-
-
   return (
     <div className={styles.modal} onClick={handleClickModal}>
       <div className={styles.modalPanel} onClick={handleClickModalPanel}>
-        <span className={styles.closeModal} onClick={handleClickCloseButton}>
-          ✕
-        </span>
+        <div className={styles.closeModal}>
+          <span className={styles.closeModal_contain} onClick={handleClickCloseButton}>
+            ✕
+          </span>
+        </div>
         {children}
       </div>
     </div>

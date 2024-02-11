@@ -8,15 +8,15 @@
   border: 1px solid #ccc;
   border-radius: 10px;
   background-color: var(--primary-color);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgb(0, 0, 0);
   overflow: hidden;
   color: #000;
+  height: 120px;
 }
 
-.header,
 .header .logo,
 .header .logo img {
-  height: 100px;
+  height: 100%;
 }
 
 .sessionControlsContainer {
@@ -24,4 +24,20 @@
   flex-direction: row;
   gap: 10px;
   align-items: center;
+}
+
+.isotipo_small {
+  display: none;
+  object-fit: contain;
+  height: 100px;
+}
+
+@media only screen and (max-width: 600px) {
+  .isotipo_small {
+    display: block;
+  }
+
+  .isologo {
+    display: none;
+  }
 }

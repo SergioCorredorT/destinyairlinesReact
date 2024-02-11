@@ -1,4 +1,13 @@
 .footer {
     color: #000;
     font-size: 14px;
+    box-shadow: 0 0 10px rgb(0, 0, 0);
+    background-color: var(--primary-color);
+    padding: 10px;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+    height: fit-content;
 }

@@ -1,22 +1,23 @@
-import logo from "../../images/Branding/isologo.PNG";
+import isologo from "../../images/Branding/isologo.PNG";
+import isotipo_small from "../../images/Branding/isotipo_small.PNG";
 import styles from "./Header.module.css";
 import { useAuthStore } from "../../store/authStore";
-import { UserGreeting } from "../UserGreeting/UserGreeting";
 import { SessionStartControls } from "../SessionStartControls/SessionStartControls";
-import { SessionEndControls } from "../SessionEndControls/SessionEndControls";
+import { SessionStartedControls } from "../SessionEndControls/SessionStartedControls";
 
 export function Header() {
   const { isLoggedIn } = useAuthStore();
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
-        <img src={logo} />
+        <img className={styles.isologo} src={isologo} />
+        <img className={styles.isotipo_small} src={isotipo_small} />
       </div>
       <div className={styles.sessionControlsContainer}>
         {isLoggedIn
         ? (
           <>
-            <UserGreeting /> <SessionEndControls />
+            <SessionStartedControls />
           </>
         ) : (
           <SessionStartControls />

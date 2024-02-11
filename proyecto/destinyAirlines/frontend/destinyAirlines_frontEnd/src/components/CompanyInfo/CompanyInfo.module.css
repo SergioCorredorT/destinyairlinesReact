@@ -3,12 +3,7 @@
     grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
     align-items: center;
     grid-gap: 10px;
-    padding: 10px;
     box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: var(--primary-color);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     grid-auto-flow: dense;
 }

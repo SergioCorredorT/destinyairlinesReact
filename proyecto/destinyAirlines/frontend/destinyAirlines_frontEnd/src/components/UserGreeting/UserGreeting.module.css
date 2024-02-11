@@ -1,6 +1,6 @@
 .greeting {
     display: block;
     font-weight: 600;
-    padding: 10px 20px;
+    padding: 0.3em 0.6em;
     box-sizing: border-box;
 }

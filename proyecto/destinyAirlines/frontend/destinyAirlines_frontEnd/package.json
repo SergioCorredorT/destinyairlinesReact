@@ -22,7 +22,6 @@
     "@preact/signals-react": "^2.0.0",
     "@vitejs/plugin-react": "4.2.1",
     "million": "^2.6.4",
-    "normalize.css": "^8.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.49.3",

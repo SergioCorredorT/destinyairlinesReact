@@ -1,7 +1,11 @@
-.logoutControls {
+.UserCfgButton {
     display: flex;
     font-weight: 600;
     padding: 0.3em 0.6em;
     box-sizing: border-box;
     align-items: center;
+}
+
+.UserCfgButton button {
+    width: 3em;
 }

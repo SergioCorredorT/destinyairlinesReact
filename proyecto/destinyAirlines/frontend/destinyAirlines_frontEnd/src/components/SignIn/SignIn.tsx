@@ -3,7 +3,7 @@ import { useAuthStore } from "../../store/authStore";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "../../validations/signInSchema";
-import { useSignal, signal } from "@preact/signals-react";
+import { useSignal } from "@preact/signals-react";
 import { forgotPassword } from "../../services/forgotPassword";
 
 type Inputs = {
