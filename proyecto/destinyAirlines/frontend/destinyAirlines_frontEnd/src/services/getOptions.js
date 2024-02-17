@@ -6,17 +6,10 @@ export async function getOptions({listOptions}) {
         { command: "getOptions", listOptions }
     );
 
-    if (response.error) {
-        toast.error(`Error en la petición a servidor: ${response.error}`);
+    if (!response || !response.status || !response.response) {
+        toast.error(`Error en la petición a servidor: ${response?.error || ""}`);
         return { status: false, response: false };
     }
 
-    if (response && response.status && response.response) {
-        return { status: true, response: response.response };
-    }
-
-    toast.error(
-        "Error en la petición a servidor"
-    );
-    return { status: false, response: false };
+    return { status: true, response: response.response };
 }

@@ -18,6 +18,7 @@ export function App() {
     setTitle,
     setFirstName,
     setLastName,
+    setEmailAddress,
     setIsLoggedIn,
   } = useAuthStore();
 
@@ -27,8 +28,9 @@ export function App() {
       setAccessToken(getToNestedKeyInLocalStorage(["tokens", "accessToken"]));
       setRefreshToken(getToNestedKeyInLocalStorage(["tokens", "refreshToken"]));
       setTitle(getToNestedKeyInLocalStorage(["userData", "title"]) || "");
-      setFirstName(getToNestedKeyInLocalStorage(["userData", "firstName"]));
-      setLastName(getToNestedKeyInLocalStorage(["userData", "lastName"]));
+      setFirstName(getToNestedKeyInLocalStorage(["userData", "firstName"]) || "");
+      setLastName(getToNestedKeyInLocalStorage(["userData", "lastName"]) || "");
+      setEmailAddress(getToNestedKeyInLocalStorage(["userData", "emailAddress"]));
     }
   }, []);
   return (

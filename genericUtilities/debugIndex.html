@@ -618,6 +618,26 @@
           action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
           method="post"
         >
+          <input type="text" readonly name="command" value="getUserEditableInfo" />
+          <input
+            type="text"
+            name="emailAddress"
+            value="sergiodesarrolladorweb@gmail.com"
+          />
+          <input
+            type="text"
+            name="accessToken"
+            value=""
+            placeholder="accessToken"
+          />
+          <button type="submit">Enviar POST</button>
+        </form>
+
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
+        >
           <input type="text" readonly name="command" value="loginUser" />
           <input
             type="text"

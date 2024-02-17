@@ -1,17 +1,14 @@
 import styles from "./UserCfgPanel.module.css";
+import { RemoveUser } from "../RemoveUser/RemoveUser";
+import { UpdateUser } from "../UpdateUser/UpdateUser";
+import { useState } from "react";
 
 export function UserCfgPanel() {
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const handleSubmitUpdateUser = (() => {
-    
-  });
-  
-  const handleSubmitDeleteAccount = ((event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    //Crear/Llamar al service
-    //desloguear si no hubo error, mostrar error si lo hubo
-  });
-
+  const handleToggle = () => {
+    setIsDetailsOpen(!isDetailsOpen);
+  };
   return (
     <>
       <div className={styles.UserCfgPanel}>
@@ -19,51 +16,16 @@ export function UserCfgPanel() {
           <h1>Panel de configuración</h1>
         </div>
         <div className={styles.UserCfgPanel_content}>
-          <details name="userConfig">
+          <details name="userConfig" open={isDetailsOpen} onToggle={handleToggle}>
             <summary>Editar usuario</summary>
             <div className="detailsContent">
-              <form onSubmit={handleSubmitUpdateUser}>
-                <div className={styles.inputContainer}>
-                  <label htmlFor="firstName">Nombre</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    id="firstName"
-                    placeholder="Nombre"
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <label htmlFor="lastName">Apellido</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    placeholder="Apellido"
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <label htmlFor="email">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    placeholder="Email"
-                  />
-                </div>
-                <div className={styles.buttonsContainer}>
-                  <button type="submit">Guardar cambios</button>
-                </div>
-              </form>
+              <UpdateUser isDetailsOpen={isDetailsOpen} />
             </div>
           </details>
           <details name="userConfig">
             <summary>Borrar mi cuenta</summary>
             <div className="detailsContent">
-              <form onSubmit={handleSubmitDeleteAccount}>
-                <div className={styles.buttonsContainer}>
-                  <button type="submit">Borrar mi cuenta</button>
-                </div>
-              </form>
+              <RemoveUser />
             </div>
           </details>
         </div>

@@ -14,6 +14,45 @@ final class UserController extends BaseController
         parent::__construct();
     }
 
+    public function getUserEditableInfo(array $POST) {
+        $keys_default = [
+            'accessToken' => '',
+            'emailAddress' => ''
+        ];
+        foreach ($keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+
+        $userData = UserSanitizer::sanitize($userData);
+        $isValidate = UserValidator::validate($userData);
+        if (!$isValidate) {
+            return false;
+        }
+        $decodedToken = TokenTool::decodeAndCheckToken($userData['accessToken'], 'access');
+
+        if (!$decodedToken['response']) {
+            return false;
+        }
+
+        $UserModel = new UserModel();
+
+        $email = $UserModel->getEmailById($decodedToken['response']->data->id);
+
+        if (!$email) {
+            return false;
+        }
+
+        if ($email !== $userData['emailAddress']) {
+            return false;
+        }
+
+        $userInfo = $UserModel->readUserEditableInfoByEmail($userData['emailAddress']);
+        if (!$userInfo) {
+            return  ['response' => false, 'message' => 'Hubo un error en la obtención de datos del usuario.'];
+        }
+        return  ['response' => $userInfo, 'message' => 'Obtenidos datos de usuario.'];
+    }
+
     public function createUser(array $POST)
     {
         $keys_default = [
@@ -196,7 +235,7 @@ final class UserController extends BaseController
         $UserModel = new UserModel();
         $email = $UserModel->getEmailById($decodedToken['response']->data->id);
 
-        if ($email !== $POST['emailAddress']) {
+        if ($email !== $userData['emailAddress']) {
             return false;
         }
         SessionTool::destroy();
@@ -263,7 +302,35 @@ final class UserController extends BaseController
                     $accessToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'access'], $secondsMaxTimeLifeAccessToken);
                     $refreshToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'refresh'], $secondsMaxTimeLifeRefreshToken);
 
-                    return ['tokens' => ['accessToken' => $accessToken, 'refreshToken' => $refreshToken], 'response' => ['userData' =>  ['title' => $user['title'], 'firstName' => $user['firstName'], 'lastName' => $user['lastName']]]];
+                    //return ['tokens' => ['accessToken' => $accessToken, 'refreshToken' => $refreshToken], 'response' => ['userData' =>  ['title' => $user['title'], 'firstName' => $user['firstName'], 'lastName' => $user['lastName']]]];
+                    return [
+                        'tokens' => [
+                          'accessToken' => $accessToken,
+                          'refreshToken' => $refreshToken
+                        ],
+                        'response' => [
+                          'userData' =>  [
+                            'title' => $user['title'],
+                            'firstName' => $user['firstName'],
+                            'lastName' => $user['lastName'],
+                            'country' => $user['country'],
+                            'townCity' => $user['townCity'],
+                            'streetAddress' => $user['streetAddress'],
+                            'zipCode' => $user['zipCode'],
+                            'phoneNumber1' => $user['phoneNumber1'],
+                            'phoneNumber2' => $user['phoneNumber2'],
+                            'phoneNumber3' => $user['phoneNumber3'],
+                            'companyName' => $user['companyName'],
+                            'companyTaxNumber' => $user['companyTaxNumber'],
+                            'companyPhoneNumber' => $user['companyPhoneNumber'],
+                            'documentationType' => $user['documentationType'],
+                            'documentCode' => $user['documentCode'],
+                            'expirationDate' => $user['expirationDate'],
+                            'dateBirth' => $user['dateBirth']
+                          ]
+                        ]
+                      ];
+                      
                     //Si hemos fallado contraseña o si estamos fuera del rango de intentos comprobamos si debemos mandar el email al usuario
                 } elseif (intval($user['currentLoginAttempts']) >= $maxLoginAttemps) {
                     $isEmailSent = false;

@@ -45,6 +45,16 @@ final class UserModel extends BaseModel
         }
     }
 
+    public function readUserEditableInfoByEmail(string $email): bool|array
+    {
+        $results = parent::select('title, firstName, lastName, country, townCity, streetAddress, zipCode, phoneNumber1, phoneNumber2, phoneNumber3, companyName, companyTaxNumber, companyPhoneNumber, documentationType, documentCode, expirationDate, dateBirth', "emailAddress = '$email' ");
+        if ($results) {
+            return $results[0];
+        } else {
+            return false;
+        }
+    }
+
     public function readUserVerifiedByEmail(string $email): bool|array
     {
         $results = parent::select('*', "emailAddress = '$email' AND isEmailVerified = 1");

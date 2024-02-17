@@ -4,8 +4,9 @@ details {
   transition: border-color 0.25s;
   background-color: var(--secondary-color);
   color: #fff;
-  cursor: pointer;
-  width: 20em;
+  width: 100%;
+  min-width: 8em;
+  max-width: 80em;
   height: fit-content;
 }
 
@@ -18,13 +19,15 @@ details[open] {
 }
 
 summary {
-  font-size: 1em;
+  font-weight: 600;
+  font-size: 1.2em;
   font-weight: 500;
   font-family: inherit;
   display: grid;
   place-content: center;
   height: 3em;
   user-select: none;
+  cursor: pointer;
 }
 
 .detailsContent {
@@ -34,8 +37,6 @@ summary {
   transition: border-color 0.25s;
   background-color: rgba(0, 0, 0, 0.3);
   color: #fff;
-  width: 8em;
   display: grid;
-  place-content: center;
   width: 100%;
 }

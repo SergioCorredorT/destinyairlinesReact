@@ -27,10 +27,10 @@ export function CompanyInfo() {
     <>
       <div className={styles.companyInfo}>
         <img src={logo}/>
-        <p><span className={styles.pTitle}>Dirección:</span> {airlineAddress}</p>
-        <p><span className={styles.pTitle}>Teléfono:</span> {phoneNumber}</p>
-        <p><span className={styles.pTitle}>Email:</span> {airlineEmail}</p>
-        <p><span className={styles.pTitle}>Información Legal:</span> {legalInfo}</p>
+        <div><p><span className={styles.pTitle}>Dirección:</span> {airlineAddress}</p></div>
+        <div><p><span className={styles.pTitle}>Teléfono:</span> {phoneNumber}</p></div>
+        <div><p><span className={styles.pTitle}>Email:</span> {airlineEmail}</p></div>
+        <div><p><span className={styles.pTitle}>Información Legal:</span> {legalInfo}</p></div>
       </div>
     </>
   );

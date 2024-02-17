@@ -5,10 +5,29 @@ class TokenTool
 {
     public static function generateToken(string|array|stdClass $data, int $timeLife = 60 * 60, string $role = 'user'): string
     {
-        $jws = self::createJWS($data, $timeLife, $role);
-        $encryptedToken = self::encryptToken($jws);
+        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
+        $secretKeys = $iniTool->getKeysAndValues('secretKeys');
+        $signatureSecretKey = $secretKeys['signatureSecretKey'];
 
-        return $encryptedToken;
+        if (is_string($data)) {
+            $data = ['id' => $data];
+        } elseif (!is_array($data)) {
+            $data = json_decode(json_encode($data), true);
+        }
+
+        $payload = array(
+            'iss' => 'destinyAirlines',
+            'aud' => 'destinyAirlines',
+            'sub' => $data['id'],
+            'iat' => time(),
+            'exp' => time() + ($timeLife),
+            'data' => $data,
+            'role' => $role
+        );
+
+        $jws = \Firebase\JWT\JWT::encode($payload, $signatureSecretKey, 'HS256');
+        
+        return $jws;
     }
 
     public static function checkUpdateAccessToken(string $accessToken, int $minLifeTimeAccessToken, int $initialLifeTimeAccessToken): array
@@ -73,9 +92,6 @@ class TokenTool
         $secretKeys = $iniTool->getKeysAndValues('secretKeys');
         $signatureSecretKey = $secretKeys['signatureSecretKey'];
 
-        // Desencriptar el token
-        $token = self::decryptToken($token);
-
         try {
             $headers = new stdClass();
             $headers->alg = 'HS256';
@@ -102,62 +118,5 @@ class TokenTool
     {
         $uuid4 = Ramsey\Uuid\Uuid::uuid4();
         return $uuid4->toString(); // i.e. 25769c6c-d34d-4bfe-ba98-e0ee856f3e7a
-    }
-
-    public static function createJWS(string|array|stdClass $data, int $timeLife = 60 * 60, string $role = 'user'): string
-    {
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $secretKeys = $iniTool->getKeysAndValues('secretKeys');
-        $signatureSecretKey = $secretKeys['signatureSecretKey'];
-
-        if (is_string($data)) {
-            $data = ['id' => $data];
-        } elseif (!is_array($data)) {
-            $data = json_decode(json_encode($data), true);
-        }
-
-        $payload = array(
-            'iss' => 'destinyAirlines',
-            'aud' => 'destinyAirlines',
-            'sub' => $data['id'],
-            'iat' => time(),
-            'exp' => time() + ($timeLife),
-            'data' => $data,
-            'role' => $role
-        );
-
-        $jws = \Firebase\JWT\JWT::encode($payload, $signatureSecretKey, 'HS256');
-
-        return $jws;
-    }
-
-    public static function encryptToken(string $jws): string
-    {
-        $iniTool = new IniTool(ROOT_PATH  . '/Config/cfg.ini');
-        $secretKeys = $iniTool->getKeysAndValues('secretKeys');
-        $encryptionSecretKey = $secretKeys['encryptionSecretKey'];
-
-        // Encriptar el token firmado
-        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
-        $encryptedToken = openssl_encrypt($jws, 'aes-256-cbc', $encryptionSecretKey, 0, $iv);
-
-        // El IV se necesita para descifrar el token, así que lo guardamos con el token
-        $encryptedToken .= '::' . base64_encode($iv);
-
-        return $encryptedToken;
-    }
-
-    public static function decryptToken(string $token): string
-    {
-        $iniTool = new IniTool(ROOT_PATH . '/Config/cfg.ini');
-        $secretKeys = $iniTool->getKeysAndValues('secretKeys');
-        $encryptionSecretKey = $secretKeys['encryptionSecretKey'];
-
-        // Desencriptar el token
-        list($encryptedToken, $iv) = explode('::', $token);
-        $iv = base64_decode($iv);
-        $token = openssl_decrypt($encryptedToken, 'aes-256-cbc', $encryptionSecretKey, 0, $iv);
-
-        return $token;
     }
 }

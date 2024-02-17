@@ -70,7 +70,7 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
     resolver: zodResolver(signUpSchema),
   });
 
-  const onsubmit = handleSubmit((jsonData) => {
+  const handleSubmitSignUp = handleSubmit((jsonData) => {
     signUp(jsonData).then((data) => {
       if (!data.status) {
         generalError.value = data.message;
@@ -84,7 +84,7 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
   return (
     <div className={styles.signUp}>
       <h2>Registrarse</h2>
-      <form className={styles.form} onSubmit={onsubmit}>
+      <form className={styles.form} onSubmit={handleSubmitSignUp}>
         <div className={styles.inputGroupsContainer}>
           <div className={styles.inputGroup}>
             {formErrors.emailAddress ? (

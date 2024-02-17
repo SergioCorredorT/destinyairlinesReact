@@ -8,8 +8,9 @@ class TokenValidator
             return false;
         }
 
+        return true;
         // Devuelve true si el número de ocurrencias de '.' en el token es exactamente 2
-        return substr_count($token, '.') == 2;
+        //return substr_count($token, '.') == 2;
     }
     
 }

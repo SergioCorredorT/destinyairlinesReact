@@ -1,0 +1,26 @@
+.buttonsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px;
+}
+
+.errorMessage {
+  color: #dc143c;
+  font-weight: 600;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.inputContainer {
+  display: grid;
+  justify-items: center;
+}
+
+.inputsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15em), 1fr));
+  gap: 1em;
+}

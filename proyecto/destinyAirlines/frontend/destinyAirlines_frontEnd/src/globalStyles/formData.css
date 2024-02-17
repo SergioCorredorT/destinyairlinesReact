@@ -21,9 +21,15 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 600;
 }
 
 input, select, textarea {
   background-color: rgba(0,0,0,0.5);
   color: #fff;
+  max-width: 20em;
+}
+
+.bg_danger {
+  background-color: #ff0000;
 }
