@@ -1,22 +1,20 @@
 <?php
 /* require_once ROOT_PATH . '/Tools/IniTool.php'; */
 require_once ROOT_PATH . '/Templates/email/EmailBaseTemplate.php';
-class AccountDeletionTemplate extends EmailBaseTemplate
+class ChangePasswordTemplate extends EmailBaseTemplate
 {
-  static function applyAccountDeletionTemplate(array $data): string
+  static function applyChangePasswordTemplate(array $data): string
   {
-    $title = 'Account deletion';
+    $title = 'Change password';
     $subject = $data['subject'];
     
     $message = "Estimado usuario,
 
-    <p>Lamentamos informarle que su cuenta con Destiny Airlines ha sido eliminada.</p>
+    <p>Queremos informarle de que su contraseña ha sido cambiada recientemente. Si ha realizado este cambio, no necesita hacer nada más.</p>
+
+    <p>Si no ha solicitado un cambio de contraseña, le recomendamos que se ponga en contacto con nuestro equipo de soporte lo antes posible para garantizar la seguridad de su cuenta.</p>
     
-    <p>Si cree que esto es un error o si no solicitó la eliminación de su cuenta, por favor, póngase en contacto con nuestro servicio de atención al cliente de inmediato.</p>
-    
-    <p>Pedimos disculpas por cualquier inconveniente que esto pueda haber causado. Valoramos a cada miembro de nuestra familia de Destiny Airlines y esperamos poder servirle nuevamente en el futuro.</p>
-    
-    <p>Gracias por su comprensión.</p>
+    <p>Agradecemos su atención a este asunto y agradecemos su continuo apoyo.</p>
     
     <p>Atentamente,</p>
     <p>Sergio Corredor</p>

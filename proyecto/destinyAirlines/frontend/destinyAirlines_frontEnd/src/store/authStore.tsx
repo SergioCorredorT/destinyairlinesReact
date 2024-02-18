@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { saveToNestedKeyInLocalStorage } from "../services/localStorageUtils";
+import { saveToNestedKeyInLocalStorage } from "../tools/localStorageUtils";
 import { destinyAirlinesFetch } from "../services/fetchUtils";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,6 +15,7 @@ interface AuthStoreState {
   firstName: string;
   lastName: string;
   emailAddress: string;
+  isSaveSecondaryUserData: boolean;
   country: string;
   townCity: string;
   streetAddress: string;
@@ -32,7 +33,7 @@ interface AuthStoreState {
   getUserEditableInfo: (
     forceFetch?: boolean
   ) => Promise<{ [key: string]: string | undefined | null } | null>;
-  setUserEditableInfo: (newUserInfo: {[key: string]: string}) => void;
+  setUserEditableInfo: (newUserInfo: { [key: string]: string }) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   setAccessToken: (accessToken: string) => void;
   setRefreshToken: (refreshToken: string) => void;
@@ -103,6 +104,7 @@ export const authStore = create<AuthStoreState>((set, get) => ({
   title: "",
   firstName: "",
   lastName: "",
+  isSaveSecondaryUserData: false,
   country: "",
   townCity: "",
   streetAddress: "",
@@ -122,88 +124,91 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     for (const key in newUserInfo) {
       const value = newUserInfo[key];
       switch (key) {
-        case 'title':
+        case "title":
           get().setTitle(value || "");
           break;
-        case 'firstName':
+        case "firstName":
           get().setFirstName(value || "");
           break;
-        case 'lastName':
+        case "lastName":
           get().setLastName(value || "");
           break;
-        case 'country':
+        case "country":
           get().setCountry(value || "");
           break;
-        case 'townCity':
+        case "townCity":
           get().setTownCity(value || "");
           break;
-        case 'streetAddress':
+        case "streetAddress":
           get().setStreetAddress(value || "");
           break;
-        case 'zipCode':
+        case "zipCode":
           get().setZipCode(value || "");
           break;
-        case 'phoneNumber1':
+        case "phoneNumber1":
           get().setPhoneNumber1(value || "");
           break;
-        case 'phoneNumber2':
+        case "phoneNumber2":
           get().setPhoneNumber2(value || "");
           break;
-        case 'phoneNumber3':
+        case "phoneNumber3":
           get().setPhoneNumber3(value || "");
           break;
-        case 'companyName':
+        case "companyName":
           get().setCompanyName(value || "");
           break;
-        case 'companyTaxNumber':
+        case "companyTaxNumber":
           get().setCompanyTaxNumber(value || "");
           break;
-        case 'companyPhoneNumber':
+        case "companyPhoneNumber":
           get().setCompanyPhoneNumber(value || "");
           break;
-        case 'documentationType':
+        case "documentationType":
           get().setDocumentationType(value || "");
           break;
-        case 'documentCode':
+        case "documentCode":
           get().setDocumentCode(value || "");
           break;
-        case 'expirationDate':
+        case "expirationDate":
           get().setExpirationDate(value || "");
           break;
-        case 'dateBirth':
+        case "dateBirth":
           get().setDateBirth(value || "");
           break;
         default:
           console.warn(`No setter found for key "${key}"`);
       }
     }
+    set({ ["isSaveSecondaryUserData"]: true });
   },
   getUserEditableInfo: async (forceFetch = false) => {
     if (!get()["isLoggedIn"]) {
       return { error: "El usuario no está logueado" };
     }
     //Comprobando si no tenemos la info de usuario editable en el store o si el forceFetch está activado (se usará tras el update de datos)
-    if (!get()["documentCode"] || forceFetch) {
+    if (!get()["isSaveSecondaryUserData"] || forceFetch) {
       //El emailAddress siempre se carga por estar también en el localstorage
       const emailAddress = get()["emailAddress"];
       const isLogued = await get()["checkUpdateLogin"]();
-      if (isLogued) {
-        const accessToken = get()["accessToken"];
-        const userInfo = await getUserEditableInfo({
-          emailAddress,
-          accessToken,
-        });
-        if (!userInfo.status) {
-          return { error: userInfo.error };
-        }
-        //rellenar store con el fetch
-        for (const info in userInfo.response) {
-          if (!userInfo.response[info]) {
-            userInfo.response[info] = "";
-          }
-          set({ [info]: userInfo.response[info] });
-        }
+      if (!isLogued) {
+        return { error: "Error en la comprobación de tokens" };
       }
+      const accessToken = get()["accessToken"];
+      const userInfo = await getUserEditableInfo({
+        emailAddress,
+        accessToken,
+      });
+      if (!userInfo.status) {
+        return { error: userInfo.error };
+      }
+      //rellenar store con el fetch
+      for (const info in userInfo.response) {
+        if (!userInfo.response[info]) {
+          userInfo.response[info] = "";
+        }
+        set({ [info]: userInfo.response[info] });
+      }
+      set({ ["isSaveSecondaryUserData"]: true });
     }
 
     return {

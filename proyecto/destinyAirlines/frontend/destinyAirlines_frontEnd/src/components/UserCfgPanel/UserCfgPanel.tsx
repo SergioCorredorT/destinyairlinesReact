@@ -2,6 +2,7 @@ import styles from "./UserCfgPanel.module.css";
 import { RemoveUser } from "../RemoveUser/RemoveUser";
 import { UpdateUser } from "../UpdateUser/UpdateUser";
 import { useState } from "react";
+import { ChangePassword } from "../ChangePassword/ChangePassword";
 
 export function UserCfgPanel() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -20,6 +21,12 @@ export function UserCfgPanel() {
             <summary>Editar usuario</summary>
             <div className="detailsContent">
               <UpdateUser isDetailsOpen={isDetailsOpen} />
+            </div>
+          </details>
+          <details name="userConfig">
+            <summary>Cambiar contraseña</summary>
+            <div className="detailsContent">
+              <ChangePassword />
             </div>
           </details>
           <details name="userConfig">

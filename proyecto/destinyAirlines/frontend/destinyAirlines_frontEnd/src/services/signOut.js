@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { removeFromNestedKeyInLocalStorage } from "./localStorageUtils";
+import { removeFromNestedKeyInLocalStorage } from "../tools/localStorageUtils";
 
 export function signOut({ set }) {
     removeFromNestedKeyInLocalStorage(["tokens"]);

@@ -35,6 +35,11 @@ class TemplateTool
                     $emailBody = AccountDeletionTemplate::applyAccountDeletionTemplate($data);
                     return $emailBody;
                 }
+            case 'changepasswordtemplate': {
+                    require_once ROOT_PATH . '/Templates/email/ChangePasswordTemplate.php';
+                    $emailBody = ChangePasswordTemplate::applyChangePasswordTemplate($data);
+                    return $emailBody;
+                }
             default: {
                     //CUANDO ES '' P.E.
                     return $data['message'];

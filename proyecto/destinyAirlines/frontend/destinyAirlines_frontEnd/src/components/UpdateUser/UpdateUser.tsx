@@ -67,7 +67,7 @@ export const UpdateUser = ({ isDetailsOpen }: { isDetailsOpen: boolean }) => {
     if (!response) {
       setState((prevState) => ({
         ...prevState,
-        generalError: "Could not load document types",
+        generalError: "No se pudieron cargar las opciones del formulario",
         isLoadingOptions: false,
       }));
       return;
@@ -91,7 +91,7 @@ export const UpdateUser = ({ isDetailsOpen }: { isDetailsOpen: boolean }) => {
         if (!userEditableInfo) {
           setState((prevState) => ({
             ...prevState,
-            generalError: "Error en la petición a servidor",
+            generalError: "No se pudo cargar los datos de usuario guardados",
             isLoadingUserData: false,
           }));
           return;
@@ -370,15 +370,6 @@ export const UpdateUser = ({ isDetailsOpen }: { isDetailsOpen: boolean }) => {
                   )
                 )}
             </select>
-          </div>
-          <div className={styles.inputContainer}>
-            <label htmlFor="password">Contraseña</label>
-            <input
-              type="text"
-              id="password"
-              placeholder="Contraseña"
-              title="Contraseña"
-            />
           </div>
           <div className={styles.inputContainer}>
             {formErrors.phoneNumber1 ? (

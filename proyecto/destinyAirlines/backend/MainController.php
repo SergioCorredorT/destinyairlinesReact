@@ -51,6 +51,7 @@ $controllers = [
     'getusereditableinfo'                       => ['controller' => 'UserController',           'method' => 'getUserEditableInfo'],
     'createuser'                                => ['controller' => 'UserController',           'method' => 'createUser'],
     'updateuser'                                => ['controller' => 'UserController',           'method' => 'updateUser'],
+    'updatepassword'                            => ['controller' => 'UserController',           'method' => 'updatePassword'],
     'removeuser'                                => ['controller' => 'UserController',           'method' => 'deleteUser'],
     'loginuser'                                 => ['controller' => 'UserController',           'method' => 'loginUser'],
     'logoutuser'                                => ['controller' => 'UserController',           'method' => 'logoutUser'],

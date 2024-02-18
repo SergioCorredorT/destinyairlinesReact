@@ -357,21 +357,6 @@
           <div class="filaForm">
             <input
               type="text"
-              name="password"
-              data-name="password"
-              class="password"
-              placeholder="Password"
-              value="_Aa1234567"
-            />
-            <input
-              type="checkbox"
-              class="checkNullify"
-              onchange="nullifyInput(this, `#updateForm [data-name='password']`)"
-            />
-          </div>
-          <div class="filaForm">
-            <input
-              type="text"
               name="phoneNumber1"
               data-name="phoneNumber1"
               class="phoneNumber1"
@@ -497,9 +482,39 @@
           onsubmit="return handleFormSubmit(event)"
           action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
           method="post"
+          id="updatePasswordForm"
+        >
+          <input
+            type="text"
+            readonly
+            name="command"
+            value="updatePassword"
+          />
+          <input type="text" name="password" value="_Aa1234567" />
+          <input
+            type="text"
+            name="emailAddressAuth"
+            data-name="emailAddressAuth"
+            class="emailAddress"
+            placeholder="Email Address Auth"
+            value="sergiodesarrolladorweb@gmail.com"
+          />
+          <input
+            type="text"
+            name="accessToken"
+            data-name="accessToken"
+            class="accessToken"
+            value=""
+            placeholder="accessToken"
+          />
+        <button type="submit">Enviar POST</button>
+      </form>
+        <form
+          onsubmit="return handleFormSubmit(event)"
+          action="http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php"
+          method="post"
         >
           <input type="text" readonly name="command" value="createuser" />
-
           <input
             type="text"
             name="documentationType"

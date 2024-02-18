@@ -6,6 +6,7 @@ import { signUpSchema } from "../../validations/signUpSchema";
 import { signUp } from "../../services/signUp";
 import { useSignal } from "@preact/signals-react";
 import { optionsStore } from "../../store/optionsStore";
+import { toast } from "react-toastify";
 
 type Inputs = {
   emailAddress: string;
@@ -74,8 +75,10 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
     signUp(jsonData).then((data) => {
       if (!data.status) {
         generalError.value = data.message;
+        toast.error(data.message);
       } else {
         generalError.value = "";
+        toast.success(data.message);
         closeModal();
       }
     });

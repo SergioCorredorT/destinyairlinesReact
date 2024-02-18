@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import {
   getFromLocalStorage,
   getToNestedKeyInLocalStorage,
-} from "../../services/localStorageUtils";
+} from "../../tools/localStorageUtils";
 import { authStore } from "../../store/authStore";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

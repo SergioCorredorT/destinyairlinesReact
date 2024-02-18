@@ -145,7 +145,6 @@ final class UserController extends BaseController
             'streetAddress' => '',
             'zipCode' => '',
             'country' => '',
-            'password' => '',
             'phoneNumber1' => '',
             'phoneNumber2' => null,
             'phoneNumber3' => null,
@@ -196,11 +195,6 @@ final class UserController extends BaseController
             return false;
         }
 
-        if (isset($userData['password'])) {
-            $userData['passwordHash'] = password_hash($userData['password'], PASSWORD_BCRYPT);
-            unset($userData['password']);
-        }
-
         //Quitamos los datos que no se deben editar en BBDD antes del update
         unset($userData['emailAddressAuth']);
         unset($userData['accessToken']);
@@ -208,6 +202,61 @@ final class UserController extends BaseController
             return true;
         }
         return false;
+    }
+
+    public function updatePassword(array $POST)
+    {
+        $keys_default = [
+            'password' => '',
+            'accessToken' => '',
+            'emailAddress' => ''
+        ];
+
+        foreach ($keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+
+        //SANEAR y VALIDAR
+        $userData = UserSanitizer::sanitize($userData);
+        if (!UserValidator::validate($userData)) {
+            return false;
+        }
+
+        $decodedToken = TokenTool::decodeAndCheckToken($userData['accessToken'], 'access');
+
+        if (!$decodedToken['response']) {
+            return false;
+        }
+        $UserModel = new UserModel();
+
+        $email = $UserModel->getEmailById($decodedToken['response']->data->id);
+
+        if (!$email) {
+            return false;
+        }
+
+        if ($email !== $userData['emailAddress']) {
+            return false;
+        }
+
+        $userData['passwordHash'] = password_hash($userData['password'], PASSWORD_BCRYPT);
+        unset($userData['password']);
+
+        //Quitamos los datos que no se deben editar en BBDD antes del update
+        unset($userData['emailAddress']);
+        unset($userData['accessToken']);
+        if (!$UserModel->updateUsersByEmail($userData, $email)) {
+            return false;
+        }
+
+        $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
+        $userChangePasswordData = [
+            'fromEmail' => $cfgOriginEmailIni['email'],
+            'fromPassword' => $cfgOriginEmailIni['password'],
+            'toEmail' =>$email,
+            'subject' => 'Cambio de contraseña'
+        ];
+        return EmailTool::sendEmail($userChangePasswordData, 'changePasswordTemplate');
     }
 
     public function deleteUser(array $POST)
