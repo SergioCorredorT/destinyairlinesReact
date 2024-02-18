@@ -1,12 +1,12 @@
 import styles from "./UserGreeting.module.css";
-import { useAuthStore } from "../../store/authStore";
+import { authStore } from "../../store/authStore";
 
 export function UserGreeting() {
     const {
         title,
         firstName,
         lastName,
-      } = useAuthStore();
+      } = authStore();
   return (
     <>
       <div className={styles.greeting}>

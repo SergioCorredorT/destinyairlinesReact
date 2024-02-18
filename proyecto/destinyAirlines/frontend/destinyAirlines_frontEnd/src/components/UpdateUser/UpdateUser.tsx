@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./UpdateUser.module.css";
-import { useAuthStore } from "../../store/authStore";
-import { userEditableDataStore } from "../../store/userEditableDataStore";
+import { authStore } from "../../store/authStore";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateUserSchema } from "../../validations/updateUserSchema";
+import { optionsStore } from "../../store/optionsStore";
+import { Modal } from "../Modal/Modal";
+import { toast } from "react-toastify";
+import { updateUser } from "../../services/updateUser";
 
 type Inputs = {
   firstName: string;
@@ -26,147 +29,347 @@ type Inputs = {
   dateBirth: string;
 };
 
+type optionsForUserRegister = {
+  docTypesEs?: { [key: string]: string };
+  docTypesAndRegExp?: { [key: string]: string };
+  titles?: { [key: string]: string };
+  countries?: { [key: string]: string };
+};
+
 export const UpdateUser = ({ isDetailsOpen }: { isDetailsOpen: boolean }) => {
-  const [generalError, setGeneralError] = useState("");
-  const { getUserEditableInfo } = useAuthStore();
-  const { userEditableInfo, setUserEditableInfo } = userEditableDataStore();
+  const [initialValues, setInitialValues] = useState({});
+  const [state, setState] = useState({
+    generalError: "",
+    optionsForUpdateUser: null as optionsForUserRegister | null,
+    isLoadingUserData: true,
+    isLoadingOptions: true,
+    isLoadingUserUpdate: false,
+  });
+  const { getUserEditableInfo, setUserEditableInfo, accessToken, emailAddress } = authStore();
+  const { getOptions } = optionsStore();
+  const {
+    getValues,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors: formErrors, dirtyFields },
+  } = useForm<Inputs>({
+    resolver: zodResolver(updateUserSchema),
+  });
+
+  const helperOptionsForUserRegister = useCallback(async () => {
+    const response = await getOptions({
+      countries: true,
+      titles: true,
+      docTypesEs: true,
+      docTypesAndRegExp: true,
+    });
+    if (!response) {
+      setState((prevState) => ({
+        ...prevState,
+        generalError: "Could not load document types",
+        isLoadingOptions: false,
+      }));
+      return;
+    }
+    setState((prevState) => ({
+      ...prevState,
+      generalError: "",
+      isLoadingOptions: false,
+      optionsForUpdateUser: response,
+    }));
+  }, [getOptions]);
+
+  useEffect(() => {
+    helperOptionsForUserRegister();
+  }, [helperOptionsForUserRegister]);
 
   useEffect(() => {
     if (isDetailsOpen) {
       const getUserInfo = async () => {
         const userEditableInfo = await getUserEditableInfo();
         if (!userEditableInfo) {
-          setGeneralError("Error en la petición a servidor");
+          setState((prevState) => ({
+            ...prevState,
+            generalError: "Error en la petición a servidor",
+            isLoadingUserData: false,
+          }));
           return;
         }
         if (userEditableInfo.error) {
-          setGeneralError(userEditableInfo.error);
+          setState((prevState) => ({
+            ...prevState,
+            generalError: userEditableInfo.error as string,
+            isLoadingUserData: false,
+          }));
           return;
         }
-        setGeneralError("");
-        setUserEditableInfo(userEditableInfo);
+
+        reset(userEditableInfo);
+        setInitialValues(userEditableInfo);
+        setState((prevState) => ({
+          ...prevState,
+          generalError: "",
+          isLoadingUserData: false,
+        }));
       };
       getUserInfo();
     }
   }, [isDetailsOpen]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors: formErrors },
-  } = useForm<Inputs>({
-    resolver: zodResolver(updateUserSchema),
-  });
+  const handleSubmitUpdateUser = handleSubmit(async (jsonData) => {
+    setState((prevState) => ({
+      ...prevState,
+      isLoadingUserUpdate: true,
+    }));
+    const currentValues = getValues();
+    const changedValues = Object.keys(currentValues).reduce((acc, key) => {
+      if ((currentValues as any)[key] !== (initialValues as any)[key]) {
+        (acc as any)[key] = (currentValues as any)[key];
+      }
+      return acc;
+    }, {});
 
-  const handleSubmitUpdateUser = handleSubmit((jsonData) => {
-    //Validar solo los campos modificados (si no hay ninguno, que se mantenga inhabilitado el button submit)
+    if (Object.keys(changedValues).length === 0) {
+      toast.warning("No se ha modificado ningún campo");
+      return;
+    }
 
-    //enviar tales campos al backend (pendiente de crear el service UpdateUser), y si no falla el update en backend, guardar en el store zustand los datos del user
-    //Escribir los errores de backend si los hay o un "success" si no
+    const response = await updateUser({ newUserInfo: changedValues, accessToken, emailAddressAuth: emailAddress });
+    if (!response) {
+      setState((prevState) => ({
+        ...prevState,
+        generalError: "Error en la petición a servidor",
+        isLoadingUserUpdate: false,
+      }));
+      return;
+    }
+    if (!response.status) {
+      setState((prevState) => ({
+        ...prevState,
+        generalError: response.message,
+        isLoadingUserUpdate: false,
+      }));
+      return;
+    }
+    toast.success("Datos actualizados correctamente");
+
+    setUserEditableInfo(changedValues);
+    reset(changedValues);
+    setState((prevState) => ({
+      ...prevState,
+      isLoadingUserUpdate: false,
+    }));
   });
   return (
     <>
       <form onSubmit={handleSubmitUpdateUser}>
+        <Modal
+          isOpen={state.isLoadingOptions || state.isLoadingUserData || state.isLoadingUserUpdate}
+          closeButton={false}
+        >
+          <div>Cargando...</div>
+        </Modal>
         <div className={styles.inputsContainer}>
           <div className={styles.inputContainer}>
-            <label htmlFor="documentationType">Tipo de Documentación</label>
-            <input
-              type="text"
+            {formErrors.documentationType ? (
+              <label
+                htmlFor="documentationType"
+                className={styles.errorMessage}
+              >
+                {formErrors.documentationType.message}
+              </label>
+            ) : (
+              <label htmlFor="documentationType">Tipo de documento*</label>
+            )}
+            <select
               id="documentationType"
-              placeholder="Tipo de Documentación"
               title="Tipo de Documentación"
-              value={userEditableInfo.documentationType || ""}
-            />
+              {...register("documentationType")}
+            >
+              <option value="" disabled>
+                Seleccione una opción
+              </option>
+              {state.optionsForUpdateUser &&
+                state.optionsForUpdateUser.docTypesEs &&
+                Object.keys(state.optionsForUpdateUser.docTypesEs).map(
+                  (docTypeKey) => (
+                    <option key={docTypeKey} value={docTypeKey}>
+                      {state.optionsForUpdateUser &&
+                        state.optionsForUpdateUser.docTypesEs &&
+                        state.optionsForUpdateUser.docTypesEs[docTypeKey]}
+                    </option>
+                  )
+                )}
+            </select>
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="documentCode">Código de Documento</label>
+            {formErrors.documentCode ? (
+              <label htmlFor="documentCode" className={styles.errorMessage}>
+                {formErrors.documentCode.message}
+              </label>
+            ) : (
+              <label htmlFor="documentCode">Código de Documento*</label>
+            )}
             <input
               type="text"
               id="documentCode"
               placeholder="Código de Documento"
               title="Código de Documento"
-              value={userEditableInfo.documentCode || ""}
+              {...register("documentCode")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="expirationDate">Fecha de Expiración</label>
+            {formErrors.expirationDate ? (
+              <label htmlFor="expirationDate" className={styles.errorMessage}>
+                {formErrors.expirationDate.message}
+              </label>
+            ) : (
+              <label htmlFor="expirationDate">Fecha de caducidad*</label>
+            )}
             <input
               type="date"
               id="expirationDate"
               placeholder="Fecha de Expiración"
               title="Fecha de Expiración"
-              value={userEditableInfo.expirationDate || ""}
+              {...register("expirationDate")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="title">Título</label>
-            <input
-              type="text"
+            {formErrors.title ? (
+              <label htmlFor="title" className={styles.errorMessage}>
+                {formErrors.title.message}
+              </label>
+            ) : (
+              <label htmlFor="title">Título</label>
+            )}
+            <select
               id="title"
-              placeholder="Título"
               title="Título"
-              value={userEditableInfo.title || ""}
-            />
+              defaultValue=""
+              {...register("title")}
+            >
+              <option value="" disabled>
+                Seleccione una opción
+              </option>
+              {state.optionsForUpdateUser &&
+                state.optionsForUpdateUser.titles &&
+                Object.keys(state.optionsForUpdateUser.titles).map((title) => (
+                  <option key={title} value={title}>
+                    {state.optionsForUpdateUser &&
+                      state.optionsForUpdateUser.titles &&
+                      state.optionsForUpdateUser.titles[title]}
+                  </option>
+                ))}
+            </select>
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="firstName">Nombre</label>
+            {formErrors.firstName ? (
+              <label htmlFor="firstName" className={styles.errorMessage}>
+                {formErrors.firstName.message}
+              </label>
+            ) : (
+              <label htmlFor="firstName">Nombre*</label>
+            )}
             <input
               type="text"
               id="firstName"
               placeholder="Nombre"
               title="Nombre"
-              value={userEditableInfo.firstName || ""}
+              {...register("firstName")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="lastName">Apellido</label>
+            {formErrors.lastName ? (
+              <label htmlFor="lastName" className={styles.errorMessage}>
+                {formErrors.lastName.message}
+              </label>
+            ) : (
+              <label htmlFor="lastName">Apellidos*</label>
+            )}
             <input
               type="text"
               id="lastName"
               placeholder="Apellido"
               title="Apellido"
-              value={userEditableInfo.lastName || ""}
+              {...register("lastName")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="townCity">Ciudad</label>
+            {formErrors.townCity ? (
+              <label htmlFor="townCity" className={styles.errorMessage}>
+                {formErrors.townCity.message}
+              </label>
+            ) : (
+              <label htmlFor="townCity">Ciudad*</label>
+            )}
             <input
               type="text"
               id="townCity"
               placeholder="Ciudad"
               title="Ciudad"
-              value={userEditableInfo.townCity || ""}
+              {...register("townCity")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="streetAddress">Dirección</label>
+            {formErrors.streetAddress ? (
+              <label htmlFor="streetAddress" className={styles.errorMessage}>
+                {formErrors.streetAddress.message}
+              </label>
+            ) : (
+              <label htmlFor="streetAddress">Dirección*</label>
+            )}
             <input
               type="text"
               id="streetAddress"
               placeholder="Dirección"
               title="Dirección"
-              value={userEditableInfo.streetAddress || ""}
+              {...register("streetAddress")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="zipCode">Código Postal</label>
+            {formErrors.zipCode ? (
+              <label htmlFor="zipCode" className={styles.errorMessage}>
+                {formErrors.zipCode.message}
+              </label>
+            ) : (
+              <label htmlFor="zipCode">Código postal*</label>
+            )}
             <input
               type="text"
               id="zipCode"
               placeholder="Código Postal"
               title="Código Postal"
-              value={userEditableInfo.zipCode || ""}
+              {...register("zipCode")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="country">País</label>
-            <input
-              type="text"
+            {formErrors.country ? (
+              <label htmlFor="country" className={styles.errorMessage}>
+                {formErrors.country.message}
+              </label>
+            ) : (
+              <label htmlFor="country">País*</label>
+            )}
+            <select
+              defaultValue=""
               id="country"
-              placeholder="País"
-              title="País"
-              value={userEditableInfo.country || ""}
-            />
+              title="Introduzca aquí su país"
+              {...register("country")}
+            >
+              <option value="" disabled>
+                Seleccione una opción
+              </option>
+              {state.optionsForUpdateUser &&
+                state.optionsForUpdateUser.countries &&
+                Object.keys(state.optionsForUpdateUser.countries).map(
+                  (country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  )
+                )}
+            </select>
           </div>
           <div className={styles.inputContainer}>
             <label htmlFor="password">Contraseña</label>
@@ -175,89 +378,140 @@ export const UpdateUser = ({ isDetailsOpen }: { isDetailsOpen: boolean }) => {
               id="password"
               placeholder="Contraseña"
               title="Contraseña"
-              value={userEditableInfo.password || ""}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="phoneNumber1">Teléfono 1</label>
+            {formErrors.phoneNumber1 ? (
+              <label htmlFor="phoneNumber1" className={styles.errorMessage}>
+                {formErrors.phoneNumber1.message}
+              </label>
+            ) : (
+              <label htmlFor="phoneNumber1">Número de teléfono 1*</label>
+            )}
             <input
               type="text"
               id="phoneNumber1"
               placeholder="Teléfono 1"
               title="Teléfono 1"
-              value={userEditableInfo.phoneNumber1 || ""}
+              {...register("phoneNumber1")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="phoneNumber2">Teléfono 2</label>
+            {formErrors.phoneNumber2 ? (
+              <label htmlFor="phoneNumber2" className={styles.errorMessage}>
+                {formErrors.phoneNumber2.message}
+              </label>
+            ) : (
+              <label htmlFor="phoneNumber2">Número de teléfono 2</label>
+            )}
             <input
               type="text"
               id="phoneNumber2"
               placeholder="Teléfono 2"
               title="Teléfono 2"
-              value={userEditableInfo.phoneNumber2 || ""}
+              {...register("phoneNumber2")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="phoneNumber3">Teléfono 3</label>
+            {formErrors.phoneNumber3 ? (
+              <label htmlFor="phoneNumber3" className={styles.errorMessage}>
+                {formErrors.phoneNumber3.message}
+              </label>
+            ) : (
+              <label htmlFor="phoneNumber3">Número de teléfono 3</label>
+            )}
             <input
               type="text"
               id="phoneNumber3"
               placeholder="Teléfono 3"
               title="Teléfono 3"
-              value={userEditableInfo.phoneNumber3 || ""}
+              {...register("phoneNumber3")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="companyName">Nombre de la Empresa</label>
+            {formErrors.companyName ? (
+              <label htmlFor="companyName" className={styles.errorMessage}>
+                {formErrors.companyName.message}
+              </label>
+            ) : (
+              <label htmlFor="companyName">Nombre de empresa</label>
+            )}
             <input
               type="text"
               id="companyName"
               placeholder="Nombre de la Empresa"
               title="Nombre de la Empresa"
-              value={userEditableInfo.companyName || ""}
+              {...register("companyName")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="companyTaxNumber">
-              Número de Impuesto de la Empresa
-            </label>
+            {formErrors.companyTaxNumber ? (
+              <label htmlFor="companyTaxNumber" className={styles.errorMessage}>
+                {formErrors.companyTaxNumber.message}
+              </label>
+            ) : (
+              <label htmlFor="companyTaxNumber">
+                Número de identificación fiscal
+              </label>
+            )}
             <input
               type="text"
               id="companyTaxNumber"
               placeholder="Número de Impuesto de la Empresa"
               title="Número de Impuesto de la Empresa"
-              value={userEditableInfo.companyTaxNumber || ""}
+              {...register("companyTaxNumber")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="companyPhoneNumber">Teléfono de la Empresa</label>
+            {formErrors.companyPhoneNumber ? (
+              <label
+                htmlFor="companyPhoneNumber"
+                className={styles.errorMessage}
+              >
+                {formErrors.companyPhoneNumber.message}
+              </label>
+            ) : (
+              <label htmlFor="companyPhoneNumber">
+                Número de teléfono de su empresa
+              </label>
+            )}
             <input
               type="text"
               id="companyPhoneNumber"
               placeholder="Teléfono de la Empresa"
               title="Teléfono de la Empresa"
-              value={userEditableInfo.companyPhoneNumber || ""}
+              {...register("companyPhoneNumber")}
             />
           </div>
           <div className={styles.inputContainer}>
-            <label htmlFor="dateBirth">Fecha de Nacimiento</label>
+            {formErrors.dateBirth ? (
+              <label htmlFor="dateBirth" className={styles.errorMessage}>
+                {formErrors.dateBirth.message}
+              </label>
+            ) : (
+              <label htmlFor="dateBirth">Fecha de nacimiento*</label>
+            )}
             <input
               type="date"
               id="dateBirth"
               placeholder="Fecha de Nacimiento"
               title="Fecha de Nacimiento"
-              value={userEditableInfo.dateBirth || ""}
+              {...register("dateBirth")}
             />
           </div>
         </div>
         <div className={styles.buttonsContainer}>
-          <button type="submit">Guardar cambios</button>
+          <button
+            disabled={Object.keys(dirtyFields).length === 0}
+            type="submit"
+          >
+            Guardar cambios
+          </button>
         </div>
       </form>
-      {generalError && (
+      {state.generalError && (
         <div className={styles.errorMessage}>
-          <p>{generalError}</p>
+          <p>{state.generalError}</p>
         </div>
       )}
     </>

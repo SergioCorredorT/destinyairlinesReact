@@ -7,9 +7,9 @@ import {
   getFromLocalStorage,
   getToNestedKeyInLocalStorage,
 } from "../../services/localStorageUtils";
-import { useAuthStore } from "../../store/authStore";
+import { authStore } from "../../store/authStore";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 export function App() {
   const {
@@ -20,7 +20,8 @@ export function App() {
     setLastName,
     setEmailAddress,
     setIsLoggedIn,
-  } = useAuthStore();
+    checkUpdateLogin,
+  } = authStore();
 
   useEffect(() => {
     if (getFromLocalStorage("isLoggedIn")) {
@@ -28,9 +29,14 @@ export function App() {
       setAccessToken(getToNestedKeyInLocalStorage(["tokens", "accessToken"]));
       setRefreshToken(getToNestedKeyInLocalStorage(["tokens", "refreshToken"]));
       setTitle(getToNestedKeyInLocalStorage(["userData", "title"]) || "");
-      setFirstName(getToNestedKeyInLocalStorage(["userData", "firstName"]) || "");
+      setFirstName(
+        getToNestedKeyInLocalStorage(["userData", "firstName"]) || ""
+      );
       setLastName(getToNestedKeyInLocalStorage(["userData", "lastName"]) || "");
-      setEmailAddress(getToNestedKeyInLocalStorage(["userData", "emailAddress"]));
+      setEmailAddress(
+        getToNestedKeyInLocalStorage(["userData", "emailAddress"])
+      );
+      checkUpdateLogin();
     }
   }, []);
   return (

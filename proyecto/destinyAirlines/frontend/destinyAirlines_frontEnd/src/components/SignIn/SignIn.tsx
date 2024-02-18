@@ -1,5 +1,5 @@
 import styles from "./SignIn.module.css";
-import { useAuthStore } from "../../store/authStore";
+import { authStore } from "../../store/authStore";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "../../validations/signInSchema";
@@ -14,7 +14,7 @@ type Inputs = {
 export function SignIn() {
   const generalError = useSignal("");
   //const [generalError, setGeneralError] = useState<string | null>(null);
-  const { signIn } = useAuthStore();
+  const { signIn } = authStore();
   const {
     register,
     handleSubmit,

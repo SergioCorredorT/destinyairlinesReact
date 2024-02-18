@@ -140,6 +140,11 @@ svg {
   display: inline;
   width: initial;
 } */
+
+html, body {
+  scrollbar-gutter: stable;
+}
+
 /* Configuramos la tipografía para toda la web */
 body {
   min-height: 100vh;

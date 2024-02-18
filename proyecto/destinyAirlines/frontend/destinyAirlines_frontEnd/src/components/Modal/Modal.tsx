@@ -3,11 +3,13 @@ import styles from "./Modal.module.css";
 
 export function Modal({
   isOpen = true,
+  closeButton = true,
   closeModal,
   children,
 }: {
   isOpen?: boolean;
-  closeModal: () => void;
+  closeButton?: boolean;
+  closeModal?: () => void;
   children: ReactNode;
 }) {
   if (!isOpen) {
@@ -15,7 +17,9 @@ export function Modal({
   }
 
   const handleClickModal = () => {
-    closeModal();
+    if (closeModal) {
+      closeModal();
+    }
   };
 
   const handleClickModalPanel = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -23,16 +27,23 @@ export function Modal({
   };
 
   const handleClickCloseButton = () => {
-    closeModal();
+    if (closeModal) {
+      closeModal();
+    }
   };
 
   return (
     <div className={styles.modal} onClick={handleClickModal}>
       <div className={styles.modalPanel} onClick={handleClickModalPanel}>
         <div className={styles.closeModal}>
-          <span className={styles.closeModal_contain} onClick={handleClickCloseButton}>
-            ✕
-          </span>
+          {closeButton && (
+            <span
+              className={styles.closeModal_contain}
+              onClick={handleClickCloseButton}
+            >
+              ✕
+            </span>
+          )}
         </div>
         {children}
       </div>

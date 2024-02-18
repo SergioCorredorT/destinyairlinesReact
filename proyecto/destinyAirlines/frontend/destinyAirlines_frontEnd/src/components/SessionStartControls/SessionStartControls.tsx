@@ -1,4 +1,3 @@
-import { useState } from "react";
 import styles from "./SessionStartControls.module.css";
 import { SignIn } from "../SignIn/SignIn";
 import { SignUp } from "../SignUp/SignUp";

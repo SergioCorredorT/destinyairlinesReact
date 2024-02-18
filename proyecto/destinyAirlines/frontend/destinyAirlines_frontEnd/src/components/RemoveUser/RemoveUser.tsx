@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import styles from "./RemoveUser.module.css";
 import { deleteAccount } from "../../services/deleteAccount";
-import { useAuthStore } from "../../store/authStore";
+import { authStore } from "../../store/authStore";
 
 export const RemoveUser = () => {
   const [generalError, setGeneralError] = useState("");
-  const { emailAddress, refreshToken, signOut } = useAuthStore();
+  const { emailAddress, refreshToken, signOut } = authStore();
   const handleSubmitDeleteAccount = (
     event: React.FormEvent<HTMLFormElement>
   ) => {

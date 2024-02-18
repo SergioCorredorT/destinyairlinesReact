@@ -1,12 +1,12 @@
 import isologo from "../../images/Branding/isologo.PNG";
 import isotipo_small from "../../images/Branding/isotipo_small.PNG";
 import styles from "./Header.module.css";
-import { useAuthStore } from "../../store/authStore";
+import { authStore } from "../../store/authStore";
 import { SessionStartControls } from "../SessionStartControls/SessionStartControls";
 import { SessionStartedControls } from "../SessionEndControls/SessionStartedControls";
 
 export function Header() {
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn } = authStore();
   return (
     <header className={styles.header}>
       <div className={styles.logo}>

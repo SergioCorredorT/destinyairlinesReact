@@ -32,6 +32,7 @@ interface AuthStoreState {
   getUserEditableInfo: (
     forceFetch?: boolean
   ) => Promise<{ [key: string]: string | undefined | null } | null>;
+  setUserEditableInfo: (newUserInfo: {[key: string]: string}) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   setAccessToken: (accessToken: string) => void;
   setRefreshToken: (refreshToken: string) => void;
@@ -95,7 +96,7 @@ const handleError = ({
   return "generic_error";
 };
 
-export const useAuthStore = create<AuthStoreState>((set, get) => ({
+export const authStore = create<AuthStoreState>((set, get) => ({
   isLoggedIn: false,
   accessToken: "",
   refreshToken: "",
@@ -117,10 +118,69 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
   expirationDate: "",
   dateBirth: "",
   emailAddress: "",
+  setUserEditableInfo: (newUserInfo) => {
+    for (const key in newUserInfo) {
+      const value = newUserInfo[key];
+      switch (key) {
+        case 'title':
+          get().setTitle(value || "");
+          break;
+        case 'firstName':
+          get().setFirstName(value || "");
+          break;
+        case 'lastName':
+          get().setLastName(value || "");
+          break;
+        case 'country':
+          get().setCountry(value || "");
+          break;
+        case 'townCity':
+          get().setTownCity(value || "");
+          break;
+        case 'streetAddress':
+          get().setStreetAddress(value || "");
+          break;
+        case 'zipCode':
+          get().setZipCode(value || "");
+          break;
+        case 'phoneNumber1':
+          get().setPhoneNumber1(value || "");
+          break;
+        case 'phoneNumber2':
+          get().setPhoneNumber2(value || "");
+          break;
+        case 'phoneNumber3':
+          get().setPhoneNumber3(value || "");
+          break;
+        case 'companyName':
+          get().setCompanyName(value || "");
+          break;
+        case 'companyTaxNumber':
+          get().setCompanyTaxNumber(value || "");
+          break;
+        case 'companyPhoneNumber':
+          get().setCompanyPhoneNumber(value || "");
+          break;
+        case 'documentationType':
+          get().setDocumentationType(value || "");
+          break;
+        case 'documentCode':
+          get().setDocumentCode(value || "");
+          break;
+        case 'expirationDate':
+          get().setExpirationDate(value || "");
+          break;
+        case 'dateBirth':
+          get().setDateBirth(value || "");
+          break;
+        default:
+          console.warn(`No setter found for key "${key}"`);
+      }
+    }
+  },
   getUserEditableInfo: async (forceFetch = false) => {
     if (!get()["isLoggedIn"]) {
-      //retornar null por no haber logueo previo
-      return null;
+      return { error: "El usuario no está logueado" };
     }
     //Comprobando si no tenemos la info de usuario editable en el store o si el forceFetch está activado (se usará tras el update de datos)
     if (!get()["documentCode"] || forceFetch) {
@@ -133,15 +193,17 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
           emailAddress,
           accessToken,
         });
-        if (userInfo.status) {
-          //rellenar store con el fetch
-          for (const info in userInfo.response) {
-            set({ [info]: userInfo.response[info] });
-          }
+        if (!userInfo.status) {
+          return { error: userInfo.error };
         }
-        return { error: userInfo.error };
+        //rellenar store con el fetch
+        for (const info in userInfo.response) {
+          if (!userInfo.response[info]) {
+            userInfo.response[info] = "";
+          }
+          set({ [info]: userInfo.response[info] });
+        }
       }
-      return { error: "El usuario no está logueado" };
     }
 
     return {

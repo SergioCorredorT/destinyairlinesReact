@@ -240,7 +240,7 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
                 {formErrors.streetAddress.message}
               </label>
             ) : (
-              <label htmlFor="streetAddress">Calle*</label>
+              <label htmlFor="streetAddress">Dirección*</label>
             )}
             <input
               type="text"

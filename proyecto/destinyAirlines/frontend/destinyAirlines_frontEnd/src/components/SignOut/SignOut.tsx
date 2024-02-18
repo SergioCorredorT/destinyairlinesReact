@@ -1,8 +1,8 @@
-import { useAuthStore } from "../../store/authStore";
+import { authStore } from "../../store/authStore";
 import styles from "./SignOut.module.css";
 
 export function SignOut() {
-  const { signOut } = useAuthStore();
+  const { signOut } = authStore();
 
   const handleClick = () => {
     signOut();

@@ -10,6 +10,15 @@ input, select {
   padding: 10px;
 }
 
+input[disabled=true], button[disabled=true] {
+  filter: brightness(0.5);
+  -webkit-filter: brightness(0.5);
+}
+
+input[disabled=true]:hover, button[disabled=true]:hover {
+  border-color: transparent;
+}
+
 label {
   font-weight: 500;
 }
