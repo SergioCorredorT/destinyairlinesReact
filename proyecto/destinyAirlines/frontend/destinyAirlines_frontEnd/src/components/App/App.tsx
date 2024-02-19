@@ -2,7 +2,7 @@ import styles from "./App.module.css";
 import { Header } from "../Header/Header";
 import { Main } from "../Main/Main";
 import { Footer } from "../Footer/Footer";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   getFromLocalStorage,
   getToNestedKeyInLocalStorage,
@@ -22,8 +22,10 @@ export function App() {
     setEmailAddress,
     setIsLoggedIn,
     checkUpdateLogin,
-    getUpdateTime
+    getUpdateTime,
   } = authStore();
+
+  const intervalRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (getFromLocalStorage("isLoggedIn")) {
@@ -40,9 +42,13 @@ export function App() {
       );
     }
     checkUpdateLogin();
-    getUpdateTime().then((secondsUpdateTime)=>{
-      setDateInterval(() => {
-          checkUpdateLogin();
+    getUpdateTime().then((secondsUpdateTime) => {
+      if (intervalRef.current) {
+        intervalRef.current();
+      }
+
+      intervalRef.current = setDateInterval(() => {
+        checkUpdateLogin();
       }, secondsUpdateTime * 1000);
     });
   }, []);

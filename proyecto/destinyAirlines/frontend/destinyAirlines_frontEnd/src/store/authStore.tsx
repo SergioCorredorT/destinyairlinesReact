@@ -105,7 +105,7 @@ const handleError = ({
 
 export const authStore = create<AuthStoreState>((set, get) => ({
   isLoggedIn: false,
-  updateTime: 30 * 60 * 1000,
+  updateTime: 30 * 60,
   accessToken: "",
   refreshToken: "",
   title: "",

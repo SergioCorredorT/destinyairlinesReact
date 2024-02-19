@@ -16,7 +16,7 @@ export const setDateInterval = (funcion, intervalo) =>
     timeoutId = setTimeout(tick, intervalo);
 
     // Función para detener el setDateInterval
-    function clearDateInterval()
+    const clearDateInterval = () =>
     {
         clearTimeout(timeoutId);
     }
