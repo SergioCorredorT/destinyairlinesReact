@@ -47,6 +47,7 @@ $controllers = [
     //POST
     'checkupdateaccesstoken'                    => ['controller' => 'TokenController',          'method' => 'checkUpdateAccessToken'],
     'checkupdaterefreshtoken'                   => ['controller' => 'TokenController',          'method' => 'checkUpdateRefreshToken'],
+    'getupdatetime'                             => ['controller' => 'TokenController',          'method' => 'getUpdateTime'],
     'contact'                                   => ['controller' => 'ContactController',        'method' => 'sendContact'],
     'getusereditableinfo'                       => ['controller' => 'UserController',           'method' => 'getUserEditableInfo'],
     'createuser'                                => ['controller' => 'UserController',           'method' => 'createUser'],

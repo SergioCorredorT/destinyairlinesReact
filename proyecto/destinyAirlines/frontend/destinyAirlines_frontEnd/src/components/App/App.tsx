@@ -10,6 +10,7 @@ import {
 import { authStore } from "../../store/authStore";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { setDateInterval } from "../../tools/timeUtils";
 
 export function App() {
   const {
@@ -21,6 +22,7 @@ export function App() {
     setEmailAddress,
     setIsLoggedIn,
     checkUpdateLogin,
+    getUpdateTime
   } = authStore();
 
   useEffect(() => {
@@ -36,8 +38,13 @@ export function App() {
       setEmailAddress(
         getToNestedKeyInLocalStorage(["userData", "emailAddress"])
       );
-      checkUpdateLogin();
     }
+    checkUpdateLogin();
+    getUpdateTime().then((secondsUpdateTime)=>{
+      setDateInterval(() => {
+          checkUpdateLogin();
+      }, secondsUpdateTime * 1000);
+    });
   }, []);
   return (
     <div className={styles.container}>

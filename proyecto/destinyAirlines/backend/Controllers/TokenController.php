@@ -37,4 +37,10 @@ final class TokenController extends BaseController
         $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);
         return TokenTool::checkUpdateRefreshToken($refreshToken, $secondsMinTimeLifeRefreshToken, $secondsMaxTimeLifeAccessToken, $secondsMaxTimeLifeRefreshToken);
     }
+
+    public function getUpdateTime(): int
+    {
+        $tokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
+        return $tokenSettings['autoUpdateTokenTime'];
+    }
 }

@@ -1,14 +1,19 @@
 import { create } from "zustand";
-import { saveToNestedKeyInLocalStorage } from "../tools/localStorageUtils";
+import {
+  getToNestedKeyInLocalStorage,
+  saveToNestedKeyInLocalStorage,
+} from "../tools/localStorageUtils";
 import { destinyAirlinesFetch } from "../services/fetchUtils";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { signIn } from "../services/signIn";
 import { signOut } from "../services/signOut";
 import { getUserEditableInfo } from "../services/getUserEditableInfo";
+import { getUpdateTime } from "../services/getUpdateTime";
 
 interface AuthStoreState {
   isLoggedIn: boolean;
+  updateTime: number;
   accessToken: string;
   refreshToken: string;
   title: string;
@@ -30,6 +35,7 @@ interface AuthStoreState {
   documentCode: string;
   expirationDate: string;
   dateBirth: string;
+  getUpdateTime: () => Promise<number>;
   getUserEditableInfo: (
     forceFetch?: boolean
   ) => Promise<{ [key: string]: string | undefined | null } | null>;
@@ -99,6 +105,7 @@ const handleError = ({
 
 export const authStore = create<AuthStoreState>((set, get) => ({
   isLoggedIn: false,
+  updateTime: 30 * 60 * 1000,
   accessToken: "",
   refreshToken: "",
   title: "",
@@ -120,6 +127,18 @@ export const authStore = create<AuthStoreState>((set, get) => ({
   expirationDate: "",
   dateBirth: "",
   emailAddress: "",
+  getUpdateTime: async () => {
+    if (getToNestedKeyInLocalStorage(["updateTime"])) {
+      return parseInt(getToNestedKeyInLocalStorage(["updateTime"]));
+    }
+    const response = await getUpdateTime();
+    if (!response || !response.status) {
+      return get()["updateTime"];
+    }
+    let updateTime = parseInt(response.response);
+    saveToNestedKeyInLocalStorage(["updateTime"], updateTime);
+    return updateTime;
+  },
   setUserEditableInfo: (newUserInfo) => {
     for (const key in newUserInfo) {
       const value = newUserInfo[key];
@@ -206,7 +225,7 @@ export const authStore = create<AuthStoreState>((set, get) => ({
         if (!userInfo.response[info]) {
           userInfo.response[info] = "";
         }
-        set({ [info]: userInfo.response[info] });
+        set({ [info]: userInfo.response[info] || "" });
       }
       set({ ["isSaveSecondaryUserData"]: true });
     }
@@ -234,6 +253,9 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     };
   },
   checkUpdateLogin: async () => {
+    if (!get()["isLoggedIn"]) {
+      return false;
+    }
     const updateTokens = get()["updateTokens"];
     const result = await updateTokens();
     if (result.error) {
@@ -253,28 +275,43 @@ export const authStore = create<AuthStoreState>((set, get) => ({
       setRefreshToken,
       signOut,
     } = get();
-    return updateAccessToken(accessToken).then((data) => {
+
+    if (!accessToken) {
+      return { error: "No se ha establecido el token de acceso" };
+    }
+
+    try {
+      const data = await updateAccessToken(accessToken);
+
       if (data.accessToken) {
         setAccessToken(data.accessToken);
         return { error: null };
       } else if (data.tokenError && data.tokenError == "expired_token") {
-        return updateRefreshToken(refreshToken).then((data) => {
-          if (data.tokenError) {
-            const errorResponse = handleError({
-              error: data.tokenError,
-              signOut,
-            });
-            return { error: errorResponse };
-          }
-          setAccessToken(data.accessToken);
-          if (data.refreshToken) {
-            setRefreshToken(data.refreshToken);
-          }
-          return { error: null };
-        });
+        const refreshData = await updateRefreshToken(refreshToken);
+
+        if (refreshData.tokenError) {
+          const errorResponse = handleError({
+            error: refreshData.tokenError,
+            signOut,
+          });
+          return { error: errorResponse };
+        }
+
+        setAccessToken(refreshData.accessToken);
+
+        if (refreshData.refreshToken) {
+          setRefreshToken(refreshData.refreshToken);
+        }
+
+        return { error: null };
       }
+
       return { error: null };
-    });
+    } catch (error) {
+      // Manejar cualquier error que pueda ocurrir durante las llamadas a la API
+      console.error(error);
+      return { error: "Ha ocurrido un error al actualizar los tokens" };
+    }
   },
   setIsLoggedIn: (isLoggedIn) => {
     saveToNestedKeyInLocalStorage(["isLoggedIn"], isLoggedIn);
