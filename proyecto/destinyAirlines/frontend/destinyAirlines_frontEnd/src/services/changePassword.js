@@ -1,9 +1,9 @@
 import { toast } from "react-toastify";
 import { destinyAirlinesFetch } from "./fetchUtils";
 
-export async function changePassword({ password, emailAddress, accessToken }) {
+export async function changePassword({ oldPassword, password, emailAddress, accessToken }) {
     const response = await destinyAirlinesFetch(
-        { command: "updatePassword", emailAddress, password, accessToken }
+        { command: "updatePassword", oldPassword, password, emailAddress, accessToken }
     );
 
     if (response.error) {

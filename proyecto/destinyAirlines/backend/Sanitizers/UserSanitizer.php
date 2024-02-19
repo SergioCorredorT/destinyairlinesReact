@@ -104,6 +104,7 @@ class UserSanitizer
         if (!empty($data['zipCode'])) $data["zipCode"] = self::sanitizeZipCode($data['zipCode']);
         if (!empty($data['country'])) $data["country"] = self::sanitizeCountry($data['country']);
         if (!empty($data['password'])) $data["password"] = self::sanitizePassword($data['password']);
+        if (!empty($data['oldPassword'])) $data["oldPassword"] = self::sanitizePassword($data['oldPassword']);
         if (!empty($data['phoneNumber1'])) $data["phoneNumber1"] = self::sanitizePhoneNumber1($data['phoneNumber1']);
         if (!empty($data['phoneNumber2'])) $data["phoneNumber2"] = self::sanitizePhoneNumber2($data['phoneNumber2']);
         if (!empty($data['phoneNumber3'])) $data["phoneNumber3"] = self::sanitizePhoneNumber3($data['phoneNumber3']);

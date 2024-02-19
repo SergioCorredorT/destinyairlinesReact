@@ -211,6 +211,9 @@ class UserValidator
         if (isset($data['password']) && !self::validatePassword($data['password'])) {
             return false;
         }
+        if (isset($data['oldPassword']) && !self::validatePassword($data['oldPassword'])) {
+            return false;
+        }
         if (isset($data['phoneNumber1']) && !self::validatePhoneNumber1($data['phoneNumber1'])) {
             return false;
         }

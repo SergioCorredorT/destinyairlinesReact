@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { changePasswordSchema } from "../../validations/changePasswordSchema";
 
 type Inputs = {
+  oldPassword: string;
   password: string;
   confirmPassword: string;
 };
@@ -33,6 +34,7 @@ export const ChangePassword = () => {
       emailAddress,
       accessToken,
       password: currentValues["password"],
+      oldPassword: currentValues["oldPassword"]
     });
 
     if(!response) {
@@ -40,16 +42,31 @@ export const ChangePassword = () => {
       return;
     }
 
-    if (response.status) {
-      signOut();
-    } else {
+    if (!response.status) {
       setGeneralError(response.message);
     }
+    signOut();
   });
 
   return (
     <>
       <form onSubmit={handleSubmitChangePassword}>
+      <div className={styles.inputContainer}>
+          {formErrors.oldPassword ? (
+            <label htmlFor="oldPassword" className={styles.errorMessage}>
+              {formErrors.oldPassword.message}
+            </label>
+          ) : (
+            <label htmlFor="oldPassword">Password actual</label>
+          )}
+          <input
+            type="password"
+            id="oldPassword"
+            placeholder="Password actual"
+            {...register("oldPassword")}
+          />
+        </div>
+
         <div className={styles.inputContainer}>
           {formErrors.password ? (
             <label htmlFor="password" className={styles.errorMessage}>

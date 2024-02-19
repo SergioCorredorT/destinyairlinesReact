@@ -207,6 +207,7 @@ final class UserController extends BaseController
     public function updatePassword(array $POST)
     {
         $keys_default = [
+            'oldPassword' => '',
             'password' => '',
             'accessToken' => '',
             'emailAddress' => ''
@@ -229,7 +230,8 @@ final class UserController extends BaseController
         }
         $UserModel = new UserModel();
 
-        $email = $UserModel->getEmailById($decodedToken['response']->data->id);
+        $user = $UserModel->readUserById($decodedToken['response']->data->id);
+        $email = $user['emailAddress'];
 
         if (!$email) {
             return false;
@@ -239,9 +241,14 @@ final class UserController extends BaseController
             return false;
         }
 
-        $userData['passwordHash'] = password_hash($userData['password'], PASSWORD_BCRYPT);
-        unset($userData['password']);
+        if (!password_verify($userData['oldPassword'], $user['passwordHash'])) {
+            return false;
+        }
 
+        $userData['passwordHash'] = password_hash($userData['password'], PASSWORD_BCRYPT);
+
+        unset($userData['password']);
+        unset($userData['oldPassword']);
         //Quitamos los datos que no se deben editar en BBDD antes del update
         unset($userData['emailAddress']);
         unset($userData['accessToken']);
