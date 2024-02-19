@@ -2,7 +2,7 @@ import styles from "./App.module.css";
 import { Header } from "../Header/Header";
 import { Main } from "../Main/Main";
 import { Footer } from "../Footer/Footer";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import {
   getFromLocalStorage,
   getToNestedKeyInLocalStorage,
@@ -10,7 +10,6 @@ import {
 import { authStore } from "../../store/authStore";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { setDateInterval } from "../../tools/timeUtils";
 
 export function App() {
   const {
@@ -22,10 +21,9 @@ export function App() {
     setEmailAddress,
     setIsLoggedIn,
     checkUpdateLogin,
-    getUpdateTime,
+    activateAutoUpdateToken,
+    desactivateAutoUpdateToken
   } = authStore();
-
-  const intervalRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (getFromLocalStorage("isLoggedIn")) {
@@ -40,9 +38,13 @@ export function App() {
       setEmailAddress(
         getToNestedKeyInLocalStorage(["userData", "emailAddress"])
       );
+      activateAutoUpdateToken();
+    }
+    else{
+      desactivateAutoUpdateToken();
     }
     checkUpdateLogin();
-    getUpdateTime().then((secondsUpdateTime) => {
+    /* getUpdateTime().then((secondsUpdateTime) => {
       if (intervalRef.current) {
         intervalRef.current();
       }
@@ -50,7 +52,7 @@ export function App() {
       intervalRef.current = setDateInterval(() => {
         checkUpdateLogin();
       }, secondsUpdateTime * 1000);
-    });
+    }); */
   }, []);
   return (
     <div className={styles.container}>

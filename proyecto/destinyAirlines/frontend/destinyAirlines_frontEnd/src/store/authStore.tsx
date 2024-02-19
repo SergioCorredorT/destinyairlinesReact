@@ -10,10 +10,12 @@ import { signIn } from "../services/signIn";
 import { signOut } from "../services/signOut";
 import { getUserEditableInfo } from "../services/getUserEditableInfo";
 import { getUpdateTime } from "../services/getUpdateTime";
+import { setDateInterval } from "../tools/timeUtils";
 
 interface AuthStoreState {
   isLoggedIn: boolean;
   updateTime: number;
+  updateTimeRef: any;
   accessToken: string;
   refreshToken: string;
   title: string;
@@ -35,6 +37,8 @@ interface AuthStoreState {
   documentCode: string;
   expirationDate: string;
   dateBirth: string;
+  activateAutoUpdateToken: () => Promise<void>;
+  desactivateAutoUpdateToken: () => Promise<void>;
   getUpdateTime: () => Promise<number>;
   getUserEditableInfo: (
     forceFetch?: boolean
@@ -106,6 +110,7 @@ const handleError = ({
 export const authStore = create<AuthStoreState>((set, get) => ({
   isLoggedIn: false,
   updateTime: 30 * 60,
+  updateTimeRef: null,
   accessToken: "",
   refreshToken: "",
   title: "",
@@ -127,6 +132,27 @@ export const authStore = create<AuthStoreState>((set, get) => ({
   expirationDate: "",
   dateBirth: "",
   emailAddress: "",
+  activateAutoUpdateToken: async () => {
+    let updateTimeRef = get()["updateTimeRef"];
+    if (updateTimeRef) {
+      updateTimeRef();
+    }
+
+    const secondsUpdateTime = await get()["getUpdateTime"]();
+    const checkUpdateLogin = get()["checkUpdateLogin"];
+
+    updateTimeRef = setDateInterval(() => {
+      checkUpdateLogin();
+    }, secondsUpdateTime * 1000);
+    set({ updateTimeRef });
+  },
+  desactivateAutoUpdateToken: async () => {
+    const updateTimeRef = get()["updateTimeRef"];
+    if (updateTimeRef) {
+      updateTimeRef();
+    }
+    set({ updateTimeRef: null });
+  },
   getUpdateTime: async () => {
     if (getToNestedKeyInLocalStorage(["updateTime"])) {
       return parseInt(getToNestedKeyInLocalStorage(["updateTime"]));
@@ -208,10 +234,10 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     if (!get()["isSaveSecondaryUserData"] || forceFetch) {
       //El emailAddress siempre se carga por estar también en el localstorage
       const emailAddress = get()["emailAddress"];
-      const isLogued = await get()["checkUpdateLogin"]();
+      /* const isLogued = await get()["checkUpdateLogin"]();
       if (!isLogued) {
         return { error: "Error en la comprobación de tokens" };
-      }
+      } */
       const accessToken = get()["accessToken"];
       const userInfo = await getUserEditableInfo({
         emailAddress,
@@ -341,59 +367,45 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     set({ lastName });
   },
   setCountry: (country) => {
-    //saveToNestedKeyInLocalStorage(["userData", "country"], country || "");
     set({ country });
   },
   setTownCity: (townCity) => {
-    //saveToNestedKeyInLocalStorage(["userData", "townCity"], townCity || "");
     set({ townCity });
   },
   setStreetAddress: (streetAddress) => {
-    //saveToNestedKeyInLocalStorage(["userData", "streetAddress"], streetAddress || "");
     set({ streetAddress });
   },
   setZipCode: (zipCode) => {
-    //saveToNestedKeyInLocalStorage(["userData", "zipCode"], zipCode || "");
     set({ zipCode });
   },
   setPhoneNumber1: (phoneNumber1) => {
-    //saveToNestedKeyInLocalStorage(["userData", "phoneNumber1"], phoneNumber1 || "");
     set({ phoneNumber1 });
   },
   setPhoneNumber2: (phoneNumber2) => {
-    //saveToNestedKeyInLocalStorage(["userData", "phoneNumber2"], phoneNumber2 || "");
     set({ phoneNumber2 });
   },
   setPhoneNumber3: (phoneNumber3) => {
-    //saveToNestedKeyInLocalStorage(["userData", "phoneNumber3"], phoneNumber3 || "");
     set({ phoneNumber3 });
   },
   setCompanyName: (companyName) => {
-    //saveToNestedKeyInLocalStorage(["userData", "companyName"], companyName || "");
     set({ companyName });
   },
   setCompanyTaxNumber: (companyTaxNumber) => {
-    //saveToNestedKeyInLocalStorage(["userData", "companyTaxNumber"], companyTaxNumber || "");
     set({ companyTaxNumber });
   },
   setCompanyPhoneNumber: (companyPhoneNumber) => {
-    //saveToNestedKeyInLocalStorage(["userData", "companyPhoneNumber"], companyPhoneNumber || "");
     set({ companyPhoneNumber });
   },
   setDocumentationType: (documentationType) => {
-    //saveToNestedKeyInLocalStorage(["userData", "documentationType"], documentationType || "");
     set({ documentationType });
   },
   setDocumentCode: (documentCode) => {
-    //saveToNestedKeyInLocalStorage(["userData", "documentCode"], documentCode || "");
     set({ documentCode });
   },
   setExpirationDate: (expirationDate) => {
-    //saveToNestedKeyInLocalStorage(["userData", "expirationDate"], expirationDate || "");
     set({ expirationDate });
   },
   setDateBirth: (dateBirth) => {
-    //saveToNestedKeyInLocalStorage(["userData", "dateBirth"], dateBirth || "");
     set({ dateBirth });
   },
   setEmailAddress: (emailAddress) => {
@@ -403,6 +415,18 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     );
     set({ emailAddress });
   },
-  signIn: (data) => signIn({ ...data, get }),
-  signOut: () => signOut({ set }),
+  signIn: async (data) => {
+    const response = await signIn({ ...data, get });
+    if (response.status) {
+      const activateAutoUpdateToken = get()["activateAutoUpdateToken"];
+      activateAutoUpdateToken();
+    }
+    toast.success("Se ha iniciado sesión");
+    return response;
+  },
+  signOut: () => {
+    const desactivateAutoUpdateToken = get()["desactivateAutoUpdateToken"]
+    desactivateAutoUpdateToken();
+    signOut({ set });
+  },
 }));

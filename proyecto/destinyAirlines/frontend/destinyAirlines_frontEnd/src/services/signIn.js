@@ -56,7 +56,6 @@ export async function signIn({ emailAddress, password, get }) {
     setDateBirth(response.response.userData.dateBirth);
     setEmailAddress(emailAddress);
     setIsLoggedIn(true);
-    toast.success("Se ha iniciado sesión");
     return { status: true, message: "Se ha iniciado sesión" };
   } else {
     toast.error(
