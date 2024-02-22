@@ -2,6 +2,7 @@ import styles from "./CompanyInfo.module.css";
 import logo from '../../images/Branding/isologo.PNG';
 import { fetchData } from "../../services/fetchData";
 
+
 const dataSending = {
   command: "getCompanyInfo"
 };
@@ -15,7 +16,7 @@ const options = {
 };
 
 const apiData = fetchData(
-  "http://localhost/destinyairlinesReact/proyecto/destinyAirlines/backend/MainController.php",
+  import.meta.env.VITE_API_URL,
   options
 );
 

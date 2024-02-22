@@ -1,0 +1,34 @@
+{
+    "name": "bandwidth-throttle/token-bucket",
+    "type": "library",
+    "description": "Implementation of the Token Bucket algorithm.",
+    "keywords": ["token bucket", "bandwidth", "rate limit", "throttle", "throttling", "rate limiting"],
+    "homepage": "https://github.com/bandwidth-throttle/token-bucket",
+    "license": "WTFPL",
+    "authors": [
+        {
+            "name": "Markus Malkusch",
+            "email": "markus@malkusch.de",
+            "homepage": "http://markus.malkusch.de",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"bandwidthThrottle\\tokenBucket\\": "classes/"}
+    },
+    "require": {
+        "php": ">=5.6",
+        "malkusch/lock": "^1",
+        "ext-bcmath":"*"
+    },
+    "require-dev": {
+        "ext-redis": "^2.2.4|^3",
+        "predis/predis": "^1",
+        "phpunit/phpunit": "^5",
+        "mikey179/vfsStream": "^1.5.0",
+        "php-mock/php-mock-phpunit": "^1"
+    },
+    "archive": {
+        "exclude": ["/tests"]
+    }
+}

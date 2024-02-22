@@ -1,0 +1,49 @@
+language: php
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+php:
+  - 7.1
+  - 7.0
+  - 5.6
+  - hhvm
+
+services:
+  - memcached
+  - redis-server
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: hhvm
+
+env: 
+  global:
+    - MYSQL_DSN="mysql:host=localhost;dbname=test"
+    - MYSQL_USER=travis
+    - PGSQL_DSN="pgsql:host=localhost;dbname=test;"
+    - PGSQL_USER=postgres
+    - MEMCACHE_HOST=localhost
+    - REDIS_URI=redis://localhost
+
+before_install:
+  - phpenv config-add tests/php-travis.ini
+
+install:
+  - composer require squizlabs/php_codesniffer phpmd/phpmd cundd/test-flight
+
+before_script:
+  - mysql -e 'create database test;'
+  - psql  -c 'create database test;' -U postgres
+
+script:
+  - vendor/bin/phpunit
+  - vendor/bin/test-flight README.md
+  - vendor/bin/test-flight classes/
+  - vendor/bin/phpcs --standard=PSR2 classes/ tests/
+  - vendor/bin/phpmd classes/ text cleancode,codesize,controversial,design,naming,unusedcode
+

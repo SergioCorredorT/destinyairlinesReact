@@ -1,5 +1,4 @@
 <?php
-/* require_once ROOT_PATH . '/Tools/IniTool.php'; */
 require_once ROOT_PATH . '/Templates/email/EmailBaseTemplate.php';
 class AccountDeletionTemplate extends EmailBaseTemplate
 {

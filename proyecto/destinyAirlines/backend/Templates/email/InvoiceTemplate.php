@@ -1,5 +1,4 @@
 <?php
-require_once "./Tools/IniTool.php";
 require_once "./Templates/email/EmailBaseTemplate.php";
 class InvoiceTemplate extends EmailBaseTemplate
 {

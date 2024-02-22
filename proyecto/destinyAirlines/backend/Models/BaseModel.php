@@ -203,43 +203,6 @@ abstract class BaseModel
             return false;
         }
     }
-    
-
-/*     protected function update(array $data, string $where, array $mathExpKeys = []): bool
-    {
-        $updateData = '';
-        $bindValues = [];
-        $i = 1;
-        foreach ($data as $key => $value) {
-            if (isset($mathExpKeys[$key])) {
-                $updateData .= "$key = $value, ";
-            } else {
-                $updateData .= "$key = :value$i, ";
-                $bindValues[":value$i"] = $value;
-                $i++;
-            }
-        }
-        $updateData = rtrim($updateData, ', ');
-        $query = "UPDATE $this->tableName SET $updateData WHERE $where";
-
-        // Prepare the query
-        try {
-            $stmt = $this->con->prepare($query);
-            foreach ($bindValues as $param => $value) {
-                $stmt->bindValue($param, trim($value, "'"));
-            }
-        } catch (Exception $er) {
-            error_log('Catched exception: ' . $er->getMessage() . "\n");
-            return false;
-        }
-
-        $stmt->execute();
-        if (intval($stmt->errorCode()) === 0) {
-            return true;
-        } else {
-            return false;
-        }
-    } */
 
     protected function delete(string $where): bool
     {

@@ -44,15 +44,6 @@ export function App() {
       desactivateAutoUpdateToken();
     }
     checkUpdateLogin();
-    /* getUpdateTime().then((secondsUpdateTime) => {
-      if (intervalRef.current) {
-        intervalRef.current();
-      }
-
-      intervalRef.current = setDateInterval(() => {
-        checkUpdateLogin();
-      }, secondsUpdateTime * 1000);
-    }); */
   }, []);
   return (
     <div className={styles.container}>

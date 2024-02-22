@@ -4,6 +4,7 @@
         "firebase/php-jwt": "^6.9",
         "ramsey/uuid": "^4.7",
         "dompdf/dompdf": "^2.0",
-        "endroid/qr-code": "^5.0"
+        "endroid/qr-code": "^5.0",
+        "bandwidth-throttle/token-bucket": "^2.0"
     }
 }

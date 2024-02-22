@@ -133,14 +133,13 @@ export const authStore = create<AuthStoreState>((set, get) => ({
   dateBirth: "",
   emailAddress: "",
   activateAutoUpdateToken: async () => {
-    let updateTimeRef = get()["updateTimeRef"];
+    const state = get();
+    let updateTimeRef = state["updateTimeRef"];
     if (updateTimeRef) {
       updateTimeRef();
     }
-
-    const secondsUpdateTime = await get()["getUpdateTime"]();
-    const checkUpdateLogin = get()["checkUpdateLogin"];
-
+    const secondsUpdateTime = await state["getUpdateTime"]();
+    const checkUpdateLogin = state["checkUpdateLogin"];
     updateTimeRef = setDateInterval(() => {
       checkUpdateLogin();
     }, secondsUpdateTime * 1000);
@@ -166,59 +165,60 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     return updateTime;
   },
   setUserEditableInfo: (newUserInfo) => {
+    const state = get();
     for (const key in newUserInfo) {
       const value = newUserInfo[key];
       switch (key) {
         case "title":
-          get().setTitle(value || "");
+          state.setTitle(value || "");
           break;
         case "firstName":
-          get().setFirstName(value || "");
+          state.setFirstName(value || "");
           break;
         case "lastName":
-          get().setLastName(value || "");
+          state.setLastName(value || "");
           break;
         case "country":
-          get().setCountry(value || "");
+          state.setCountry(value || "");
           break;
         case "townCity":
-          get().setTownCity(value || "");
+          state.setTownCity(value || "");
           break;
         case "streetAddress":
-          get().setStreetAddress(value || "");
+          state.setStreetAddress(value || "");
           break;
         case "zipCode":
-          get().setZipCode(value || "");
+          state.setZipCode(value || "");
           break;
         case "phoneNumber1":
-          get().setPhoneNumber1(value || "");
+          state.setPhoneNumber1(value || "");
           break;
         case "phoneNumber2":
-          get().setPhoneNumber2(value || "");
+          state.setPhoneNumber2(value || "");
           break;
         case "phoneNumber3":
-          get().setPhoneNumber3(value || "");
+          state.setPhoneNumber3(value || "");
           break;
         case "companyName":
-          get().setCompanyName(value || "");
+          state.setCompanyName(value || "");
           break;
         case "companyTaxNumber":
-          get().setCompanyTaxNumber(value || "");
+          state.setCompanyTaxNumber(value || "");
           break;
         case "companyPhoneNumber":
-          get().setCompanyPhoneNumber(value || "");
+          state.setCompanyPhoneNumber(value || "");
           break;
         case "documentationType":
-          get().setDocumentationType(value || "");
+          state.setDocumentationType(value || "");
           break;
         case "documentCode":
-          get().setDocumentCode(value || "");
+          state.setDocumentCode(value || "");
           break;
         case "expirationDate":
-          get().setExpirationDate(value || "");
+          state.setExpirationDate(value || "");
           break;
         case "dateBirth":
-          get().setDateBirth(value || "");
+          state.setDateBirth(value || "");
           break;
         default:
           console.warn(`No setter found for key "${key}"`);
@@ -227,18 +227,15 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     set({ ["isSaveSecondaryUserData"]: true });
   },
   getUserEditableInfo: async (forceFetch = false) => {
-    if (!get()["isLoggedIn"]) {
+    const state = get();
+    if (!state["isLoggedIn"]) {
       return { error: "El usuario no está logueado" };
     }
     //Comprobando si no tenemos la info de usuario editable en el store o si el forceFetch está activado (se usará tras el update de datos)
-    if (!get()["isSaveSecondaryUserData"] || forceFetch) {
+    if (!state["isSaveSecondaryUserData"] || forceFetch) {
       //El emailAddress siempre se carga por estar también en el localstorage
-      const emailAddress = get()["emailAddress"];
-      /* const isLogued = await get()["checkUpdateLogin"]();
-      if (!isLogued) {
-        return { error: "Error en la comprobación de tokens" };
-      } */
-      const accessToken = get()["accessToken"];
+      const emailAddress = state["emailAddress"];
+      const accessToken = state["accessToken"];
       const userInfo = await getUserEditableInfo({
         emailAddress,
         accessToken,
@@ -258,36 +255,37 @@ export const authStore = create<AuthStoreState>((set, get) => ({
 
     return {
       //retornar info del store en un objeto
-      title: get()["title"],
-      firstName: get()["firstName"],
-      lastName: get()["lastName"],
-      emailAddress: get()["emailAddress"],
-      country: get()["country"],
-      townCity: get()["townCity"],
-      streetAddress: get()["streetAddress"],
-      zipCode: get()["zipCode"],
-      phoneNumber1: get()["phoneNumber1"],
-      phoneNumber2: get()["phoneNumber2"],
-      phoneNumber3: get()["phoneNumber3"],
-      companyName: get()["companyName"],
-      companyTaxNumber: get()["companyTaxNumber"],
-      companyPhoneNumber: get()["companyPhoneNumber"],
-      documentationType: get()["documentationType"],
-      documentCode: get()["documentCode"],
-      expirationDate: get()["expirationDate"],
-      dateBirth: get()["dateBirth"],
+      title: state["title"],
+      firstName: state["firstName"],
+      lastName: state["lastName"],
+      emailAddress: state["emailAddress"],
+      country: state["country"],
+      townCity: state["townCity"],
+      streetAddress: state["streetAddress"],
+      zipCode: state["zipCode"],
+      phoneNumber1: state["phoneNumber1"],
+      phoneNumber2: state["phoneNumber2"],
+      phoneNumber3: state["phoneNumber3"],
+      companyName: state["companyName"],
+      companyTaxNumber: state["companyTaxNumber"],
+      companyPhoneNumber: state["companyPhoneNumber"],
+      documentationType: state["documentationType"],
+      documentCode: state["documentCode"],
+      expirationDate: state["expirationDate"],
+      dateBirth: state["dateBirth"],
     };
   },
   checkUpdateLogin: async () => {
-    if (!get()["isLoggedIn"]) {
+    const state = get();
+    if (!state["isLoggedIn"]) {
       return false;
     }
-    const updateTokens = get()["updateTokens"];
+    const updateTokens = state["updateTokens"];
     const result = await updateTokens();
     if (result.error) {
       // Comprobar el motivo del error y decidir si hacer signOut o no
       if (result.error === "expired_token") {
-        get()["signOut"]();
+        state["signOut"]();
       }
       return false;
     }
@@ -418,15 +416,13 @@ export const authStore = create<AuthStoreState>((set, get) => ({
   signIn: async (data) => {
     const response = await signIn({ ...data, get });
     if (response.status) {
-      const activateAutoUpdateToken = get()["activateAutoUpdateToken"];
-      activateAutoUpdateToken();
+      get()["activateAutoUpdateToken"]();
     }
     toast.success("Se ha iniciado sesión");
     return response;
   },
   signOut: () => {
-    const desactivateAutoUpdateToken = get()["desactivateAutoUpdateToken"]
-    desactivateAutoUpdateToken();
+    get()["desactivateAutoUpdateToken"]();
     signOut({ set });
   },
 }));

@@ -1,7 +1,27 @@
 <?php
 
-if (!isset($_SERVER['HTTP_ORIGIN'])) {//Si la petición es get no pasa este filtro
-    //return false;
+//Esta parte debería funcionar si el usuario ejecutor de Apache tiene permisos para modificar el archivo api.bucket de la raíz del backend
+require './vendor/autoload.php';
+
+use bandwidthThrottle\tokenBucket\Rate;
+use bandwidthThrottle\tokenBucket\TokenBucket;
+use bandwidthThrottle\tokenBucket\storage\FileStorage;
+use bandwidthThrottle\tokenBucket\storage\StorageException;
+
+try {
+    $storage = new FileStorage(__DIR__ . "/api.bucket");
+    $rate    = new Rate(10, Rate::SECOND);
+    $bucket  = new TokenBucket(10, $rate, $storage);
+    $bucket->bootstrap(10);
+
+    $seconds = 0;
+    if (!$bucket->consume(1, $seconds)) {
+        http_response_code(429);
+        header(sprintf("Retry-After: %d", floor($seconds)));
+        exit();
+    }
+} catch (StorageException $e) {
+    error_log("Error al escribir en el almacenamiento: " . $e->getMessage());
 }
 
 define('ROOT_PATH', __DIR__);
@@ -80,14 +100,14 @@ $controllers = [
 
     'getcompanyinfo'                            => ['controller' => 'PageDetailsController',    'method' => 'getCompanyInfo'],
     //GET
-    'gotopasswordreset'                         => ['controller' => 'EmailLinkActionController','method' => 'goToPasswordReset'],
-    'gotoemailverification'                     => ['controller' => 'EmailLinkActionController','method' => 'goToEmailVerification'],
-    'gotoaccountdeletion'                       => ['controller' => 'EmailLinkActionController','method' => 'goToAccountDeletion'],
+    'gotopasswordreset'                         => ['controller' => 'EmailLinkActionController', 'method' => 'goToPasswordReset'],
+    'gotoemailverification'                     => ['controller' => 'EmailLinkActionController', 'method' => 'goToEmailVerification'],
+    'gotoaccountdeletion'                       => ['controller' => 'EmailLinkActionController', 'method' => 'goToAccountDeletion'],
     'paypalredirectok'                          => ['controller' => 'PaymentController',        'method' => 'paypalRedirectOk'],
     'paypalredirectcancel'                      => ['controller' => 'PaymentController',        'method' => 'paypalRedirectCancel'],
     //SOLO PARA DEBUG
-    'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',          'method' => 'obtenerVariablesDeSesionDebug'],
-    'debugpaypalredirectok'                     => ['controller' => 'DebugController',          'method' => 'debugPaypalRedirectOk']
+    /* 'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',          'method' => 'obtenerVariablesDeSesionDebug'],
+    'debugpaypalredirectok'                     => ['controller' => 'DebugController',          'method' => 'debugPaypalRedirectOk'] */
 ];
 
 if (array_key_exists(strtolower($command), $controllers)) {

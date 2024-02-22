@@ -689,15 +689,4 @@ final class UserController extends BaseController
         }
         return rtrim('?' . $linkParametres, '&'); // Eliminamos el último '&'
     }
-
-    /*
-    private function generateTokenSession($user)
-    {//OLD, la autenticación basada en sesiones es otro modo (sobrecarga el server y no sirve para varias API a la vez porque es necesaria una session en cada una, aunque tiene otros modos seguros),
-        // para este proyecto prefiero la autenticación basada en tokens
-        $token = hash('sha256', uniqid(mt_rand(), true));
-        SessionTool::startSession('destinyAirlines_session', 60 * 60 * 10);
-        $_SESSION['login'] = ['token' => $token, 'id' => $user['id_USERS']];
-        return $token;
-    }
-*/
 }
