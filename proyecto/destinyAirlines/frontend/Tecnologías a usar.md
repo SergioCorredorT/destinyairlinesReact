@@ -20,9 +20,22 @@
         🔄 Jest para test ¿ + testing library?
 
 [hosting]
-    🔄 Netlify                 para frontend
-    🔄 heroku o 000webhost     para php de backend
-    🔄 000webhost              para sql MariaDB de bbdd
+    🔄Todo
+            ✅000webhost
+    🔄 frontend
+            Netlify
+            000webhost
+            vercel
+    🔄 backend + bbdd
+            ❓railway
+            ❓infinityfree
+            ❓back4app
+            ❌000webhost (cors por peticiones http externas)
+            ❌heroku (tarj. banco)
+            ❌googleCloud (tarj. banco)
+            ❌aws (tarj. banco)
+    🔄 bbdd
+            
 
 [Descartadas]
     ❌ axios (únicamente por viciarse el fetch primero)

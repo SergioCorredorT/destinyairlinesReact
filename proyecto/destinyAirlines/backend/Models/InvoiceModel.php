@@ -2,7 +2,7 @@
 require_once "./Models/BaseModel.php";
 final class InvoiceModel extends BaseModel
 {
-    private const table = "INVOICES";
+    private const table = "invoices";
 
     public function __construct()
     {

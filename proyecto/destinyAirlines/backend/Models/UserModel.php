@@ -2,7 +2,7 @@
 require_once "./Models/BaseModel.php";
 final class UserModel extends BaseModel
 {
-    private const table = "USERS";
+    private const table = "users";
 
     public function __construct()
     {
@@ -79,7 +79,7 @@ final class UserModel extends BaseModel
 
     public function updateAddCurrentLoginAttempts(int $id_USERS): bool
     {
-        return parent::update(['currentLoginAttempts' => 'currentLoginAttempts + 1', 'lastAttempt' => "'" . date('Y-m-d H:i:s') . "'"], "id_USERS = $id_USERS", ['currentLoginAttempts'=>true]);
+        return parent::update(['currentLoginAttempts' => 'currentLoginAttempts + 1', 'lastAttempt' => "" . date('Y-m-d H:i:s') . ""], "id_USERS = $id_USERS", ['currentLoginAttempts'=>true]);
     }
 
     public function updatePasswordHashById(string $passwordHash, int $id_USERS): bool

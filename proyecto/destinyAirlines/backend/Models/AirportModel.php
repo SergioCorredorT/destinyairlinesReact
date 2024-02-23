@@ -2,7 +2,7 @@
 require_once "./Models/BaseModel.php";
 final class AirportModel extends BaseModel
 {
-    private const table = "AIRPORTS";
+    private const table = "airports";
 
     public function __construct()
     {

@@ -2,7 +2,7 @@
 require_once "./Models/BaseModel.php";
 final class UserTempIdsModel extends BaseModel
 {
-    private const table = "USER_TEMP_IDS";
+    private const table = "user_temp_ids";
 
     public function __construct()
     {

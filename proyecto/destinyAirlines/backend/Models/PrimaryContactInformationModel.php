@@ -2,7 +2,7 @@
 require_once ROOT_PATH . '/Models/BaseModel.php';
 final class PrimaryContactInformationModel extends BaseModel
 {
-    private const TABLE = "PRIMARY_CONTACT_INFORMATIONS";
+    private const TABLE = "primary_contact_informations";
 
     public function __construct()
     {
