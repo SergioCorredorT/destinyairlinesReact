@@ -145,13 +145,6 @@ class PassengerValidator
             return true;
         }
         return false;
-/*
-        require_once ROOT_PATH . '/Models/AdditionalInformationModel.php';
-        $AdditionalInformationModel = new AdditionalInformationModel();
-        if ($AdditionalInformationModel->isAllowedValue($assistiveDevices, 'assistiveDevices')) {
-            return true;
-        }
-        return false;*/
     }
 
     public static function validateMedicalEquipment(string $medicalEquipment): bool
@@ -222,7 +215,7 @@ class PassengerValidator
         return false;
     }
 
-    public static function validateIndividualServiceCodes(string $individualServiceCodes): bool
+    public static function validateIndividualServiceCodes(array $individualServiceCodes): bool
     {
         if (!is_array($individualServiceCodes)) {
             return false;

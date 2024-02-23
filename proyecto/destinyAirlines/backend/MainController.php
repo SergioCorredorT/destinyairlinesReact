@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 
 //Esta parte debería funcionar si el usuario ejecutor de Apache tiene permisos para modificar el archivo api.bucket de la raíz del backend
-require './vendor/autoload.php';
+ require './vendor/autoload.php';
 
 use bandwidthThrottle\tokenBucket\Rate;
 use bandwidthThrottle\tokenBucket\TokenBucket;
@@ -22,7 +23,7 @@ try {
     }
 } catch (StorageException $e) {
     error_log("Error al escribir en el almacenamiento: " . $e->getMessage());
-}
+} 
 
 define('ROOT_PATH', __DIR__);
 require_once ROOT_PATH . '/Tools/IniTool.php';
@@ -106,8 +107,8 @@ $controllers = [
     'paypalredirectok'                          => ['controller' => 'PaymentController',        'method' => 'paypalRedirectOk'],
     'paypalredirectcancel'                      => ['controller' => 'PaymentController',        'method' => 'paypalRedirectCancel'],
     //SOLO PARA DEBUG
-    /* 'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',          'method' => 'obtenerVariablesDeSesionDebug'],
-    'debugpaypalredirectok'                     => ['controller' => 'DebugController',          'method' => 'debugPaypalRedirectOk'] */
+    'obtenervariablesdesesiondebug'             => ['controller' => 'DebugController',          'method' => 'obtenerVariablesDeSesionDebug'],
+    'debugpaypalredirectok'                     => ['controller' => 'DebugController',          'method' => 'debugPaypalRedirectOk']
 ];
 
 if (array_key_exists(strtolower($command), $controllers)) {

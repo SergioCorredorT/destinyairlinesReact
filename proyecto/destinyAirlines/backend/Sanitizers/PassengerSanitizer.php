@@ -96,7 +96,7 @@ class PassengerSanitizer
         return htmlspecialchars(trim($sanitizedMedicationRequirements));
     }
 
-    public static function sanitizeIndividualServiceCodes(string $individualServiceCodes): string
+    public static function sanitizeIndividualServiceCodes(string|array $individualServiceCodes): string|array
     {
         if (is_array($individualServiceCodes)) {
             return array_map('trim', array_map('htmlspecialchars', $individualServiceCodes));
