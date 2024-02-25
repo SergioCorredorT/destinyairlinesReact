@@ -4,7 +4,7 @@ import styles from "./SignOut.module.css";
 export function SignOut() {
   const { signOut } = authStore();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     signOut();
   };
 

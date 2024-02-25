@@ -1,3 +1,4 @@
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import "../src/globalStyles/variables.css";
@@ -14,4 +15,8 @@ if (!appElement) {
 }
 
 const root = createRoot(appElement);
-root.render(<App />);
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);

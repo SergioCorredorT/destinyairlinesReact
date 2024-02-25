@@ -68,6 +68,10 @@ final class EmailLinkActionController extends BaseController
 
         $UserTempIdsModel = new UserTempIdsModel();
         $readUserByTempIdResults = $UserTempIdsModel->readUserByTempId($goToEmailVerificationData['tempId'], 'emailVerification');
+        if(!isset($readUserByTempIdResults) || !isset($readUserByTempIdResults[0])) {
+            RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Token expirado, inválido o ya usado', 'messageType'=>'error']);
+            exit;
+        }
         $id_USERS = $readUserByTempIdResults[0]['id_USERS'];
 
         if (!$decodedToken['response']) {

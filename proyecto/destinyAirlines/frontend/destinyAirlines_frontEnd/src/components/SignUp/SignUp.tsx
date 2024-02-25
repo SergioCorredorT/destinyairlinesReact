@@ -71,8 +71,9 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
     resolver: zodResolver(signUpSchema),
   });
 
-  const handleSubmitSignUp = handleSubmit((jsonData) => {
-    signUp(jsonData).then((data) => {
+  const handleSubmitSignUp = handleSubmit(async (jsonData) => {
+    try {
+      const data = await signUp(jsonData);
       if (!data.status) {
         generalError.value = data.message;
         toast.error(data.message);
@@ -81,7 +82,9 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
         toast.success(data.message);
         closeModal();
       }
-    });
+    } catch (error:any) {
+      toast.error(error);
+    }
   });
 
   return (

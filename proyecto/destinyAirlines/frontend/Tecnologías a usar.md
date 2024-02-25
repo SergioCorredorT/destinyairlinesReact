@@ -21,7 +21,7 @@
 
 [hosting]
     🔄Todo
-            ✅000webhost
+            ✅000webhost (aunque es anual)
     🔄 frontend
             Netlify
             000webhost

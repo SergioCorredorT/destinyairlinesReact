@@ -255,24 +255,24 @@ export const authStore = create<AuthStoreState>((set, get) => ({
 
     return {
       //retornar info del store en un objeto
-      title: state["title"],
-      firstName: state["firstName"],
-      lastName: state["lastName"],
-      emailAddress: state["emailAddress"],
-      country: state["country"],
-      townCity: state["townCity"],
-      streetAddress: state["streetAddress"],
-      zipCode: state["zipCode"],
-      phoneNumber1: state["phoneNumber1"],
-      phoneNumber2: state["phoneNumber2"],
-      phoneNumber3: state["phoneNumber3"],
-      companyName: state["companyName"],
-      companyTaxNumber: state["companyTaxNumber"],
-      companyPhoneNumber: state["companyPhoneNumber"],
-      documentationType: state["documentationType"],
-      documentCode: state["documentCode"],
-      expirationDate: state["expirationDate"],
-      dateBirth: state["dateBirth"],
+      title: state["title"] || "",
+      firstName: state["firstName"]  || "",
+      lastName: state["lastName"]  || "",
+      emailAddress: state["emailAddress"]  || "",
+      country: state["country"]  || "",
+      townCity: state["townCity"]  || "",
+      streetAddress: state["streetAddress"]  || "",
+      zipCode: state["zipCode"]  || "",
+      phoneNumber1: state["phoneNumber1"]  || "",
+      phoneNumber2: state["phoneNumber2"]  || "",
+      phoneNumber3: state["phoneNumber3"]  || "",
+      companyName: state["companyName"]  || "",
+      companyTaxNumber: state["companyTaxNumber"]  || "",
+      companyPhoneNumber: state["companyPhoneNumber"]  || "",
+      documentationType: state["documentationType"]  || "",
+      documentCode: state["documentCode"]  || "",
+      expirationDate: state["expirationDate"]  || "",
+      dateBirth: state["dateBirth"]  || "",
     };
   },
   checkUpdateLogin: async () => {
@@ -421,7 +421,7 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     toast.success("Se ha iniciado sesión");
     return response;
   },
-  signOut: () => {
+  signOut: async () => {
     get()["desactivateAutoUpdateToken"]();
     signOut({ set });
   },

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 //Esta parte debería funcionar si el usuario ejecutor de Apache tiene permisos para modificar el archivo api.bucket de la raíz del backend
- require './vendor/autoload.php';
+require './vendor/autoload.php';
 
 use bandwidthThrottle\tokenBucket\Rate;
 use bandwidthThrottle\tokenBucket\TokenBucket;
@@ -11,7 +11,7 @@ use bandwidthThrottle\tokenBucket\storage\StorageException;
 
 try {
     $storage = new FileStorage(__DIR__ . "/api.bucket");
-    $rate    = new Rate(10, Rate::SECOND);
+    $rate    = new Rate(5, Rate::SECOND);
     $bucket  = new TokenBucket(10, $rate, $storage);
     $bucket->bootstrap(10);
 
@@ -23,7 +23,7 @@ try {
     }
 } catch (StorageException $e) {
     error_log("Error al escribir en el almacenamiento: " . $e->getMessage());
-} 
+}
 
 define('ROOT_PATH', __DIR__);
 require_once ROOT_PATH . '/Tools/IniTool.php';

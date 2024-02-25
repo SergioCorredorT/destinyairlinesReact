@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "../../validations/signInSchema";
 import { useSignal } from "@preact/signals-react";
 import { forgotPassword } from "../../services/forgotPassword";
+import { toast } from "react-toastify";
 
 type Inputs = {
   emailAddress: string;
@@ -25,16 +26,19 @@ export function SignIn() {
   //Register :Para señalar los inputs a tener en cuenta en react-hook-form
   //handleSubmit :Para enviar los datos al backend dándole el esquema de validación o resolver de tipo zod
 
-  const onSubmitSignUp = handleSubmit((jsonData) => {
+  const onSubmitSignIn = handleSubmit(async (jsonData) => {
     //Tras ser validado el form con el schema
-    signIn({
-      emailAddress: jsonData.emailAddress,
-      password: jsonData.password,
-    }).then((data) => {
+    try {
+      const data = await signIn({
+        emailAddress: jsonData.emailAddress,
+        password: jsonData.password,
+      });
       if (!data.status) {
         generalError.value = data.message;
       }
-    });
+    } catch (error: any) {
+      toast.error(error);
+    }
   });
 
   const onSubmitForgotPassword = (
@@ -58,7 +62,7 @@ export function SignIn() {
   return (
     <div className={styles.signIn}>
       <h2>Iniciar sesión</h2>
-      <form className={styles.form} onSubmit={onSubmitSignUp}>
+      <form className={styles.form} onSubmit={onSubmitSignIn}>
         <div className={styles.inputGroup}>
           {formErrors.emailAddress ? (
             <label htmlFor="emailAddress" className={styles.errorMessage}>
