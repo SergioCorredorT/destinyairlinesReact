@@ -63,36 +63,38 @@ export function SignIn() {
     <div className={styles.signIn}>
       <h2>Iniciar sesión</h2>
       <form className={styles.form} onSubmit={onSubmitSignIn}>
-        <div className={styles.inputGroup}>
-          {formErrors.emailAddress ? (
-            <label htmlFor="emailAddress" className={styles.errorMessage}>
-              {formErrors.emailAddress.message}
-            </label>
-          ) : (
-            <label htmlFor="emailAddress">Email</label>
-          )}
-          <input
-            type="text"
-            id="emailAddress"
-            placeholder="Email address"
-            title="Introduzca aquí su email"
-            {...register("emailAddress")}
-          />
-        </div>
-        <div className={styles.inputGroup}>
-          {formErrors.password ? (
-            <label htmlFor="password" className={styles.errorMessage}>
-              {formErrors.password.message}
-            </label>
-          ) : (
-            <label htmlFor="password">Password</label>
-          )}
-          <input
-            type="password"
-            id="password"
-            placeholder="Password"
-            {...register("password")}
-          />
+        <div className={styles.inputGroupsContainer}>
+          <div className={styles.inputGroup}>
+            {formErrors.emailAddress ? (
+              <label htmlFor="emailAddress" className={styles.errorMessage}>
+                {formErrors.emailAddress.message}
+              </label>
+            ) : (
+              <label htmlFor="emailAddress">Email</label>
+            )}
+            <input
+              type="text"
+              id="emailAddress"
+              placeholder="Email address"
+              title="Introduzca aquí su email"
+              {...register("emailAddress")}
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            {formErrors.password ? (
+              <label htmlFor="password" className={styles.errorMessage}>
+                {formErrors.password.message}
+              </label>
+            ) : (
+              <label htmlFor="password">Password</label>
+            )}
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              {...register("password")}
+            />
+          </div>
         </div>
         <div className={styles.buttonsContainer}>
           <button type="submit">Iniciar sesión</button>

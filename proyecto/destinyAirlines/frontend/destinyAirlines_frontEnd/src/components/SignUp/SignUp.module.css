@@ -17,14 +17,20 @@ form {
   flex-direction: column;
   gap: 5px;
   margin: 0 auto;
+  align-items: center;
 }
 
 .buttonsContainer {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8em), 1fr));
   gap: 10px;
-  justify-content: center;
   padding: 10px;
+  justify-items: center;
+  justify-content: center;
+}
+
+.inputGroup label {
+  font-weight: 500;
 }
 
 .signUp {
@@ -42,12 +48,21 @@ form {
   align-self: center;
 }
 
-.errorMessage {
-  color: #dc143c;
-}
 
 input, select, textarea {
   width: 100%;
+}
+
+.errorMessage {
+  color: #dc143c;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+@media only screen and (min-width: 600px) {
+  .signIn {
+    min-width: 300px;
+  }
 }
 
 @media only screen and (max-width: 600px) {
