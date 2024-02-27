@@ -1,7 +1,5 @@
 .header {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
+  display: grid;
   align-items: center;
   padding: 10px;
   box-sizing: border-box;
@@ -9,19 +7,21 @@
   background-color: var(--primary-color);
   box-shadow: 0 0 10px rgb(0, 0, 0);
   overflow: hidden;
-  height: 120px;
+  height: 130px;
+  grid-template-columns: 150px 1fr;
 }
 
 .header .logo,
 .header .logo img {
-  height: 100%;
+  width: fit-content;
 }
 
 .sessionControlsContainer {
-  display: flex;
-  flex-direction: row;
+  display: grid;
   gap: 10px;
   align-items: center;
+  height: 100%;
+  justify-items: end;
 }
 
 .isotipo_small {

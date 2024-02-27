@@ -27,7 +27,7 @@ export function CompanyInfo() {
   return (
     <>
       <div className={styles.companyInfo}>
-        <img src={logo}/>
+        <div><img className={styles.logo} src={logo}/></div>
         <div><p><span className={styles.pTitle}>Dirección:</span> {airlineAddress}</p></div>
         <div><p><span className={styles.pTitle}>Teléfono:</span> {phoneNumber}</p></div>
         <div><p><span className={styles.pTitle}>Email:</span> {airlineEmail}</p></div>

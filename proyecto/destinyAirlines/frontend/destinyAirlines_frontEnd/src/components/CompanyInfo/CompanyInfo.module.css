@@ -1,33 +1,50 @@
 .companyInfo {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
-    grid-gap: 10px;
-    box-sizing: border-box;
-    overflow: hidden;
-    grid-auto-flow: dense;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  grid-gap: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  grid-auto-flow: dense;
 }
 
 .companyInfo > img {
-    box-sizing: border-box;
-    width: 100%;
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -ms-border-radius: 10px;
-    -o-border-radius: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
 }
 
 .companyInfo > div {
-    background-color: rgba(255,255,255,0.03);
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -ms-border-radius: 10px;
-    -o-border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
 }
 
 .companyInfo .pTitle {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 10px;
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.logo {
+  max-width: 140px;
+  margin: auto;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+}
+
+@media only screen and (max-width: 600px) {
+  .companyInfo {
+    height: 100px;
+    overflow: auto;
+  }
 }
