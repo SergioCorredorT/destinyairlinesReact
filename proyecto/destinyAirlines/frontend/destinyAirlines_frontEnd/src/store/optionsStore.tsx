@@ -27,23 +27,32 @@ export const optionsStore = create<OptionsStoreState>((set, get) => ({
     const optionsFetchRequired: ListOptions = {};
     const rsp: { [key: string]: { [key: string]: string } | null } = {};
 
-    //Comprobamos cuales son las key requeridas que no tenemos previamente cargadas en el store
+    // Comprobamos cuales son las key requeridas que no tenemos previamente cargadas en el store
     for (const option in listOptions) {
-      if (
-        listOptions[option as keyof ListOptions] &&
-        !get()[option as keyof ListOptions]
-      ) {
+      if (!get()[option as keyof ListOptions]) {
         optionsFetchRequired[option as keyof ListOptions] = true;
       }
     }
 
-    const response = await getOptions({ listOptions: optionsFetchRequired });
-    //Vamos introduciendo en la store los datos recibidos del fetch y rellenamos la respuesta
-    for (const option in listOptions) {
-      if (optionsFetchRequired[option as keyof ListOptions]) {
-        set({ [option]: response.response[option] });
+    // Si hay opciones que necesitan ser buscadas, hacemos la petición
+    if (Object.keys(optionsFetchRequired).length > 0) {
+      const response = await getOptions({ listOptions: optionsFetchRequired });
+
+      // Actualizamos el store con los datos recibidos y rellenamos la respuesta
+      for (const option in optionsFetchRequired) {
+        const optionValue = response?.response[option];
+        if (optionValue) {
+          set({ [option]: optionValue });
+          rsp[option] = optionValue;
+        }
       }
-      rsp[option] = get()[option as keyof ListOptions];
+    }
+
+    // Para las opciones que ya estaban en el store, simplemente las añadimos a la respuesta
+    for (const option in listOptions) {
+      if (!optionsFetchRequired[option as keyof ListOptions]) {
+        rsp[option] = get()[option as keyof ListOptions];
+      }
     }
 
     return rsp;
