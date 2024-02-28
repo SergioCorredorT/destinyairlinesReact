@@ -43,4 +43,10 @@ final class TokenController extends BaseController
         $tokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         return $tokenSettings['autoUpdateTokenTime'];
     }
+
+    public function getSiteKey(): string
+    {
+        $secretKeys = $this->iniTool->getKeysAndValues('secretKeys');
+        return $secretKeys['captchaSiteKey'];
+    }
 }

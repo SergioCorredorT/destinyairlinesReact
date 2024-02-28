@@ -7,6 +7,7 @@ import { signUp } from "../../services/signUp";
 import { useSignal } from "@preact/signals-react";
 import { optionsStore } from "../../store/optionsStore";
 import { toast } from "react-toastify";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 type Inputs = {
   emailAddress: string;
@@ -29,6 +30,7 @@ type Inputs = {
   companyTaxNumber: string;
   companyPhoneNumber: string;
   dateBirth: string;
+  captchaToken: string;
 };
 
 type optionsForUserRegister = {
@@ -39,6 +41,7 @@ type optionsForUserRegister = {
 };
 
 export function SignUp({ closeModal }: { closeModal: () => void }) {
+  const [captchaToken, setCaptchaToken] = useState("");
   const generalError = useSignal("");
   const [optionsForUserRegister, setOptionsForUserRegister] =
     useState<optionsForUserRegister | null>(null);
@@ -73,6 +76,8 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
 
   const handleSubmitSignUp = handleSubmit(async (jsonData) => {
     try {
+      jsonData.captchaToken = captchaToken;
+
       const data = await signUp(jsonData);
       if (!data.status) {
         generalError.value = data.message;
@@ -82,10 +87,14 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
         toast.success(data.message);
         closeModal();
       }
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(error);
     }
   });
+
+  const onVerify = (token: string) => {
+    setCaptchaToken(token);
+  };
 
   return (
     <div className={styles.signUp}>
@@ -482,7 +491,10 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
           </div>
         </div>
         <div className={styles.buttonsContainer}>
-          <button type="submit">Registrarse</button>
+          <HCaptcha sitekey={import.meta.env.VITE_SITE_TOKEN_CAPTCHA} onVerify={onVerify} />
+          <button type="submit" disabled={!captchaToken}>
+            Registrarse
+          </button>
         </div>
         {generalError && (
           <div className={styles.errorMessage}>

@@ -74,12 +74,20 @@ final class UserController extends BaseController
             'companyName' => null,
             'companyTaxNumber' => null,
             'companyPhoneNumber' => null,
-            'dateBirth' => ''
+            'dateBirth' => '',
+            'captchaToken' => ''
         ];
 
         foreach ($keys_default as $key => $defaultValue) {
             $userData[$key] = $POST[$key] ?? $defaultValue;
         }
+
+        require_once ROOT_PATH . '/Validators/TokenValidator.php';
+        $secretKeys = $this->iniTool->getKeysAndValues('secretKeys');
+        if(!TokenValidator::TokenCaptchaValidator($userData['captchaToken'], $secretKeys['captchaSecretKey'])){
+            return ['response'=> false,'message'=> 'Validación de captcha incorrecta'];
+        }
+        unset($userData['captchaToken']);
 
         $userData = UserSanitizer::sanitize($userData);
         $isValidate = UserValidator::validate($userData);
