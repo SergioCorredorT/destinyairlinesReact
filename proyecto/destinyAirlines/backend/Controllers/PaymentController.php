@@ -11,17 +11,16 @@ final class PaymentController extends BaseController
 
     public function paypalRedirectOk(array $GET)
     {
-        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
-        require_once ROOT_PATH . '/Validators/TokenValidator.php';
-
         $paymentDetails = [
             'token'           => $GET['token'] ?? ''
         ];
 
-        $tokenSanitized = TokenSanitizer::sanitizeToken($paymentDetails['token']);
-        if (!TokenValidator::validateToken($tokenSanitized)) {
+        $tokenSanitized = $this->processData->processData(['accessToken'=>$paymentDetails['token']], 'Token');
+        if (!$tokenSanitized['accessToken']) {
             return false;
         }
+        $tokenSanitized=$tokenSanitized['accessToken'];
+
         $paymentDetails['token']= $tokenSanitized;
 
         $dedodedPaymentToken = TokenTool::decodeAndCheckToken(strval($paymentDetails['token']), 'paypalredirectok');
@@ -58,7 +57,7 @@ final class PaymentController extends BaseController
             'invoice'
         );
 
-        $invoiceReturnData;
+        $invoiceReturnData = null;
         if (isset($dedodedPaymentToken['response']->data->idInvoiceR)) {
             $invoiceModel->updateIsPaid($dedodedPaymentToken['response']->data->idInvoiceR);
             $invoiceReturnData = $invoiceTool->generateInvoiceData($dedodedPaymentToken['response']->data->idUser, $dedodedPaymentToken['response']->data->idInvoiceR);

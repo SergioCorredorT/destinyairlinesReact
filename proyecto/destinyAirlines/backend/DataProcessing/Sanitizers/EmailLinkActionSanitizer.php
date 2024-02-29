@@ -1,5 +1,5 @@
 <?php
-require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
+require_once ROOT_PATH . '/DataProcessing/Sanitizers/TokenSanitizer.php';
 class EmailLinkActionSanitizer
 {
     public static function sanitizeType(string $type): string

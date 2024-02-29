@@ -1,8 +1,10 @@
 <?php
 class DocumentTypeValidator
 {
-    public static function validateDocumentType(string $docType, string $docCode): bool
+    public static function validateDocument(array $documentData): bool
     {
+        $docType= $documentData['docType'];
+        $docCode= $documentData['docCode'];
         if (empty($docType)) {
             return false;
         }
@@ -23,7 +25,15 @@ class DocumentTypeValidator
         if (!preg_match($documentTypes[$docType], $docCode)) {
             return false;
         }
-        
+
         return true;
+    }
+
+    public static function validate(array $data): bool | array
+    {
+        if (isset($data['document']) && !self::validateDocument($data['document'])) {
+            return false;
+        }
+        return $data;
     }
 }

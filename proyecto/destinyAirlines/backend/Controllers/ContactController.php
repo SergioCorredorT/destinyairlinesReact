@@ -1,42 +1,31 @@
 <?php
 require_once ROOT_PATH . '/Controllers/BaseController.php';
-require_once ROOT_PATH . '/Sanitizers/ContactSanitizer.php';
-require_once ROOT_PATH . '/Validators/ContactValidator.php';
 final class ContactController extends BaseController
 {
     public function __construct()
     {
         parent::__construct();
+        parent::loadFilter('Contact');
     }
 
     public function sendContact(array $POST): bool
     {
-        $keys_default = [
-            'name' => '',
-            'email' => '',
-            'phoneNumber' => '',
-            'subject' => '',
-            'message' => ''
-        ];
-
-        foreach ($keys_default as $key => $defaultValue) {
-            $contactData[$key] = $POST[$key] ?? $defaultValue;
+        $contactData = $this->filter->filterSendContactData($POST);
+        $contactData = $this->processData->processData($contactData, 'Contact');
+        if (!$contactData) {
+            return false;
         }
 
-        $contactData = ContactSanitizer::sanitize($contactData);
-        $isValidate = ContactValidator::validate($contactData);
-        if ($isValidate) {
-            //Seleccionamos correo destino en función del asunto recibido, que debería estar en cfg.ini, si no, se activa el valor default
-            $contactData['toEmail'] = $this->chooseToFromSubject($contactData['subject']);
+        //Seleccionamos correo destino en función del asunto recibido, que debería estar en cfg.ini, si no, se activa el valor default
+        $contactData['toEmail'] = $this->chooseToFromSubject($contactData['subject']);
 
-            //Recogemos del cfg.ini la cuenta remitente de correo
-            $cfgOriginEmailIni = $this->iniTool->getKeysAndValues("originEmail");
-            $contactData['fromEmail'] = $cfgOriginEmailIni['email'];
-            $contactData['fromPassword'] = $cfgOriginEmailIni['password'];
+        //Recogemos del cfg.ini la cuenta remitente de correo
+        $cfgOriginEmailIni = $this->iniTool->getKeysAndValues("originEmail");
+        $contactData['fromEmail'] = $cfgOriginEmailIni['email'];
+        $contactData['fromPassword'] = $cfgOriginEmailIni['password'];
 
-            if (EmailTool::sendEmail($contactData, "contactTemplate")) {
-                return true;
-            }
+        if (EmailTool::sendEmail($contactData, "contactTemplate")) {
+            return true;
         }
         return false;
     }

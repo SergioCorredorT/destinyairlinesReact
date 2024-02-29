@@ -2,31 +2,26 @@
 //Ver vuelos/reservas hechas y pendientes, crear reserva, crear nuevo vuelo
 
 require_once ROOT_PATH . '/Controllers/BaseController.php';
+
 final class BookController extends BaseController
 {
+
     public function __construct()
     {
         parent::__construct();
+        parent::loadFilter('Book');
     }
 
     public function storeFlightDetails(array $POST): bool
     {
-        require_once ROOT_PATH . '/Sanitizers/FlightSanitizer.php';
-        require_once ROOT_PATH . '/Validators/FlightValidator.php';
+        $flightDetails = $this->filter->filterFlightData($POST);
 
-        $flightDetails = [
-            'flightCode'      => $POST['flightCode'] ?? '',
-            'adultsNumber'    => $POST['adultsNumber'] ?? '',
-            'childsNumber'    => $POST['childsNumber'] ?? '',
-            'infantsNumber'   => $POST['infantsNumber'] ?? ''
-        ];
-
-        $direction = $POST['direction'] ?? '';
-
-        $flightDetails = FlightSanitizer::sanitize($flightDetails);
-        if (!FlightValidator::validate($flightDetails)) {
+        $flightDetails = $this->processData->processData($flightDetails, 'Flight');
+        if (!$flightDetails) {
             return false;
         }
+
+        $direction = $POST['direction'] ?? '';
 
         if (!$this->validateDirection($direction)) {
             return false;
@@ -39,57 +34,12 @@ final class BookController extends BaseController
 
     public function storePassengerDetails(array $POST): bool
     {
-        require_once ROOT_PATH . '/Sanitizers/PassengerSanitizer.php';
-        require_once ROOT_PATH . '/Validators/PassengerValidator.php';
-        require_once ROOT_PATH . '/Validators/PassengersValidator.php';
-
-        $FrontendDataHelpersTool = new FrontendDataHelpersTool();
-        $NestedPOST = $FrontendDataHelpersTool->processNestedKeys($POST);
-        $passengers = $NestedPOST['passengers'];
-        $passengersDetails = [];
-
-        //Vamos recogiendo los datos de los pasajeros
-        foreach ($passengers as $passenger) {
-            $passengerDetails = [];
-
-            $keys_default = [
-                'documentationType' => '',
-                'documentCode' => '',
-                'expirationDate' => '',
-                'title' => null,
-                'firstName' => '',
-                'lastName' => '',
-                'nationality' => '',
-                'country' => '',
-                'dateBirth' => '',
-                'assistiveDevices' => null,
-                'medicalEquipment' => null,
-                'mobilityLimitations' => null,
-                'communicationNeeds' => null,
-                'medicationRequirements' => null,
-                'services' => null
-            ];
-
-            foreach ($keys_default as $key => $defaultValue) {
-                $passengerDetails[$key] = !isset($passenger[$key]) || $passenger[$key] === "" ? $defaultValue : $passenger[$key];
-            }
-            //Cada pasajero lo saneamos y validamos
-            $passengerDetails = PassengerSanitizer::sanitize($passengerDetails);
-
-            if (!PassengerValidator::validate($passengerDetails)) {
-                return false;
-            }
-
-            $timeTool = new TimeTool();
-            $passengerDetails['ageCategory'] = $timeTool->getAgeCategory($passengerDetails['dateBirth']);
-
-            array_push($passengersDetails, $passengerDetails);
-        }
+        $passengersDetails = $this->filter->filterPassengersData($POST);
 
         $direction = $POST['direction'] ?? '';
 
-
-        if (!PassengersValidator::validate($passengersDetails)) {
+        $passengersDetails = $this->processData->processData($passengersDetails, 'Passengers');
+        if (!$passengersDetails) {
             return false;
         }
 
@@ -105,15 +55,8 @@ final class BookController extends BaseController
     public function storeBookServicesDetails(array $POST): bool
     {
         //$POST será un array que contendrá códigos de servicios que solicita el cliente
-        require_once ROOT_PATH . '/Sanitizers/BookServicesSanitizer.php';
-        require_once ROOT_PATH . '/Validators/BookServicesValidator.php';
 
-        //No ponemos aquí las variables admitidas porque todas son opcionales (valor por defecto null), y
-        // porque en el validate ya se hace una solicitud a BBDD para comprobar las key y value que se envíen,
-        // así evitamos una llamada extra a BBDD
-
-        $FrontendDataHelpersTool = new FrontendDataHelpersTool();
-        $NestedPOST = $FrontendDataHelpersTool->processNestedKeys($POST);
+        $NestedPOST = $this->filter->filterBookServicesData($POST);
 
         $servicesDetails = $NestedPOST['bookServices'] ?? [];
         $direction = $NestedPOST['direction'] ?? '';
@@ -123,10 +66,8 @@ final class BookController extends BaseController
         }
 
         if (is_array($servicesDetails) && count($servicesDetails) > 0) {
-            //Sanear
-            //Validar si todos están en bbdd
-            $servicesDetails = BookServicesSanitizer::sanitize($servicesDetails);
-            if (!BookServicesValidator::validate($servicesDetails)) {
+            $servicesDetails = $this->processData->processData($servicesDetails, 'BookServices');
+            if (!$servicesDetails) {
                 return false;
             }
         }
@@ -136,35 +77,12 @@ final class BookController extends BaseController
 
     public function storePrimaryContactInformationDetails(array $POST): bool
     {
-        $primaryContactDetails = [
-            'documentationType' => '',
-            'documentCode' => '',
-            'expirationDate' => '',
-            'title' => null,
-            'firstName' => '',
-            'lastName' => '',
-            'emailAddress' => '',
-            'phoneNumber1' => '',
-            'phoneNumber2' => null,
-            'country' => '',
-            'townCity' => '',
-            'streetAddress' => '',
-            'zipCode' => '',
-            'companyName' => null,
-            'companyTaxNumber' => null,
-            'companyPhoneNumber' => null,
-            'dateBirth' => ''
-        ];
+        $primaryContactDetails = $this->filter->filterPrimaryContactInformationData($POST);
 
-        foreach ($primaryContactDetails as $key => $defaultValue) {
-            $primaryContactDetails[$key] = $POST[$key] ?? $defaultValue;
-        }
         $direction = $POST['direction'] ?? '';
 
-        require_once ROOT_PATH . '/Sanitizers/PrimaryContactInformationSanitizer.php';
-        require_once ROOT_PATH . '/Validators/PrimaryContactInformationValidator.php';
-        $primaryContactDetails = PrimaryContactInformationSanitizer::sanitize($primaryContactDetails);
-        if (!PrimaryContactInformationValidator::validate($primaryContactDetails)) {
+        $primaryContactDetails = $this->processData->processData($primaryContactDetails, 'PrimaryContactInformation');
+        if (!$primaryContactDetails) {
             return false;
         }
 
@@ -178,17 +96,16 @@ final class BookController extends BaseController
 
     public function paymentDetails(array $POST): bool
     {
-        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
-        require_once ROOT_PATH . '/Validators/TokenValidator.php';
-
         $BookingPriceCalculatorTool = new BookingPriceCalculatorTool();
         $BookingDataEnricherTool = new BookingDataEnricherTool();
 
         $accessToken = $POST['accessToken'];
-        $accessToken = TokenSanitizer::sanitizeToken($accessToken);
-        if (!TokenValidator::validateToken($accessToken)) {
+
+        $accessToken = $this->processData->processData(['accessToken' => $accessToken], 'Token');
+        if (!$accessToken['accessToken']) {
             return false;
         }
+        $accessToken = $accessToken['accessToken'];
 
         $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
 
@@ -211,7 +128,7 @@ final class BookController extends BaseController
             return false;
         }
 
-        $returnWithPrices;
+        $returnWithPrices = null;
         $returnTotalPrice = 0;
         $idInvoiceR = null;
         if (!is_null(SessionTool::get('return'))) {
@@ -355,24 +272,18 @@ final class BookController extends BaseController
     //Para obtener la tarjeta de embarque, solo se puede hacer desde 24 a 48 hrs antes del vuelo
     public function checkin(array $POST): bool
     {
-        require_once ROOT_PATH . '/Sanitizers/CheckinSanitizer.php';
-        require_once ROOT_PATH . '/Validators/CheckinValidator.php';
-        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
-        require_once ROOT_PATH . '/Validators/TokenValidator.php';
-
-        $checkinDetails = [
-            'accessToken'       => $POST['accessToken'] ?? '',
-            'bookCode'          => $POST['bookCode'] ?? ''
-        ];
+        $checkinDetails = $this->filter->filterCheckinData($POST);
 
         $accessToken = $POST['accessToken'];
-        $accessToken = TokenSanitizer::sanitizeToken($accessToken);
-        if (!TokenValidator::validateToken($accessToken)) {
+
+        $accessToken = $this->processData->processData(['accessToken' => $accessToken], 'Token');
+        if (!$accessToken['accessToken']) {
             return false;
         }
+        $accessToken = $accessToken['accessToken'];
 
-        $checkinDetails = CheckinSanitizer::sanitize($checkinDetails);
-        if (!CheckinValidator::validate($checkinDetails)) {
+        $checkinDetails = $this->processData->processData($checkinDetails, 'Checkin');
+        if (!$checkinDetails) {
             return false;
         }
 
@@ -460,14 +371,13 @@ final class BookController extends BaseController
     public function getSummaryBooks(array $POST): bool|array
     {
         //Recibe id del usuario y accessToken, y devuelve un array o un JSON de los books
-        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
-        require_once ROOT_PATH . '/Validators/TokenValidator.php';
 
         $accessToken = $POST['accessToken'];
-        $accessToken = TokenSanitizer::sanitizeToken($accessToken);
-        if (!TokenValidator::validateToken($accessToken)) {
+        $accessToken = $this->processData->processData(['accessToken' => $accessToken], 'Token');
+        if (!$accessToken['accessToken']) {
             return false;
         }
+        $accessToken = $accessToken['accessToken'];
 
         $decodedToken = TokenTool::decodeAndCheckToken($accessToken, 'access');
 
@@ -485,20 +395,14 @@ final class BookController extends BaseController
     public function getBookInfo(array $POST): bool|array
     {
         //Recibe id del usuario y accessToken, y devuelve un array o un JSON de los books
-        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
-        require_once ROOT_PATH . '/Validators/TokenValidator.php';
-        require_once ROOT_PATH . '/Sanitizers/BookInfoSanitizer.php';
-        require_once ROOT_PATH . '/Validators/BookInfoValidator.php';
+        $bookInfo = $this->filter->filterBookInfoData($POST);
 
-        $bookInfo = [
-            'accessToken'       => $POST['accessToken'] ?? '',
-            'bookCode'          => $POST['bookCode'] ?? ''
-        ];
-
-        $tokenSanitized = TokenSanitizer::sanitizeToken($bookInfo['accessToken']);
-        if (!TokenValidator::validateToken($tokenSanitized)) {
+        $tokenSanitized = $this->processData->processData(['accessToken' => $bookInfo['accessToken']], 'Token');
+        if (!$tokenSanitized['accessToken']) {
             return false;
         }
+        $tokenSanitized = $tokenSanitized['accessToken'];
+
         $bookInfo['accessToken'] = $tokenSanitized;
 
         $decodedToken = TokenTool::decodeAndCheckToken($tokenSanitized, 'access');
@@ -507,8 +411,8 @@ final class BookController extends BaseController
             return false;
         }
 
-        $bookInfo = BookInfoSanitizer::sanitize($bookInfo);
-        if (!BookInfoValidator::validate($bookInfo)) {
+        $bookInfo = $this->processData->processData($bookInfo, 'BookInfo');
+        if (!$bookInfo) {
             return false;
         }
 
@@ -522,20 +426,13 @@ final class BookController extends BaseController
 
     public function cancelBook(array $POST): bool
     {
-        require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
-        require_once ROOT_PATH . '/Validators/TokenValidator.php';
-        require_once ROOT_PATH . '/Sanitizers/BookInfoSanitizer.php';
-        require_once ROOT_PATH . '/Validators/BookInfoValidator.php';
-
-        $bookInfo = [
-            'accessToken'       => $POST['accessToken'] ?? '',
-            'bookCode'          => $POST['bookCode'] ?? ''
-        ];
-
-        $tokenSanitized = TokenSanitizer::sanitizeToken($bookInfo['accessToken']);
-        if (!TokenValidator::validateToken($tokenSanitized)) {
+        $bookInfo = $this->filter->filterCancelBookData($POST);
+        $tokenSanitized = $this->processData->processData(['accessToken' => $bookInfo['accessToken']], 'Token');
+        if (!$tokenSanitized['accessToken']) {
             return false;
         }
+        $tokenSanitized = $tokenSanitized['accessToken'];
+
         $bookInfo['accessToken'] = $tokenSanitized;
 
         $decodedToken = TokenTool::decodeAndCheckToken($tokenSanitized, 'access');
@@ -544,8 +441,8 @@ final class BookController extends BaseController
             return false;
         }
 
-        $bookInfo = BookInfoSanitizer::sanitize($bookInfo);
-        if (!BookInfoValidator::validate($bookInfo)) {
+        $bookInfo = $this->processData->processData($bookInfo, 'BookInfo');
+        if (!$bookInfo) {
             return false;
         }
 

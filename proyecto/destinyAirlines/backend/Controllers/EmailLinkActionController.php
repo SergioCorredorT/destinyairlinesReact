@@ -1,28 +1,18 @@
 <?php
 require_once ROOT_PATH . '/Controllers/BaseController.php';
-require_once ROOT_PATH . '/Sanitizers/EmailLinkActionSanitizer.php';
-require_once ROOT_PATH . '/Validators/EmailLinkActionValidator.php';
 final class EmailLinkActionController extends BaseController
 {
     public function __construct()
     {
         parent::__construct();
+        parent::loadFilter('EmailLinkAction');
     }
 
     public function goToPasswordReset(array $GET): bool
     {
-        $keys_default = [
-            'type' => '',
-            'passwordResetToken' => '',
-            'tempId' => null
-        ];
-        foreach ($keys_default as $key => $defaultValue) {
-            $goToPasswordResetData[$key] = $GET[$key] ?? $defaultValue;
-        }
-
-        $goToPasswordResetData = EmailLinkActionSanitizer::sanitize($goToPasswordResetData);
-
-        if (!EmailLinkActionValidator::validate($goToPasswordResetData)) {
+        $goToPasswordResetData = $this->filter->filterGoToPasswordResetData($GET);
+        $goToPasswordResetData = $this->processData->processData($goToPasswordResetData, 'EmailLinkAction');
+        if (!$goToPasswordResetData) {
             return false;
         }
 
@@ -43,22 +33,13 @@ final class EmailLinkActionController extends BaseController
 
     public function goToEmailVerification(array $GET): bool
     {
+        $goToEmailVerificationData = $this->filter->filterGoToEmailVerificationData($GET);
+        $goToEmailVerificationData = $this->processData->processData($goToEmailVerificationData, 'EmailLinkAction');
+
         $additionalFeatures = $this->iniTool->getKeysAndValues('additionalFeatures');
         $title = 'Activación de cuenta';
 
-        $keys_default = [
-            'emailVerificationToken' => '',
-            'tempId' => '',
-            'type' => ''
-        ];
-
-        foreach ($keys_default as $key => $defaultValue) {
-            $goToEmailVerificationData[$key] = $GET[$key] ?? $defaultValue;
-        }
-
-        $goToEmailVerificationData = EmailLinkActionSanitizer::sanitize($goToEmailVerificationData);
-
-        if (!EmailLinkActionValidator::validate($goToEmailVerificationData)) {
+        if (!$goToEmailVerificationData) {
             RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Datos recibidos no válidos', 'messageType'=>'error']);
             exit;
         }
@@ -98,19 +79,9 @@ final class EmailLinkActionController extends BaseController
         $additionalFeatures = $this->iniTool->getKeysAndValues('additionalFeatures');
         $title = 'Revocación de cuenta no verificada';
 
-        $keys_default = [
-            'accountDeletionToken' => '',
-            'tempId' => '',
-            'type' => ''
-        ];
-
-        foreach ($keys_default as $key => $defaultValue) {
-            $goToAccountDeletionData[$key] = $GET[$key] ?? $defaultValue;
-        }
-
-        $goToAccountDeletionData = EmailLinkActionSanitizer::sanitize($goToAccountDeletionData);
-
-        if (!EmailLinkActionValidator::validate($goToAccountDeletionData)) {
+        $goToAccountDeletionData = $this->filter->filterGoToAccountDeletionData($GET);
+        $goToAccountDeletionData = $this->processData->processData($goToAccountDeletionData, 'EmailLinkAction');
+        if (!$goToAccountDeletionData) {
             RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Datos recibidos no válidos', 'messageType'=>'error']);
             exit;
         }
@@ -133,7 +104,7 @@ final class EmailLinkActionController extends BaseController
             RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Cuenta revocada con éxito', 'messageType'=>'success']);
             exit;
         }
-        RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'La cuenta no ha sido revocada, es posible que ya se haya activado previamente', 'messageType'=>'error']);
+        RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'La cuenta no ha sido revocada, es posible que ya se haya activado o revocado previamente', 'messageType'=>'error']);
         exit;
     }
 }

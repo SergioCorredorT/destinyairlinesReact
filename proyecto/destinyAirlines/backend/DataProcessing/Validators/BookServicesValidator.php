@@ -29,12 +29,12 @@ class BookServicesValidator
     }
 
 
-    public static function validate(array $data): bool
+    public static function validate(array $data): bool | array
     {
         if (isset($data) && !self::validateCollectiveServiceCodes($data)) {
             return false;
         }
 
-        return true;
+        return $data;
     }
 }

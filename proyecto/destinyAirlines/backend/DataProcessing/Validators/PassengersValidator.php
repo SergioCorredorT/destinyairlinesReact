@@ -48,7 +48,7 @@ class PassengersValidator
         return true;
     }
 
-    public static function validate(array $data): bool
+    public static function validate(array $data): bool | array
     {
         if (count($data) < 1) {
             return false;
@@ -66,6 +66,6 @@ class PassengersValidator
             return false;
         }
 
-        return true;
+        return $data;
     }
 }

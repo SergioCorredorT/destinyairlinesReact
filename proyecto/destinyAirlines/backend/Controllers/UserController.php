@@ -5,29 +5,21 @@ tras logueo y envío de token al frontend
 	Entonces cuando el usuario haga una acción en la que sea necesaria una comprobación de servidor, el frontend enviará al php el token, el cual comprobará con secretPass
 */
 require_once ROOT_PATH . '/Controllers/BaseController.php';
-require_once ROOT_PATH . '/Sanitizers/UserSanitizer.php';
-require_once ROOT_PATH . '/Validators/UserValidator.php';
 final class UserController extends BaseController
 {
     public function __construct()
     {
         parent::__construct();
+        parent::loadFilter('User');
     }
 
     public function getUserEditableInfo(array $POST) {
-        $keys_default = [
-            'accessToken' => '',
-            'emailAddress' => ''
-        ];
-        foreach ($keys_default as $key => $defaultValue) {
-            $userData[$key] = $POST[$key] ?? $defaultValue;
-        }
-
-        $userData = UserSanitizer::sanitize($userData);
-        $isValidate = UserValidator::validate($userData);
-        if (!$isValidate) {
+        $userData = $this->filter->filterGetUserEditableInfoData($POST);
+        $userData = $this->processData->processData($userData, 'User');
+        if (!$userData) {
             return false;
         }
+
         $decodedToken = TokenTool::decodeAndCheckToken($userData['accessToken'], 'access');
 
         if (!$decodedToken['response']) {
@@ -55,45 +47,23 @@ final class UserController extends BaseController
 
     public function createUser(array $POST)
     {
-        $keys_default = [
-            'documentationType' => '',
-            'documentCode' => '',
-            'expirationDate' => '',
-            'title' => null,
-            'firstName' => '',
-            'lastName' => '',
-            'townCity' => '',
-            'streetAddress' => '',
-            'zipCode' => '',
-            'country' => '',
-            'emailAddress' => '',
-            'password' => '',
-            'phoneNumber1' => '',
-            'phoneNumber2' => null,
-            'phoneNumber3' => null,
-            'companyName' => null,
-            'companyTaxNumber' => null,
-            'companyPhoneNumber' => null,
-            'dateBirth' => '',
-            'captchaToken' => ''
-        ];
-
-        foreach ($keys_default as $key => $defaultValue) {
-            $userData[$key] = $POST[$key] ?? $defaultValue;
-        }
-
-        require_once ROOT_PATH . '/Validators/TokenValidator.php';
+        $userData = $this->filter->filterCreateUserData($POST);
         $secretKeys = $this->iniTool->getKeysAndValues('secretKeys');
-        if(!TokenValidator::TokenCaptchaValidator($userData['captchaToken'], $secretKeys['captchaSecretKey'])){
+        
+       // require_once ROOT_PATH . '/DataProcessing/Validators/TokenValidator.php';
+
+        $captchaToken = $this->processData->processData(['captchaToken'=>['token'=>$userData['captchaToken'],'secretCaptchaKey'=>$secretKeys['captchaSecretKey']]], 'Token');
+        if (!$captchaToken) {
             return ['response'=> false,'message'=> 'Validación de captcha incorrecta'];
         }
+
         unset($userData['captchaToken']);
 
-        $userData = UserSanitizer::sanitize($userData);
-        $isValidate = UserValidator::validate($userData);
-        if (!$isValidate) {
+        $userData = $this->processData->processData($userData, 'User');
+        if (!$userData) {
             return  ['response' => false, 'message' => 'No se pudo crear la cuenta. El formato de los datos recibidos es inválido.'];
         }
+
         $userData['passwordHash'] = password_hash($userData['password'], PASSWORD_BCRYPT);
         unset($userData['password']);
 
@@ -145,44 +115,11 @@ final class UserController extends BaseController
     public function updateUser(array $POST)
     {
         //En $POST solo se deben recibir los campos que se desea usar, ya sea para enviar a BBDD o hacer algo, al final, justo antes del update, se extraerán los campos no usados para el update
-        $optional_keys_default = [
-            'title' => null,
-            'firstName' => '',
-            'lastName' => '',
-            'townCity' => '',
-            'streetAddress' => '',
-            'zipCode' => '',
-            'country' => '',
-            'phoneNumber1' => '',
-            'phoneNumber2' => null,
-            'phoneNumber3' => null,
-            'companyName' => null,
-            'companyTaxNumber' => null,
-            'companyPhoneNumber' => null,
-            'documentationType' => '',
-            'documentCode' => '',
-            'expirationDate' => '',
-            'dateBirth' => ''
-        ];
-
-        $fixed_keys_default = [
-            'accessToken' => '',
-            'emailAddressAuth' => ''
-        ];
-
-        //Recogemos los campos opcionales, con valor opcional (null), o con valor a validar ('')
-        foreach ($optional_keys_default as $key => $defaultValue) {
-            if (isset($POST[$key])) {
-                $userData[$key] = !empty($POST[$key]) ? $POST[$key] : $defaultValue; //Antes que poner un '' ponemos un null
-            }
-        }
-        foreach ($fixed_keys_default as $key => $defaultValue) {
-            $userData[$key] = $POST[$key] ?? $defaultValue;
-        }
+        $userData = $this->filter->filterUpdateUserData($POST);
 
         //SANEAR y VALIDAR
-        $userData = UserSanitizer::sanitize($userData);
-        if (!UserValidator::validate($userData)) {
+        $userData = $this->processData->processData($userData, 'User');
+        if (!$userData) {
             return false;
         }
 
@@ -214,20 +151,11 @@ final class UserController extends BaseController
 
     public function updatePassword(array $POST)
     {
-        $keys_default = [
-            'oldPassword' => '',
-            'password' => '',
-            'accessToken' => '',
-            'emailAddress' => ''
-        ];
-
-        foreach ($keys_default as $key => $defaultValue) {
-            $userData[$key] = $POST[$key] ?? $defaultValue;
-        }
+        $userData = $this->filter->filterUpdatePasswordData($POST);
 
         //SANEAR y VALIDAR
-        $userData = UserSanitizer::sanitize($userData);
-        if (!UserValidator::validate($userData)) {
+        $userData = $this->processData->processData($userData, 'User');
+        if (!$userData) {
             return false;
         }
 
@@ -277,17 +205,9 @@ final class UserController extends BaseController
     public function deleteUser(array $POST)
     {
         //eliminar tokens en el frontend
-        $keys_default = [
-            'emailAddress' => '',
-            'password' => '',
-            'refreshToken' => ''
-        ];
-        foreach ($keys_default as $key => $defaultValue) {
-            $userData[$key] = $POST[$key] ?? $defaultValue;
-        }
-
-        $userData = UserSanitizer::sanitize($userData);
-        if (!UserValidator::validate($userData)) {
+        $userData = $this->filter->filterDeleteUserData($POST);
+        $userData = $this->processData->processData($userData, 'User');
+        if (!$userData) {
             return false;
         }
 
@@ -325,123 +245,114 @@ final class UserController extends BaseController
 
     public function loginUser(array $POST)
     {
-        $keys_default = [
-            'emailAddress' => '',
-            'password' => ''
-        ];
-        foreach ($keys_default as $key => $defaultValue) {
-            $userData[$key] = $POST[$key] ?? $defaultValue;
+        $userData = $this->filter->filterLoginUserData($POST);
+        $userData = $this->processData->processData($userData, 'User');
+        if (!$userData) {
+            return false;
         }
 
-        $userData = UserSanitizer::sanitize($userData);
-        $isValidate = UserValidator::validate($userData);
+        $UserModel = new UserModel();
+        $UserTempIdsModel = new UserTempIdsModel();
+        $user = $UserModel->readUserVerifiedByEmail($userData['emailAddress']);
 
-        if ($isValidate) {
-            $UserModel = new UserModel();
-            $UserTempIdsModel = new UserTempIdsModel();
-            $user = $UserModel->readUserVerifiedByEmail($userData['emailAddress']);
+        if (!$user) {
+            return ['response' => false];
+        }
+        //Recogemos datos que necesitaremos
+        //[$user] = $user;
+        $cfgAboutLogin = $this->iniTool->getKeysAndValues('aboutLogin');
+        $maxLoginAttemps = intval($cfgAboutLogin['maxLoginAttemps']);
+        $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
+        $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);
+        $secondsMaxTimeLifeRefreshToken = intval($cfgTokenSettings['secondsMaxTimeLifeRefreshToken']);
 
-            if ($user) {
-                //Recogemos datos que necesitaremos
-                //[$user] = $user;
-                $cfgAboutLogin = $this->iniTool->getKeysAndValues('aboutLogin');
-                $maxLoginAttemps = intval($cfgAboutLogin['maxLoginAttemps']);
-                $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
-                $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);
-                $secondsMaxTimeLifeRefreshToken = intval($cfgTokenSettings['secondsMaxTimeLifeRefreshToken']);
+        //El valor inicial de intentos de login es 0, entonces cada vez que iniciemos un intento le daremos un + 1 al que ya había
+        $user['currentLoginAttempts'] = intval($user['currentLoginAttempts']) + 1;
 
-                //El valor inicial de intentos de login es 0, entonces cada vez que iniciemos un intento le daremos un + 1 al que ya había
-                $user['currentLoginAttempts'] = intval($user['currentLoginAttempts']) + 1;
+        //En BBDD solo actualizamos si es necesario
+        if (intval($user['currentLoginAttempts']) <= $maxLoginAttemps) {
+            $UserModel->updateAddCurrentLoginAttempts($user['id_USERS']);
+            $user['lastAttempt'] = date('Y-m-d H:i:s');
+        }
 
-                //En BBDD solo actualizamos si es necesario
-                if (intval($user['currentLoginAttempts']) <= $maxLoginAttemps) {
-                    $UserModel->updateAddCurrentLoginAttempts($user['id_USERS']);
-                    $user['lastAttempt'] = date('Y-m-d H:i:s');
+        //Si estamos dentro del número de intentos permitidos comprobamos el pass
+        if (intval($user['currentLoginAttempts']) <= $maxLoginAttemps && password_verify($userData['password'], $user['passwordHash'])) {
+            $UserModel->updateResetCurrentLoginAttempts($user['id_USERS']);
+
+            $accessToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'access'], $secondsMaxTimeLifeAccessToken);
+            $refreshToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'refresh'], $secondsMaxTimeLifeRefreshToken);
+
+            //return ['tokens' => ['accessToken' => $accessToken, 'refreshToken' => $refreshToken], 'response' => ['userData' =>  ['title' => $user['title'], 'firstName' => $user['firstName'], 'lastName' => $user['lastName']]]];
+            return [
+                'tokens' => [
+                    'accessToken' => $accessToken,
+                    'refreshToken' => $refreshToken
+                ],
+                'response' => [
+                    'userData' =>  [
+                    'title' => $user['title'],
+                    'firstName' => $user['firstName'],
+                    'lastName' => $user['lastName'],
+                    'country' => $user['country'],
+                    'townCity' => $user['townCity'],
+                    'streetAddress' => $user['streetAddress'],
+                    'zipCode' => $user['zipCode'],
+                    'phoneNumber1' => $user['phoneNumber1'],
+                    'phoneNumber2' => $user['phoneNumber2'],
+                    'phoneNumber3' => $user['phoneNumber3'],
+                    'companyName' => $user['companyName'],
+                    'companyTaxNumber' => $user['companyTaxNumber'],
+                    'companyPhoneNumber' => $user['companyPhoneNumber'],
+                    'documentationType' => $user['documentationType'],
+                    'documentCode' => $user['documentCode'],
+                    'expirationDate' => $user['expirationDate'],
+                    'dateBirth' => $user['dateBirth']
+                    ]
+                ]
+                ];
+                
+            //Si hemos fallado contraseña o si estamos fuera del rango de intentos comprobamos si debemos mandar el email al usuario
+        } elseif (intval($user['currentLoginAttempts']) >= $maxLoginAttemps) {
+            $isEmailSent = false;
+            //Comprobamos que no haya email de desbloqueo pendiente para saber si debemos enviarlo por primera vez
+            if (!$UserTempIdsModel->readUserByUserId($user['id_USERS'], 'failedAttemptsTemplate')) {
+                $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
+                $userRestartData = [
+                    'fromEmail' => $cfgOriginEmailIni['email'],
+                    'fromPassword' => $cfgOriginEmailIni['password'],
+                    'toEmail' => $user['emailAddress'],
+                    'lastAttempt' => $user['lastAttempt'],
+                    'subject' => 'Cambio de contraseña'
+                ];
+
+                //Generamos token
+                $failedAttemptsToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'failedAttempts'], $secondsMaxTimeLifeAccessToken);
+
+                //Insertar una id temporal en bbdd para enviarlo integrado en un link al email del user para evitar usar la id original del usuario.
+                //Esta id temporal sirve por si el token del link que se enviará por email caduca sin usarse, y entonces poder identificar de nuevo 
+                //  la dirección email del usuario.
+                $tempId = TokenTool::generateUUID();
+
+                //Generamos link que se enviará por email
+                $userRestartData['passwordResetLink'] = $this->generateLink(
+                    $cfgAboutLogin['mainControllerLink'],
+                    [
+                        'passwordResetToken' => $failedAttemptsToken,
+                        'tempId' => $tempId,
+                        'type' => 'failedAttempts',
+                        'command' => 'goToPasswordReset'
+                    ]
+                );
+                $isEmailSent = EmailTool::sendEmail($userRestartData, 'failedAttemptsTemplate');
+                if ($isEmailSent) {
+                    //Si el email se ha enviado creamos registro como que hay un email de reactivación pendiente
+                    $this->updateCreateTempIdByUserId($user['id_USERS'], $tempId, 'failedAttempts');
                 }
-
-                //Si estamos dentro del número de intentos permitidos comprobamos el pass
-                if (intval($user['currentLoginAttempts']) <= $maxLoginAttemps && password_verify($userData['password'], $user['passwordHash'])) {
-                    $UserModel->updateResetCurrentLoginAttempts($user['id_USERS']);
-
-                    $accessToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'access'], $secondsMaxTimeLifeAccessToken);
-                    $refreshToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'refresh'], $secondsMaxTimeLifeRefreshToken);
-
-                    //return ['tokens' => ['accessToken' => $accessToken, 'refreshToken' => $refreshToken], 'response' => ['userData' =>  ['title' => $user['title'], 'firstName' => $user['firstName'], 'lastName' => $user['lastName']]]];
-                    return [
-                        'tokens' => [
-                          'accessToken' => $accessToken,
-                          'refreshToken' => $refreshToken
-                        ],
-                        'response' => [
-                          'userData' =>  [
-                            'title' => $user['title'],
-                            'firstName' => $user['firstName'],
-                            'lastName' => $user['lastName'],
-                            'country' => $user['country'],
-                            'townCity' => $user['townCity'],
-                            'streetAddress' => $user['streetAddress'],
-                            'zipCode' => $user['zipCode'],
-                            'phoneNumber1' => $user['phoneNumber1'],
-                            'phoneNumber2' => $user['phoneNumber2'],
-                            'phoneNumber3' => $user['phoneNumber3'],
-                            'companyName' => $user['companyName'],
-                            'companyTaxNumber' => $user['companyTaxNumber'],
-                            'companyPhoneNumber' => $user['companyPhoneNumber'],
-                            'documentationType' => $user['documentationType'],
-                            'documentCode' => $user['documentCode'],
-                            'expirationDate' => $user['expirationDate'],
-                            'dateBirth' => $user['dateBirth']
-                          ]
-                        ]
-                      ];
-                      
-                    //Si hemos fallado contraseña o si estamos fuera del rango de intentos comprobamos si debemos mandar el email al usuario
-                } elseif (intval($user['currentLoginAttempts']) >= $maxLoginAttemps) {
-                    $isEmailSent = false;
-                    //Comprobamos que no haya email de desbloqueo pendiente para saber si debemos enviarlo por primera vez
-                    if (!$UserTempIdsModel->readUserByUserId($user['id_USERS'], 'failedAttemptsTemplate')) {
-                        $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
-                        $userRestartData = [
-                            'fromEmail' => $cfgOriginEmailIni['email'],
-                            'fromPassword' => $cfgOriginEmailIni['password'],
-                            'toEmail' => $user['emailAddress'],
-                            'lastAttempt' => $user['lastAttempt'],
-                            'subject' => 'Cambio de contraseña'
-                        ];
-
-                        //Generamos token
-                        $failedAttemptsToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'failedAttempts'], $secondsMaxTimeLifeAccessToken);
-
-                        //Insertar una id temporal en bbdd para enviarlo integrado en un link al email del user para evitar usar la id original del usuario.
-                        //Esta id temporal sirve por si el token del link que se enviará por email caduca sin usarse, y entonces poder identificar de nuevo 
-                        //  la dirección email del usuario.
-                        $tempId = TokenTool::generateUUID();
-
-                        //Generamos link que se enviará por email
-                        $userRestartData['passwordResetLink'] = $this->generateLink(
-                            $cfgAboutLogin['mainControllerLink'],
-                            [
-                                'passwordResetToken' => $failedAttemptsToken,
-                                'tempId' => $tempId,
-                                'type' => 'failedAttempts',
-                                'command' => 'goToPasswordReset'
-                            ]
-                        );
-                        $isEmailSent = EmailTool::sendEmail($userRestartData, 'failedAttemptsTemplate');
-                        if ($isEmailSent) {
-                            //Si el email se ha enviado creamos registro como que hay un email de reactivación pendiente
-                            $this->updateCreateTempIdByUserId($user['id_USERS'], $tempId, 'failedAttempts');
-                        }
-                    }
-                    return ['response' => false, 'currentLoginAttempts' => $user['currentLoginAttempts'], 'lastAttempt' => $user['lastAttempt'], 'emailSent' => $isEmailSent];
-                }
-                //Si no hemos sobrepasado el número de intentos máximo y hemos fallado contraseña
-                return ['response' => false, 'currentLoginAttempts' => $user['currentLoginAttempts'], 'lastAttempt' => $user['lastAttempt']];
-            } else {
-                return ['response' => false];
             }
+            return ['response' => false, 'currentLoginAttempts' => $user['currentLoginAttempts'], 'lastAttempt' => $user['lastAttempt'], 'emailSent' => $isEmailSent];
         }
-        return false;
+        //Si no hemos sobrepasado el número de intentos máximo y hemos fallado contraseña
+        return ['response' => false, 'currentLoginAttempts' => $user['currentLoginAttempts'], 'lastAttempt' => $user['lastAttempt']];
     }
 
     public function logoutUser(array $POST)
@@ -450,8 +361,8 @@ final class UserController extends BaseController
             'refreshToken'  => $POST['refreshToken'] ?? ''
         ];
 
-        $userData = UserSanitizer::sanitize($userData);
-        if (!UserValidator::validate($userData)) {
+        $userData = $this->processData->processData($userData, 'User');
+        if (!$userData) {
             return false;
         }
 
@@ -469,19 +380,8 @@ final class UserController extends BaseController
 
     public function passwordReset(array $POST)
     {
-        $keys_default = [
-            'type' => '',
-            'new_password' => '',
-            'confirm_password' => '',
-            'passwordResetToken' => '',
-            'tempId' => ''
-        ];
-        foreach ($keys_default as $key => $defaultValue) {
-            $userData[$key] = $POST[$key] ?? $defaultValue;
-        }
-
-        require_once ROOT_PATH . '/Sanitizers/PasswordResetSanitizer.php';
-        $userData = PasswordResetSanitizer::sanitize($userData);
+        $userData = $this->filter->filterPasswordResetData($POST);
+        $userData = $this->processData->processData($userData, 'PasswordReset');
 
         if ($POST['type']) {
             switch ($POST['type']) {
@@ -617,9 +517,8 @@ final class UserController extends BaseController
             'emailAddress'  => $POST['emailAddress'] ?? ''
         ];
 
-        $userData = UserSanitizer::sanitize($userData);
-        $isValidate = UserValidator::validate($userData);
-        if (!$isValidate) {
+        $userData = $this->processData->processData($userData, 'User');
+        if (!$userData) {
             return ['response' => false, 'errorCode' => 1];
         }
 

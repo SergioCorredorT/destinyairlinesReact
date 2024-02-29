@@ -3,8 +3,10 @@ class PrimaryContactInformationValidator
 {
     public static function validateDocumentation(string $docType, string $docCode): bool
     {
-        require_once ROOT_PATH . '/Validators/DocumentTypeValidator.php';
-        if(!DocumentTypeValidator::validateDocumentType($docType, $docCode)) {
+        require_once ROOT_PATH . '/DataProcessing/ProcessData.php';
+        $processData = new ProcessData();
+        $document = $processData->processData(['document'=>['docType'=>$docType, 'docCode'=>$docCode]], 'DocumentType');
+        if (!$document) {
             return false;
         }
 
@@ -196,7 +198,7 @@ class PrimaryContactInformationValidator
         return true;
     }
 
-    public static function validate(array $data): bool
+    public static function validate(array $data): bool | array
     {
         if (isset($data['documentationType']) && isset($data['documentCode']) && !self::validateDocumentation($data['documentationType'], $data['documentCode'])) {
             return false;
@@ -257,6 +259,6 @@ class PrimaryContactInformationValidator
             return false;
         }
 
-        return true;
+        return $data;
     }
 }

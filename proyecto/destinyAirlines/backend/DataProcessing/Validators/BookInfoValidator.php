@@ -9,12 +9,12 @@ class BookInfoValidator
         return true;
     }
 
-    public static function validate(array $data): bool
+    public static function validate(array $data): bool | array
     {
         if (isset($data['bookCode']) && !self::validateBookCode($data['bookCode'])) {
             return false;
         }
 
-        return true;
+        return $data;
     }
 }

@@ -11,7 +11,7 @@ class EmailLinkActionValidator
 
     public static function validateToken(string $token): bool
     {
-        require_once ROOT_PATH . '/Validators/TokenValidator.php';
+        require_once ROOT_PATH . '/DataProcessing/Validators/TokenValidator.php';
         $tokenValidator = new TokenValidator();
         if (!$tokenValidator->validateToken($token)) {
             return false;
@@ -28,7 +28,7 @@ class EmailLinkActionValidator
     }
 
 
-    public static function validate(array $data): bool
+    public static function validate(array $data): bool | array
     {
         if (isset($data['type']) && !self::validateType($data['type'])) {
             return false;
@@ -42,6 +42,6 @@ class EmailLinkActionValidator
             return false;
         }
 
-        return true;
+        return $data;
     }
 }

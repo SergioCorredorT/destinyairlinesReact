@@ -1,7 +1,5 @@
 <?php
 require_once ROOT_PATH . '/Controllers/BaseController.php';
-require_once ROOT_PATH . '/Sanitizers/TokenSanitizer.php';
-require_once ROOT_PATH . '/Validators/TokenValidator.php';
 final class TokenController extends BaseController
 {
     public function __construct()
@@ -12,11 +10,13 @@ final class TokenController extends BaseController
     public function checkUpdateAccessToken(array $POST): bool|array
     {
         $accessToken = $POST['accessToken'];
-        $accessToken = TokenSanitizer::sanitizeToken($accessToken);
-        if(!TokenValidator::validateToken($accessToken))
-        {
+
+        $accessToken = $this->processData->processData(['accessToken'=>$accessToken], 'Token');
+        if (!$accessToken['accessToken']) {
             return false;
         }
+        $accessToken=$accessToken['accessToken'];
+
         $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         $secondsMinTimeLifeAccessToken = intval($cfgTokenSettings['secondsMinTimeLifeAccessToken']);
         $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);
@@ -26,11 +26,12 @@ final class TokenController extends BaseController
     public function checkUpdateRefreshToken(array $POST): bool|array
     {
         $refreshToken = $POST['refreshToken'];
-        $refreshToken = TokenSanitizer::sanitizeToken($refreshToken);
-        if(!TokenValidator::validateToken($refreshToken))
-        {
+        $refreshToken = $this->processData->processData(['refreshToken'=>$refreshToken], 'Token');
+        if (!$refreshToken['refreshToken']) {
             return false;
         }
+        $refreshToken=$refreshToken['refreshToken'];
+
         $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         $secondsMinTimeLifeRefreshToken = intval($cfgTokenSettings['secondsMinTimeLifeRefreshToken']);
         $secondsMaxTimeLifeRefreshToken = intval($cfgTokenSettings['secondsMaxTimeLifeRefreshToken']);
