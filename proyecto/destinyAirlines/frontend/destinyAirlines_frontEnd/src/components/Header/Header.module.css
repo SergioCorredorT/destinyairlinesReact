@@ -6,7 +6,6 @@
   border-radius: 10px;
   background-color: var(--primary-color);
   box-shadow: 0 0 10px rgb(0, 0, 0);
-  overflow: hidden;
   height: 130px;
   grid-template-columns: 150px 1fr;
 }

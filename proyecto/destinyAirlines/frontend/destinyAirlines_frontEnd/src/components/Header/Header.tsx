@@ -4,6 +4,7 @@ import styles from "./Header.module.css";
 import { authStore } from "../../store/authStore";
 import { SessionStartControls } from "../SessionStartControls/SessionStartControls";
 import { SessionStartedControls } from "../SessionEndControls/SessionStartedControls";
+import { HamburguerMenu } from "../HamburguerMenu/HamburguerMenu";
 
 export function Header() {
   const { isLoggedIn } = authStore();
@@ -14,14 +15,16 @@ export function Header() {
         <img className={styles.isotipo_small} src={isotipo_small} />
       </div>
       <div className={styles.sessionControlsContainer}>
-        {isLoggedIn
-        ? (
-          <>
-            <SessionStartedControls />
-          </>
-        ) : (
-          <SessionStartControls />
-        )}
+        <HamburguerMenu>
+          {isLoggedIn
+          ? (
+            <>
+              <SessionStartedControls />
+            </>
+          ) : (
+            <SessionStartControls />
+          )}
+        </HamburguerMenu>
       </div>
     </header>
   );
