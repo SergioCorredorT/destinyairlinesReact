@@ -1,6 +1,4 @@
-.toggleMenu:checked ~ .hamburguerMenu {
-  display: block;
-}
+
 
 .toggleMenu:checked ~ .toggleButton {
   border: 2px solid var(--tertiary-color);
@@ -37,15 +35,10 @@
 
 .hamburguerMenu {
   display: none;
-  /*   width: 200px;
-  height: 200px;
-  color: #ffffff;
-  padding: 20px;
-  margin-top: 10px; */
 }
 
 .toggleButton:hover {
-  border: 1px solid var(--tertiary-color);
+  border-color: var(--tertiary-color);
 }
 
 .hamburguerComponent {
@@ -58,7 +51,7 @@
   }
 
   .hamburguerMenu {
-    display: inherit;
+    display: flex;
   }
 }
 
@@ -75,5 +68,9 @@
     -moz-border-radius: 10px 0 10px 0;
     -ms-border-radius: 10px 0 10px 0;
     -o-border-radius: 10px 0 10px 0;
+  }
+
+  .toggleMenu:checked ~ .hamburguerMenu {
+    display: block;
   }
 }

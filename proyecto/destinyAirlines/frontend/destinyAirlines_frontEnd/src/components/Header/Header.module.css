@@ -16,11 +16,13 @@
 }
 
 .sessionControlsContainer {
-  display: grid;
+  display: flex;
   gap: 10px;
   align-items: center;
   height: 100%;
   justify-items: end;
+  flex-direction: row;
+  justify-content: right;
 }
 
 .isotipo_small {

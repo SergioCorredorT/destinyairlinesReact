@@ -128,8 +128,12 @@ final class EmailLinkActionController extends BaseController
             exit;
         }
 
-        $UserModel->deleteUserNoVerifiedById($decodedToken['response']->data->userId);
-        RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Cuenta revocada con éxito', 'messageType'=>'success']);
+        $deleteResponse = $UserModel->deleteUserNoVerifiedById($decodedToken['response']->data->userId);
+        if($deleteResponse) {
+            RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Cuenta revocada con éxito', 'messageType'=>'success']);
+            exit;
+        }
+        RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'La cuenta no ha sido revocada, es posible que ya se haya activado previamente', 'messageType'=>'error']);
         exit;
     }
 }

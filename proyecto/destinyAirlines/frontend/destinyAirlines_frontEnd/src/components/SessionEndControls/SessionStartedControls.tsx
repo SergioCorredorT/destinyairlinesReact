@@ -6,7 +6,6 @@ import styles from "./SessionStartedControls.module.css";
 export function SessionStartedControls() {
   return (
     <>
-      <UserGreeting />
       <SignOut />
       <UserCfgButton />
     </>

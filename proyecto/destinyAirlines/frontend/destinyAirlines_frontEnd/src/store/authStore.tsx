@@ -417,8 +417,8 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     const response = await signIn({ ...data, get });
     if (response.status) {
       get()["activateAutoUpdateToken"]();
+      toast.success("Se ha iniciado sesión");
     }
-    toast.success("Se ha iniciado sesión");
     return response;
   },
   signOut: async () => {

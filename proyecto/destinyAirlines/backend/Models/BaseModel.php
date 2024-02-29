@@ -214,6 +214,28 @@ abstract class BaseModel
             $stmt->execute();
 
             if (intval($stmt->errorCode()) === 0) {
+                if ($stmt->rowCount() > 0) {
+                    return true; // Se eliminó al menos un registro
+                }
+            }
+            return false; // Error al ejecutar la consulta
+        } catch (Exception $er) {
+            // Manejo de excepciones en caso de error
+            error_log('Catched exception: ' . $er->getMessage());
+            return false;
+        }
+    }
+
+/*     protected function delete(string $where): bool
+    {
+        // Ejecuta DELETE sin filtro WHERE
+        $query = "DELETE FROM $this->tableName WHERE $where";
+
+        try {
+            $stmt = $this->con->prepare($query);
+            $stmt->execute();
+
+            if (intval($stmt->errorCode()) === 0) {
                 return true; // La eliminación fue exitosa
             } else {
                 return false; // Error al ejecutar la consulta
@@ -223,7 +245,8 @@ abstract class BaseModel
             error_log('Catched exception: ' . $er->getMessage());
             return false;
         }
-    }
+    } */
+
 
     public function selectAllowedValues(string $columnName): bool|array
     {
