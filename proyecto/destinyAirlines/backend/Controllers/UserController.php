@@ -418,7 +418,7 @@ final class UserController extends BaseController
                         $UserModel->updateResetCurrentLoginAttempts($userId);
 
                         //Incorporamos la nueva pass en bbdd
-                        $UserModel->updatePasswordHashById("'" . password_hash($new_password, PASSWORD_BCRYPT) . "'", $userId);
+                        $UserModel->updatePasswordHashById('' . password_hash($new_password, PASSWORD_BCRYPT) . '', $userId);
 
                         return ['response' => true, 'message' => '<span class="success">Contraseña cambiada con éxito, puede cerrar esta página.</span>'];
                     } else {
@@ -492,7 +492,7 @@ final class UserController extends BaseController
                     $cfgAboutLogin = $this->iniTool->getKeysAndValues('aboutLogin');
                     //Comprobamos que la cuenta no esté bloqueada por exceder el máximo de intentos permitidos de login
                     if ($user || intval($user['currentLoginAttempts']) < intval($cfgAboutLogin['maxLoginAttemps'])) {
-                        $response = $UserModel->updatePasswordHashById(password_hash($new_password, PASSWORD_BCRYPT), $userId);
+                        $response = $UserModel->updatePasswordHashById('' . password_hash($new_password, PASSWORD_BCRYPT . ''), $userId);
                     }
 
                     if ($response) {
