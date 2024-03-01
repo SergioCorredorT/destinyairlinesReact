@@ -77,6 +77,7 @@ $controllers = [
     'updatepassword'                            => ['controller' => 'UserController',           'method' => 'updatePassword'],
     'removeuser'                                => ['controller' => 'UserController',           'method' => 'deleteUser'],
     'loginuser'                                 => ['controller' => 'UserController',           'method' => 'loginUser'],
+    'googleloginuser'                           => ['controller' => 'UserController',           'method' => 'googleLoginUser'],
     'logoutuser'                                => ['controller' => 'UserController',           'method' => 'logoutUser'],
     'passwordreset'                             => ['controller' => 'UserController',           'method' => 'passwordReset'],
     'forgotpassword'                            => ['controller' => 'UserController',           'method' => 'forgotPassword'],

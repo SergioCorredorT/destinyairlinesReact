@@ -39,7 +39,9 @@ class TokenValidator
         if (isset($data['captchaToken']) && !self::TokenCaptchaValidator($data['captchaToken'])) {
             return false;
         }
+        if (isset($data['googleToken']) && !self::validateToken($data['googleToken'])) {
+            return false;
+        }
         return $data;
     }
-
 }

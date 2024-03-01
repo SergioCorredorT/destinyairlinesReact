@@ -135,6 +135,18 @@ final class UserFilter  extends BaseFilter
         return $userData;
     }
 
+    public function filterGoogleLoginUserData(array $POST): array
+    {
+        $userData = null;
+        $keys_default = [
+            'googleToken' => ''
+        ];
+        foreach ($keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+        return $userData;
+    }
+
     public function filterPasswordResetData(array $POST): array
     {
         $userData = null;

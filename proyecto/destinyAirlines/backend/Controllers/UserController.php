@@ -13,7 +13,8 @@ final class UserController extends BaseController
         parent::loadFilter('User');
     }
 
-    public function getUserEditableInfo(array $POST) {
+    public function getUserEditableInfo(array $POST)
+    {
         $userData = $this->filter->filterGetUserEditableInfoData($POST);
         $userData = $this->processData->processData($userData, 'User');
         if (!$userData) {
@@ -49,12 +50,12 @@ final class UserController extends BaseController
     {
         $userData = $this->filter->filterCreateUserData($POST);
         $secretKeys = $this->iniTool->getKeysAndValues('secretKeys');
-        
-       // require_once ROOT_PATH . '/DataProcessing/Validators/TokenValidator.php';
 
-        $captchaToken = $this->processData->processData(['captchaToken'=>['token'=>$userData['captchaToken'],'secretCaptchaKey'=>$secretKeys['captchaSecretKey']]], 'Token');
+        // require_once ROOT_PATH . '/DataProcessing/Validators/TokenValidator.php';
+
+        $captchaToken = $this->processData->processData(['captchaToken' => ['token' => $userData['captchaToken'], 'secretCaptchaKey' => $secretKeys['captchaSecretKey']]], 'Token');
         if (!$captchaToken) {
-            return ['response'=> false,'message'=> 'Validación de captcha incorrecta'];
+            return ['response' => false, 'message' => 'Validación de captcha incorrecta'];
         }
 
         unset($userData['captchaToken']);
@@ -196,7 +197,7 @@ final class UserController extends BaseController
         $userChangePasswordData = [
             'fromEmail' => $cfgOriginEmailIni['email'],
             'fromPassword' => $cfgOriginEmailIni['password'],
-            'toEmail' =>$email,
+            'toEmail' => $email,
             'subject' => 'Cambio de contraseña'
         ];
         return EmailTool::sendEmail($userChangePasswordData, 'changePasswordTemplate');
@@ -290,27 +291,27 @@ final class UserController extends BaseController
                 ],
                 'response' => [
                     'userData' =>  [
-                    'title' => $user['title'],
-                    'firstName' => $user['firstName'],
-                    'lastName' => $user['lastName'],
-                    'country' => $user['country'],
-                    'townCity' => $user['townCity'],
-                    'streetAddress' => $user['streetAddress'],
-                    'zipCode' => $user['zipCode'],
-                    'phoneNumber1' => $user['phoneNumber1'],
-                    'phoneNumber2' => $user['phoneNumber2'],
-                    'phoneNumber3' => $user['phoneNumber3'],
-                    'companyName' => $user['companyName'],
-                    'companyTaxNumber' => $user['companyTaxNumber'],
-                    'companyPhoneNumber' => $user['companyPhoneNumber'],
-                    'documentationType' => $user['documentationType'],
-                    'documentCode' => $user['documentCode'],
-                    'expirationDate' => $user['expirationDate'],
-                    'dateBirth' => $user['dateBirth']
+                        'title' => $user['title'],
+                        'firstName' => $user['firstName'],
+                        'lastName' => $user['lastName'],
+                        'country' => $user['country'],
+                        'townCity' => $user['townCity'],
+                        'streetAddress' => $user['streetAddress'],
+                        'zipCode' => $user['zipCode'],
+                        'phoneNumber1' => $user['phoneNumber1'],
+                        'phoneNumber2' => $user['phoneNumber2'],
+                        'phoneNumber3' => $user['phoneNumber3'],
+                        'companyName' => $user['companyName'],
+                        'companyTaxNumber' => $user['companyTaxNumber'],
+                        'companyPhoneNumber' => $user['companyPhoneNumber'],
+                        'documentationType' => $user['documentationType'],
+                        'documentCode' => $user['documentCode'],
+                        'expirationDate' => $user['expirationDate'],
+                        'dateBirth' => $user['dateBirth']
                     ]
                 ]
-                ];
-                
+            ];
+
             //Si hemos fallado contraseña o si estamos fuera del rango de intentos comprobamos si debemos mandar el email al usuario
         } elseif (intval($user['currentLoginAttempts']) >= $maxLoginAttemps) {
             $isEmailSent = false;
@@ -353,6 +354,63 @@ final class UserController extends BaseController
         }
         //Si no hemos sobrepasado el número de intentos máximo y hemos fallado contraseña
         return ['response' => false, 'currentLoginAttempts' => $user['currentLoginAttempts'], 'lastAttempt' => $user['lastAttempt']];
+    }
+
+    public function googleLoginUser(array $POST)
+    {
+        $secretKeys = $this->iniTool->getKeysAndValues('secretKeys');
+        $userData = $this->filter->filterGoogleLoginUserData($POST);
+        $userData = $this->processData->processData(['googleToken' => $userData['googleToken'], 'googleClientId' => $secretKeys['googleClientId']], 'Token');
+        $payload = $this->checkGetGoogleTokenData($userData);
+        if (!$payload || !$payload['email_verified']) {
+            return ['response' => false, 'message' => 'Validación de token de Google incorrecta'];
+        }
+
+        $UserModel = new UserModel();
+        $user = $UserModel->readUserVerifiedByEmail($payload['email']);
+        if (!$user) {
+            return ['response' => false];
+        }
+        if (intval($user['currentLoginAttempts']) > 0) {
+            $UserModel->updateResetCurrentLoginAttempts($user['id_USERS']);
+        }
+
+        $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
+        $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);
+        $secondsMaxTimeLifeRefreshToken = intval($cfgTokenSettings['secondsMaxTimeLifeRefreshToken']);
+
+        $accessToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'access'], $secondsMaxTimeLifeAccessToken);
+        $refreshToken = TokenTool::generateToken(['id' => $user['id_USERS'], 'type' => 'refresh'], $secondsMaxTimeLifeRefreshToken);
+
+        return [
+            'tokens' => [
+                'accessToken' => $accessToken,
+                'refreshToken' => $refreshToken
+            ],
+            'response' => [
+                'userData' =>  [
+                    'title' => $user['title'],
+                    'firstName' => $user['firstName'],
+                    'lastName' => $user['lastName'],
+                    'country' => $user['country'],
+                    'townCity' => $user['townCity'],
+                    'streetAddress' => $user['streetAddress'],
+                    'zipCode' => $user['zipCode'],
+                    'phoneNumber1' => $user['phoneNumber1'],
+                    'phoneNumber2' => $user['phoneNumber2'],
+                    'phoneNumber3' => $user['phoneNumber3'],
+                    'companyName' => $user['companyName'],
+                    'companyTaxNumber' => $user['companyTaxNumber'],
+                    'companyPhoneNumber' => $user['companyPhoneNumber'],
+                    'documentationType' => $user['documentationType'],
+                    'documentCode' => $user['documentCode'],
+                    'expirationDate' => $user['expirationDate'],
+                    'dateBirth' => $user['dateBirth'],
+                    'emailAddress' => $user['emailAddress']
+                ]
+            ]
+        ];
+        return null;
     }
 
     public function logoutUser(array $POST)
@@ -595,5 +653,25 @@ final class UserController extends BaseController
             $linkParametres .= urlencode($key) . '=' . urlencode($value) . '&';
         }
         return rtrim('?' . $linkParametres, '&'); // Eliminamos el último '&'
+    }
+
+    public static function checkGetGoogleTokenData(array $googleData)
+    {
+        $idToken = $googleData['googleToken'];
+        $clientId = $googleData['googleClientId'];
+
+        require_once ROOT_PATH . '/vendor/autoload.php';
+        $keys = Firebase\JWT\JWK::parseKeySet(
+            json_decode(file_get_contents('https://www.googleapis.com/oauth2/v3/certs'), true)
+        );
+        $headers = null;
+        $data = Firebase\JWT\JWT::decode($idToken, $keys, $headers);
+
+        if ($data->aud != $clientId) {
+            return false;
+        }
+
+        //Retornamos un array asociativo
+        return json_decode(json_encode($data), true);
     }
 }

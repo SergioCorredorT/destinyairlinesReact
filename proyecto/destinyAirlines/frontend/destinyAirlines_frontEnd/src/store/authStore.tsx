@@ -11,6 +11,7 @@ import { signOut } from "../services/signOut";
 import { getUserEditableInfo } from "../services/getUserEditableInfo";
 import { getUpdateTime } from "../services/getUpdateTime";
 import { setDateInterval } from "../tools/timeUtils";
+import { googleSignIn } from "../services/googleSignIn";
 
 interface AuthStoreState {
   isLoggedIn: boolean;
@@ -71,6 +72,11 @@ interface AuthStoreState {
   }: {
     emailAddress: string;
     password: string;
+  }) => Promise<{ status: boolean; message: string }>;
+  googleSignIn: ({
+    credential,
+  }: {
+    credential: string;
   }) => Promise<{ status: boolean; message: string }>;
   signOut: () => void;
   updateTokens: () => Promise<{ error: string | null }>;
@@ -415,6 +421,14 @@ export const authStore = create<AuthStoreState>((set, get) => ({
   },
   signIn: async (data) => {
     const response = await signIn({ ...data, get });
+    if (response.status) {
+      get()["activateAutoUpdateToken"]();
+      toast.success("Se ha iniciado sesión");
+    }
+    return response;
+  },
+  googleSignIn: async (data) => {
+    const response = await googleSignIn({ credential: data.credential, get });
     if (response.status) {
       get()["activateAutoUpdateToken"]();
       toast.success("Se ha iniciado sesión");

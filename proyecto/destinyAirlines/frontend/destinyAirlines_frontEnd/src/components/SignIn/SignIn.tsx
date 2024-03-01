@@ -6,16 +6,23 @@ import { signInSchema } from "../../validations/signInSchema";
 import { useSignal } from "@preact/signals-react";
 import { forgotPassword } from "../../services/forgotPassword";
 import { toast } from "react-toastify";
+import { GoogleLogin } from "@react-oauth/google";
 
 type Inputs = {
   emailAddress: string;
   password: string;
 };
 
+interface credentialResponse {
+  clientId?: string;
+  credential?: string;
+  select_by?: string;
+}
+
 export function SignIn() {
   const generalError = useSignal("");
   //const [generalError, setGeneralError] = useState<string | null>(null);
-  const { signIn } = authStore();
+  const { signIn, googleSignIn } = authStore();
   const {
     register,
     handleSubmit,
@@ -57,6 +64,25 @@ export function SignIn() {
         generalError.value = data.message;
       }
     });
+  };
+
+  const googleSubmit = async (credentialResponse: credentialResponse) => {
+    try {
+      if(!credentialResponse.credential) {
+        generalError.value = "Error en la credencial";
+        return;
+      }
+      const data = await googleSignIn({
+        credential: credentialResponse.credential,
+      });
+      if (!data.status) {
+        generalError.value = data.message;
+      }
+    } catch (error: any) {
+      toast.error(error);
+    }
+    //Enviar aquí la credencial al backend y comprobar allí este token
+    //Si es correcto todo, el backend me retorna los mismo datos que retornaría un signin normal
   };
 
   return (
@@ -101,6 +127,18 @@ export function SignIn() {
           <button type="button" onClick={onSubmitForgotPassword}>
             Contraseña olvidada
           </button>
+          <div className={styles.googleButton}>
+            <GoogleLogin
+              auto_select
+              onSuccess={(credentialResponse) => {
+                googleSubmit(credentialResponse);
+              }}
+              onError={() => {
+                generalError.value =
+                  "Ocurrió un error durante la autenticación con Google";
+              }}
+            />
+          </div>
         </div>
         {generalError && (
           <div className={styles.errorMessage}>

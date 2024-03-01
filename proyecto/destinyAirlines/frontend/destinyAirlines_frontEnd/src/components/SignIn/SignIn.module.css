@@ -29,6 +29,23 @@
   justify-content: center;
 }
 
+.googleButton {
+  grid-column: span 2;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  overflow: hidden;
+}
+
+.googleButton:hover {
+  outline: 1px solid var(--tertiary-color);
+}
+.googleButton:focus {
+  outline: 4px solid var(--tertiary-color);
+}
+
 .inputGroup label {
   font-weight: 500;
 }

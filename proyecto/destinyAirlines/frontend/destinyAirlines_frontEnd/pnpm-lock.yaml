@@ -14,6 +14,9 @@ dependencies:
   '@preact/signals-react':
     specifier: ^2.0.0
     version: 2.0.0(react@18.2.0)
+  '@react-oauth/google':
+    specifier: ^0.12.1
+    version: 0.12.1(react-dom@18.2.0)(react@18.2.0)
   '@vitejs/plugin-react':
     specifier: 4.2.1
     version: 4.2.1(vite@5.1.4)
@@ -652,6 +655,16 @@ packages:
       '@preact/signals-core': 1.5.1
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  /@react-oauth/google@0.12.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-qagsy22t+7UdkYAiT5ZhfM4StXi9PPNvw0zuwNmabrWyMKddczMtBIOARflbaIj+wHiQjnMAsZmzsUYuXeyoSg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /@rollup/rollup-android-arm-eabi@4.12.0:

@@ -12,6 +12,7 @@ class TokenSanitizer
         //Si es "", o null, o no está definida no se ejecutará el saneamiento
         if (!empty($data['accessToken'])) $data["accessToken"] = self::sanitizeToken($data['accessToken']);
         if (!empty($data['refreshToken'])) $data["refreshToken"] = self::sanitizeToken($data['refreshToken']);
+        if (!empty($data['googleToken'])) $data["googleToken"] = self::sanitizeToken($data['googleToken']);
 
         return $data;
     }

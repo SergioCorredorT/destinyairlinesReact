@@ -10,6 +10,7 @@ import {
 import { authStore } from "../../store/authStore";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export function App() {
   const {
@@ -22,7 +23,7 @@ export function App() {
     setIsLoggedIn,
     checkUpdateLogin,
     activateAutoUpdateToken,
-    desactivateAutoUpdateToken
+    desactivateAutoUpdateToken,
   } = authStore();
 
   useEffect(() => {
@@ -39,15 +40,16 @@ export function App() {
         getToNestedKeyInLocalStorage(["userData", "emailAddress"])
       );
       activateAutoUpdateToken();
-    }
-    else{
+    } else {
       desactivateAutoUpdateToken();
     }
     checkUpdateLogin();
   }, []);
   return (
     <div className={styles.container}>
-      <Header />
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID_LOGIN}>
+        <Header />
+      </GoogleOAuthProvider>
       <Main />
       <Footer />
       <ToastContainer />
