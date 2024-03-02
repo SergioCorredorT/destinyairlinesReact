@@ -37,6 +37,7 @@
   -ms-border-radius: 10px;
   -o-border-radius: 10px;
   overflow: hidden;
+  background-color: #fff;
 }
 
 .googleButton:hover {

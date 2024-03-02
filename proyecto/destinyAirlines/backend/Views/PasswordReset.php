@@ -139,7 +139,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET) {
 
                 if (password != '') {
                     formData.set('new_password', password);
-                    formData.set('confirm_password', password);
                 }
 
                 fetch('<?php echo RELATIVE_ROOT_PATH; ?>MainController.php', {
