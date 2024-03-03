@@ -52,6 +52,37 @@ final class UserFilter  extends BaseFilter
         return $userData;
     }
 
+    public function filterGoogleCreateUserData(array $POST): array
+    {
+        $userData = null;
+        $keys_default = [
+            'documentationType' => '',
+            'documentCode' => '',
+            'expirationDate' => '',
+            'title' => null,
+            'firstName' => '',
+            'lastName' => '',
+            'townCity' => '',
+            'streetAddress' => '',
+            'zipCode' => '',
+            'country' => '',
+            'password' => '',
+            'phoneNumber1' => '',
+            'phoneNumber2' => null,
+            'phoneNumber3' => null,
+            'companyName' => null,
+            'companyTaxNumber' => null,
+            'companyPhoneNumber' => null,
+            'dateBirth' => '',
+            'credentialResponse' => ''
+        ];
+
+        foreach ($keys_default as $key => $defaultValue) {
+            $userData[$key] = $POST[$key] ?? $defaultValue;
+        }
+        return $userData;
+    }
+
     public function filterUpdateUserData(array $POST): array
     {
         $userData = null;

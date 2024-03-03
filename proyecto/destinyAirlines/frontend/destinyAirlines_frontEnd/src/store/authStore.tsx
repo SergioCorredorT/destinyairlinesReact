@@ -66,14 +66,14 @@ interface AuthStoreState {
   setDocumentCode: (documentCode: string) => void;
   setExpirationDate: (expirationDate: string) => void;
   setDateBirth: (dateBirth: string) => void;
-  signIn: ({
+  signInStore: ({
     emailAddress,
     password,
   }: {
     emailAddress: string;
     password: string;
   }) => Promise<{ status: boolean; message: string }>;
-  googleSignIn: ({
+  googleSignInStore: ({
     credential,
   }: {
     credential: string;
@@ -419,7 +419,7 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     );
     set({ emailAddress });
   },
-  signIn: async (data) => {
+  signInStore: async (data) => {
     const response = await signIn({ ...data, get });
     if (response.status) {
       get()["activateAutoUpdateToken"]();
@@ -427,7 +427,7 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     }
     return response;
   },
-  googleSignIn: async (data) => {
+  googleSignInStore: async (data) => {
     const response = await googleSignIn({ credential: data.credential, get });
     if (response.status) {
       get()["activateAutoUpdateToken"]();

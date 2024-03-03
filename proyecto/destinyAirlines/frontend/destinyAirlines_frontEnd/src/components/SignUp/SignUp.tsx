@@ -8,6 +8,9 @@ import { useSignal } from "@preact/signals-react";
 import { optionsStore } from "../../store/optionsStore";
 import { toast } from "react-toastify";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { GoogleLogin } from "@react-oauth/google";
+import { googleSignUp } from "../../services/googleSignUp";
+import { TabPanel } from "../TabPanel/TabPanel";
 
 type Inputs = {
   emailAddress: string;
@@ -31,6 +34,7 @@ type Inputs = {
   companyPhoneNumber: string;
   dateBirth: string;
   captchaToken: string;
+  credentialResponse: any;
 };
 
 type optionsForUserRegister = {
@@ -39,6 +43,12 @@ type optionsForUserRegister = {
   titles?: { [key: string]: string };
   countries?: { [key: string]: string };
 };
+
+interface credentialResponse {
+  clientId?: string;
+  credential?: string;
+  select_by?: string;
+}
 
 export function SignUp({ closeModal }: { closeModal: () => void }) {
   const [captchaToken, setCaptchaToken] = useState("");
@@ -69,12 +79,24 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
   const {
     register,
     handleSubmit,
+    clearErrors,
+    setValue,
+    getValues,
     formState: { errors: formErrors },
   } = useForm<Inputs>({
     resolver: zodResolver(signUpSchema),
+    mode: "onSubmit",
   });
 
-  const handleSubmitSignUp = handleSubmit(async (jsonData) => {
+  const handleClickCommonSubmit = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+    clearErrors();
+    handleSubmit(onSubmitCommonSignUp)();
+  };
+
+  const onSubmitCommonSignUp = async (jsonData: Inputs) => {
     try {
       jsonData.captchaToken = captchaToken;
 
@@ -90,33 +112,53 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
     } catch (error: any) {
       toast.error(error);
     }
-  });
+  };
 
   const onVerify = (token: string) => {
     setCaptchaToken(token);
   };
 
+  const handleClickGoogleSubmit = (credentialResponse: any) => {
+    const currentEmail = getValues("emailAddress");
+    clearErrors();
+    setValue("emailAddress", "aaaaaaa@gmail.com");
+
+    handleSubmit(
+      (jsonData: Inputs) => {
+        onSubmitGoogleSignUp(jsonData, credentialResponse);
+      },
+      () => {
+        setValue("emailAddress", currentEmail);
+      } // Este es el callback que se ejecutará si la validación falla
+    )();
+  };
+
+  const onSubmitGoogleSignUp = async (
+    jsonData: Inputs,
+    credentialResponse: credentialResponse
+  ) => {
+    let newJsonData = { ...jsonData, credentialResponse };
+
+    try {
+      const data = await googleSignUp(newJsonData);
+      if (!data.status) {
+        generalError.value = data.message;
+        toast.error(data.message);
+      } else {
+        generalError.value = "";
+        toast.success(data.message);
+        closeModal();
+      }
+    } catch (error: any) {
+      toast.error(error);
+    }
+  };
+
   return (
     <div className={styles.signUp}>
       <h2>Registrarse</h2>
-      <form className={styles.form} onSubmit={handleSubmitSignUp}>
+      <form className={styles.form}>
         <div className={styles.inputGroupsContainer}>
-          <div className={styles.inputGroup}>
-            {formErrors.emailAddress ? (
-              <label htmlFor="emailAddress" className={styles.errorMessage}>
-                {formErrors.emailAddress.message}
-              </label>
-            ) : (
-              <label htmlFor="emailAddress">Email*</label>
-            )}
-            <input
-              type="text"
-              id="emailAddress"
-              placeholder="juan@dominio.com"
-              title="Introduzca aquí su email"
-              {...register("emailAddress")}
-            />
-          </div>
           <div className={styles.inputGroup}>
             {formErrors.password ? (
               <label htmlFor="password" className={styles.errorMessage}>
@@ -491,10 +533,60 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
           </div>
         </div>
         <div className={styles.buttonsContainer}>
-          <HCaptcha sitekey={import.meta.env.VITE_SITE_TOKEN_CAPTCHA} onVerify={onVerify} />
-          <button type="submit" disabled={!captchaToken}>
-            Registrarse
-          </button>
+          <TabPanel>
+            {{
+              title: "Registro con Google",
+              children: (
+                <GoogleLogin
+                  auto_select
+                  onSuccess={(credentialResponse) => {
+                    handleClickGoogleSubmit(credentialResponse);
+                  }}
+                  onError={() => {
+                    generalError.value =
+                      "Ocurrió un error durante la autenticación con Google";
+                  }}
+                />
+              ),
+            }}
+            {{
+              title: "Registro Web",
+              children: (
+                <>
+                  <div className={styles.inputGroup}>
+                    {formErrors.emailAddress ? (
+                      <label
+                        htmlFor="emailAddress"
+                        className={styles.errorMessage}
+                      >
+                        {formErrors.emailAddress.message}
+                      </label>
+                    ) : (
+                      <label htmlFor="emailAddress">Email*</label>
+                    )}
+                    <input
+                      type="text"
+                      id="emailAddress"
+                      placeholder="juan@dominio.com"
+                      title="Introduzca aquí su email"
+                      {...register("emailAddress")}
+                    />
+                  </div>
+                  <HCaptcha
+                    sitekey={import.meta.env.VITE_SITE_TOKEN_CAPTCHA}
+                    onVerify={onVerify}
+                  />
+                  <button
+                    type="submit"
+                    disabled={!captchaToken}
+                    onClick={handleClickCommonSubmit}
+                  >
+                    Registrarse
+                  </button>
+                </>
+              ),
+            }}
+          </TabPanel>
         </div>
         {generalError && (
           <div className={styles.errorMessage}>

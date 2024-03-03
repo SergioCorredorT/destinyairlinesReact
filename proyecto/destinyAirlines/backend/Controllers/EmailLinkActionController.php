@@ -70,6 +70,11 @@ final class EmailLinkActionController extends BaseController
         }
 
         $UserTempIdsModel->deleteTempIdByUserId($id_USERS, 'emailVerification');
+
+        $userEmail = $UserModel->getEmailById($id_USERS);
+        $welcomeData = $this->generateWelcomeData($userEmail);
+        EmailTool::sendEmail($welcomeData, 'welcomeTemplate');
+
         RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'Cuenta activada con éxito, puede iniciar sesión en la página principal', 'messageType'=>'success']);
         exit;
     }
@@ -106,5 +111,16 @@ final class EmailLinkActionController extends BaseController
         }
         RedirectTool::redirectTo($additionalFeatures['messageUrl'], ['title'=> $title, 'message'=>'La cuenta no ha sido revocada, es posible que ya se haya activado o revocado previamente', 'messageType'=>'error']);
         exit;
+    }
+
+    private function generateWelcomeData($destinyEmailAddress)
+    {
+        $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
+        return [
+            'fromEmail' => $cfgOriginEmailIni['email'],
+            'fromPassword' => $cfgOriginEmailIni['password'],
+            'toEmail' => $destinyEmailAddress,
+            'subject' => 'Creación de cuenta exitosa'
+        ];
     }
 }

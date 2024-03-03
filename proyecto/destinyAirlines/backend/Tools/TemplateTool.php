@@ -40,6 +40,11 @@ class TemplateTool
                     $emailBody = ChangePasswordTemplate::applyChangePasswordTemplate($data);
                     return $emailBody;
                 }
+            case 'welcometemplate': {
+                    require_once ROOT_PATH . '/Templates/email/WelcomeTemplate.php';
+                    $emailBody = WelcomeTemplate::applyWelcomeTemplate($data);
+                    return $emailBody;
+                }
             default: {
                     //CUANDO ES '' P.E.
                     return $data['message'];

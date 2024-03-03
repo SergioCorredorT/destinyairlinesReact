@@ -73,6 +73,7 @@ $controllers = [
     'contact'                                   => ['controller' => 'ContactController',        'method' => 'sendContact'],
     'getusereditableinfo'                       => ['controller' => 'UserController',           'method' => 'getUserEditableInfo'],
     'createuser'                                => ['controller' => 'UserController',           'method' => 'createUser'],
+    'googlecreateuser'                          => ['controller' => 'UserController',           'method' => 'googleCreateUser'],
     'updateuser'                                => ['controller' => 'UserController',           'method' => 'updateUser'],
     'updatepassword'                            => ['controller' => 'UserController',           'method' => 'updatePassword'],
     'removeuser'                                => ['controller' => 'UserController',           'method' => 'deleteUser'],

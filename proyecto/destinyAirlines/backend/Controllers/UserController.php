@@ -91,6 +91,43 @@ final class UserController extends BaseController
         return  ['response' => false, 'message' => 'Hubo un error en el envío de email de activación de cuenta. Por favor, vuelva a intentar crear la cuenta.'];
     }
 
+    public function googleCreateUser(array $POST)
+    {
+        $userData = $this->filter->filterGoogleCreateUserData($POST);
+
+        $userData = $this->processData->processData($userData, 'User');
+        if (!$userData) {
+            return  ['response' => false, 'message' => 'No se pudo crear la cuenta. El formato de los datos recibidos es inválido.'];
+        }
+
+        $credential = $userData['credentialResponse']['credential'];
+        $clientId = $userData['credentialResponse']['clientId'];
+        $payload = $this->checkGetGoogleTokenData(['googleToken' => $credential, 'googleClientId' => $clientId]);
+        if (!$payload || !$payload['email_verified']) {
+            return ['response' => false, 'message' => 'Validación de token de Google incorrecta'];
+        }
+
+        $userData['emailAddress'] = $payload['email'];
+        unset($userData['credentialResponse']);
+
+        $userData['passwordHash'] = password_hash($userData['password'], PASSWORD_BCRYPT);
+        unset($userData['password']);
+
+        $UserModel = new UserModel();
+        $userId = $UserModel->createUser($userData, true);
+        if (!$userId) {
+            return  ['response' => false, 'message' => 'No se ha podido crear la cuenta. Esto puede deberse a un error del servidor o a que ya hay una cuenta registrada con ese email o a que ya se haya enviado un correo electrónico de activación de cuenta. Por favor, revisa tu correo electrónico para obtener instrucciones detalladas. Si no reconoces la solicitud de creación de la cuenta, por favor, haz clic en el enlace de revocación de la cuenta que se proporciona en el correo electrónico.'];
+        }
+        $userId = $userId[0];
+
+        $welcomeData = $this->generateWelcomeData($userData['emailAddress']);
+        EmailTool::sendEmail($welcomeData, 'welcomeTemplate');
+
+//Hacer login
+//Y completarlo en frontend
+        return  ['response' => true, 'message' => 'Usuario registrado con éxito.'];
+    }
+
     public function updateUser(array $POST)
     {
         //En $POST solo se deben recibir los campos que se desea usar, ya sea para enviar a BBDD o hacer algo, al final, justo antes del update, se extraerán los campos no usados para el update
@@ -258,7 +295,7 @@ final class UserController extends BaseController
             $UserModel->updateResetCurrentLoginAttempts($user['id_USERS']);
         }
 
-        [$accessToken, $refreshToken] = $this->generateGoogleLoginTokens($user);
+        ['accessToken' => $accessToken, 'refreshToken' => $refreshToken] = $this->generateGoogleLoginTokens($user);
 
         return $this->generateSuccessGoogleLoginResponse($user, $accessToken, $refreshToken);
     }
@@ -781,5 +818,16 @@ final class UserController extends BaseController
         $start = new DateTime($startTime);
         $interval = $now->getTimestamp() - $start->getTimestamp();
         return $interval;
+    }
+
+    private function generateWelcomeData($destinyEmailAddress)
+    {
+        $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
+        return [
+            'fromEmail' => $cfgOriginEmailIni['email'],
+            'fromPassword' => $cfgOriginEmailIni['password'],
+            'toEmail' => $destinyEmailAddress,
+            'subject' => 'Creación de cuenta exitosa'
+        ];
     }
 }

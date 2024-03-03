@@ -27,6 +27,7 @@ form {
   padding: 10px;
   justify-items: center;
   justify-content: center;
+  min-height: 400px;
 }
 
 .inputGroup label {
@@ -51,6 +52,15 @@ form {
 
 input, select, textarea {
   width: 100%;
+}
+
+button:disabled {
+  filter: brightness(0.5);
+  -webkit-filter: brightness(0.5);
+}
+
+button:disabled:hover {
+  border-color: transparent;
 }
 
 .errorMessage {

@@ -22,7 +22,7 @@ interface credentialResponse {
 export function SignIn() {
   const generalError = useSignal("");
   //const [generalError, setGeneralError] = useState<string | null>(null);
-  const { signIn, googleSignIn } = authStore();
+  const { signInStore, googleSignInStore } = authStore();
   const {
     register,
     handleSubmit,
@@ -36,7 +36,7 @@ export function SignIn() {
   const onSubmitSignIn = handleSubmit(async (jsonData) => {
     //Tras ser validado el form con el schema
     try {
-      const data = await signIn({
+      const data = await signInStore({
         emailAddress: jsonData.emailAddress,
         password: jsonData.password,
       });
@@ -72,7 +72,7 @@ export function SignIn() {
         generalError.value = "Error en la credencial";
         return;
       }
-      const data = await googleSignIn({
+      const data = await googleSignInStore({
         credential: credentialResponse.credential,
       });
       if (!data.status) {
@@ -81,8 +81,6 @@ export function SignIn() {
     } catch (error: any) {
       toast.error(error);
     }
-    //Enviar aquí la credencial al backend y comprobar allí este token
-    //Si es correcto todo, el backend me retorna los mismo datos que retornaría un signin normal
   };
 
   return (
