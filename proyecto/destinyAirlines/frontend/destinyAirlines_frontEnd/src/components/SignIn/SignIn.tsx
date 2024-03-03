@@ -27,6 +27,8 @@ export function SignIn() {
     register,
     handleSubmit,
     formState: { errors: formErrors },
+    getValues,
+    setValue,
   } = useForm<Inputs>({
     resolver: zodResolver(signInSchema),
   });
@@ -48,27 +50,30 @@ export function SignIn() {
     }
   });
 
-  const onSubmitForgotPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-    const form = event.currentTarget.closest("form");
-    if (!form) return;
-    const input = form.querySelector("#emailAddress");
-    if (!input) return;
-    const emailAddress = (input as HTMLInputElement).value;
-    forgotPassword({
-      emailAddress,
-    }).then((data) => {
-      if (!data.status) {
-        generalError.value = data.message;
+  const onSubmitForgotPassword = () => {
+    setValue("password", "_Aa1234567");
+    const emailAddress = getValues("emailAddress");
+
+    handleSubmit(
+      () => {
+        setValue("password", "");
+        forgotPassword({
+          emailAddress,
+        }).then((data) => {
+          if (!data.status) {
+            generalError.value = data.message;
+          }
+        });
+      },
+      () => {
+        setValue("password", "");
       }
-    });
+    )();
   };
 
   const googleSubmit = async (credentialResponse: credentialResponse) => {
     try {
-      if(!credentialResponse.credential) {
+      if (!credentialResponse.credential) {
         generalError.value = "Error en la credencial";
         return;
       }

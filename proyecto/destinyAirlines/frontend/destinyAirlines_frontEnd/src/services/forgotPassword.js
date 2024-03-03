@@ -13,7 +13,7 @@ export async function forgotPassword({emailAddress}) {
 
     if (response && response.status && response.response) {
         toast.success(
-            "Email enviado con éxito para cambio de contraseña"
+            "Email enviado con éxito para cambio de contraseña. Recuerda revisar que esté bien escrito el email"
         );
         return { status: true, response: response.response, message: "Email enviado con éxito para cambio de contraseña" };
     }

@@ -29,7 +29,7 @@ abstract class BaseController
         });
     }
 
-    public function loadFilter($nameFilter)
+    public function loadFilter(string $nameFilter): void
     {
         try {
             $fileName = ucfirst($nameFilter) . 'Filter';
@@ -50,11 +50,4 @@ abstract class BaseController
             $this->filter = null;
         }
     }
-
-    /* public function loadFilter($nameFilter)
-    {
-        $fileName = ucfirst($nameFilter). 'Filter';
-        require_once ROOT_PATH. '/DataProcessing/Filters/'. $fileName . '.php';
-        $this->filter = new $fileName();
-    } */
 }

@@ -9,7 +9,7 @@ final class PaymentController extends BaseController
         parent::__construct();
     }
 
-    public function paypalRedirectOk(array $GET)
+    public function paypalRedirectOk(array $GET): bool
     {
         $paymentDetails = [
             'token'           => $GET['token'] ?? ''

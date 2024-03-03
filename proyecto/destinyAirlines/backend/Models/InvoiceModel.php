@@ -9,17 +9,17 @@ final class InvoiceModel extends BaseModel
         parent::__construct(self::table);
     }
 
-    public function getInvoiceFromIdInvoice(int $idInvoice): bool|array
+    public function getInvoiceFromIdInvoice(string | int $idInvoice): bool|array
     {
         return parent::select('*', "id_INVOICES = $idInvoice ")[0];
     }
 
-    public function getInvoicesForGetBookInfoFromIdBook(int $idBook): bool|array
+    public function getInvoicesForGetBookInfoFromIdBook(string | int $idBook): bool|array
     {
         return parent::select('id_INVOICES, invoiceCode, invoicedDate, price, isPaid', "id_BOOKS = $idBook ");
     }
 
-    public function updateIsPaid(int $idInvoice): bool
+    public function updateIsPaid(string | int $idInvoice): bool
     {
         return parent::update(['isPaid'=>1], 'id_INVOICES = '.$idInvoice);
     }

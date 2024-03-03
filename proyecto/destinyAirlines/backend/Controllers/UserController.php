@@ -13,7 +13,7 @@ final class UserController extends BaseController
         parent::loadFilter('User');
     }
 
-    public function getUserEditableInfo(array $POST)
+    public function getUserEditableInfo(array $POST): bool | array
     {
         $userData = $this->filter->filterGetUserEditableInfoData($POST);
         $userData = $this->processData->processData($userData, 'User');
@@ -46,7 +46,7 @@ final class UserController extends BaseController
         return  ['response' => $userInfo, 'message' => 'Obtenidos datos de usuario.'];
     }
 
-    public function createUser(array $POST)
+    public function createUser(array $POST): array
     {
         $userData = $this->filter->filterCreateUserData($POST);
         $secretKeys = $this->iniTool->getKeysAndValues('secretKeys');
@@ -91,7 +91,7 @@ final class UserController extends BaseController
         return  ['response' => false, 'message' => 'Hubo un error en el envío de email de activación de cuenta. Por favor, vuelva a intentar crear la cuenta.'];
     }
 
-    public function googleCreateUser(array $POST)
+    public function googleCreateUser(array $POST): array
     {
         $userData = $this->filter->filterGoogleCreateUserData($POST);
 
@@ -127,7 +127,7 @@ final class UserController extends BaseController
         return  [...$this->googleUserLoginAfterCreate($userData['emailAddress']), 'message' => 'Te has registrado y has iniciado sesión con éxito. ¡Bienvenido!.'];
     }
 
-    public function updateUser(array $POST)
+    public function updateUser(array $POST): bool
     {
         //En $POST solo se deben recibir los campos que se desea usar, ya sea para enviar a BBDD o hacer algo, al final, justo antes del update, se extraerán los campos no usados para el update
         $userData = $this->filter->filterUpdateUserData($POST);
@@ -164,7 +164,7 @@ final class UserController extends BaseController
         return false;
     }
 
-    public function updatePassword(array $POST)
+    public function updatePassword(array $POST): bool
     {
         $userData = $this->filter->filterUpdatePasswordData($POST);
 
@@ -212,7 +212,7 @@ final class UserController extends BaseController
         return EmailTool::sendEmail($userChangePasswordData, 'changePasswordTemplate');
     }
 
-    public function deleteUser(array $POST)
+    public function deleteUser(array $POST): bool
     {
         //eliminar tokens en el frontend
         $userData = $this->filter->filterDeleteUserData($POST);
@@ -245,12 +245,12 @@ final class UserController extends BaseController
         return true;
     }
 
-    public function loginUser(array $POST)
+    public function loginUser(array $POST): array
     {
         $userData = $this->filter->filterLoginUserData($POST);
         $userData = $this->processData->processData($userData, 'User');
         if (!$userData) {
-            return false;
+            return ['response' => false];
         }
 
         $UserModel = new UserModel();
@@ -275,7 +275,7 @@ final class UserController extends BaseController
         }
     }
 
-    public function googleLoginUser(array $POST)
+    public function googleLoginUser(array $POST): array
     {
         $secretKeys = $this->iniTool->getKeysAndValues('secretKeys');
         $userData = $this->filter->filterGoogleLoginUserData($POST);
@@ -299,7 +299,7 @@ final class UserController extends BaseController
         return $this->generateSuccessGoogleLoginResponse($user, $accessToken, $refreshToken);
     }
 
-    private function googleUserLoginAfterCreate(string $email)
+    private function googleUserLoginAfterCreate(string $email): bool | array
     {
         $UserModel = new UserModel();
         $user = $UserModel->readUserVerifiedByEmail($email);
@@ -312,7 +312,7 @@ final class UserController extends BaseController
         return $this->generateSuccessGoogleLoginResponse($user, $accessToken, $refreshToken);
     }
 
-    public function logoutUser(array $POST)
+    public function logoutUser(array $POST): bool
     {
         $userData = [
             'refreshToken'  => $POST['refreshToken'] ?? ''
@@ -335,7 +335,7 @@ final class UserController extends BaseController
         return false;
     }
 
-    public function passwordReset(array $POST)
+    public function passwordReset(array $POST): array | null
     {
         $userData = $this->filter->filterPasswordResetData($POST);
         $userData = $this->processData->processData($userData, 'PasswordReset');
@@ -347,9 +347,10 @@ final class UserController extends BaseController
                 default => null,
             };
         }
+        return null;
     }
 
-    public function passwordResetFailedAttempts(array $POST)
+    public function passwordResetFailedAttempts(array $POST): array
     {
         $new_password = $POST['new_password'];
         $passwordResetToken = $POST['passwordResetToken'];
@@ -406,7 +407,7 @@ final class UserController extends BaseController
         }
     }
 
-    public function passwordResetForgotPassword(array $POST)
+    public function passwordResetForgotPassword(array $POST): array
     {
         $new_password = $POST['new_password'];
         $passwordResetToken = $POST['passwordResetToken'];
@@ -446,15 +447,17 @@ final class UserController extends BaseController
         }
     }
 
-    public function forgotPassword(array $POST)
+    public function forgotPassword(array $POST): array
     {
+        //No queremos que los usuarios ajenos sepan cual email está registrado
         $userData = [
             'emailAddress'  => $POST['emailAddress'] ?? ''
         ];
 
         $userData = $this->processData->processData($userData, 'User');
         if (!$userData) {
-            return ['response' => false, 'errorCode' => 1];
+            return ['response' => true];
+            //return ['response' => false, 'errorCode' => 1];
         }
 
         //Recopilamos cfg
@@ -464,17 +467,20 @@ final class UserController extends BaseController
         $user = $UserModel->readUserByEmail($userData['emailAddress']);
 
         if (!$user) {
-            return ['response' => false, 'errorCode' => 2];
+            return ['response' => true];
+            //return ['response' => false, 'errorCode' => 2];
         }
 
         //Comprobamos que la cuenta no esté bloqueada por exceder el máximo de intentos permitidos de login
         if (intval($user['currentLoginAttempts']) >= intval($cfgAboutLogin['maxLoginAttemps'])) {
-            return ['response' => false, 'errorCode' => 3];
+            return ['response' => true];
+            //return ['response' => false, 'errorCode' => 3];
         }
 
         if (!is_null($user['lastForgotPasswordEmail'])) {
             if ($this->isForgotPasswordTokenExpired($user['lastForgotPasswordEmail'])) {
-                return ['response' => false, 'errorCode' => 4];
+                //return ['response' => false, 'errorCode' => 4];
+                return ['response' => true];
             }
         }
 
@@ -486,22 +492,27 @@ final class UserController extends BaseController
                 return ['response' => true];
             }
         }
-        return ['response' => false, 'errorCode' => 5];
+        return ['response' => true];
+        //return ['response' => false, 'errorCode' => 5];
     }
 
-    private function updateCreateTempIdByUserId(int $userId, string $tempId, string $recordCause)
+    private function updateCreateTempIdByUserId(int $userId, string $tempId, string $recordCause): bool
     {
         $UserTempIdsModel = new UserTempIdsModel();
         $UserTempIdsModel->removeTempIdIfExistByIdUser($userId, $recordCause);
-        $UserTempIdsModel->createTempId($userId, $tempId, $recordCause);
+        $isCreatedNewTempId = $UserTempIdsModel->createTempId($userId, $tempId, $recordCause);
+        if($isCreatedNewTempId) {
+            return true;
+        }
+        return false;
     }
 
-    private function generateLink(string $base, array $parametres)
+    private function generateLink(string $base, array $parametres): string
     {
         return $base . $this->generateLinkParametres($parametres);
     }
 
-    private function generateLinkParametres(array $parametres)
+    private function generateLinkParametres(array $parametres): string
     {
         $linkParametres = '';
         foreach ($parametres as $key => $value) {
@@ -510,7 +521,7 @@ final class UserController extends BaseController
         return rtrim('?' . $linkParametres, '&'); // Eliminamos el último '&'
     }
 
-    public static function checkGetGoogleTokenData(array $googleData)
+    public static function checkGetGoogleTokenData(array $googleData): array | bool
     {
         $idToken = $googleData['googleToken'];
         $clientId = $googleData['googleClientId'];
@@ -530,7 +541,7 @@ final class UserController extends BaseController
         return json_decode(json_encode($data), true);
     }
 
-    private function generateLoginTokens($userId)
+    private function generateLoginTokens(string | int $userId): array
     {
         $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);
@@ -545,7 +556,7 @@ final class UserController extends BaseController
         ];
     }
 
-    private function generateFailedAttemptsToken($userId)
+    private function generateFailedAttemptsToken(string | int $userId): string
     {
         $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);
@@ -555,7 +566,7 @@ final class UserController extends BaseController
         return $failedAttemptsToken;
     }
 
-    private function generateSuccessLoginResponse($user, $loginTokens)
+    private function generateSuccessLoginResponse(array $user, array $loginTokens): array
     {
         return [
             'tokens' => [
@@ -586,7 +597,7 @@ final class UserController extends BaseController
         ];
     }
 
-    private function generatePasswordResetLink($passwordResetToken, $type, $tempId)
+    private function generatePasswordResetLink(string $passwordResetToken, string $type, string $tempId): string
     {
         $cfgAboutLogin = $this->iniTool->getKeysAndValues('aboutLogin');
         return $this->generateLink(
@@ -600,7 +611,7 @@ final class UserController extends BaseController
         );
     }
 
-    private function generateEmailDataForFailedAttempts($user)
+    private function generateEmailDataForFailedAttempts(array $user): array
     {
         $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
         return [
@@ -612,19 +623,18 @@ final class UserController extends BaseController
         ];
     }
 
-    private function sendEmailAndCreateTempId($user, $userRestartData, $tempId)
+    private function sendEmailAndCreateTempId(array $user, array $userRestartData, string $tempId): bool
     {
         $isEmailSent = EmailTool::sendEmail($userRestartData, 'failedAttemptsTemplate');
         if ($isEmailSent) {
             //Si el email se ha enviado creamos registro como que hay un email de reactivación pendiente
-            $this->updateCreateTempIdByUserId($user['id_USERS'], $tempId, 'failedAttempts');
-            return true;
+            return $this->updateCreateTempIdByUserId($user['id_USERS'], $tempId, 'failedAttempts');
         } else {
             return false;
         }
     }
 
-    private function isLoginAttemptValid($user, $password)
+    private function isLoginAttemptValid(array $user, string $password): bool
     {
         $cfgAboutLogin = $this->iniTool->getKeysAndValues('aboutLogin');
         $maxLoginAttemps = intval($cfgAboutLogin['maxLoginAttemps']);
@@ -632,7 +642,7 @@ final class UserController extends BaseController
         return intval($user['currentLoginAttempts']) <= $maxLoginAttemps && password_verify($password, $user['passwordHash']);
     }
 
-    private function handleFailedLoginAttempt($user)
+    private function handleFailedLoginAttempt(array $user): array
     {
         $cfgAboutLogin = $this->iniTool->getKeysAndValues('aboutLogin');
         $maxLoginAttemps = intval($cfgAboutLogin['maxLoginAttemps']);
@@ -650,7 +660,7 @@ final class UserController extends BaseController
         return ['response' => false, 'currentLoginAttempts' => $user['currentLoginAttempts'], 'lastAttempt' => $user['lastAttempt']];
     }
 
-    private function sendFailedAttemptsEmail($user)
+    private function sendFailedAttemptsEmail(array $user): array
     {
         $userRestartData = $this->generateEmailDataForFailedAttempts($user);
         $failedAttemptsToken = $this->generateFailedAttemptsToken($user['id_USERS']);
@@ -670,7 +680,7 @@ final class UserController extends BaseController
         return ['response' => false, 'currentLoginAttempts' => $user['currentLoginAttempts'], 'lastAttempt' => $user['lastAttempt'], 'emailSent' => true];
     }
 
-    private function generateVerfificationEmailData($userId, $destinyEmailAddress, $tempId)
+    private function generateVerfificationEmailData(string | int $userId, string $destinyEmailAddress, string $tempId): array
     {
         $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         $secondsTimeLifeActivationAccount = intval($cfgTokenSettings['secondsTimeLifeActivationAccount']);
@@ -696,7 +706,7 @@ final class UserController extends BaseController
         ];
     }
 
-    private function generateUserChangePasswordData($email)
+    private function generateUserChangePasswordData(string $email): array
     {
         $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
         return [
@@ -707,7 +717,7 @@ final class UserController extends BaseController
         ];
     }
 
-    private function generateAccountDeletionData($email)
+    private function generateAccountDeletionData(string $email): array
     {
         $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
         return [
@@ -718,7 +728,7 @@ final class UserController extends BaseController
         ];
     }
 
-    private function generateSuccessGoogleLoginResponse($user, $accessToken, $refreshToken)
+    private function generateSuccessGoogleLoginResponse(array $user, string $accessToken, string $refreshToken): array
     {
         return [
             'tokens' => [
@@ -750,7 +760,7 @@ final class UserController extends BaseController
         ];
     }
 
-    private function generateGoogleLoginTokens($user)
+    private function generateGoogleLoginTokens(array $user): array
     {
         $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         $secondsMaxTimeLifeAccessToken = intval($cfgTokenSettings['secondsMaxTimeLifeAccessToken']);
@@ -764,7 +774,7 @@ final class UserController extends BaseController
         ];
     }
 
-    private function generateUserFailedAttemptsRestartData($user, $tempId)
+    private function generateUserFailedAttemptsRestartData(array $user, string $tempId): array
     {
         $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
         $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
@@ -785,7 +795,7 @@ final class UserController extends BaseController
         ];
     }
 
-    private function generateUserForgotPasswordRestartData($user)
+    private function generateUserForgotPasswordRestartData(array $user): array
     {
         $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
         $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
@@ -807,7 +817,7 @@ final class UserController extends BaseController
         ];
     }
 
-    private function isForgotPasswordTokenExpired($lastForgotPasswordEmail)
+    private function isForgotPasswordTokenExpired(string $lastForgotPasswordEmail): bool
     {
         $cfgTokenSettings = $this->iniTool->getKeysAndValues('tokenSettings');
         $expireTimeTokenForgotPassword = intval($cfgTokenSettings['secondsMinTimeLifeForgotPasswordToken']);
@@ -818,13 +828,13 @@ final class UserController extends BaseController
         return false;
     }
 
-    private function isTokenExpired($startTime, $expireTime)
+    private function isTokenExpired(string $startTime, int $expireTime): bool
     {
         $interval = $this->calculateTimeDifferenceSinceNow($startTime);
         return $interval < intval($expireTime);
     }
 
-    private function calculateTimeDifferenceSinceNow($startTime)
+    private function calculateTimeDifferenceSinceNow(string $startTime): int
     {
         $now = new DateTime();
         $start = new DateTime($startTime);
@@ -832,7 +842,7 @@ final class UserController extends BaseController
         return $interval;
     }
 
-    private function generateWelcomeData($destinyEmailAddress)
+    private function generateWelcomeData(string $destinyEmailAddress): array
     {
         $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
         return [

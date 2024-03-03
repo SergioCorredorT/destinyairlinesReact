@@ -113,7 +113,7 @@ final class EmailLinkActionController extends BaseController
         exit;
     }
 
-    private function generateWelcomeData($destinyEmailAddress)
+    private function generateWelcomeData(string $destinyEmailAddress): array
     {
         $cfgOriginEmailIni = $this->iniTool->getKeysAndValues('originEmail');
         return [
