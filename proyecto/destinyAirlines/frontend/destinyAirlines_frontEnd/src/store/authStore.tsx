@@ -38,6 +38,7 @@ interface AuthStoreState {
   documentCode: string;
   expirationDate: string;
   dateBirth: string;
+  getAll: () => any;
   activateAutoUpdateToken: () => Promise<void>;
   desactivateAutoUpdateToken: () => Promise<void>;
   getUpdateTime: () => Promise<number>;
@@ -138,6 +139,10 @@ export const authStore = create<AuthStoreState>((set, get) => ({
   expirationDate: "",
   dateBirth: "",
   emailAddress: "",
+  getAll: ()  => {
+    const state = get();
+    return state;
+  },
   activateAutoUpdateToken: async () => {
     const state = get();
     let updateTimeRef = state["updateTimeRef"];

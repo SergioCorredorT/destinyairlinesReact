@@ -38,6 +38,7 @@
   -o-border-radius: 10px;
   overflow: hidden;
   background-color: #fff;
+  aspect-ratio: 6/1;
 }
 
 .googleButton:hover {

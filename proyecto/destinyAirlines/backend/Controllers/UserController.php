@@ -114,6 +114,7 @@ final class UserController extends BaseController
         unset($userData['password']);
 
         $UserModel = new UserModel();
+        $userData['isEmailVerified'] = 1;
         $userId = $UserModel->createUser($userData, true);
         if (!$userId) {
             return  ['response' => false, 'message' => 'No se ha podido crear la cuenta. Esto puede deberse a un error del servidor o a que ya hay una cuenta registrada con ese email o a que ya se haya enviado un correo electrónico de activación de cuenta. Por favor, revisa tu correo electrónico para obtener instrucciones detalladas. Si no reconoces la solicitud de creación de la cuenta, por favor, haz clic en el enlace de revocación de la cuenta que se proporciona en el correo electrónico.'];
@@ -123,9 +124,7 @@ final class UserController extends BaseController
         $welcomeData = $this->generateWelcomeData($userData['emailAddress']);
         EmailTool::sendEmail($welcomeData, 'welcomeTemplate');
 
-//Hacer login
-//Y completarlo en frontend
-        return  ['response' => true, 'message' => 'Usuario registrado con éxito.'];
+        return  [...$this->googleUserLoginAfterCreate($userData['emailAddress']), 'message' => 'Te has registrado y has iniciado sesión con éxito. ¡Bienvenido!.'];
     }
 
     public function updateUser(array $POST)
@@ -295,6 +294,19 @@ final class UserController extends BaseController
             $UserModel->updateResetCurrentLoginAttempts($user['id_USERS']);
         }
 
+        ['accessToken' => $accessToken, 'refreshToken' => $refreshToken] = $this->generateGoogleLoginTokens($user);
+
+        return $this->generateSuccessGoogleLoginResponse($user, $accessToken, $refreshToken);
+    }
+
+    private function googleUserLoginAfterCreate(string $email)
+    {
+        $UserModel = new UserModel();
+        $user = $UserModel->readUserVerifiedByEmail($email);
+
+        if (!$user) {
+            return false;
+        }
         ['accessToken' => $accessToken, 'refreshToken' => $refreshToken] = $this->generateGoogleLoginTokens($user);
 
         return $this->generateSuccessGoogleLoginResponse($user, $accessToken, $refreshToken);

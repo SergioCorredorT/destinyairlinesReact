@@ -11,6 +11,7 @@ import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { GoogleLogin } from "@react-oauth/google";
 import { googleSignUp } from "../../services/googleSignUp";
 import { TabPanel } from "../TabPanel/TabPanel";
+import { authStore } from "../../store/authStore";
 
 type Inputs = {
   emailAddress: string;
@@ -51,6 +52,7 @@ interface credentialResponse {
 }
 
 export function SignUp({ closeModal }: { closeModal: () => void }) {
+  const { getAll } = authStore();
   const [captchaToken, setCaptchaToken] = useState("");
   const generalError = useSignal("");
   const [optionsForUserRegister, setOptionsForUserRegister] =
@@ -129,7 +131,7 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
       },
       () => {
         setValue("emailAddress", currentEmail);
-      } // Este es el callback que se ejecutará si la validación falla
+      }
     )();
   };
 
@@ -140,7 +142,7 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
     let newJsonData = { ...jsonData, credentialResponse };
 
     try {
-      const data = await googleSignUp(newJsonData);
+      const data = await googleSignUp({ getAll, ...newJsonData });
       if (!data.status) {
         generalError.value = data.message;
         toast.error(data.message);
@@ -537,16 +539,18 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
             {{
               title: "Registro con Google",
               children: (
-                <GoogleLogin
-                  auto_select
-                  onSuccess={(credentialResponse) => {
-                    handleClickGoogleSubmit(credentialResponse);
-                  }}
-                  onError={() => {
-                    generalError.value =
-                      "Ocurrió un error durante la autenticación con Google";
-                  }}
-                />
+                <div className={styles.googleButton}>
+                  <GoogleLogin
+                    auto_select
+                    onSuccess={(credentialResponse) => {
+                      handleClickGoogleSubmit(credentialResponse);
+                    }}
+                    onError={() => {
+                      generalError.value =
+                        "Ocurrió un error durante la autenticación con Google";
+                    }}
+                  />
+                </div>
               ),
             }}
             {{
@@ -572,10 +576,12 @@ export function SignUp({ closeModal }: { closeModal: () => void }) {
                       {...register("emailAddress")}
                     />
                   </div>
-                  <HCaptcha
-                    sitekey={import.meta.env.VITE_SITE_TOKEN_CAPTCHA}
-                    onVerify={onVerify}
-                  />
+                  <div className={styles.captchaButton}>
+                    <HCaptcha
+                      sitekey={import.meta.env.VITE_SITE_TOKEN_CAPTCHA}
+                      onVerify={onVerify}
+                    />
+                  </div>
                   <button
                     type="submit"
                     disabled={!captchaToken}
