@@ -1,6 +1,22 @@
 .greeting {
-    display: block;
-    font-weight: 600;
-    padding: 0.3em 0.6em;
-    box-sizing: border-box;
+  display: block;
+  font-weight: 600;
+  padding: 0.3em 0.6em;
+  box-sizing: border-box;
+}
+
+.greeting p {
+  font-size: 3vw;
+}
+
+@media only screen and (max-width: 600px) {
+  .greeting p {
+    font-size: 15px;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .greeting p {
+    font-size: 25px;
+  }
 }

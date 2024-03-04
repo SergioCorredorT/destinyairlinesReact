@@ -175,6 +175,68 @@ export const authStore = create<AuthStoreState>((set, get) => ({
     saveToNestedKeyInLocalStorage(["updateTime"], updateTime);
     return updateTime;
   },
+  checkUpdateLogin: async () => {
+    const state = get();
+    if (!state["isLoggedIn"]) {
+      return false;
+    }
+    const updateTokens = state["updateTokens"];
+    const result = await updateTokens();
+    if (result.error) {
+      // Comprobar el motivo del error y decidir si hacer signOut o no
+      if (result.error === "expired_token") {
+        state["signOut"]();
+      }
+      return false;
+    }
+    return true;
+  },
+  updateTokens: async () => {
+    const {
+      accessToken,
+      refreshToken,
+      setAccessToken,
+      setRefreshToken,
+      signOut,
+    } = get();
+
+    if (!accessToken) {
+      return { error: "No se ha establecido el token de acceso" };
+    }
+
+    try {
+      const data = await updateAccessToken(accessToken);
+
+      if (data.accessToken) {
+        setAccessToken(data.accessToken);
+        return { error: null };
+      } else if (data.tokenError && data.tokenError == "expired_token") {
+        const refreshData = await updateRefreshToken(refreshToken);
+
+        if (refreshData.tokenError) {
+          const errorResponse = handleError({
+            error: refreshData.tokenError,
+            signOut,
+          });
+          return { error: errorResponse };
+        }
+
+        setAccessToken(refreshData.accessToken);
+
+        if (refreshData.refreshToken) {
+          setRefreshToken(refreshData.refreshToken);
+        }
+
+        return { error: null };
+      }
+
+      return { error: null };
+    } catch (error) {
+      // Manejar cualquier error que pueda ocurrir durante las llamadas a la API
+      console.error(error);
+      return { error: "Ha ocurrido un error al actualizar los tokens" };
+    }
+  },
   setUserEditableInfo: (newUserInfo) => {
     const state = get();
     for (const key in newUserInfo) {
@@ -285,68 +347,6 @@ export const authStore = create<AuthStoreState>((set, get) => ({
       expirationDate: state["expirationDate"]  || "",
       dateBirth: state["dateBirth"]  || "",
     };
-  },
-  checkUpdateLogin: async () => {
-    const state = get();
-    if (!state["isLoggedIn"]) {
-      return false;
-    }
-    const updateTokens = state["updateTokens"];
-    const result = await updateTokens();
-    if (result.error) {
-      // Comprobar el motivo del error y decidir si hacer signOut o no
-      if (result.error === "expired_token") {
-        state["signOut"]();
-      }
-      return false;
-    }
-    return true;
-  },
-  updateTokens: async () => {
-    const {
-      accessToken,
-      refreshToken,
-      setAccessToken,
-      setRefreshToken,
-      signOut,
-    } = get();
-
-    if (!accessToken) {
-      return { error: "No se ha establecido el token de acceso" };
-    }
-
-    try {
-      const data = await updateAccessToken(accessToken);
-
-      if (data.accessToken) {
-        setAccessToken(data.accessToken);
-        return { error: null };
-      } else if (data.tokenError && data.tokenError == "expired_token") {
-        const refreshData = await updateRefreshToken(refreshToken);
-
-        if (refreshData.tokenError) {
-          const errorResponse = handleError({
-            error: refreshData.tokenError,
-            signOut,
-          });
-          return { error: errorResponse };
-        }
-
-        setAccessToken(refreshData.accessToken);
-
-        if (refreshData.refreshToken) {
-          setRefreshToken(refreshData.refreshToken);
-        }
-
-        return { error: null };
-      }
-
-      return { error: null };
-    } catch (error) {
-      // Manejar cualquier error que pueda ocurrir durante las llamadas a la API
-      console.error(error);
-      return { error: "Ha ocurrido un error al actualizar los tokens" };
-    }
   },
   setIsLoggedIn: (isLoggedIn) => {
     saveToNestedKeyInLocalStorage(["isLoggedIn"], isLoggedIn);

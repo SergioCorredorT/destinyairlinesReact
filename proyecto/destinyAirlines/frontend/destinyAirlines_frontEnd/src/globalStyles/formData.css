@@ -1,21 +1,26 @@
-input:hover, select:hover {
+input:hover,
+select:hover {
   outline: 1px solid var(--tertiary-color);
 }
 
-input:focus, select:focus {
+input:focus,
+select:focus {
   outline: 2px solid var(--tertiary-color);
 }
 
-input, select {
+input,
+select {
   padding: 10px;
 }
 
-input[disabled=true], button[disabled=true] {
+input[disabled="true"],
+button[disabled="true"] {
   filter: brightness(0.5);
   -webkit-filter: brightness(0.5);
 }
 
-input[disabled=true]:hover, button[disabled=true]:hover {
+input[disabled="true"]:hover,
+button[disabled="true"]:hover {
   border-color: transparent;
 }
 
@@ -32,12 +37,44 @@ label {
   font-weight: 600;
 }
 
-input, select, textarea {
-  background-color: rgba(0,0,0,0.5);
+input,
+select,
+textarea {
+  background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
   max-width: 20em;
 }
 
 .bg_danger {
   background-color: #ff0000;
+}
+
+h1 {
+  font-size: 6.5vw;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 5vw;
+  line-height: 1.1;
+}
+
+@media only screen and (max-width: 600px) {
+  h1 {
+    font-size: 30px;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  h1 {
+    font-size: 60px;
+  }
+
+  h2 {
+    font-size: 45px;
+  }
 }
