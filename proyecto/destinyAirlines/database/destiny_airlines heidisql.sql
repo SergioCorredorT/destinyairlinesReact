@@ -291,6 +291,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
   `dateBirth` date NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_USERS`),
   UNIQUE KEY `emailAddress` (`emailAddress`)
 ) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

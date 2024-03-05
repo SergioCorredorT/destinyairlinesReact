@@ -63,6 +63,7 @@ Table USERS {
   expirationDate date [not null]
   dateBirth date [not null]
   isEmailVerified tinyint [default: 0, not null]
+  createdAt datetime [not null, default: `CURRENT_TIMESTAMP`]
 }
 
 Table USER_TEMP_IDS {

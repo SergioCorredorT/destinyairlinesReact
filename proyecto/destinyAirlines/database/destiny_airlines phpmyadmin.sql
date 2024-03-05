@@ -463,7 +463,8 @@ CREATE TABLE `users` (
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
   `dateBirth` date NOT NULL,
-  `isEmailVerified` tinyint(1) UNSIGNED NOT NULL DEFAULT 0
+  `isEmailVerified` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

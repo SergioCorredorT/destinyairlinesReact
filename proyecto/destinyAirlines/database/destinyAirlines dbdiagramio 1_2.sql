@@ -60,7 +60,8 @@ CREATE TABLE `USERS` (
   `documentationType` varchar(50) NOT NULL,
   `documentCode` varchar(30) NOT NULL,
   `expirationDate` date NOT NULL,
-  `dateBirth` date NOT NULL
+  `dateBirth` date NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP)
 );
 
 CREATE TABLE `USER_TEMP_IDS` (
