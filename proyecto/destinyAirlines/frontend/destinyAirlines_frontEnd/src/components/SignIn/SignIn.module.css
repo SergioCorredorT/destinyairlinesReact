@@ -31,14 +31,16 @@
 
 .googleButton {
   grid-column: span 2;
+  max-width: 100%;
+  overflow: hidden;
+  width: fit-content;
+  display: flex;
+  background-color: #fff;
   border-radius: 10px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   -ms-border-radius: 10px;
   -o-border-radius: 10px;
-  overflow: hidden;
-  background-color: #fff;
-  aspect-ratio: 6/1;
 }
 
 .googleButton:hover {

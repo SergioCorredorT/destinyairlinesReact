@@ -69,8 +69,18 @@ button:disabled:hover {
   word-wrap: break-word;
 }
 
-.googleButton > div {
-  aspect-ratio: 6/1;
+.googleButton {
+  max-width: 100%;
+  overflow: hidden;
+  width: fit-content;
+  display: flex;
+  background-color: #fff;
+  aspect-ratio: 5.7/1;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
 }
 
 .captchaButton > div {

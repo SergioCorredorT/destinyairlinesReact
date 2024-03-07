@@ -17,7 +17,7 @@
         🔄 react select (select personalizados)
         🔄 react router dom
         🔄 react lazy load image component + tipos
-        🔄 Jest para test ¿ + testing library?
+        🔄 vitest para test ¿ + testing library? https://www.youtube.com/watch?v=Ysv_3OQYOMg
 
 [hosting]
     🔄Todo
@@ -40,4 +40,4 @@
 [Descartadas]
     ❌ axios (únicamente por viciarse el fetch primero)
     ❌ normalize.css (mejor mi resetCSS)
-    ❌ Vitest (por simplicidad)
+    ❌ Jest (incompatibilidad con proyectos vite)

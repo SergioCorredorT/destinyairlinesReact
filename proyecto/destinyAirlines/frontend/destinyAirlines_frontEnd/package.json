@@ -9,12 +9,12 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@types/react": "^18.2.60",
-    "@types/react-dom": "^18.2.19",
+    "@types/react": "^18.2.63",
+    "@types/react-dom": "^18.2.20",
     "eslint": "^8.57.0",
     "typescript": "^5.3.3",
     "typescript-plugin-css-modules": "^5.1.0",
-    "vite": "^5.1.4",
+    "vite": "^5.1.5",
     "vite-plugin-million": "^0.0.2"
   },
   "dependencies": {
@@ -26,9 +26,9 @@
     "million": "^2.6.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-hook-form": "^7.50.1",
+    "react-hook-form": "^7.51.0",
     "react-toastify": "^10.0.4",
     "zod": "^3.22.4",
-    "zustand": "^4.5.1"
+    "zustand": "^4.5.2"
   }
 }
